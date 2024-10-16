@@ -294,4 +294,8 @@ ModelManifest.xml
 log.txt
 app-log.txt
 *.swp
+<<<<<<< HEAD
 /Logs
+=======
+/Logs
+>>>>>>> origin/main
