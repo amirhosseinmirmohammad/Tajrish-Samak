@@ -1,0 +1,525 @@
+﻿@model DataLayer.ViewModels.PagerViewModel.PagerViewModels<DataLayer.Models.Product>
+@{ GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();}
+@using MvcPager
+@using System.Data.Entity;
+@{
+    ViewBag.Title = "جدیدترین ها";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <link rel="canonical" href="@string.Format("{0}{1}", "http://tajrish-samak.ir", Request.Path)">
+    <meta name="Keywords" content="تجویز سمعک">
+    <meta property="og:title" content="تجویز سمعک" />
+    @*<meta property="og:url" content="@facebook" />*@
+    <meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
+    <meta name="twitter:image" content="تجویز سمعک">
+    <meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    @*<meta name="twitter:site" content="@twitter">*@
+    <meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+}
+
+@section Styles{
+    <!--Google jSON_LD Structure Data Region-->
+    <script type="application/ld+json">
+        {
+        "@@context": "http://schema.org",
+        "@@type": "Organization",
+        "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+        "description": "کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .",
+        "logo": "http://tajrish-samak.ir/images/logo_purple.png",
+        "url": "http://www.tajrish-samak.ir",
+        "sameAs": [ "https://www.instagram.com/tajrishsamak/",
+        "https://www.telegram.me/tajrish_samak/"],
+        "address": "تهران - میدان تجریش - خیابان شهرداری - رو به روی سینما آستارا - پلاک ۲۲۴ - ساختمان ۱۱۰ (ورودی قائم)",
+        "contactPoint": [{
+        "@@type": "ContactPoint",
+        "telephone": ["+98-21-22735588"],
+        "contactType": "customer service"
+        }]
+        }
+    </script>
+    <!--Google jSON_LD Structure Data Region-->
+}
+
+<!-- banner-2 -->
+@*<div class="page-head_agile_info_w3l">
+
+    </div>*@
+<!-- //banner-2 -->
+<!-- page -->
+<div class="services-breadcrumb">
+    <div class="agile_inner_breadcrumb">
+        <div class="container">
+            <ul class="w3_short">
+                <li>
+                    <a href="/">صفحه اصلی</a>
+                    <i>|</i>
+                </li>
+                <li>جدیدترین ها</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- //page -->
+<br />
+
+<!-- top Products -->
+<div class="ads-grid">
+    <div class="container">
+        <!-- tittle heading -->
+        <h3 class="tittle-w3l">
+            جدیدترین ها
+            <span class="heading-style">
+                <i></i>
+                <i></i>
+                <i></i>
+            </span>
+        </h3>
+        <!-- //tittle heading -->
+        <!-- product left -->
+        <div class="side-bar col-md-3 pull-right">
+            <div class="search-hotel">
+                <h3 class="agileits-sear-head">جستجو متنی</h3>
+                <form action="/Product/Filter" method="get">
+                    <input type="search" placeholder="عبارت جستجو . . ." name="Title" required="">
+                    <input type="submit" value=" ">
+                </form>
+            </div>
+            <!-- price range -->
+            @*<form method="get" action="/Product/Filter">
+                <div class="range">
+                    <h3 class="agileits-sear-head">محدوده قیمت</h3>
+                    <ul class="dropdown-menu6">
+                        <li>
+                            <div id="slider-range"></div>
+                            <input type="text" id="amount" />
+                        </li>
+                    </ul>
+                </div>
+                <input type="hidden" id="Min" name="Min" value="">
+                <input type="hidden" id="Max" name="Max" value="">*@
+            <!-- //price range -->
+            <!-- food preference -->
+            <div class="left-side cats">
+                <h3 class="agileits-sear-head">دسته بندی</h3>
+                <ul>
+                    @foreach (var category in content.Categories.Include(current => current.Products).Where(current => current.Products.Count() > 0 && current.IsBlog == false).OrderByDescending(current => current.PersianName).ToList())
+                    {
+                        <li>
+                            <input name="Category" type="radio" class="checked" value="@category.Id">
+                            <span class="span">@category.PersianName</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <!-- //food preference -->
+            <!-- discounts -->
+            @*<div class="left-side">
+                    <h3 class="agileits-sear-head">درصد تخفیف</h3>
+                    <ul>
+                        <li>
+                            <input name="Discount" type="radio" class="checked" value="5">
+                            <span class="span">5 % و بیشتر</span>
+                        </li>
+                        <li>
+                            <input name="Discount" type="radio" class="checked" value="10">
+                            <span class="span">10 % و بیشتر</span>
+                        </li>
+                        <li>
+                            <input name="Discount" type="radio" class="checked" value="20">
+                            <span class="span">20 % و بیشتر</span>
+                        </li>
+                        <li>
+                            <input name="Discount" type="radio" class="checked" value="30">
+                            <span class="span">30 % و بیشتر</span>
+                        </li>
+                        <li>
+                            <input name="Discount" type="radio" class="checked" value="50">
+                            <span class="span">50 % و بیشتر</span>
+                        </li>
+                        <li>
+                            <input name="Discount" type="radio" class="checked" value="60">
+                            <span class="span">60 % و بیشتر</span>
+                        </li>
+                    </ul>
+                </div>*@
+            <br />
+            <div class="text-center">
+                <input type="submit" class="filter" value="اعمال فیلترها" />
+            </div>
+            <br />
+            </form>
+            <!-- //discounts -->
+            <!-- reviews -->
+            @*<div class="customer-rev left-side">
+                    <h3 class="agileits-sear-head">Customer Review</h3>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <span>5.0</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                <span>4.0</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star-half-o" aria-hidden="true"></i>
+                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                <span>3.5</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                <span>3.0</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star-half-o" aria-hidden="true"></i>
+                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                <span>2.5</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>*@
+            <!-- //reviews -->
+            <!-- cuisine -->
+            @*<div class="left-side">
+                    <h3 class="agileits-sear-head">Cuisine</h3>
+                    <ul>
+                        <li>
+                            <input type="checkbox" class="checked">
+                            <span class="span">South American</span>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="checked">
+                            <span class="span">French</span>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="checked">
+                            <span class="span">Greek</span>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="checked">
+                            <span class="span">Chinese</span>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="checked">
+                            <span class="span">Japanese</span>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="checked">
+                            <span class="span">Italian</span>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="checked">
+                            <span class="span">Mexican</span>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="checked">
+                            <span class="span">Thai</span>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="checked">
+                            <span class="span">Indian</span>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="checked">
+                            <span class="span"> Spanish </span>
+                        </li>
+                    </ul>
+                </div>*@
+            <!-- //cuisine -->
+            <!-- deals -->
+            <div class="deal-leftmk left-side">
+                <h3 class="agileits-sear-head">پرطرفدارترین ها</h3>
+                @foreach (var item in content.Products.OrderByDescending(current => current.CreateDate).Where(currrent => currrent.SiteFirstImage != null).Take(7).ToList())
+                {
+                    <div class="special-sec1">
+                        <div class="col-xs-4 img-deals pull-right">
+                            <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
+                        </div>
+                        <div class="col-xs-8 img-deal1">
+                            <a title="@item.PersianName" href="/Product/Details/@item.Id">
+                                <h3>@item.PersianName</h3>
+                            </a>
+                            @*@string.Format("{0:n0}", item.UnitPrice) ریال*@
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                }
+            </div>
+            <!-- //deals -->
+        </div>
+        <!-- //product left -->
+        <!-- product right -->
+        <div class="agileinfo-ads-display col-md-9 w3l-rightpro pull-right">
+            <div class="wrapper">
+                <!-- first section -->
+                @{
+                    var list1 = Model.data.OrderByDescending(current => current.CreateDate).Where(currrent => currrent.SiteFirstImage != null).Take(3);
+                    var list2 = Model.data.OrderByDescending(current => current.CreateDate).Where(currrent => currrent.SiteFirstImage != null).Skip(3).Take(3);
+                    var list3 = Model.data.OrderByDescending(current => current.CreateDate).Where(currrent => currrent.SiteFirstImage != null).Skip(6).Take(3);
+                    var list4 = Model.data.OrderByDescending(current => current.CreateDate).Where(currrent => currrent.SiteFirstImage != null).Skip(9).Take(3);
+                }
+                @if (list1.Count() > 0)
+                {
+                    <div class="product-sec1">
+                        @foreach (var item in list1)
+                        {
+                            <div class="col-md-4 product-men">
+                                <div class="men-pro-item simpleCart_shelfItem">
+                                    <div class="men-thumb-item">
+                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
+                                        <div class="men-cart-pro">
+                                            <div class="inner-men-cart-pro">
+                                                <a title="@item.PersianName" class="link-product-add-cart" href="/Product/Details/@item.Id">جزئیات</a>
+                                            </div>
+                                        </div>
+                                        <span class="product-new-top">جدید</span>
+                                    </div>
+                                    <div class="item-info-product ">
+                                        <h4>
+                                            <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
+                                        </h4>
+                                        @*<div class="info-product-price">
+                                                @{
+                                                    int pricewithdiscount = item.UnitPrice - (item.UnitPrice) * (item.DiscountPercent) / 100;
+                                                }
+                                                <span class="item_price">@string.Format("{0:n0}", pricewithdiscount) ریال</span>
+                                                @if (item.DiscountPercent > 0)
+                                                {
+                                                    <del>@string.Format("{0:n0}", item.UnitPrice) ریال</del>
+                                                }
+                                            </div>
+                                            <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                                                @if (item.Stock > 0)
+                                                {
+                                                    <input type="button" name="submit" value="افزودن به سبد خرید" class="button add-to-cart-link btncard" productid="@item.Id" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="button" disabled name="submit" value="ناموجود" class="button add-to-cart-link" productid="@item.Id" />
+                                                }
+                                            </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="clearfix"></div>
+                        <!-- //first section -->
+                    </div>
+                }
+
+                @if (list2.Count() > 0)
+                {
+                    <div class="product-sec1">
+                        @foreach (var item in list2)
+                        {
+                            <div class="col-md-4 product-men">
+                                <div class="men-pro-item simpleCart_shelfItem">
+                                    <div class="men-thumb-item">
+                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
+                                        <div class="men-cart-pro">
+                                            <div class="inner-men-cart-pro">
+                                                <a title="@item.PersianName" class="link-product-add-cart" href="/Product/Details/@item.Id">جزئیات</a>
+                                            </div>
+                                        </div>
+                                        <span class="product-new-top">جدید</span>
+                                    </div>
+                                    <div class="item-info-product ">
+                                        <h4>
+                                            <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
+                                        </h4>
+                                        @*<div class="info-product-price">
+                                                @{
+                                                    int pricewithdiscount = item.UnitPrice - (item.UnitPrice) * (item.DiscountPercent) / 100;
+                                                }
+                                                <span class="item_price">@string.Format("{0:n0}", pricewithdiscount) ریال</span>
+                                                @if (item.DiscountPercent > 0)
+                                                {
+                                                    <del>@string.Format("{0:n0}", item.UnitPrice) ریال</del>
+                                                }
+                                            </div>
+                                            <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                                                @if (item.Stock > 0)
+                                                {
+                                                    <input type="button" name="submit" value="افزودن به سبد خرید" class="button add-to-cart-link btncard" productid="@item.Id" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="button" disabled name="submit" value="ناموجود" class="button add-to-cart-link" productid="@item.Id" />
+                                                }
+                                            </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="clearfix"></div>
+                        <!-- //first section -->
+                    </div>
+                }
+
+                @if (list3.Count() > 0)
+                {
+                    <div class="product-sec1">
+                        @foreach (var item in list3)
+                        {
+                            <div class="col-md-4 product-men">
+                                <div class="men-pro-item simpleCart_shelfItem">
+                                    <div class="men-thumb-item">
+                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
+                                        <div class="men-cart-pro">
+                                            <div class="inner-men-cart-pro">
+                                                <a title="@item.PersianName" class="link-product-add-cart" href="/Product/Details/@item.Id">جزئیات</a>
+                                            </div>
+                                        </div>
+                                        <span class="product-new-top">جدید</span>
+                                    </div>
+                                    <div class="item-info-product ">
+                                        <h4>
+                                            <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
+                                        </h4>
+                                        @*<div class="info-product-price">
+                                                @{
+                                                    int pricewithdiscount = item.UnitPrice - (item.UnitPrice) * (item.DiscountPercent) / 100;
+                                                }
+                                                <span class="item_price">@string.Format("{0:n0}", pricewithdiscount) ریال</span>
+                                                @if (item.DiscountPercent > 0)
+                                                {
+                                                    <del>@string.Format("{0:n0}", item.UnitPrice) ریال</del>
+                                                }
+                                            </div>
+                                            <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                                                @if (item.Stock > 0)
+                                                {
+                                                    <input type="button" name="submit" value="افزودن به سبد خرید" class="button add-to-cart-link btncard" productid="@item.Id" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="button" disabled name="submit" value="ناموجود" class="button add-to-cart-link" productid="@item.Id" />
+                                                }
+                                            </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="clearfix"></div>
+                        <!-- //first section -->
+                    </div>
+                }
+
+                @if (list4.Count() > 0)
+                {
+                    <div class="product-sec1">
+                        @foreach (var item in list4)
+                        {
+                            <div class="col-md-4 product-men">
+                                <div class="men-pro-item simpleCart_shelfItem">
+                                    <div class="men-thumb-item">
+                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
+                                        <div class="men-cart-pro">
+                                            <div class="inner-men-cart-pro">
+                                                <a title="@item.PersianName" class="link-product-add-cart" href="/Product/Details/@item.Id">جزئیات</a>
+                                            </div>
+                                        </div>
+                                        <span class="product-new-top">جدید</span>
+                                    </div>
+                                    <div class="item-info-product ">
+                                        <h4>
+                                            <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
+                                        </h4>
+                                        @*<div class="info-product-price">
+                                                @{
+                                                    int pricewithdiscount = item.UnitPrice - (item.UnitPrice) * (item.DiscountPercent) / 100;
+                                                }
+                                                <span class="item_price">@string.Format("{0:n0}", pricewithdiscount) ریال</span>
+                                                @if (item.DiscountPercent > 0)
+                                                {
+                                                    <del>@string.Format("{0:n0}", item.UnitPrice) ریال</del>
+                                                }
+                                            </div>
+                                            <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                                                @if (item.Stock > 0)
+                                                {
+                                                    <input type="button" name="submit" value="افزودن به سبد خرید" class="button add-to-cart-link btncard" productid="@item.Id" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="button" disabled name="submit" value="ناموجود" class="button add-to-cart-link" productid="@item.Id" />
+                                                }
+                                            </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="clearfix"></div>
+                        <!-- //first section -->
+                    </div>
+                }
+
+            </div>
+        </div>
+        <!-- //product right -->
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="product-pagination text-center">
+                    <nav>
+                        @{
+                            string Search = Request.QueryString["Search"];
+                            string Title = Request.QueryString["Title"];
+                            string Min = Request.QueryString["Min"];
+                            string Max = Request.QueryString["Max"];
+                            string Category = Request.QueryString["Category"];
+                            string Discount = Request.QueryString["Discount"];
+                        }
+                        <ul class="pagination pagination-sm">
+                            <li>@Html.Pager(10, Model.CurrentPage, Model.TotalItemCount, new RouteValueDictionary { { "Search", Search }, { "Category", Category }, { "Discount", Discount }, { "Title", Title }, { "Min", Min }, { "Max", Max } })</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- //top products -->
+
+@section Scripts{
+    <!-- the jScrollPane script -->
+    <script src="~/Scripts/jquery.jscrollpane.min.js"></script>
+    <script type="text/javascript" id="sourcecode">
+        $(function () {
+            $('.scroll-pane').jScrollPane();
+        });
+    </script>
+    <!-- //the jScrollPane script -->
+}

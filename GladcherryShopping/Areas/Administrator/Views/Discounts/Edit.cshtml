@@ -1,0 +1,315 @@
+﻿@{
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+@model DataLayer.Models.Discount
+@{
+    ViewBag.Title = "ویرایش کد تخفیف";
+}
+
+@section Styles{
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <style>
+        label {
+            text-align: right !important;
+            direction: rtl;
+            color: darkred;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>ویرایش کد تخفیف <small></small></h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-wrench"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li>
+                            <a href="#">گزینه 1</a>
+                        </li>
+                        <li>
+                            <a href="#">گزینه 2</a>
+                        </li>
+                    </ul>
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <form method="post" class="form-horizontal" action="/Administrator/Discounts/Edit" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(current => current.Count)
+                    @Html.HiddenFor(current => current.Id)
+                    @Html.HiddenFor(current => current.Image)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsPercentage, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.IsPercentage, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.IsPercentage, "", new { @class = "text-danger" })
+                            <span>در صورت انتخاب این گزینه تنها درصد تخفیف محاسبه میشود و مقدار تخفیف به ریال کاربردی نخواهد داشت .</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Percent, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Percent, new { htmlAttributes = new { @class = "form-control tell" } })
+                            @Html.ValidationMessageFor(model => model.Percent, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control tell" } })
+                            @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+                            <span>اگر کد تخفیف مقداری مد نظر شما است لطفا تیک محاسبه درصدی را بردارید و مقدار تخفیف را در اینجا وارد نمایید .</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MaxOrder, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.MaxOrder, new { htmlAttributes = new { @class = "form-control tell" } })
+                            @Html.ValidationMessageFor(model => model.MaxOrder, "", new { @class = "text-danger" })
+                            <span>اگر سقف سفارش وارد نشود به صورت نامحدود این کد در سفارش ها قابل استفاده است .</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MaxCount, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.MaxCount, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.MaxCount, "", new { @class = "text-danger" })
+                            <span>اگر حداکثر تعداد وارد نشود به صورت نامحدود این کد برای کاربران قابل استفاده است .</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsPublic, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.IsPublic, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.IsPublic, "", new { @class = "text-danger" })
+                            <span>تنها اگر این گزینه انتخاب شود امکان نمایش این کد تخفیف در ویترین میباشد . اگر کد شخصی است نیاز به تیک زدن نیست .</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ExpireDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.ExDate, new { htmlAttributes = new { @class = "form-control date_field_special", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.ExDate, "", new { @class = "text-danger" })
+                            <span>در صورتی که تاریخی در نظر نگیرید این کد نامحدود قابل استفاده است .</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ShowcaseDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.ShDate, new { htmlAttributes = new { @class = "form-control date_field_special", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.ShDate, "", new { @class = "text-danger" })
+                            <span>در صورتی که تاریخی در نظر نگیرید این کد نامحدود ویترین است . دقت کنید بعد از در نظر گرفتن تاریخ امکان حذف آن وجود ندارد .</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Image, htmlAttributes: new { @class = "control-label col-md-2 text-right" })
+                        <div class="col-md-10">
+                            <input type="file" name="Image" class="form-control" />
+                            @if (Model.Image != null)
+                            {
+                                <img src="@Url.Content(Model.Image)" width="200" />
+                            }
+                            @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DiscountCount, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.DiscountCount)
+                                @Html.ValidationMessageFor(model => model.DiscountCount, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsRepeated, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.IsRepeated)
+                                @Html.ValidationMessageFor(model => model.IsRepeated, "", new { @class = "text-danger" })
+                                <span>در صورتی که تیک بخورد به صورت مداوم بر روی تعداد در نظر گرفته شده شما عمل میکند .</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IntroductionCount, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.IntroductionCount, new { htmlAttributes = new { @class = "form-control tell" } })
+                                @Html.ValidationMessageFor(model => model.IntroductionCount, "", new { @class = "text-danger" })
+                                <span>در صورت خالی یا صفر بودن این مقدار کاربر با معرفی اپلیکیشن کد تخفیف جدید نمیگیرد .</span>
+                                <strong>لطفا این مقدار را تنها برای یکی از کدهای تخفیف سامانه خود در نظر بگیرید .</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsActived, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.IsActived)
+                                @Html.ValidationMessageFor(model => model.IsActived, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <button class="btn btn-warning" type="submit">ویرایش</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>پیام</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#">گزینه 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">گزینه 2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="alert alert-success">
+                                @TempData["Success"]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>پیام</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#">گزینه 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">گزینه 2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="alert alert-danger">
+                                @TempData["Error"]
+                            </div>
+                        </div>
+                        @if (ViewBag.Edit1 != null && ViewBag.Id != null)
+                        {
+                            <a href="/Administrator/Discounts/Edit/@ViewBag.Id" class="btn btn-warning">ویرایش کد قبلی</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        Calendar.setup({
+            inputField: 'ExDate',
+            button: 'date_btn',
+            ifFormat: '%Y/%m/%d',
+            dateType: 'jalali'
+        });
+    </script>
+    <script type="text/javascript">
+        Calendar.setup({
+            inputField: 'ShDate',
+            button: 'date_btn',
+            ifFormat: '%Y/%m/%d',
+            dateType: 'jalali'
+        });
+    </script>
+    <script>
+        (function ($) {
+            // Catch all events related to changes
+            $('.tell').on('change keyup', function () {
+                // Remove invalid characters
+                var sanitized = $(this).val().replace(/[^0-9]/g, '');
+                // Update value
+                $(this).val(sanitized);
+            });
+        })(jQuery);
+    </script>
+}

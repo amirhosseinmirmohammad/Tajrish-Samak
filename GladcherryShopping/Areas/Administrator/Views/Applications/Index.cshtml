@@ -1,0 +1,99 @@
+﻿@model IEnumerable<DataLayer.Models.Application>
+
+@{
+    ViewBag.Title = "مدیریت نرم افزار";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>مدیریت نرم افزار</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>تنظیمات نرم افزار</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Title)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.UserName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.FromNumber)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.SmtpServer)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.PortNumber)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EmailAddress)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EmailUserName)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Title)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.UserName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FromNumber)
+                                </td>
+                                <td style="color:darkred;font-weight:bold">
+                                    @Html.DisplayFor(modelItem => item.SmtpServer)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PortNumber)
+                                </td>
+                                <td id="mailtd">
+                                    @Html.DisplayFor(modelItem => item.EmailAddress)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EmailUserName)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("ویرایش", "Edit", new { id = item.Id }, new { @class = "btn btn-warning btn-xs" }) 
+                                    @*@Html.ActionLink("جزییات", "Details", new { id = item.Id }, new { @class = "btn btn-info btn-xs" })*@
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

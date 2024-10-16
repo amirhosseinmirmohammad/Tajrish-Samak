@@ -1,0 +1,134 @@
+﻿@model DataLayer.Models.Blog
+
+@{
+    ViewBag.Title = "افزودن بلاگ";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+    @*<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">*@
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>افزودن بلاگ <small></small></h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-wrench"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li>
+                            <a href="#">گزینه 1</a>
+                        </li>
+                        <li>
+                            <a href="#">گزینه 2</a>
+                        </li>
+                    </ul>
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <form method="post" class="form-horizontal" action="/Administrator/Blogs/Create" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">عنوان</label>
+                        <div class="col-sm-10">
+                            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">توضیحات کوتاه</label>
+                        <div class="col-sm-10">
+                            @Html.EditorFor(model => model.ShortDesc, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ShortDesc, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">متن اصلی</label>
+                        <div class="col-sm-10">
+                            @Html.EditorFor(model => model.Body, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">کلمات کلیدی</label>
+                        <div class="col-sm-10">
+                            @Html.EditorFor(model => model.MetaKey, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.MetaKey, "", new { @class = "text-danger" })<br />
+                            <strong>لطفا کلمات کلیدی را با "," از هم جدا کنید .</strong>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">توضیحات META</label>
+                        <div class="col-sm-10">
+                            @Html.EditorFor(model => model.MetaDesc, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.MetaDesc, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">فایل ها</label>
+                        <div class="col-sm-10">
+                            <input type="file" name="Images" class="form-control multi with-preview" />
+                            @Html.ValidationMessageFor(model => model.Images, "", new { @class = "text-danger" })<br />
+                            <strong>فرمت های jpeg ، png و jpg برای عکس و فرمت های mp4 ، wmv و mpeg برای ویدئو مجاز هستند .</strong>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">آدرس SEF</label>
+                        <div class="col-sm-10">
+                            @Html.EditorFor(model => model.SefUrl, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.SefUrl, "", new { @class = "text-danger" })<br />
+                            <strong>توضیحات در آدرس URL شما نمایش داده خواهند شد .</strong><br />
+                            <strong>از به کار بردن علامت های % ، $ ، & ، و . . .  خودداری نمایید .</strong>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsVisible, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.IsVisible)
+                                @Html.ValidationMessageFor(model => model.IsVisible, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("دسته بندی", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.DropDownList("CategoryId", null, "لطفا دسته بندی مطلب را انتخاب نمایید", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <button class="btn btn-primary" type="submit">ثبت</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="//cdn.ckeditor.com/4.6.2/full/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('Body', { language: 'fa' });
+    </script>
+    <script src="~/Scripts/multifile-master/jquery.form.js"></script>
+    <script src="~/Scripts/multifile-master/jquery.MetaData.js"></script>
+    <script src="~/Scripts/multifile-master/jquery.MultiFile.js"></script>
+    <script src="~/Scripts/multifile-master/jQuery.MultiFile.min.js"></script>
+}

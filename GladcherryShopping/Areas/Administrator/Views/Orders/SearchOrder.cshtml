@@ -1,0 +1,142 @@
+﻿@model IEnumerable<DataLayer.Models.Order>
+@{
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+@{
+    ViewBag.Title = "جستجوی سفارش";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-9">
+        <h2>جستجوی سفارش</h2>
+        @*<ol class="breadcrumb">
+                <li>
+                    <a href="index-2.html">خانه</a>
+                </li>
+                <li>
+                    صفحات دیگر
+                </li>
+                <li class="active">
+                    <strong>	صفحه جستجو</strong>
+                </li>
+            </ol>*@
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <h2>
+                        @Model.Count() نتیجه جستجو : <span class="text-navy">” سفارش “</span>
+                    </h2>
+
+                    <div class="search-form">
+                        <form action="/Administrator/Orders/OrderResult" method="get">
+                            <div class="input-group">
+                                <input type="text" placeholder="شماره سفارش" name="OrderId" class="form-control input-lg" required>
+                                <input type="hidden" name="returnurl" value="@ViewBag.ReturnUrl" />
+                                <div class="input-group-btn">
+                                    <button class="btn btn-lg btn-primary" type="submit">
+                                        جستجو
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    @foreach (var order in Model)
+                    {
+                        <div class="search-result">
+                            <h3><a href="/Administrator/Orders/OrderFound/@order.Id">@order.FullName</a></h3>
+                            <p>
+                                شماره سفارش : @order.Id
+                            </p>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>پیام</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#">گزینه 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">گزینه 2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="alert alert-success">
+                                @TempData["Success"]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>پیام</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#">گزینه 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">گزینه 2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="alert alert-danger">
+                                @TempData["Error"]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

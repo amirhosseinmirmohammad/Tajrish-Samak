@@ -1,0 +1,155 @@
+﻿@model DataLayer.Models.Application
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Application</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BussinessEmailAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BussinessEmailAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RunDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RunDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PersianRunDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PersianRunDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Password)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Password)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FromNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FromNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SmtpServer)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SmtpServer)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PortNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PortNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EmailAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EmailAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EmailUserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EmailUserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EmailPassword)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EmailPassword)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SuccessfullRegisterationText)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SuccessfullRegisterationText)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VerifyPhoneNumberText)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VerifyPhoneNumberText)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AfterUserOrderText)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AfterUserOrderText)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AboutUs)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AboutUs)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ContactUs)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ContactUs)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

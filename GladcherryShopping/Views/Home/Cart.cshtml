@@ -1,0 +1,441 @@
+﻿@model List<DataLayer.ViewModels.BasketViewModel>
+@{ GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();}
+@{
+    ViewBag.Title = "سفارش محصول در کلینیک شنوایی و سمعک شکوه تجریش";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+<meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+<meta name="Keywords" content="تجویز سمعک">
+<meta property="og:title" content="تجویز سمعک" />
+@*<meta property="og:url" content="@facebook" />*@
+<meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
+<meta name="twitter:image" content="تجویز سمعک">
+<meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+@*<meta name="twitter:site" content="@twitter">*@
+<meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+}
+
+@section Styles{
+}
+
+<!-- banner-2 -->
+@*<div class="page-head_agile_info_w3l">
+
+</div>*@
+<!-- //banner-2 -->
+<!-- page -->
+<div class="services-breadcrumb">
+    <div class="agile_inner_breadcrumb">
+        <div class="container">
+            <ul class="w3_short">
+                <li>
+                    <a href="/">صفحه اصلی</a>
+                    <i>|</i>
+                </li>
+                <li>سبد خرید</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- //page -->
+<!-- checkout page -->
+@if (Model.Count > 0)
+{
+    <div class="privacy">
+        <div class="container">
+            <!-- tittle heading -->
+            <div class="text-center">
+                <h1 class="tittle-w3l">
+                    سبد خرید
+                    <span class="heading-style">
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                    </span>
+                </h1>
+            </div>
+            <!-- //tittle heading -->
+            <div class="checkout-right">
+                @*<h4>
+                        <span>@Model.Count() آیتم در سبد خرید شما موجود است :</span>
+                    </h4>*@
+                <div class="table-responsive">
+                    <table class="timetable_sub">
+                        <thead>
+                            <tr>
+                                <th>کد محصول</th>
+                                <th>عکس محصول</th>
+                                <th>تعداد</th>
+                                <th>نام محصول</th>
+
+                                <th>قیمت واحد</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="rem1" productid="@item.Product.Id">
+                                    <td class="invert">@item.Product.Id</td>
+                                    <td class="invert-image">
+                                        @if (item.Product.SiteFirstImage != null)
+                                        {
+                                            <a title="@item.Product.PersianName" href="/Product/Details/@item.Product.Id"><img width="50" height="50" alt="@item.Product.PersianName" title="@item.Product.PersianName" class="img-responsive" src="@item.Product.SiteFirstImage"></a>
+                                        }
+                                        else
+                                        {
+                                            <a title="@item.Product.PersianName" href="/Product/Details/@item.Product.Id"><img width="50" height="50" alt="@item.Product.PersianName" title="@item.Product.PersianName" class="img-responsive" src="~/images/pransa_logo_web.png"></a>
+                                        }
+                                    </td>
+                                    @{
+                                        int pricewithdiscount;
+                                        pricewithdiscount = item.Product.UnitPrice - (item.Product.UnitPrice) * (item.Product.DiscountPercent) / 100;
+                                    }
+                                    <td class="invert">
+                                        <div class="quantity">
+                                            <div class="quantity-select">
+                                                <div productid="@item.Product.Id" productPrice="@pricewithdiscount" count="@item.Count" class="entry value-plus active plus" onclick="plus(this)">&nbsp;</div>
+                                                <div class="entry value">
+                                                    <span class="input-text qty text qtc" productPrice="@pricewithdiscount" count="@item.Count" productid="@item.Product.Id">@item.Count</span>
+                                                </div>
+                                                <div productid="@item.Product.Id" productPrice="@pricewithdiscount" count="@item.Count" class="entry value-minus minus" onclick="minus(this)">&nbsp;</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="invert">@item.Product.PersianName</td>
+                                    <td class="invert">@string.Format("{0:n0}", pricewithdiscount) ریال</td>
+                                    <td class="invert">
+                                        <div class="rem">
+                                            <div class="close1 remove btnRemove" productid="@item.Product.Id"> </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="checkout-left">
+                <div class="address_form_agile">
+                    @*<h4>Add a new Details</h4>
+                        <form action="payment.html" method="post" class="creditly-card-form agileinfo_form">
+                            <div class="creditly-wrapper wthree, w3_agileits_wrapper">
+                                <div class="information-wrapper">
+                                    <div class="first-row">
+                                        <div class="controls">
+                                            <input class="billing-address-name" type="text" name="name" placeholder="Full Name" required="">
+                                        </div>
+                                        <div class="w3_agileits_card_number_grids">
+                                            <div class="w3_agileits_card_number_grid_left">
+                                                <div class="controls">
+                                                    <input type="text" placeholder="Mobile Number" name="number" required="">
+                                                </div>
+                                            </div>
+                                            <div class="w3_agileits_card_number_grid_right">
+                                                <div class="controls">
+                                                    <input type="text" placeholder="Landmark" name="landmark" required="">
+                                                </div>
+                                            </div>
+                                            <div class="clear"> </div>
+                                        </div>
+                                        <div class="controls">
+                                            <input type="text" placeholder="Town/City" name="city" required="">
+                                        </div>
+                                        <div class="controls">
+                                            <select class="option-w3ls">
+                                                <option>Select Address type</option>
+                                                <option>Office</option>
+                                                <option>Home</option>
+                                                <option>Commercial</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button class="submit check_out">Delivery to this Address</button>
+                                </div>
+                            </div>
+                        </form>*@
+                    <div class="checkout-right-basket text-center">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a href="/invoice">
+                                دریافت پیش فاکتور و تکمیل سفارش
+                                <span class="fa fa-hand-o-left" aria-hidden="true"></span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" data-toggle="modal" data-target="#myModal1">
+                                <span class="fa fa-unlock-alt" aria-hidden="true"></span> ورود به حساب کاربری
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+    </div>
+    <!-- //checkout page -->
+                                        }
+                                        else
+                                        {
+                                            <br />
+                                            <div class="text-center container">
+                                                <div class="checkout-right">
+                                                    <h4>
+                                                        <span>سبد خرید شما خالی است .</span>
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                        }
+
+@if (TempData["Error"] != null)
+{
+        <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">وضعیت سفارش</h4>
+                </div>
+                <div class="modal-body" style="text-align:center;direction:rtl;">
+                    <p class="text-danger">@TempData["Error"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">ویرایش اطلاعات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="mi-modal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">آیا از حذف این محصول از سبد خرید خود اطمینان دارید ؟</h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="modal-btn-si">بله</button>
+                <button type="button" class="btn btn-primary" id="modal-btn-no">خیر</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script>
+        var modalConfirm = function (callback) {
+
+            $("#btn-confirm").on("click", function () {
+                $("#mi-modal").modal('show');
+            });
+
+            $("#modal-btn-si").on("click", function () {
+                callback(true);
+                $("#mi-modal").modal('hide');
+            });
+
+            $("#modal-btn-no").on("click", function () {
+                callback(false);
+                $("#mi-modal").modal('hide');
+            });
+        };
+
+        modalConfirm(function (confirm) {
+            if (confirm) {
+                //Acciones si el usuario confirma
+            } else {
+                //Acciones si el usuario no confirma
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#myModal").modal();
+        });
+    </script>
+
+    <!-- cart-js -->
+    <script src="/js/minicart.js"></script>
+    <script>
+        paypalm.minicartk.render(); //use only unique class names other than paypal1.minicart1.Also Replace same class name in css and minicart.min.js
+
+        paypalm.minicartk.cart.on('checkout', function (evt) {
+            var items = this.items(),
+				len = items.length,
+				total = 0,
+				i;
+
+            // Count the number of each item in the cart
+            for (i = 0; i < len; i++) {
+                total += items[i].get('quantity');
+            }
+
+            if (total < 3) {
+                alert('The minimum order quantity is 3. Please add more to your shopping cart before checking out');
+                evt.preventDefault();
+            }
+        });
+    </script>
+    <!-- //cart-js -->
+    <!--quantity-->
+    <script>
+        function plus(element) {
+            var id = $(element).attr("productid");
+            var count = $(element).attr("count");
+            var input = $('.input-text');
+            //Increase Region
+            $.ajax({
+                url: "/Home/AddToShoppingCart",
+                data: { Id: id },
+                type: "Post",
+                dataType: "Json",
+                success: function (result) {
+                    if (result.Success) {
+                        var x = input[0].innerHTML;
+                        x = parseInt(x) + parseInt(1);
+                        input.html(x);
+                    }
+                    eval(result.Script);
+                },
+                error: function () {
+                    alert("خطایی رخ داده است !");
+                }
+            });
+            //Increase Region
+        };
+
+        function minus(element) {
+            var id = $(element).attr("productid");
+            var count = $(element).attr("count");
+            var input = $('.input-text');
+            var x = input[0].innerHTML;
+            var intX = parseInt(x);
+            if (intX > 1) {
+                //Decrease Region
+                $.ajax({
+                    url: "/Home/MinusFromShoppingCart",
+                    data: { Id: id },
+                    type: "Post",
+                    dataType: "Json",
+                    success: function (result) {
+                        if (result.Success) {
+                            x = parseInt(x) - parseInt(1);
+                            input.html(x);
+                        }
+                        eval(result.Script);
+                    },
+                    error: function () {
+                        alert("خطایی رخ داده است !");
+                    }
+                });
+                //Decrease Region
+            }
+        };
+    </script>
+    <!--quantity-->
+    <script>
+        function Discount() {
+            var discount = jQuery("#coupon_code").val();
+            var totalPrice = 0;
+            var priceDis = 0;
+            var uId = jQuery("#uId").text();
+            if (discount != undefined || discount != null || discount != "") {
+                $.ajax({
+                    url: "/Home/GetDiscount",
+                    contentType: "application/json; charset=utf-8",
+                    data: { Code: discount, UserId: uId },
+                    dataType: "json",
+                    type: "GET",
+                    success: function (data) {
+                        if (data.Status == true) {
+                            $("#shoppingPrice").html(data.PriceHtml + " ریال با تخفیف ");
+                            $("#preOrder").html(data.PriceHtml + " ریال با تخفیف ");
+                        }
+                        { $('#error-modal .inner-text').html(data.Text); $('#error-modal').modal(); return false; }
+                    },
+                    error: function (jqhxr, statusText, error) { alert("خطایی رخ داده است لطفا دویاره امتحان کنید ."); }
+                });
+            }
+            else {
+                { $('#error-modal .inner-text').html("لطفا کد خود را وارد نمایید ."); $('#error-modal').modal(); return false; }
+            }
+        }
+    </script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $('.shipping-calculator-button').click(function () {
+            if ($(".shipping-calculator-button i").hasClass('fa-arrow-down')) {
+                $('.shipping-calculator-button i').switchClass("fa-arrow-down", "fa-arrow-up");
+            }
+            else {
+                $('.shipping-calculator-button i').switchClass("fa-arrow-up", "fa-arrow-down");
+            }
+        });
+    </script>
+
+    <script>
+        $(".btnRemove").click(function (e) {
+            e.preventDefault();
+            var id = $(this).attr("productid");
+            var element = $(this);
+            var txt;
+
+            var modalConfirm = function (callback) {
+
+                $("#mi-modal").modal('show');
+
+                $("#modal-btn-si").on("click", function () {
+                    callback(true);
+                    $("#mi-modal").modal('hide');
+                });
+
+                $("#modal-btn-no").on("click", function () {
+                    callback(false);
+                    $("#mi-modal").modal('hide');
+                });
+            };
+
+            modalConfirm(function (confirm) {
+                if (confirm) {
+                    $.ajax({
+                        url: "/Home/RemoveCart",
+                        data: { Id: id },
+                        type: "Post",
+                        dataType: "Json",
+                        success: function (result) {
+                            if (result.Success) {
+                                setTimeout(function () {
+                                    var element = $('tr[productid=' + id + ']')
+                                    element.fadeOut('slow', function (c) {
+                                        element.remove();
+                                        tr = $('tr');
+                                        if (tr.length == 1) {
+                                            window.location.reload(true);
+                                        }
+                                    });
+                                }, 800);
+                            }
+                            eval(result.Script);
+                        },
+                        error: function () {
+                            alert("Error!");
+                        }
+                    });
+                } else {
+                    $("#mi-modal").modal('hide');
+                }
+            });
+        });
+    </script>
+
+}

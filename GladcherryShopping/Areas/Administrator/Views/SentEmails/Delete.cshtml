@@ -1,0 +1,40 @@
+﻿@model DataLayer.Models.SentEmail
+
+@{
+    ViewBag.Title = "حذف ایمیل";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>حذف ایمیل</h2>
+
+<h3>آیا از حذف این ایمیل مطمئن هستید ؟</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+
+        <dd>
+            @Html.Raw(Model.Text)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FromEmail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FromEmail)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="حذف" class="btn btn-danger" /> |
+            @Html.ActionLink("بازگشت به لیست", "Index", null, new { @class = "btn btn-default" })
+        </div>
+    }
+</div>

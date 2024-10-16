@@ -1,0 +1,117 @@
+﻿@model DataLayer.Models.Comment
+
+@{
+    ViewBag.Title = "جزییات نظر";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>مدیریت نظر</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5> جزییات نظر</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div>
+                        @*<h4>HubSYS Software Application 2016-2017</h4>
+                            <hr />*@
+                        <dl class="dl-horizontal">
+                            <dd>
+                                @Html.DisplayFor(model => model.Text)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Text)
+                            </dt>
+                        </dl>
+                    </div><br /><br />
+                    <p>
+                        @Html.ActionLink("تایید یا عدم تایید", "Approve", new { id = Model.Id }, new { @class = "btn btn-warning btn-md" }) |
+                        @Html.ActionLink("بازگشت به لیست", "Index", null, new { @class = "btn btn-default btn-md" })
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*@model DataLayer.Models.Comment
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Comment</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Product.PersianName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Product.PersianName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.User.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.User.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsApprove)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsApprove)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>*@

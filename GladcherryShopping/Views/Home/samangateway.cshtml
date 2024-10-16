@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "samangateway";
+    Layout = null;
+}
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>اتصال به درگاه بانکی کلینیک شنوایی و سمعک شکوه تجریش</title>
+    <style>
+        @@font-face {
+            font-family: 'iransans';
+            src: url('../fonts/IranSans/eot/IRANSansWeb_Bold.eot') format('eot'), url('../fonts/IranSans/woff/IRANSansWeb_Bold.woff') format('woff'), url('../fonts/IranSans/ttf/IRANSansWeb_Bold.ttf'), url('../fonts/IranSans/woff/IRANSansWeb_Bold.woff') format('woff2'), url('../fonts/IranSans/woff2/IRANSansWeb_Bold.woff2') format('truetype');
+            font-style: normal;
+            font-weight: normal;
+        }
+
+        body {
+            font-family: iransans;
+            background-color: #f4f1f7;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23000000' fill-opacity='0.14' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center;padding-top:50px;">در حال اتصال به درگاه بانک سامان</h2>
+    <div style="text-align:center;">
+        <img src="~/images/sep-logo-new91.png" width="160" class="img-responsive" />
+        <img src="~/images/pransa_logo_web.png" width="100" class="img-responsive" />
+        <h3>کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک</h3>
+    </div>
+    <form id="myform" method="post" action="https://sep.shaparak.ir/payment.aspx">
+        <input type="hidden" name="Token" value="@Request.QueryString["Token"]" />
+        <input type="hidden" name="RedirectURL" value="@Request.QueryString["RedirectURL"]" />
+    </form>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            setInterval(submit_me, 3000);
+            function submit_me() {
+                $('#myform').submit();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+﻿@using DataLayer.ViewModels.PagerViewModel
+@model PagerViewModels<DataLayer.Models.Blog>
+@{ GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();}
+@using MvcPager
+@{
+    Layout = null;
+    //string twitter = "@TajrishSamak";
+    //string facebook = "https://facebook.com/TajrishSamak";
+}
+@using System.Data.Entity;
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>بلاگ کلینیک شنوایی و سمعک شکوه تجریش | خرید سمعک ، تجویز سمعک</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <meta name="Keywords" content="تجویز سمعک">
+    <meta property="og:title" content="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" />
+    <meta property="og:url" content="http://tajrish-samak.ir.com/" />
+    <meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
+    <meta name="twitter:image" content="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک">
+    @*<meta property="og:url" content="@facebook" />
+    <meta name="twitter:site" content="@twitter">*@
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <link href="~/css/blog/bootstrap.css" rel='stylesheet' type='text/css' />
+    <link href="~/css/blog/style.css" rel="stylesheet" />
+    <!--Custom-Theme-files-->
+    <script src="~/css/blog/jquery.min.js"> </script>
+    <!--/script-->
+    <script type="text/javascript" src="~/css/blog/move-top.js"></script>
+    <script type="text/javascript" src="~/css/blog/easing.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 900);
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <!-- header-section-starts -->
+        <div class="h-top" id="home">
+            <div class="top-header">
+                    <ul class="cl-effect-16 top-nag">
+                        <li><a class="active" href="/" data-hover="خانه">خانه</a></li>
+                        <li><a href="/aboutus" data-hover="درباره ما">درباره ما</a></li>
+                        <li><a href="/contactus" data-hover="تماس با ما">تماس با ما</a></li>
+                        <li><a href="/terms" data-hover="قوانین و مقررات">قوانین و مقررات</a></li>
+                    </ul>
+                <div class="search-box">
+                    <div class="b-search">
+                        <form method="get" action="/Blog/All">
+                            <input type="text" name="q" value="جستجو" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '';}">
+                            <input type="submit" value="">
+                        </form>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    <div class="full">
+        @*<div class="col-md-3 top-nav">
+                <div class="cat">
+                    <div class="logo">
+                        <a href="/blog/all"><img src="~/images/pransa_logo_web.png" width="100" /></a>
+                    </div>
+                    <div class="top-menu">
+                        <span class="menu"> </span>
+                        <ul class="cl-effect-16">
+                            @foreach (var category in content.Categories.Where(current => current.ParentId == null).OrderByDescending(current => current.PersianName).ToList())
+                            {
+                            <li><a title="@category.PersianName" href="/Home/Products/@category.Id">@category.PersianName</a></li>
+                            }
+                        </ul>
+                        <!-- script-for-nav -->
+                        <script>
+                            $( "span.menu" ).click(function() {
+                              $( ".top-menu ul" ).slideToggle(300, function() {
+                                // Animation complete.
+                              });
+                            });
+                        </script>
+                        <!-- script-for-nav -->
+                        <ul class="side-icons">
+                            <li><a class="fb" href="#"></a></li>
+                            <li><a class="twitt" href="#"></a></li>
+                            <li><a class="goog" href="#"></a></li>
+                            <li><a class="drib" href="#"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>*@
+        @{
+            var slider = content.Sliders.OrderByDescending(current => current.LastDate);
+        }
+        <div class="col-md-12 main">
+            <!--banner-section-->
+            <div class="banner-section">
+                <h3 class="tittle">مجله تصویری کلینیک شنوایی و سمعک شکوه تجریش <i class="glyphicon glyphicon-picture"></i></h3>
+                @if (slider != null && slider.Count() > 0)
+                {
+                    <div class="banner">
+                        <div class="callbacks_container">
+                            <ul class="rslides" id="slider4">
+                                @foreach (var item in slider.ToList())
+                                {
+                                    <li>
+                                        <img src="@item.Image" class="img-responsive" title="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" alt="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" style="width:100%;">
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <!--banner-->
+                        <script src="~/css/blog/responsiveslides.min.js"></script>
+                        <script>
+                            // You can also use "$(window).load(function() {"
+                            $(function () {
+                                // Slideshow 4
+                                $("#slider4").responsiveSlides({
+                                    auto: true,
+                                    pager: true,
+                                    nav: true,
+                                    speed: 500,
+                                    namespace: "callbacks",
+                                    before: function () {
+                                        $('.events').append("<li>before event fired.</li>");
+                                    },
+                                    after: function () {
+                                        $('.events').append("<li>after event fired.</li>");
+                                    }
+                                });
+
+                            });
+                        </script>
+                        <div class="clearfix"> </div>
+                        <div class="b-bottom">
+                            <h5 class="top"><a href="/">خرید و تجویز سمعک ، انجام تمامی آزمایشات شنوایی</a></h5>
+                        </div>
+                    </div>
+                }
+                <!--//banner-->
+                <!--/top-news-->
+                <div class="top-news">
+                    <div class="top-inner">
+                        @foreach (var item in Model.data.Take(4))
+                        {
+                            <div class="col-md-6 top-text">
+                                <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                                    @{
+                                        var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
+                                        if (ig != null)
+                                        {
+                                            string img = ig.FullPath;
+                                            <img src="@img" alt="@item.Title" title="@item.Title" class="img-responsive" />
+                                        }
+                                    }
+                                    @{
+                                        var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
+                                        if (vd != null)
+                                        {
+                                            string vid = vd.FullPath;
+                                            <video width="400" src="@vid" controls style="height:auto !important;width:80% !important;height:auto !important;margin-top:15px !important;"></video>
+                                        }
+                                    }
+                                </a>
+                                <h5 class="top">
+                                    <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                                    </a>
+                                </h5>
+                                <p>@item.ShortDesc</p>
+                                @*<p>
+                                    @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)
+                                <a class="span_link" href="#">
+                                    <span class="glyphicon glyphicon-eye-open">
+                                    </span>@item.Survey
+                                </a>
+                                <a class="span_link" href="/blog/@item.Id/@item.SefUrl">
+                                    <span class="glyphicon glyphicon-circle-arrow-right">
+                                    </span>
+                                </a>
+                            </p>*@
+                        </div>
+                                        }
+                        <div class="clearfix"> </div>
+                    </div><br />
+                    <div class="text-center">
+                        <div class="col-md-12" style="direction: ltr">
+                            <ul class="pagination pagination-sm">
+                                <li>@Html.Pager(4, Model.CurrentPage, Model.TotalItemCount)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!--//top-news-->
+            </div>
+            <!--//banner-section-->
+            <div class="banner-right-text">
+                <h3 class="tittle">پربازدیدترین ها  <i class="glyphicon glyphicon-facetime-video"></i></h3>
+                <!--/general-news-->
+                <div class="general-news">
+                    <div class="general-inner">
+                        @foreach (var item in Model.data.OrderByDescending(current => current.Survey).Take(1))
+                        {
+                            <div class="general-text">
+                                <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                                    @{
+                                        var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
+                                        if (ig != null)
+                                        {
+                                            string img = ig.FullPath;
+                                            <img src="@img" alt="@item.Title" title="@item.Title" class="img-responsive" />
+                                        }
+                                    }
+                                    @{
+                                        var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
+                                        if (vd != null)
+                                        {
+                                            string vid = vd.FullPath;
+                                            <video width="400" src="@vid" controls style="height:auto !important;width:100% !important;height:auto !important;"></video>
+                                        }
+                                    }
+                                </a><br />
+                                <h5 class="top">
+                                    <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                                        @item.Title
+                                    </a>
+                                </h5>
+                                <p>@item.ShortDesc</p>
+                                <p><a class="span_link" href="/blog/@item.Id/@item.SefUrl"> @item.Survey </a><a class="span_link" href="/blog/@item.Id/@item.SefUrl"><span class="glyphicon glyphicon-eye-open"></span></a></p>
+                            </div>
+                                        }
+                        @foreach (var item in Model.data.OrderByDescending(current => current.Survey).Skip(1).Take(4))
+                        {
+                            <div class="edit-pics">
+                                <div class="editor-pics">
+                                    <div class="col-md-3 item-pic">
+                                        @{
+                                            var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
+                                            if (ig != null)
+                                            {
+                                                string img = ig.FullPath;
+                                                <img src="@img" alt="@item.Title" title="@item.Title" class="img-responsive" />
+                                            }
+                                        }
+                                        @{
+                                            var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
+                                            if (vd != null)
+                                            {
+                                                string vid = vd.FullPath;
+                                                <video width="400" src="@vid" controls style="height:auto !important;width:100% !important;height:auto !important;"></video>
+                                            }
+                                        }
+                                    </div>
+                                    <div class="col-md-9 item-details">
+                                        <h5 class="inner two">
+                                            <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                                                @item.ShortDesc
+                                            </a>
+                                        </h5>
+                                        <div class="td-post-date two">
+                                            <i class="glyphicon glyphicon-time">
+                                            </i>@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)
+                                            <a href="/blog/@item.Id/@item.SefUrl">
+                                                <i class="glyphicon glyphicon-eye-open">
+                                                </i>@item.Survey
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                                            }
+                        <div class="media">
+                            <h3 class="tittle media">تصادفی <i class="glyphicon glyphicon-random"></i></h3>
+                            @foreach (var item in Model.data.OrderByDescending(current => Guid.NewGuid()).Take(2))
+                            {
+                                <div class="general-text two">
+                                    <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                                        @{
+                                            var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
+                                            if (ig != null)
+                                            {
+                                                string img = ig.FullPath;
+                                                <img src="@img" alt="@item.Title" title="@item.Title" class="img-responsive" />
+                                            }
+                                        }
+                                        @{
+                                            var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
+                                            if (vd != null)
+                                            {
+                                                string vid = vd.FullPath;
+                                                <video width="400" src="@vid" controls style="height:auto !important;width:100% !important;height:auto !important;"></video>
+                                            }
+                                        }
+                                    </a>
+                                    <h5 class="top">
+                                        <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                                        </a>
+                                    </h5>
+                                    <p>@item.ShortDesc</p>
+                                    <p>
+                                        @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)
+                                    </p>
+                                </div>
+                                            }
+                        </div>
+                    </div>
+                </div>
+                <!--//general-news-->
+                <!--/news-->
+                <!--/news-->
+            </div>
+            <div class="clearfix"> </div>
+            <!--/footer-->
+            <div class="footer">
+                <div class="footer-top">
+                    <div class="col-md-4 footer-grid">
+                        <h4>کلینیک شنوایی و سمعک شکوه تجریش </h4>
+                        <ul class="bottom">
+                            <li>خرید و تجویز سمعک </li>
+                            <li>انجام آزمایشات شنوایی </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 footer-grid">
+                        <h4>تماس با ما</h4>
+                        <ul class="bottom">
+                            <li><i class="glyphicon glyphicon-phone"></i>8985 338 0939 </li>
+                            <li><i class="glyphicon glyphicon-envelope"></i><a href="mailto:info@TajrishSamak.com">info@TajrishSamak.com</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 footer-grid">
+                        <h4>آدرس</h4>
+                        <ul class="bottom">
+                            <li><i class="glyphicon glyphicon-map-marker"></i>ایران ، تهران </li>
+                            <li><i class="glyphicon glyphicon-earphone"></i>5588 2273 021 </li>
+                        </ul>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+            </div>
+            <div class="copy">
+                <p> تمامی حقوق برای کلینیک شنوایی و سمعک شکوه تجریش محفوظ است  &copy;</p>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+    <!--//footer-->
+    <!--start-smooth-scrolling-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $().UItoTop({ easingType: 'easeOutQuart' });
+
+        });
+    </script>
+    <a href="#home" id="toTop" class="scroll" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+</body>
+</html>
+<script src="~/Scripts/persianumber.min.js"></script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('body').persiaNumber();
+        });
+</script>

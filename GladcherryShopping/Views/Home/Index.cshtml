@@ -1,0 +1,602 @@
+﻿@{ GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();}
+@using System.Data.Entity;
+@{
+    ViewBag.Title = "کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //string twitter = "@TajrishSamak";
+    //string facebook = "https://facebook.com/TajrishSamak";
+}
+@{
+    var blogs = content.Blogs.Include(current => current.Images).Where(current => current.Images.Count() > 0 && current.IsVisible == true).OrderByDescending(current => current.CreateDate);
+}
+@section Metas{
+    <link rel="canonical" href="https://tajrish-samak.ir">
+    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <meta name="Keywords" content="تجویز سمعک">
+    <meta property="og:title" content="تجویز سمعک" />
+    <meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
+    <meta name="twitter:image" content="تجویز سمعک">
+    <meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+}
+
+@section Styles{
+    <!--Google jSON_LD Structure Data Region-->
+    <script type="application/ld+json">
+        {
+        "@@context": "http://schema.org",
+        "@@type": "Organization",
+        "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+        "description": "کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .",
+        "logo": "http://tajrish-samak.ir/images/logo_purple.png",
+        "url": "http://www.tajrish-samak.ir",
+        "sameAs": [ "https://www.instagram.com/tajrishsamak/",
+        "https://www.telegram.me/sthc/"],
+        "address": "تهران - میدان تجریش - خیابان شهرداری - رو به روی سینما آستارا - پلاک ۲۲۴ - ساختمان ۱۱۰ (ورودی قائم)",
+        "contactPoint": [{
+        "@@type": "ContactPoint",
+        "telephone": ["+98-21-22735588"],
+        "contactType": "customer service"
+        }]
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" href="~/library/engine1/style.css" />
+    <!--Google jSON_LD Structure Data Region-->
+}
+
+@{
+    var slider = content.Sliders.OrderByDescending(current => current.LastDate);
+}
+
+<div id="mainheader">
+    <div class="container gif">
+        <!-- tittle heading -->
+        @*<img title="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" alt="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" src="~/images/giphy-downsized.gif" width="180">*@
+        <h1 title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" class="tittle-w3l text-center">
+            <strong>کلینیک شنوایی و سمعک شکوه تجریش</strong>، آزمایشات شنوایی و تجویز سمعک
+            <span class="heading-style">
+                <i></i>
+                <i></i>
+                <i></i>
+            </span>
+        </h1>
+        <h2 class="h2-hearing">
+            1/4 قرن تجربه
+        </h2>
+        @*<img alt="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" src="~/images/giphy-downsized.gif" width="180">*@
+    </div>
+</div>
+
+<!-- banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 pull-right">
+            @if (slider.Count() > 0)
+            {
+                <div class="picturebox desktop">
+                    <div class="picture">
+                        @if (slider.Count() > 0)
+                        {
+                            int i = 0;
+                            int j = 0;
+                            <!-- Start WOWSlider.com BODY section -->
+                            <div class="">
+                                <div id="wowslider-container1">
+                                    <div class="ws_images">
+                                        <ul>
+                                            @foreach (var item in slider.ToList())
+                                            {
+                                                if (string.IsNullOrEmpty(item.Link))
+                                                {
+                                                    <li>
+                                                        <a href="#">
+                                                            <img height="350" src="@item.Image" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" id="wows1_@i" />
+                                                        </a>
+                                                    </li>
+                                                }
+                                                else
+                                                {
+                                                    <li>
+                                                        <a href="@item.Link">
+                                                            <img height="350" src="@item.Image" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" id="wows1_@i" />
+                                                        </a>
+                                                    </li>
+                                                }
+                                                i++;
+                                            }
+                                        </ul>
+                                    </div>
+                                    <div class="ws_bullets">
+                                        <div>
+                                            @foreach (var item in slider.ToList())
+                                            {
+                                                if (string.IsNullOrEmpty(item.Link))
+                                                {
+                                                    <a href="#">
+                                                        <span>
+                                                            <img height="350" src="@item.Image" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" />
+                                                        </span>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@item.Link" title="پازل">
+                                                        <span>
+                                                            <img height="350" src="@item.Image" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" />
+                                                        </span>
+                                                    </a>
+                                                }
+                                                j++;
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="ws_shadow"></div>
+                                </div>
+                            </div>
+                            <!-- End WOWSlider.com BODY section -->
+                        }
+                    </div>
+                </div>
+
+                <div class="mobile">
+                    @if (slider != null)
+                    {
+                        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                            <!-- Indicators -->
+                            <ol class="carousel-indicators">
+                                @{ int i = 1;}
+                                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                @foreach (var item in slider.Skip(1).ToList())
+                    {
+                                    <li data-target="#myCarousel" data-slide-to="@i"></li>
+                                    i++;
+                                }
+                            </ol>
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner">
+                                <div class="item active">
+                                    @if (!string.IsNullOrEmpty(slider.FirstOrDefault().Link))
+                    {
+                                        <a href="@slider.FirstOrDefault().Link">
+                                            <img src="@slider.FirstOrDefault().MobImage" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" />
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <img src="@slider.FirstOrDefault().MobImage" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" />
+                                    }
+                                </div>
+                                @foreach (var item in slider.Skip(1).ToList())
+                    {
+                                    <div class="item">
+                                        @if (!string.IsNullOrEmpty(item.Link))
+                        {
+                                            <a href="@item.Link">
+                                                <img src="@item.MobImage" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک">
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <img src="@item.MobImage" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک">
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Left and right controls -->
+                            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                                    }
+                </div>
+                                    }
+        </div>
+        <div class="col-md-6 colxs">
+            @foreach (var item in content.Brands.ToList())
+            {
+                <div class="col-md-6 pull-right brands">
+                    <a title="@item.PersianName" href="/Home/Brands/@item.Id">
+                        <img alt="@item.PersianName" title="@item.PersianName" src="@item.SmallImage" width="100" height="100" />
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <span class="animate-charcter"> برای شنیدن بهترین آواز زندگیتان</span>
+        </div>
+    </div>
+</div>
+
+@*<div class="guarantee-section visible-lg" id="guarantee">
+        <div class="container">
+            <ul class="guarantee-items">
+                <li>
+                    <div class="guarantee-item">
+                        <i class="fa fa-user-secret fa-2x"></i><p>امکان ارسال کارشناس</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="guarantee-item">
+                        <i class="fa fa-dollar fa-2x"></i><p>قیمت مناسب</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="guarantee-item">
+                        <i class="fa fa-support fa-2x"></i><p>مشاوره رایگان</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>*@
+@*<div class="container">
+        <div class="row sp">
+            <div class="col-md-6 col-xs-12 col-sm-12">
+                <img src="~/images/sp1.jpg" title="انجام آزمایش ادیومتری PTA در کلینیک شنوایی شکوه تجریش" alt="انجام آزمایش ادیومتری PTA در کلینیک شنوایی شکوه تجریش" class="img-responsive" />
+                <div class="padding-top">
+                    <h4>PTA - ادیومتری</h4>
+                    <br />
+                    <p>هدف این آزمایش تعیین میزان کم شنوایی (خفیف، متوسط، شدید، عمیق) و تعیین نوع آن (انتقالی، حسی-عصبی و آمیخته) است.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-xs-12 col-sm-12">
+                <img src="~/images/sp2.jpg" title="انجام آزمایش تمپانومتری TYMP در کلینیک شنوایی شکوه تجریش" alt="انجام آزمایش تمپانومتری TYMP در کلینیک شنوایی شکوه تجریش" class="img-responsive" />
+                <div class="padding-top">
+                    <h4>TYMP - تمپانومتری</h4>
+                    <br />
+                    <p>تکنیک داینامیک برای اندازه‌گیری حرکت پرده صماخ به‌ عنوان عملکرد تغییرات فشار هوا در کانال گوش خارجی به شمار می رود.</p>
+                </div>
+            </div>
+        </div>
+    </div>*@
+<!-- top Products -->
+<div class="ads-grid" id="products">
+    <div class="container">
+        <!-- product right -->
+        <div class="agileinfo-ads-display col-md-12">
+            <div class="wrapper">
+                <!-- first section (nuts) -->
+                @*<div class="product-sec1">
+                        <h3 class="heading-tittle">منتخب جدیدترین ها</h3>
+                        @foreach (var item in content.Products.OrderByDescending(current => current.CreateDate).Where(currrent => currrent.SiteFirstImage != null).Take(3).ToList())
+                        {
+                            <div class="col-md-4 product-men pull-right">
+                                <div class="men-pro-item simpleCart_shelfItem">
+                                    <div class="men-thumb-item">
+                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
+                                        <div class="men-cart-pro">
+                                            <div class="inner-men-cart-pro">
+                                                <a title="@item.PersianName" class="link-product-add-cart" href="/Product/Details/@item.Id">جزئیات</a>
+                                            </div>
+                                        </div>
+                                        <span class="product-new-top">جدید</span>
+                                    </div>
+                                    <div class="item-info-product ">
+                                        <h4>
+                                            <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="clearfix"></div>
+                    </div>*@
+                <!-- //first section (nuts) -->
+                <!-- second section (nuts special) -->
+                <div class="product-sec1 product-sec2">
+                    <div class="col-xs-6 effect-bg">
+                        <h3 class="">کلینیک شنوایی و سمعک شکوه تجریش</h3>
+                        <h6>تشخیص صحیح</h6>
+                        <p>درمان دقیق </p>
+                    </div>
+                    @*<h3 class="w3l-nut-middle">Pransa Gift</h3>*@
+                    <div class="col-xs-6 bg-right-nut">
+                        <img src="~/images/pransa_logo_web.png" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" width="200" height="54">
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- //second section (nuts special) -->
+                <!-- third section (oils) -->
+                <!-- tittle heading -->
+                <h3 class="tittle-w3l">
+                    سمعک ها
+                    <span class="heading-style">
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                    </span>
+                </h3>
+                <!-- //tittle heading -->
+                <div class="product-sec1">
+                    <h3 class="heading-tittle">پرطرفدارترین ها</h3>
+                    @foreach (var item in content.Products.Include(current => current.Orders).OrderByDescending(current => current.Orders.Count()).Where(currrent => currrent.SiteFirstImage != null).Take(3).ToList())
+                    {
+                        <div class="col-md-4 pull-right product-men">
+                            <div class="men-pro-item simpleCart_shelfItem">
+                                <div class="men-thumb-item">
+                                    <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
+                                    <div class="men-cart-pro">
+                                        <div class="inner-men-cart-pro">
+                                            <a title="@item.PersianName" class="link-product-add-cart" href="/Product/Details/@item.Id">جزئیات</a>
+                                        </div>
+                                    </div>
+                                    <span class="product-new-top">جدید</span>
+                                </div>
+                                <div class="item-info-product ">
+                                    <h4>
+                                        <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
+                                    </h4>
+                                    @*<div class="info-product-price">
+                                            @{
+                                                int pricewithdiscount = item.UnitPrice - (item.UnitPrice) * (item.DiscountPercent) / 100;
+                                            }
+                                            <span class="item_price">@string.Format("{0:n0}", pricewithdiscount) ریال</span>
+                                            @if (item.DiscountPercent > 0)
+                                            {
+                                                <del>@string.Format("{0:n0}", item.UnitPrice) ریال</del>
+                                            }
+                                        </div>*@
+                                    @*<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                                            @if (item.Stock > 0)
+                                            {
+                                                <input type="button" name="submit" value="افزودن به سبد خرید" class="button add-to-cart-link btncard" productid="@item.Id" />
+                                            }
+                                            else
+                                            {
+                                                <input type="button" disabled name="submit" value="ناموجود" class="button add-to-cart-link" productid="@item.Id" />
+                                            }
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="clearfix"></div>
+                </div>
+                <!-- //third section (oils) -->
+            </div>
+        </div>
+        <!-- //product right -->
+    </div>
+</div>
+<!-- //top products -->
+<!-- special offers -->
+@*<div class="featured-section" id="projects">
+        <div class="container">
+            <h3 class="tittle-w3l">
+                ویژه ها
+                <span class="heading-style">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                </span>
+            </h3>
+            <div class="content-bottom-in">
+                <ul id="flexiselDemo1">
+                    @foreach (var item in content.Products.OrderByDescending(current => current.CreateDate).Where(currrent => currrent.SiteFirstImage != null && currrent.IsSpecial == true).Take(6).ToList())
+                    {
+                        <li>
+                            <div class="w3l-specilamk">
+                                <div class="speioffer-agile">
+                                    <a href="/Product/Details/@item.Id">
+                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
+                                    </a>
+                                </div>
+                                <div class="product-name-w3l">
+                                    <span class="product-new-top">ویژه</span>
+                                    <h4>
+                                        <a href="/Product/Details/@item.Id">@GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.PersianName, 20)</a>
+                                    </h4>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>*@
+<!-- //special offers -->
+<!-- Services -->
+<div class="why-choose-agile">
+    <div class="container">
+        <div class="text-center">
+            <h3 class="w3l_head">ویژگی های کلینیک شنوایی و سمعک شکوه تجریش</h3>
+        </div>
+        <div class="why-choose-agile-grids-top">
+            <div class="col-md-4 agileits-w3layouts-grid">
+                <div class="wthree_agile_us">
+                    <div class="col-xs-9 agile-why-text">
+                        <h4>پشتیبانی معتبر</h4>
+                        <p>حفظ کیفیت و پشتیبانی خدمات از جمله مواردی بوده که ما برای آن اهمیت بسیار بالایی قائل هستیم . </p>
+                    </div>
+                    <div class="col-xs-3 agile-why-text">
+                        <div class="wthree_features_grid hvr-rectangle-out">
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="wthree_agile_us">
+                    <div class="col-xs-9 agile-why-text">
+                        <h4>تضمین بهترین سمعک</h4>
+                        <p>تجویز بهترین نوع سمعک از معتبرترین برندهای روز دنیا</p>
+                    </div>
+                    <div class="col-xs-3 agile-why-text">
+                        <div class="wthree_features_grid hvr-rectangle-out">
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                @*<div class="wthree_agile_us">
+                        <div class="col-xs-9 agile-why-text">
+                            <h4>به صرفه و اقتصادی</h4>
+                            <p>کلینیک شنوایی و سمعک شکوه تجریش همواره به دنبال این هدف بوده که کاربران به صرفه‌ترین و اقتصادی ‌ترین کادو خود را داشته باشند . </p>
+                        </div>
+                        <div class="col-xs-3 agile-why-text">
+                            <div class="wthree_features_grid hvr-rectangle-out">
+                                <i class="fa fa-credit-card" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>*@
+            </div>
+            <div class="col-md-4 agileits-w3layouts-grid img moc-main">
+                <img src="~/images/tajrish-mockup.webp" width="282" height="513" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" class="img-responsive" />
+            </div>
+            <div class="col-md-4 agileits-w3layouts-grid">
+                <div class="wthree_agile_us">
+                    <div class="col-xs-3 agile-why-text">
+                        <div class="wthree_features_grid hvr-rectangle-out">
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-9 agile-why-text two">
+                        <h4>انتخاب مناسب</h4>
+                        <p>با انجام آزمایشات شنوایی سنجی و مقایسه سمعک ها بهترین گزینه را انتخاب نمایید .</p>
+                    </div>
+
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="wthree_agile_us">
+                    <div class="col-xs-3 agile-why-text">
+                        <div class="wthree_features_grid hvr-rectangle-out">
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="col-xs-9 agile-why-text two">
+                        <h4>مشاوره رایگان</h4>
+                        <p>جلسه مشاوره پیرامون شنوایی سنجی و تجویز سمعک کاملا رایگان میباشد .</p>
+                    </div>
+
+                    <div class="clearfix"> </div>
+                </div>
+                @*<div class="wthree_agile_us">
+                        <div class="col-xs-3 agile-why-text">
+                            <div class="wthree_features_grid hvr-rectangle-out">
+                                <i class="fa fa-cloud" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div class="col-xs-9 agile-why-text two">
+                            <h4>پرداخت آنلاین</h4>
+                            <p>کلینیک شنوایی و سمعک شکوه تجریش امکان پرداخت آنلاین هزینه را میدهد . با استفاده از درکاه بانک های معتبر  سفارش خود را نهایی کنید .</p>
+                        </div>
+
+                        <div class="clearfix"> </div>
+                    </div>*@
+
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+</div>
+<!-- //services -->
+
+@if (blogs.Count() > 0)
+{
+    <br />
+    <div class="container-fluid">
+        <div class="text-center">
+            <h3>آخرین نوشته های بلاگ</h3>
+        </div>
+    </div>
+    <div class="container grids">
+        <div class="row">
+            @foreach (var item in blogs.Take(4).ToList())
+            {
+                <div class="col-md-3 col-sm-6 pull-right">
+                    <div class="product-grid5 card">
+                        <div class="product-image5 image-cropper text-center">
+                            <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                                @{
+                                    var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
+                                    if (ig != null)
+                                    {
+                                        string img = ig.FullPath;
+                                        <img src="@img" alt="@item.Title" title="@item.Title" class="pic-1 img-rounded" />
+                                    }
+                                }
+                                @{
+                                    var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
+                                    if (vd != null)
+                                    {
+                                        string vid = vd.FullPath;
+                                        <video src="@vid" controls style="height:auto !important;width:240px !important;"></video>
+                                    }
+                                }
+                            </a>
+                        </div>
+                        <div class="product-content text-center">
+                            <div class="price text-center rent name_item"> @item.Title </div>
+                            <h3 class="title">
+                                <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                                    @GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.ShortDesc, 45)
+                                </a>
+                            </h3>
+                            <span class="badge badge-white ml-2">@item.Survey <i class="fa fa-bar-chart-o"></i></span>
+                            <div class="price to-bottom text-center"> @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false) </div>
+                        </div>
+                    </div>
+                </div>
+                                    }
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="text-center">
+            <a href="/blog/all" class="btn btn-success more-blog"> مقالات بیشتر </a>
+        </div>
+    </div>
+                                    }<br />
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#myModal").modal();
+        });
+    </script>
+    @if (slider.Count() > 0)
+    {
+        <text>
+            <script type="text/javascript" src="~/library/engine1/wowslider.js"></script>
+            <script type="text/javascript" src="~/library/engine1/script.js"></script>
+            <script>
+                jQuery("#wowslider-container1").wowSlider({
+                    effect: "fade",
+                    prev: "",
+                    next: "",
+                    duration: 20 * 100,
+                    delay: 60 * 100,
+                    width: 750,
+                    height: 450,
+                    autoPlay: true,
+                    autoPlayVideo: false,
+                    playPause: true,
+                    stopOnHover: true,
+                    loop: false,
+                    bullets: 1,
+                    caption: false,
+                    captionEffect: "parallax",
+                    controls: true,
+                    controlsThumb: [],
+                    responsive: 1,
+                    fullScreen: true,
+                    gestures: 2,
+                    onBeforeStep: 0,
+                    images: 0
+                });
+            </script>
+        </text>
+    }
+}
+

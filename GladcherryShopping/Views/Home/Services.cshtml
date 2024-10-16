@@ -1,0 +1,86 @@
+﻿@using DataLayer.ViewModels.PagerViewModel
+@model PagerViewModels<DataLayer.Models.Service>
+@using MvcPager
+@using Microsoft.AspNet.Identity;
+@using System.Web.Mvc;
+@using System.Data.Entity;
+@using DataLayer.Models;
+@{
+    ViewBag.Title = "خدمات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <link rel="canonical" href="@string.Format("{0}{1}", "http://tajrish-samak.ir", Request.Path)">
+    <meta name="Keywords" content="تجویز سمعک">
+    <meta property="og:title" content="تجویز سمعک" />
+    @*<meta property="og:url" content="@facebook" />*@
+    <meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
+    <meta name="twitter:image" content="تجویز سمعک">
+    <meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    @*<meta name="twitter:site" content="@twitter">*@
+    <meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+}
+
+
+@section Styles{
+    <style>
+        .cat_blog {
+            float: right !important;
+        }
+    </style>
+}
+
+<div class="services-breadcrumb">
+    <div class="agile_inner_breadcrumb">
+        <div class="container">
+            <ul class="w3_short">
+                <li>
+                    <a href="/">صفحه اصلی</a>
+                    <i>|</i>
+                </li>
+                <li>خدمات</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@if (Model.data.Count() > 0)
+{
+    <div class="container grids">
+        <div class="row">
+            @foreach (var item in Model.data.ToList())
+            {
+                <div class="col-md-3 col-sm-6 text-right cat_blog">
+                    <div class="product-grid5 card">
+                        <div class="product-image5 image-cropper text-center">
+                            <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/service/@item.Id/@item.SefUrl">
+                                <img class="pic-1 img-rounded" src="@item.Images.FirstOrDefault().FullPath" alt="@item.Title @item.Title" title="@item.Title @item.Title">
+                            </a>
+                        </div>
+                        <div class="product-content text-center">
+                            <div class="price text-center rent name_item"> @item.Title </div>
+                            <h3 class="title">
+                                <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/service/@item.Id/@item.SefUrl">
+                                    @GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.ShortDesc, 45)
+                                </a>
+                            </h3>
+                            <span class="badge badge-danger ml-2">@item.Survey <i class="fa fa-bar-chart-o"></i></span>
+                            <div class="price to-bottom text-center"> @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false) </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+<div class="text-center" style="display:flex;justify-content:center;">
+    <div class="loadmore1">
+        <div style="direction: ltr">
+            <ul class="pagination pagination-sm">
+                <li>@Html.Pager(16, Model.CurrentPage, Model.TotalItemCount)</li>
+            </ul>
+        </div>
+    </div>
+</div><br />

@@ -1,0 +1,193 @@
+﻿@model GladcherryShopping.Models.ApplicationUser
+
+@{
+    ViewBag.Title = "حذف کاربر";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>مدیریت کاربران</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    @if (Model.FirstName != null && Model.LastName != null)
+                    {
+                        <h5> آیا از حذف این کاربر به نام <span style="color:darkred"> @Model.FirstName @Model.LastName</span> اطمینان دارید ؟ </h5>
+                    }
+                    else
+                    {
+                        <h5> آیا از حذف این کاربر با شماده <span style="color:darkred"> @Model.Mobile </span> اطمینان دارید ؟ </h5>
+                    }
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div>
+                        @*<h4>HubSIS Software Application 2016-2017</h4>
+                        <hr />*@
+                        <dl class="dl-horizontal">
+                            <dt>
+                                @Html.DisplayNameFor(model => model.City.Name)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.City.Name)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.State.Name)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.State.Name)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.FirstName)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.FirstName)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.LastName)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.LastName)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Gender)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.getGender)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.BirthDate)
+                            </dt>
+
+                            <dd>
+                                @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)Model.BirthDate, false, false)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.RegistrationDate)
+                            </dt>
+
+                            <dd>
+                                @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(Model.RegistrationDate, true, true)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.UserScore)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.UserScore)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.ProfileImage)
+                            </dt>
+
+                            <dd>
+                                @if (Model.ProfileImage != null)
+                                {
+                                    <img src="@Model.ProfileImage" width="100" class="img-responsive" />
+                                }
+                                else
+                                {
+                                    <span>تعیین نشده</span>
+                                }
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.AddressLine)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.AddressLine)
+                            </dd>
+
+                            <dt>
+                                ایمیل
+                            </dt>
+
+                            <dd>
+                                <span style="color:darkred">@Html.DisplayFor(model => model.Email)</span>
+                            </dd>
+
+                            <dt>
+                                ایمیل تایید شده ؟
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.EmailConfirmed)
+                            </dd>
+
+                            <dt>
+                                شماره تلفن
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.PhoneNumber)
+                            </dd>
+
+                            <dt>
+                                شماره تلفن تایید شده ؟
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.PhoneNumberConfirmed)
+                            </dd>
+
+                            <dt>
+                                نام کاربری
+                            </dt>
+
+                            <dd>
+                                <span style="color:darkred">@Html.DisplayFor(model => model.UserName)</span>
+                            </dd>
+
+                        </dl>
+                    </div>
+                    <p>
+                        @using (Html.BeginForm())
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-actions no-color">
+                                <input type="submit" value="حذف" class="btn btn-danger btn-md" /> |
+                                @Html.ActionLink("بازگشت به لیست", "Index", null, new { @class = "btn btn-default btn-md" })
+                            </div>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

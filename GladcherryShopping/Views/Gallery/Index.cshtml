@@ -1,0 +1,84 @@
+﻿@{ GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();}
+@using System.Data.Entity;
+@{
+    ViewBag.Title = "گالری VIP";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+    <meta name="description" content="برند VIP با مدیریت پیام کاویانی ستاره سابق تیم ملی والیبال از برترین برند های ورزشی حال حاضر بوده که در تولید لباس ورزشی ، کفش ورزشی ، اکسسوری و دیگر وسایل ورزشی و طراحی لباس های تیم های ملی والیبال شهرت بسیاری دارد ." />
+    <meta name="keywords" content="لباس , کفش , شلوار , برند , وی آی پی , تخفیف , حراجی , زنانه , پوشاک ترک , کفش زنانه , نایک , نیوبالانس , برند ترکیه , vip , کفش ورزشی , آدیداس , بچگانه" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="http://gladcherry.com">
+    <meta name="Designer" content="Design, Develope by, GladCherry, Co. Email : info@gladcherry.com">
+    <meta name="copyright" content="http://gladcherry.com, 2017 - software company">
+    <meta name="expires" content="never">
+    <meta name="rating" content="Safe For Kids">
+    <meta name="og:site_name" content="فروشگاه VIP" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:url" content="https://vipiranian.org/" />
+    <meta name="robots" content="INDEX,FOLLOW">
+    <meta name="googlebot" content="index">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">
+    <meta name="twitter:title" content="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">
+    <meta name="twitter:domain" content="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">
+}
+
+@section Styles{
+    <link href="~/Content/Gallery/style.css" rel="stylesheet" />
+}
+
+<!-- Gallery -->
+<div class="gallery">
+    <div class="container">
+        <h2>گالری VIP</h2>
+        <div class="wthree_gallery_grids">
+            <div id="jzBox" class="jzBox">
+                <div id="jzBoxNextBig"></div>
+                <div id="jzBoxPrevBig"></div>
+                <img src="#" id="jzBoxTargetImg" alt="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" />
+                <div id="jzBoxBottom">
+                    <div id="jzBoxTitle"></div>
+                    <div id="jzBoxMoreItems">
+                        <div id="jzBoxCounter"></div>
+                        <i class="arrow-left" id="jzBoxPrev"></i>
+                        <i class="arrow-right" id="jzBoxNext"></i>
+                    </div>
+                    <i class="close" id="jzBoxClose"></i>
+                </div>
+            </div>
+            @if (content.Galleries.Count() > 0)
+            {
+                <div class="bs-example bs-example-tabs" role="tabpanel" data-example-id="togglable-tabs">
+                    <div id="myTabContent" class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="home">
+                            <div class="tab_img">
+                                @foreach (var item in content.Galleries.Include(current => current.Images).FirstOrDefault().Images.ToList())
+                                {
+                                    <div class="col-md-3 agile_gallery_grids">
+                                        <a href="@item.Link" class="jzBoxLink" title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">
+                                            <div class="view view-sixth">
+                                                <img src="@item.Link" alt="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" class="img-responsive" title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" />
+                                                <div class="mask">
+                                                    <p>فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران</p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                }
+                                <div class="clearfix"> </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<!-- //Gallery -->
+
+@section Scripts{
+}
+

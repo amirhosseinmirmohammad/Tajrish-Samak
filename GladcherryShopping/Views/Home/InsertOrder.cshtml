@@ -1,0 +1,325 @@
+﻿@model DataLayer.ViewModels.SubmitOrderViewModel
+@{ GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();}
+@{
+    ViewBag.Title = "تکمیل سفارش";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+<meta name="description" content="برند VIP با مدیریت پیام کاویانی ستاره سابق تیم ملی والیبال از برترین برند های ورزشی حال حاضر بوده که در تولید لباس ورزشی ، کفش ورزشی ، اکسسوری و دیگر وسایل ورزشی و طراحی لباس های تیم های ملی والیبال شهرت بسیاری دارد ." />
+<meta name="keywords" content="لباس , کفش , شلوار , برند , وی آی پی , تخفیف , حراجی , زنانه , پوشاک ترک , کفش زنانه , نایک , نیوبالانس , برند ترکیه , vip , کفش ورزشی , آدیداس , بچگانه" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="author" content="http://gladcherry.com">
+<meta name="Designer" content="Design, Develope by, GladCherry, Co. Email : info@gladcherry.com">
+<meta name="copyright" content="http://gladcherry.com, 2017 - software company">
+<meta name="expires" content="never">
+<meta name="rating" content="Safe For Kids">
+<meta name="og:site_name" content="فروشگاه VIP" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="fa_IR">
+<meta property="og:url" content="https://vipiranian.org/" />
+<meta name="robots" content="INDEX,FOLLOW">
+<meta name="googlebot" content="index">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">
+<meta name="twitter:title" content="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">
+<meta name="twitter:domain" content="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">
+}
+
+@section Styles{
+}
+
+@*<div class="product-big-title-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="product-bit-title text-center">
+                    <h2 title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">تکمیل سفارش</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.basket.Count() > 0)
+{
+    <div class="single-product-area">
+        <div class="zigzag-bottom"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="single-sidebar">
+                        <h2 title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" class="sidebar-title">جستجو محصولات</h2>
+                        <form action="/Product/Search" method="post">
+                            <input name="Search" type="text" placeholder="جستجو محصولات . . ." required>
+                            <input type="submit" value="جستجو">
+                        </form>
+                    </div>
+
+                    <div class="single-sidebar">
+                        <h2 class="sidebar-title">محصولات پرفروش</h2>
+                        @foreach (var item in content.Products.Take(4).ToList())
+                        {
+                            <div class="thubmnail-recent">
+                                @if (item.SiteFirstImage != null)
+                                {
+                                    <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName" class="recent-thumb">
+                                }
+                                else
+                                {
+                                    <img src="~/images/hand-shake.png" alt="@item.PersianName" title="@item.PersianName" class="recent-thumb">
+                                }
+                                <h2><a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a></h2>
+                                <div class="product-sidebar-price">
+                                    @if (item.DiscountPercent > 0)
+                                    {
+                                        int pricewithdiscount = item.UnitPrice - (item.UnitPrice) * (item.DiscountPercent) / 100;
+
+                                        <ins>@pricewithdiscount ریال</ins> <del>@item.UnitPrice</del>
+
+                                    }
+                                    else
+                                    {
+                                        <ins>@item.UnitPrice ریال</ins> <del>@item.UnitPrice</del>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+
+                <div class="col-md-8">
+                    <div class="product-content-right">
+                        <div class="woocommerce">
+
+                            @*@if (User.Identity.IsAuthenticated == false)
+                            {
+                                <div class="woocommerce-info">
+                                    اگر حساب کاربری دارید میتوانید به سایت ورود کنید : <a class="showlogin" href="/Account/LoginAccount" target="_blank" aria-expanded="false" aria-controls="login-form-wrap">ورود به حساب کاربری</a>
+                                </div>
+                            }*@
+
+                            <form id="login-form-wrap" class="login collapse" method="post" action="/Home/InsertOrder">
+
+                                <p class="form-row form-row-first">
+                                    <label for="username">
+                                        Username or email <span class="required">*</span>
+                                    </label>
+                                    <input type="text" id="username" name="username" class="input-text">
+                                </p>
+                                <p class="form-row form-row-last">
+                                    <label for="password">
+                                        Password <span class="required">*</span>
+                                    </label>
+                                    <input type="password" id="password" name="password" class="input-text">
+                                </p>
+                                <div class="clear"></div>
+
+
+                                <p class="form-row">
+                                    <input type="submit" value="Login" name="login" class="button">
+                                    <label class="inline" for="rememberme"><input type="checkbox" value="forever" id="rememberme" name="rememberme"> Remember me </label>
+                                </p>
+                                <p class="lost_password">
+                                    <a href="#">Lost your password?</a>
+                                </p>
+
+                                <div class="clear"></div>
+                            </form>
+
+                            <form enctype="multipart/form-data" action="/Home/InsertOrder" class="checkout" method="post" name="checkout">
+                                @Html.AntiForgeryToken()
+                                <div id="customer_details" class="col2-set">
+
+                                    <div class="col-2">
+                                        <div class="woocommerce-shipping-fields">
+                                            <h3 title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" id="ship-to-different-address">
+                                                <label class="checkbox" for="ship-to-different-address-checkbox">لطفا اطلاعات خود را تکمیل نمایید :</label>
+                                            </h3>
+                                            <div class="shipping_address" style="display: block;">
+
+                                                <p id="shipping_first_name_field" class="form-row form-row-first validate-required">
+                                                    <label class="" for="shipping_first_name">
+                                                        نام و نام خانوادگی <abbr title="required" class="required">*</abbr>
+                                                    </label>
+                                                    @Html.TextBoxFor(model => model.order.FullName, new { @class = "input-text", @id = "FullName", @placeholder = "نام و نام خانوادگی", required = "required" })
+                                                    @Html.ValidationMessageFor(model => model.order.FullName, "", new { @class = "text-danger" })
+                                                </p>
+
+                                                <p id="shipping_last_name_field" class="form-row form-row-last validate-required">
+                                                    <label class="" for="shipping_last_name">
+                                                        شماره موبایل فعال <abbr title="required" class="required">*</abbr>
+                                                    </label>
+                                                    @Html.TextBoxFor(model => model.order.Phone, new { @class = "input-text", @id = "Phone", @placeholder = "شماره موبایل فعال", required = "required" })
+                                                    @Html.ValidationMessageFor(model => model.order.Phone, "", new { @class = "text-danger" })
+                                                </p>
+                                                <div class="clear"></div>
+
+                                                <p id="shipping_company_field" class="form-row form-row-wide">
+                                                    <label class="" for="shipping_company">آدرس کامل جهت ارسال <abbr title="required" class="required">*</abbr></label>
+                                                    @Html.TextBoxFor(model => model.order.UserAddress, new { @class = "input-text address", @id = "UserAddress", @placeholder = "آدرس کامل جهت ارسال", required = "required" })
+                                                    @Html.ValidationMessageFor(model => model.order.UserAddress, "", new { @class = "text-danger" })
+                                                </p>
+
+                                                <div class="clear"></div>
+                                            </div>
+
+                                            <p id="order_comments_field" class="form-row notes">
+                                                <label class="" for="order_comments">توضیحات</label>
+                                                @Html.TextAreaFor(model => model.order.UserOrderDescription, new { @class = "input-text address", @id = "UserOrderDescription", @placeholder = "اگر توضیحاتی در مورد سفارش خود دارید وارد نمایید . . ." })
+                                                @Html.ValidationMessageFor(model => model.order.UserOrderDescription, "", new { @class = "text-danger" })
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                @{
+                                    var PaymentType = Request.QueryString["PaymentType"];
+                                    var Type = Request.QueryString["Type"];
+                                }
+
+                                <input type="hidden" value="@PaymentType" name="PaymentType" />
+                                <input type="hidden" value="@Type" name="Type" />
+
+                                <h3 title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" id="order_review_heading">مبلغ نهایی قابل پرداخت</h3>
+                                <br />
+                                <div id="order_review" style="position: relative;">
+                                    <table class="shop_table">
+                                        <thead>
+                                            <tr>
+                                                <th class="product-name">قابل پرداخت</th>
+                                                <th class="product-total">جمع کل</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="cart_item">
+                                                <td class="product-name">
+                                                    @{
+                                                        double discountPrice = 0;
+                                                        if (Model.discount.Count() > 0)
+                                                        {
+                                                            discountPrice = Model.FinalPrice - Model.FinalPrice * (Model.discount.FirstOrDefault().Percent) / 100;
+                                                        }
+                                                    }
+                                                    @if (Model.discount.Count() > 0)
+                                                    {
+                                                        <strong class="product-quantity">@discountPrice  ریال با تخفیف</strong>
+                                                    }
+                                                    else
+                                                    {
+                                                        <strong class="product-quantity">@Model.FinalPrice ریال</strong>
+                                                    }
+                                                </td>
+                                                <td class="product-total">
+                                                    @if (Model.discount.Count() > 0)
+                                                    {
+                                                        <span class="amount">@discountPrice ریال با تخفیف @Model.discount.FirstOrDefault().Discount.Percent %</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="amount">@Model.FinalPrice  ریال</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    @if (Convert.ToInt32(PaymentType) == 1)
+                                    {
+                                        <div id="payment">
+                                            <ul class="payment_methods methods">
+                                                <li class="payment_method_bacs">
+                                                    <input type="radio" data-order_button_text="" checked="checked" value="bacs" name="payment_method" class="input-radio" id="payment_method_bacs">
+                                                    <label for="payment_method_bacs">پرداخت نقدی</label>
+                                                    <div class="payment_box payment_method_bacs">
+                                                        <p>پرداخت شما به صورت نقدی انجام خواهد شد .</p>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            <div class="form-row place-order">
+                                                <input type="submit" value="ثبت سفارش" id="place_order" name="woocommerce_checkout_place_order" class="button alt">
+                                                <a title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" class="preOrder" href="/Home/Cart">بازگشت به مرحله قبل</a>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                    }
+                                    else if (Convert.ToInt32(PaymentType) == 2)
+                                    {
+                                        <div id="payment">
+                                            <ul class="payment_methods methods">
+                                                <li class="payment_method_bacs">
+                                                    <input type="radio" data-order_button_text="" checked="checked" value="bacs" name="payment_method" class="input-radio" id="payment_method_bacs">
+                                                    <label for="payment_method_bacs">پرداخت آنلاین</label>
+                                                    <div class="payment_box payment_method_bacs">
+                                                        <p>پرداخت شما از طریق درگاه اینترنتی بانک های عضو شبکه شتاب انجام خواهد شد .</p>
+                                                    </div>
+                                                </li>
+                                                <li class="payment_method_paypal">
+                                                    <label for="payment_method_paypal">
+                                                        <img alt="PayPal Acceptance Mark" src="~/images/bank-logo-cart.jpg"><a title="کارت های عضو شتاب" class="about_paypal"></a>
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                            <div class="form-row place-order">
+                                                <input type="submit" value="اتصال به درگاه اینترنتی" id="place_order" name="woocommerce_checkout_place_order" class="button alt">
+                                                <a class="preOrder" href="/Home/Cart">بازگشت به مرحله قبل</a>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                    }
+
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                                                        }
+
+                                                        else
+                                                        {
+                                                            <div class="forbidden">
+                                                                <p>صفحه ی ممنوعه</p>
+                                                                <img title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" alt="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" src="~/images/cross.png" />
+                                                            </div>
+                                                        }*@
+
+
+@if (TempData["Error"] != null)
+{
+        <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">وضعیت سفارش</h4>
+                </div>
+                <div class="modal-body" style="text-align:center;direction:rtl;">
+                    <p class="text-danger">@TempData["Error"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">ویرایش اطلاعات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            $("#myModal").modal();
+        });
+    </script>
+}
+

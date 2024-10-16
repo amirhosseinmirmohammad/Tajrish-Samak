@@ -1,0 +1,488 @@
+﻿@model DataLayer.ViewModels.ProductDetailViewModel
+@{ GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();}
+@using Microsoft.Ajax.Utilities;
+@{
+    string desc = Html.Raw(Model.product.Description).ToString();
+}
+@{
+    ViewBag.Title = Model.product.PersianName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+
+    <meta name="description" content="@GladCherryShopping.Helpers.FunctionsHelper.Truncate(desc,160)" />
+    <link rel="canonical" href="@string.Format("{0}{1}", "http://tajrish-samak.ir", Request.Path)">
+    <meta name="Keywords" content="تجویز سمعک">
+    <meta property="og:title" content="تجویز سمعک" />
+    @*<meta property="og:url" content="@facebook" />*@
+    <meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
+    <meta name="twitter:image" content="تجویز سمعک">
+    <meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    @*<meta name="twitter:site" content="@twitter">*@
+    <meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+}
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/flexslider.css" type="text/css" media="screen" />
+}
+
+<!-- banner-2 -->
+@*<div class="page-head_agile_info_w3l">
+
+    </div>*@
+<!-- //banner-2 -->
+<!-- page -->
+<div class="services-breadcrumb">
+    <div class="agile_inner_breadcrumb">
+        <div class="container">
+            <ul class="w3_short">
+                <li>
+                    <a href="/">صفحه اصلی</a>
+                    <i>|</i>
+                </li>
+                <li>@Model.product.PersianName</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- //page -->
+<!-- Single Page -->
+<div class="banner-bootom-w3-agileits">
+    <div class="container">
+        <!-- tittle heading -->
+        <div class="text-center">
+            <h1 title="@Model.product.PersianName" class="tittle-w3l text-center">
+                @Model.product.PersianName
+                <span class="heading-style">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                </span>
+            </h1>
+        </div>
+        <br />
+        <!-- //tittle heading -->
+        <div class="col-md-5 single-right-left ">
+            <div class="grid images_3_of_2">
+                <div class="flexslider">
+                    <ul class="slides">
+                        @if (Model.product.SiteFirstImage != null)
+                        {
+                            <li data-thumb="@Model.product.SiteFirstImage">
+                                <div class="thumb-image">
+                                    <img src="@Model.product.SiteFirstImage" data-imagezoom="true" class="img-responsive" alt="@Model.product.PersianName" title="@Model.product.PersianName">
+                                </div>
+                            </li>
+                        }
+                        @if (Model.product.SiteSecondImage != null)
+                        {
+                            <li data-thumb="@Model.product.SiteSecondImage">
+                                <div class="thumb-image">
+                                    <img src="@Model.product.SiteSecondImage" data-imagezoom="true" class="img-responsive" alt="@Model.product.PersianName" title="@Model.product.PersianName">
+                                </div>
+                            </li>
+                        }
+                        @if (Model.product.SiteThirdImage != null)
+                        {
+                            <li data-thumb="@Model.product.SiteThirdImage">
+                                <div class="thumb-image">
+                                    <img src="@Model.product.SiteThirdImage" data-imagezoom="true" class="img-responsive" alt="@Model.product.PersianName" title="@Model.product.PersianName">
+                                </div>
+                            </li>
+                        }
+
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7 single-right-left simpleCart_shelfItem">
+            <h3>@Model.product.EnglishName </h3>
+            @*<div class="rating1">
+                    <span class="starRating">
+                        <input id="rating5" type="radio" name="rating" value="5">
+                        <label for="rating5">5</label>
+                        <input id="rating4" type="radio" name="rating" value="4">
+                        <label for="rating4">4</label>
+                        <input id="rating3" type="radio" name="rating" value="3" checked="">
+                        <label for="rating3">3</label>
+                        <input id="rating2" type="radio" name="rating" value="2">
+                        <label for="rating2">2</label>
+                        <input id="rating1" type="radio" name="rating" value="1">
+                        <label for="rating1">1</label>
+                    </span>
+                </div>*@
+            @*<p>
+                    @{
+                        int pricewithdiscount = Model.product.UnitPrice - (Model.product.UnitPrice) * (Model.product.DiscountPercent) / 100;
+                    }
+                    <span class="item_price">@string.Format("{0:n0}", pricewithdiscount) ریال </span>
+                    @if (Model.product.DiscountPercent > 0)
+                    {
+                        <del>@string.Format("{0:n0}", Model.product.UnitPrice) ریال</del>
+                    }
+                    <label>ارسال رایگان</label>
+                </p>
+                <div class="single-infoagile">
+                    <ul>
+                        <li>
+                            امکان
+                            تحویل اکسپرس
+                        </li>
+                        <li>
+                            پشتیبانی
+                            ۷ روزه ۲۴ ساعته
+                        </li>
+                        <li>
+                            امکان
+                            پرداخت آنلاین
+                        </li>
+                        <li>
+                            امکان تغییر سفارش تا 24 ساعت
+                            @if (Model.product.Stock > 0)
+                            {
+                                <span class="item_price">آماده ارسال</span>
+                            }
+                            else
+                            {
+                                <span class="item_price">ناموجود</span>
+                            }
+                        </li>
+                        <li>
+                            امکان بازگشت هزینه با انصراف تا قبل از 72 ساعت
+                        </li>
+                    </ul>
+                </div>*@
+            <div class="product-single-w3l">
+                <p>
+                    <i class="fa fa-hand-o-left" aria-hidden="true"></i>توضیحات
+                </p>
+                <p>@Html.Raw(Model.product.Description)</p>
+                @*<ul>
+                        <li>
+                            Doesn't just cover, Truly removes odours
+                        </li>
+                        <li>
+                            Ambi Pur is a brand of air freshener products available in the United States, Europe, Asia and Oceania.
+                        </li>
+                        <li>
+                            Their range of products may be used in the home or in the car with a variety of smells and properties such as odor neutralisation.
+                        </li>
+                        <li>
+                            Transforms your home from smelly to smiley
+                        </li>
+                    </ul>*@
+                @*<p>
+                        <i class="fa fa-refresh" aria-hidden="true"></i>امکان
+                        <label>عودت محصول</label>
+                    </p>*@
+            </div>
+            @*<div class="occasion-cart">
+                    <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                        @if (Model.product.Stock > 0)
+                        {
+                            <input type="button" name="submit" value="افزودن به سبد خرید" class="button add-to-cart-link btncard" productid="@Model.product.Id" />
+                        }
+                        else
+                        {
+                            <input type="button" disabled name="submit" value="ناموجود" class="button add-to-cart-link" productid="@Model.product.Id" />
+                        }
+                    </div>
+                </div>*@
+
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+</div>
+
+@if (Model.product.RelatedProducts.Count() > 0)
+{
+    <!-- related offers -->
+    <div class="featured-section" id="projects">
+        <div class="container">
+            <!-- tittle heading -->
+            <h3 class="tittle-w3l">
+                متعلقات
+                <span class="heading-style">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                </span>
+            </h3>
+            <!-- //tittle heading -->
+            <div class="content-bottom-in">
+                <ul id="flexiselDemo1">
+                    @foreach (var rel in Model.product.RelatedProducts.DistinctBy(current => current.Id).ToList())
+                {
+                        <li>
+                            <div class="w3l-specilamk">
+                                <div class="speioffer-agile">
+                                    <a href="/Product/Details/@rel.Id">
+                                        <img src="@rel.SiteFirstImage" alt="@rel.PersianName" title="@rel.PersianName">
+                                    </a>
+                                </div>
+                                @*<div class="product-name-w3l">
+                                        <h4>
+                                            <a href="/Product/Details/@rel.Id">@rel.PersianName</a>
+                                        </h4>
+                                        <div class="w3l-pricehkj">
+                                            @{
+                                                int pricewithdiscount1 = rel.UnitPrice - (rel.UnitPrice) * (rel.DiscountPercent) / 100;
+                                            }
+                                            <h6>@string.Format("{0:n0}", pricewithdiscount1) ریال</h6>
+                                            @if (rel.DiscountPercent > 0)
+                                            {
+                                                <p>@rel.DiscountPercent % تخفیف</p>
+                                            }
+                                            else
+                                            {
+                                                <p>سفارش آنلاین</p>
+                                            }
+                                        </div>
+                                        <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                                            @if (rel.Stock > 0)
+                                            {
+                                                <input type="button" name="submit" value="افزودن به سبد خرید" class="button add-to-cart-link btncard" productid="@rel.Id" />
+                                            }
+                                            else
+                                            {
+                                                <input type="button" disabled name="submit" value="ناموجود" class="button add-to-cart-link" productid="@rel.Id" />
+                                            }
+                                        </div>
+                                    </div>*@
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- //related offers --><br />
+}
+
+<!-- //Single Page -->
+@if (content.Products.Where(current => current.Id != Model.product.Id && current.CategoryId == Model.product.CategoryId).Count() > 0)
+{
+    <!-- related offers -->
+    <div class="featured-section" id="projects">
+        <div class="container">
+            <!-- tittle heading -->
+            <h3 class="tittle-w3l">
+                مرتبط
+                <span class="heading-style">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                </span>
+            </h3>
+            <!-- //tittle heading -->
+            <div class="content-bottom-in">
+                <ul id="flexiselDemo2">
+                    @foreach (var item in content.Products.Where(current => current.Id != Model.product.Id && current.CategoryId == Model.product.CategoryId).ToList())
+                {
+                        <li>
+                            <div class="w3l-specilamk">
+                                <div class="speioffer-agile">
+                                    <a href="/Product/Details/@item.Id">
+                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
+                                    </a>
+                                </div>
+                                <div class="product-name-w3l">
+                                    <h4>
+                                        <a href="/Product/Details/@item.Id">@GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.PersianName, 20)</a>
+                                    </h4>
+                                    @*<div class="w3l-pricehkj">
+                                            @{
+                                                int pricewithdiscount1 = item.UnitPrice - (item.UnitPrice) * (item.DiscountPercent) / 100;
+                                            }
+                                            <h6>@string.Format("{0:n0}", pricewithdiscount1) ریال</h6>
+                                            @if (item.DiscountPercent > 0)
+                                            {
+                                                <p>@item.DiscountPercent % تخفیف</p>
+                                            }
+                                            else
+                                            {
+                                                <p>سفارش آنلاین</p>
+                                            }
+                                        </div>
+                                        <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                                            @if (item.Stock > 0)
+                                            {
+                                                <input type="button" name="submit" value="افزودن به سبد خرید" class="button add-to-cart-link btncard" productid="@item.Id" />
+                                            }
+                                            else
+                                            {
+                                                <input type="button" disabled name="submit" value="ناموجود" class="button add-to-cart-link" productid="@item.Id" />
+                                            }
+                                        </div>*@
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- //related offers --><br />
+}
+
+<div class="container">
+    <!-- tittle heading -->
+    <h3 class="tittle-w3l">
+        ثبت دیدگاه
+        <span class="heading-style">
+            <i></i>
+            <i></i>
+            <i></i>
+        </span>
+    </h3>
+</div>
+
+<div class="contact agileits">
+    <div class="contact-agileinfo">
+        <div class="contact-form wthree">
+            <form method="post" action="/Product/InsertComment">
+                @Html.AntiForgeryToken()
+                <div class="">
+                    @Html.EditorFor(model => model.comment.Fullname, new { htmlAttributes = new { @class = "", required = "required", @Name = "Fullname", placeholder = "نام و نام خانوادگی" } })
+                    @Html.ValidationMessageFor(model => model.comment.Fullname, "", new { @class = "text-danger" })
+                </div>
+                <div class="">
+                    @Html.EditorFor(model => model.comment.Email, new { htmlAttributes = new { @class = "", required = "required", @Name = "Email", placeholder = "ایمیل" } })
+                    @Html.ValidationMessageFor(model => model.comment.Email, "", new { @class = "text-danger" })
+                </div>
+                <div class="">
+                    <textarea name="comment.Text" required placeholder="متن نظر"></textarea>
+                </div>
+                <input type="hidden" value="@Model.product.Id" name="ProductId" />
+                <div class="text-center">
+                    <input type="submit" value="ارسال">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+
+<div class="container comms">
+    <div class="row">
+        @foreach (var item in content.Comments.Where(current => current.IsApprove == true && current.ProductId == Model.product.Id).ToList())
+        {        <div class="col-sm-1 pull-right">
+        <div class="thumbnail">
+            <img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
+        </div><!-- /thumbnail -->
+    </div><!-- /col-sm-1 -->
+            <div class="col-sm-5 pull-right">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong>@item.Fullname</strong> <span class="text-muted">@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(item.DateTime, false, false)</span>
+                    </div>
+                    <div class="panel-body">
+                        @item.Text
+                    </div><!-- /panel-body -->
+                </div><!-- /panel panel-default -->
+            </div><!-- /col-sm-5 -->
+
+        }
+    </div><!-- /row -->
+</div><!-- /container -->
+
+@if (TempData["Success"] != null)
+{
+        <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">وضعیت دیدگاه</h4>
+                </div>
+                <div class="modal-body" style="text-align:center;direction:rtl;">
+                    <p class="text-success">@TempData["Success"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["error"] != null)
+{
+        <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">وضعیت دیدگاه</h4>
+                </div>
+                <div class="modal-body" style="text-align:center;direction:rtl;">
+                    <p class="text-danger">@TempData["error"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            $("#myModal").modal();
+        });
+    </script>
+    <script src="~/js/imagezoom.js"></script>
+    <!-- //imagezoom -->
+    <!-- FlexSlider -->
+    <script src="~/js/jquery.flexslider.js"></script>
+    <script>
+        // Can also be used with $(document).ready()
+        $(window).load(function () {
+            $('.flexslider').flexslider({
+                animation: "slide",
+                controlNav: "thumbnails"
+            });
+        });
+    </script>
+    <!-- //FlexSlider-->
+    <!-- flexisel (for special offers) -->
+    <script src="~/js/jquery.flexisel.js"></script>
+    <!-- //flexisel (for special offers) -->
+
+    <script>
+        $(window).load(function () {
+            $("#flexiselDemo2").flexisel({
+                visibleItems: 3,
+                animationSpeed: 1000,
+                autoPlay: true,
+                autoPlaySpeed: 3000,
+                pauseOnHover: true,
+                enableResponsiveBreakpoints: true,
+                responsiveBreakpoints: {
+                    portrait: {
+                        changePoint: 480,
+                        visibleItems: 1
+                    },
+                    landscape: {
+                        changePoint: 640,
+                        visibleItems: 2
+                    },
+                    tablet: {
+                        changePoint: 768,
+                        visibleItems: 2
+                    }
+                }
+            });
+
+        });
+    </script>
+
+}

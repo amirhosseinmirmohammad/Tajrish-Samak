@@ -1,0 +1,171 @@
+﻿@{
+    ViewBag.Title = "کاهش یا افزایش قیمت";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>کاهش یا افزایش قیمت</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    @using (Html.BeginForm("Price", "HearingAids", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                <label class="control-label col-md-2">افزایش یا کاهش ؟</label>
+                                <div class="col-md-10">
+                                    <input type="checkbox" class="form-control" name="IsIncrease" value="true" />
+                                    <input name="IsIncrease" type="hidden" value="false">
+                                </div>
+                                <strong>با اعمال تیک افزایش لحاظ میشود و با عدم اعمال تیک کاهش انجام میشود .</strong>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">درصدی یا مقداری ؟</label>
+                                <div class="col-md-10">
+                                    <input type="checkbox" class="form-control" name="IsPercent" value="true" />
+                                    <input name="IsPercent" type="hidden" value="false">
+                                </div>
+                                <strong>با اعمال تیک درصدی لحاظ میشود و با عدم اعمال تیک مقداری انجام میشود .</strong>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">مقدار کاهش یا افزایش به ریال</label>
+                                <div class="col-md-10">
+                                    <input type="number" class="form-control" name="Amount" min="0"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">درصد کاهش یا افزایش به ریال</label>
+                                <div class="col-md-10">
+                                    <input type="number" class="form-control" name="Percent"  min="0" max="100"/>
+                                </div>
+                            </div>           
+                            
+                            <b>
+                               زمان اعمال تغییرات با توجه به تعداد محصولات و سرعت پاسخگویی سرور متفاوت است ، لطفا بعد از اعمل تغییرات تا نهایی شدن تغییرات تأمل بفرمایید .
+                            </b><br /> <br />          
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="اعمال تغییرات" class="btn btn-success btn-md" />
+                                    @Html.ActionLink("لیست محصولات", "Index", null, new { @class = "btn btn-default btn-md" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>پیام</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#">گزینه 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">گزینه 2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="alert alert-success">
+                                @TempData["Success"]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["error"] != null)
+{
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>پیام</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#">گزینه 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">گزینه 2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="alert alert-danger">
+                                @TempData["error"]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts{
+}
+
+
