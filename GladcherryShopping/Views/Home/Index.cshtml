@@ -1,5 +1,8 @@
-﻿@{ GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();}
-@using System.Data.Entity;
+﻿@using System.Data.Entity;
+@{
+    GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();
+    var gpCacheVersion = "20260603-tajrish-v23-bottomnav-darkfix";
+}
 @{
     ViewBag.Title = "کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,15 +10,48 @@
     //string facebook = "https://facebook.com/TajrishSamak";
 }
 @{
-    var blogs = content.Blogs.Include(current => current.Images).Where(current => current.Images.Count() > 0 && current.IsVisible == true).OrderByDescending(current => current.CreateDate);
+    var blogs = content.Blogs
+        .AsNoTracking()
+        .Include(current => current.Images)
+        .Where(current => current.Images.Count() > 0 && current.IsVisible == true)
+        .OrderByDescending(current => current.CreateDate)
+        .Take(4)
+        .ToList();
+
+    var gpPopularBlogs = content.Blogs
+        .AsNoTracking()
+        .Include(current => current.Images)
+        .Where(current => current.Images.Count() > 0 && current.IsVisible == true)
+        .OrderByDescending(current => current.Survey)
+        .ThenByDescending(current => current.CreateDate)
+        .Take(4)
+        .ToList();
 }
+@{
+    var slider = content.Sliders
+        .AsNoTracking()
+        .OrderByDescending(current => current.LastDate)
+        .ToList();
+}
+
+@{
+    var gpPopularProducts = content.Products
+        .AsNoTracking()
+        .Include(current => current.Orders)
+        .Where(current => current.SiteFirstImage != null)
+        .OrderByDescending(current => current.Orders.Count())
+        .Take(4)
+        .ToList();
+}
+
+
 @section Metas{
-    <link rel="canonical" href="https://tajrish-samak.ir">
+    <link rel="canonical" href="https://tajrish-samak.ir/">
     <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
     <meta name="Keywords" content="تجویز سمعک">
     <meta property="og:title" content="تجویز سمعک" />
-    <meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
-    <meta name="twitter:image" content="تجویز سمعک">
+    <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp">
     <meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
     <meta property="og:type" content="website" />
     <meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
@@ -25,12 +61,12 @@
     <!--Google jSON_LD Structure Data Region-->
     <script type="application/ld+json">
         {
-        "@@context": "http://schema.org",
+        "@@context": "https://schema.org",
         "@@type": "Organization",
         "name": "کلینیک شنوایی و سمعک شکوه تجریش",
         "description": "کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .",
-        "logo": "http://tajrish-samak.ir/images/logo_purple.png",
-        "url": "http://www.tajrish-samak.ir",
+        "logo": "https://tajrish-samak.ir/images/logo_purple.webp",
+        "url": "https://tajrish-samak.ir/",
         "sameAs": [ "https://www.instagram.com/tajrishsamak/",
         "https://www.telegram.me/sthc/"],
         "address": "تهران - میدان تجریش - خیابان شهرداری - رو به روی سینما آستارا - پلاک ۲۲۴ - ساختمان ۱۱۰ (ورودی قائم)",
@@ -41,183 +77,220 @@
         }]
         }
     </script>
-    <link rel="stylesheet" type="text/css" href="~/library/engine1/style.css" />
-    <!--Google jSON_LD Structure Data Region-->
-}
 
-@{
-    var slider = content.Sliders.OrderByDescending(current => current.LastDate);
-}
-
-<div id="mainheader">
-    <div class="container gif">
-        <!-- tittle heading -->
-        @*<img title="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" alt="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" src="~/images/giphy-downsized.gif" width="180">*@
-        <h1 title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" class="tittle-w3l text-center">
-            <strong>کلینیک شنوایی و سمعک شکوه تجریش</strong>، آزمایشات شنوایی و تجویز سمعک
-            <span class="heading-style">
-                <i></i>
-                <i></i>
-                <i></i>
-            </span>
-        </h1>
-        <h2 class="h2-hearing">
-            1/4 قرن تجربه
-        </h2>
-        @*<img alt="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" src="~/images/giphy-downsized.gif" width="180">*@
-    </div>
-</div>
-
-<!-- banner -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 pull-right">
-            @if (slider.Count() > 0)
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "FAQPage",
+          "mainEntity": [
             {
-                <div class="picturebox desktop">
-                    <div class="picture">
-                        @if (slider.Count() > 0)
-                        {
-                            int i = 0;
-                            int j = 0;
-                            <!-- Start WOWSlider.com BODY section -->
-                            <div class="">
-                                <div id="wowslider-container1">
-                                    <div class="ws_images">
-                                        <ul>
-                                            @foreach (var item in slider.ToList())
-                                            {
-                                                if (string.IsNullOrEmpty(item.Link))
-                                                {
-                                                    <li>
-                                                        <a href="#">
-                                                            <img height="350" src="@item.Image" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" id="wows1_@i" />
-                                                        </a>
-                                                    </li>
-                                                }
-                                                else
-                                                {
-                                                    <li>
-                                                        <a href="@item.Link">
-                                                            <img height="350" src="@item.Image" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" id="wows1_@i" />
-                                                        </a>
-                                                    </li>
-                                                }
-                                                i++;
-                                            }
-                                        </ul>
-                                    </div>
-                                    <div class="ws_bullets">
-                                        <div>
-                                            @foreach (var item in slider.ToList())
-                                            {
-                                                if (string.IsNullOrEmpty(item.Link))
-                                                {
-                                                    <a href="#">
-                                                        <span>
-                                                            <img height="350" src="@item.Image" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" />
-                                                        </span>
-                                                    </a>
-                                                }
-                                                else
-                                                {
-                                                    <a href="@item.Link" title="پازل">
-                                                        <span>
-                                                            <img height="350" src="@item.Image" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" />
-                                                        </span>
-                                                    </a>
-                                                }
-                                                j++;
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="ws_shadow"></div>
-                                </div>
-                            </div>
-                            <!-- End WOWSlider.com BODY section -->
-                        }
-                    </div>
-                </div>
-
-                <div class="mobile">
-                    @if (slider != null)
-                    {
-                        <div id="myCarousel" class="carousel slide" data-ride="carousel">
-                            <!-- Indicators -->
-                            <ol class="carousel-indicators">
-                                @{ int i = 1;}
-                                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-                                @foreach (var item in slider.Skip(1).ToList())
-                    {
-                                    <li data-target="#myCarousel" data-slide-to="@i"></li>
-                                    i++;
-                                }
-                            </ol>
-                            <!-- Wrapper for slides -->
-                            <div class="carousel-inner">
-                                <div class="item active">
-                                    @if (!string.IsNullOrEmpty(slider.FirstOrDefault().Link))
-                    {
-                                        <a href="@slider.FirstOrDefault().Link">
-                                            <img src="@slider.FirstOrDefault().MobImage" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" />
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <img src="@slider.FirstOrDefault().MobImage" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" />
-                                    }
-                                </div>
-                                @foreach (var item in slider.Skip(1).ToList())
-                    {
-                                    <div class="item">
-                                        @if (!string.IsNullOrEmpty(item.Link))
-                        {
-                                            <a href="@item.Link">
-                                                <img src="@item.MobImage" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک">
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <img src="@item.MobImage" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک">
-                                        }
-                                    </div>
-                                }
-                            </div>
-
-                            <!-- Left and right controls -->
-                            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-                                <span class="glyphicon glyphicon-chevron-left"></span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                            <a class="right carousel-control" href="#myCarousel" data-slide="next">
-                                <span class="glyphicon glyphicon-chevron-right"></span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        </div>
-                                    }
-                </div>
-                                    }
-        </div>
-        <div class="col-md-6 colxs">
-            @foreach (var item in content.Brands.ToList())
+              "@@type": "Question",
+              "name": "برای انتخاب سمعک از کجا شروع کنیم؟",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "بهترین شروع، انجام تست شنوایی و بررسی سبک زندگی، سن و نیاز شنیداری فرد توسط متخصص شنوایی است."
+              }
+            },
             {
-                <div class="col-md-6 pull-right brands">
-                    <a title="@item.PersianName" href="/Home/Brands/@item.Id">
-                        <img alt="@item.PersianName" title="@item.PersianName" src="@item.SmallImage" width="100" height="100" />
-                    </a>
-                </div>
+              "@@type": "Question",
+              "name": "آیا مشاوره سمعک در کلینیک شکوه تجریش رایگان است؟",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "در کلینیک شنوایی و سمعک شکوه تجریش امکان دریافت مشاوره برای بررسی وضعیت شنوایی و انتخاب مناسب‌تر سمعک فراهم است."
+              }
+            },
+            {
+              "@@type": "Question",
+              "name": "تنظیم سمعک بعد از خرید چه اهمیتی دارد؟",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "تنظیم دقیق سمعک باعث وضوح بهتر صدا، راحتی بیشتر و سازگاری بهتر کاربر با محیط‌های شنیداری مختلف می‌شود."
+              }
             }
-        </div>
-    </div>
-</div>
+          ]
+        }
+    </script>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <span class="animate-charcter"> برای شنیدن بهترین آواز زندگیتان</span>
+    @if (slider != null && slider.Count() > 0)
+    {
+        var gpFirstSlider = slider.FirstOrDefault();
+        if (gpFirstSlider != null)
+        {
+            if (!string.IsNullOrWhiteSpace(gpFirstSlider.Image))
+            {
+                <link rel="preload" as="image" href="@Url.Content(gpFirstSlider.Image)" fetchpriority="high" />
+            }
+            if (!string.IsNullOrWhiteSpace(gpFirstSlider.MobImage))
+            {
+                <link rel="preload" as="image" href="@Url.Content(gpFirstSlider.MobImage)" media="(max-width: 768px)" fetchpriority="high" />
+            }
+        }
+    }
+    <!--Google jSON_LD Structure Data Region-->
+
+    <style id="gp-v22-index-inline-fixes">
+        .gp-popular-card .gp-popular-card-head {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 10px !important;
+        }
+
+        .gp-popular-card .gp-popular-views {
+            order: 2 !important;
+            margin-right: auto !important;
+            margin-left: 0 !important;
+            max-width: 62% !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+
+        .gp-popular-card .gp-popular-rank {
+            order: 1 !important;
+            margin-left: auto !important;
+            margin-right: 0 !important;
+            white-space: nowrap !important;
+        }
+
+        .gp-v10-auto-slider {
+            cursor: grab !important;
+            touch-action: pan-y pinch-zoom;
+            user-select: none;
+        }
+
+            .gp-v10-auto-slider.is-dragging {
+                cursor: grabbing !important;
+            }
+
+                .gp-v10-auto-slider.is-dragging a {
+                    pointer-events: none;
+                }
+
+        @@media (max-width: 640px) {
+            .gp-popular-card .gp-popular-views {
+                max-width: 58% !important;
+            }
+        }
+    </style>
+
+}
+
+<section id="mainheader" class="gp-v10-compact-hero" aria-label="معرفی کلینیک شنوایی و سمعک شکوه تجریش">
+    <div class="container">
+        <div class="gp-v10-hero-card">
+            <div class="gp-v10-hero-copy">
+                <span class="gp-v10-eyebrow">کلینیک شنوایی شکوه تجریش</span>
+                <h1>شنیدن بهتر،<br />با انتخاب دقیق‌تر</h1>
+                <p>تست شنوایی، مشاوره رایگان، انتخاب و تنظیم تخصصی سمعک .</p>
+                <div class="gp-v10-hero-actions">
+                    <a href="tel:02122735588" class="gp-v10-primary">مشاوره رایگان</a>
+                    <a href="/contactus" class="gp-v10-secondary">رزرو وقت</a>
+                </div>
+            </div>
+            <div class="gp-v10-hero-services" aria-label="دسته‌بندی خدمات">
+                <a href="/Home/Services" class="gp-v10-service-card gp-v10-service-a"><span>〰</span><b>تست شنوایی</b><small>ارزیابی دقیق</small></a>
+                <a href="/Home/Products" class="gp-v10-service-card gp-v10-service-b"><span>◖</span><b>انواع سمعک</b><small>انتخاب متناسب</small></a>
+                <a href="/contactus" class="gp-v10-service-card gp-v10-service-c"><span>✦</span><b>مشاوره تخصصی</b><small>تعیین وقت</small></a>
+            </div>
         </div>
     </div>
-</div>
+</section>
+
+
+<section class="gp-hidden-aeo" aria-label="پرسش‌های شنوایی سنجی">
+    <h2>پرسش و پاسخ خدمات شنوایی و سمعک</h2>
+    <h3>برای انتخاب سمعک از کجا شروع کنیم؟</h3>
+    <p>انتخاب سمعک با تست شنوایی، بررسی نوع کم‌شنوایی و مشاوره تخصصی انجام می‌شود.</p>
+    <h3>آیا همه سمعک‌ها برای همه افراد مناسب هستند؟</h3>
+    <p>خیر، نوع سمعک باید بر اساس نتیجه شنوایی‌سنجی، سبک زندگی و نیاز شنیداری هر فرد انتخاب شود.</p>
+    <h3>چرا تنظیم سمعک مهم است؟</h3>
+    <p>تنظیم دقیق باعث افزایش کیفیت شنیدن، کاهش آزار صوتی و سازگاری بهتر با سمعک می‌شود.</p>
+</section>
+
+<!-- compact services + automatic slider -->
+<section class="gp-v10-showcase" aria-label="خدمات، برندها و اسلایدر کلینیک">
+    <div class="container">
+        <div class="gp-v10-showcase-shell">
+            <div class="gp-v10-showcase-info">
+                <span class="gp-v10-section-label">مسیر تجویز سمعک</span>
+                <h2>متناسب با میزان شنوایی شما</h2>
+                <p>برندهای معتبر</p>
+                <div class="gp-v10-category-row">
+                    <a href="/Home/Products">سمعک</a>
+                    <a href="/blog/all">مجله کلینیک</a>
+                    <a href="/contactus">مشاوره</a>
+                </div>
+                <div class="gp-v10-brand-strip" aria-label="برندهای سمعک">
+                    @foreach (var item in content.Brands.AsNoTracking().Take(8).ToList())
+                    {
+                        <a title="@item.PersianName" href="/Home/Brands/@item.Id">
+                            <img alt="@item.PersianName" title="@item.PersianName" src="@item.SmallImage" width="96" height="56" loading="lazy" decoding="async" />
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <div class="gp-v10-slider-wrap">
+                @{
+                    var gpDynamicSlides = slider
+                        .Where(current => !string.IsNullOrWhiteSpace(current.Image) || !string.IsNullOrWhiteSpace(current.MobImage))
+                        .ToList();
+
+                    int gpDynamicSlideIndex = 0;
+                }
+
+                <div class="gp-v10-auto-slider" data-gp-auto-slider data-gp-slide-count="@gpDynamicSlides.Count" aria-label="اسلایدر معرفی کلینیک">
+                    @if (gpDynamicSlides.Count > 0)
+                    {
+                        foreach (var item in gpDynamicSlides)
+                        {
+                            var gpDesktopImage = !string.IsNullOrWhiteSpace(item.Image) ? item.Image : item.MobImage;
+                            var gpMobileImage = !string.IsNullOrWhiteSpace(item.MobImage) ? item.MobImage : gpDesktopImage;
+                            var gpSlideLink = !string.IsNullOrWhiteSpace(item.Link) ? item.Link : "#";
+                            var gpActiveClass = gpDynamicSlideIndex == 0 ? "gp-auto-slide is-active" : "gp-auto-slide";
+                            var gpLoadingMode = gpDynamicSlideIndex == 0 ? "eager" : "lazy";
+
+                            <a class="@gpActiveClass" href="@gpSlideLink" aria-label="اسلاید معرفی کلینیک شنوایی و سمعک شکوه تجریش">
+                                <picture>
+                                    <source media="(max-width: 768px)" srcset="@Url.Content(gpMobileImage)" />
+                                    <img src="@Url.Content(gpDesktopImage)" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" loading="@gpLoadingMode" decoding="async" />
+                                </picture>
+                            </a>
+
+                            gpDynamicSlideIndex++;
+                        }
+                    }
+                    else
+                    {
+                        <a class="gp-auto-slide is-active" href="/contactus" aria-label="مشاوره رایگان شنوایی">
+                            <picture>
+                                <source media="(max-width: 768px)" srcset="@Url.Content("~/images/slider/tajrish-slider-v10-01-mobile.webp")" />
+                                <img src="@Url.Content("~/images/slider/tajrish-slider-v10-01-desktop.webp")" alt="شنیدن بهتر از همین امروز، تست شنوایی و مشاوره رایگان" loading="eager" decoding="async" />
+                            </picture>
+                        </a>
+                        <a class="gp-auto-slide" href="/Home/Products" aria-label="انتخاب سمعک هوشمند">
+                            <picture>
+                                <source media="(max-width: 768px)" srcset="@Url.Content("~/images/slider/tajrish-slider-v10-02-mobile.webp")" />
+                                <img src="@Url.Content("~/images/slider/tajrish-slider-v10-02-desktop.webp")" alt="سمعک هوشمند، انتخاب دقیق و تنظیم راحت" loading="lazy" decoding="async" />
+                            </picture>
+                        </a>
+                    }
+                    <div class="gp-v8-slider-dots gp-v10-slider-dots" aria-hidden="true"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="gp-v8-life-title" aria-label="شعار کلینیک">
+    <div class="container">
+        <div class="gp-v8-life-card">
+            <h2 class="animate-charcter">برای شنیدن بهترین آواز زندگی‌تان</h2>
+            <p>خوب شنیدن؛ آرامش، ارتباط و کیفیت زندگی است.</p>
+        </div>
+    </div>
+</section>
 
 @*<div class="guarantee-section visible-lg" id="guarantee">
         <div class="container">
@@ -261,48 +334,21 @@
         </div>
     </div>*@
 <!-- top Products -->
-<div class="ads-grid" id="products">
+<div class="ads-grid gp-home-section" id="products">
     <div class="container">
         <!-- product right -->
         <div class="agileinfo-ads-display col-md-12">
             <div class="wrapper">
-                <!-- first section (nuts) -->
-                @*<div class="product-sec1">
-                        <h3 class="heading-tittle">منتخب جدیدترین ها</h3>
-                        @foreach (var item in content.Products.OrderByDescending(current => current.CreateDate).Where(currrent => currrent.SiteFirstImage != null).Take(3).ToList())
-                        {
-                            <div class="col-md-4 product-men pull-right">
-                                <div class="men-pro-item simpleCart_shelfItem">
-                                    <div class="men-thumb-item">
-                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
-                                        <div class="men-cart-pro">
-                                            <div class="inner-men-cart-pro">
-                                                <a title="@item.PersianName" class="link-product-add-cart" href="/Product/Details/@item.Id">جزئیات</a>
-                                            </div>
-                                        </div>
-                                        <span class="product-new-top">جدید</span>
-                                    </div>
-                                    <div class="item-info-product ">
-                                        <h4>
-                                            <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        <div class="clearfix"></div>
-                    </div>*@
-                <!-- //first section (nuts) -->
                 <!-- second section (nuts special) -->
-                <div class="product-sec1 product-sec2">
+                <div class="product-sec1 product-sec2 gp-clinic-strip">
                     <div class="col-xs-6 effect-bg">
                         <h3 class="">کلینیک شنوایی و سمعک شکوه تجریش</h3>
-                        <h6>تشخیص صحیح</h6>
-                        <p>درمان دقیق </p>
+                        <h6>تشخیص دقیق، مسیر درمان روشن</h6>
+                        <p>انواع آزمایشات شنوایی</p>
                     </div>
                     @*<h3 class="w3l-nut-middle">Pransa Gift</h3>*@
                     <div class="col-xs-6 bg-right-nut">
-                        <img src="~/images/pransa_logo_web.png" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" width="200" height="54">
+                        <img src="@Url.Content("~/images/pransa_logo_web.png")" loading="lazy" decoding="async" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" width="200" height="54">
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -318,51 +364,57 @@
                     </span>
                 </h3>
                 <!-- //tittle heading -->
-                <div class="product-sec1">
-                    <h3 class="heading-tittle">پرطرفدارترین ها</h3>
-                    @foreach (var item in content.Products.Include(current => current.Orders).OrderByDescending(current => current.Orders.Count()).Where(currrent => currrent.SiteFirstImage != null).Take(3).ToList())
-                    {
-                        <div class="col-md-4 pull-right product-men">
-                            <div class="men-pro-item simpleCart_shelfItem">
-                                <div class="men-thumb-item">
-                                    <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
-                                    <div class="men-cart-pro">
-                                        <div class="inner-men-cart-pro">
-                                            <a title="@item.PersianName" class="link-product-add-cart" href="/Product/Details/@item.Id">جزئیات</a>
-                                        </div>
+                <section class="gp-product-popular-stage" aria-label="پرطرفدارترین سمعک‌ها">
+                    <div class="gp-product-popular-head">
+                        <span>پرطرفدارترین‌ها</span>
+                        <h3>سمعک‌های محبوب کلینیک</h3>
+                        <p>چهار مدل منتخب برای شروع مقایسه؛ جمع‌وجور، مرتب و مناسب مشاوره سریع.</p>
+                    </div>
+
+                    <div class="gp-product-plan-grid">
+                        @{ var gpProductIndex = 0; }
+                        @foreach (var item in gpPopularProducts)
+                        {
+                            var gpProductClass = gpProductIndex == 2 ? "gp-product-plan-card is-highlighted" : "gp-product-plan-card";
+                            <article class="@gpProductClass">
+                                <div class="gp-product-plan-top">
+                                    <div>
+                                        <span class="gp-product-rank">@((gpProductIndex + 1).ToString("00"))</span>
+                                        <h4>
+                                            <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
+                                        </h4>
                                     </div>
-                                    <span class="product-new-top">جدید</span>
+                                    @if (gpProductIndex == 2)
+                                    {
+                                        <span class="gp-product-recommended">پیشنهادی</span>
+                                    }
                                 </div>
-                                <div class="item-info-product ">
-                                    <h4>
-                                        <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
-                                    </h4>
-                                    @*<div class="info-product-price">
-                                            @{
-                                                int pricewithdiscount = item.UnitPrice - (item.UnitPrice) * (item.DiscountPercent) / 100;
-                                            }
-                                            <span class="item_price">@string.Format("{0:n0}", pricewithdiscount) ریال</span>
-                                            @if (item.DiscountPercent > 0)
-                                            {
-                                                <del>@string.Format("{0:n0}", item.UnitPrice) ریال</del>
-                                            }
-                                        </div>*@
-                                    @*<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-                                            @if (item.Stock > 0)
-                                            {
-                                                <input type="button" name="submit" value="افزودن به سبد خرید" class="button add-to-cart-link btncard" productid="@item.Id" />
-                                            }
-                                            else
-                                            {
-                                                <input type="button" disabled name="submit" value="ناموجود" class="button add-to-cart-link" productid="@item.Id" />
-                                            }
-                                        </div>*@
+
+                                <a class="gp-product-plan-image" title="@item.PersianName" href="/Product/Details/@item.Id">
+                                    <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName" loading="lazy" decoding="async" />
+                                </a>
+
+                                <div class="gp-product-plan-meta gp-product-plan-meta-clean">
+                                    <span>محبوب در کلینیک</span>
+                                    <b>مشاوره تخصصی</b>
                                 </div>
-                            </div>
-                        </div>
-                    }
-                    <div class="clearfix"></div>
-                </div>
+
+                                <ul class="gp-product-plan-features">
+                                    <li>انتخاب بر اساس تست شنوایی</li>
+                                    <li>تنظیم تخصصی و پیگیری</li>
+                                    <li>مشاوره قبل از خرید</li>
+                                </ul>
+
+                                <a title="@item.PersianName" class="gp-product-plan-btn" href="/Product/Details/@item.Id">
+                                    مشاهده جزئیات
+                                    <span aria-hidden="true">←</span>
+                                </a>
+                            </article>
+
+                            gpProductIndex++;
+                        }
+                    </div>
+                </section>
                 <!-- //third section (oils) -->
             </div>
         </div>
@@ -370,130 +422,73 @@
     </div>
 </div>
 <!-- //top products -->
-<!-- special offers -->
-@*<div class="featured-section" id="projects">
-        <div class="container">
-            <h3 class="tittle-w3l">
-                ویژه ها
-                <span class="heading-style">
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                </span>
-            </h3>
-            <div class="content-bottom-in">
-                <ul id="flexiselDemo1">
-                    @foreach (var item in content.Products.OrderByDescending(current => current.CreateDate).Where(currrent => currrent.SiteFirstImage != null && currrent.IsSpecial == true).Take(6).ToList())
-                    {
-                        <li>
-                            <div class="w3l-specilamk">
-                                <div class="speioffer-agile">
-                                    <a href="/Product/Details/@item.Id">
-                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName">
-                                    </a>
-                                </div>
-                                <div class="product-name-w3l">
-                                    <span class="product-new-top">ویژه</span>
-                                    <h4>
-                                        <a href="/Product/Details/@item.Id">@GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.PersianName, 20)</a>
-                                    </h4>
-                                </div>
-                            </div>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </div>*@
-<!-- //special offers -->
 <!-- Services -->
-<div class="why-choose-agile">
+<div class="why-choose-agile gp-home-section">
     <div class="container">
         <div class="text-center">
             <h3 class="w3l_head">ویژگی های کلینیک شنوایی و سمعک شکوه تجریش</h3>
         </div>
         <div class="why-choose-agile-grids-top">
             <div class="col-md-4 agileits-w3layouts-grid">
-                <div class="wthree_agile_us">
+                <div class="wthree_agile_us gp-feature-card gp-feature-support">
                     <div class="col-xs-9 agile-why-text">
+                        <span class="gp-feature-kicker">همراهی مطمئن</span>
                         <h4>پشتیبانی معتبر</h4>
-                        <p>حفظ کیفیت و پشتیبانی خدمات از جمله مواردی بوده که ما برای آن اهمیت بسیار بالایی قائل هستیم . </p>
+                        <p>پیگیری وضعیت، پاسخ‌گویی منظم و همراهی بعد از انتخاب سمعک، بخشی از خدماتی است که با دقت ارائه می‌کنیم.</p>
                     </div>
                     <div class="col-xs-3 agile-why-text">
-                        <div class="wthree_features_grid hvr-rectangle-out">
-                            <i class="fa fa-star" aria-hidden="true"></i>
+                        <div class="wthree_features_grid gp-feature-icon hvr-rectangle-out">
+                            <i class="fa fa-shield" aria-hidden="true"></i>
                         </div>
                     </div>
                     <div class="clearfix"> </div>
                 </div>
-                <div class="wthree_agile_us">
+                <div class="wthree_agile_us gp-feature-card gp-feature-brand">
                     <div class="col-xs-9 agile-why-text">
+                        <span class="gp-feature-kicker">انتخاب از برندهای خوب</span>
                         <h4>تضمین بهترین سمعک</h4>
-                        <p>تجویز بهترین نوع سمعک از معتبرترین برندهای روز دنیا</p>
+                        <p>مدل مناسب شما از میان برندهای معتبر و گزینه‌های به‌روز انتخاب می‌شود تا نتیجه نهایی دقیق‌تر و مطمئن‌تر باشد.</p>
                     </div>
                     <div class="col-xs-3 agile-why-text">
-                        <div class="wthree_features_grid hvr-rectangle-out">
-                            <i class="fa fa-star" aria-hidden="true"></i>
+                        <div class="wthree_features_grid gp-feature-icon hvr-rectangle-out">
+                            <i class="fa fa-headphones" aria-hidden="true"></i>
                         </div>
                     </div>
                     <div class="clearfix"> </div>
                 </div>
-                @*<div class="wthree_agile_us">
-                        <div class="col-xs-9 agile-why-text">
-                            <h4>به صرفه و اقتصادی</h4>
-                            <p>کلینیک شنوایی و سمعک شکوه تجریش همواره به دنبال این هدف بوده که کاربران به صرفه‌ترین و اقتصادی ‌ترین کادو خود را داشته باشند . </p>
-                        </div>
-                        <div class="col-xs-3 agile-why-text">
-                            <div class="wthree_features_grid hvr-rectangle-out">
-                                <i class="fa fa-credit-card" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div class="clearfix"> </div>
-                    </div>*@
             </div>
             <div class="col-md-4 agileits-w3layouts-grid img moc-main">
-                <img src="~/images/tajrish-mockup.webp" width="282" height="513" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" class="img-responsive" />
+                <img src="@Url.Content("~/images/tajrish-mockup.webp")" width="282" height="513" loading="lazy" decoding="async" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" class="img-responsive" />
             </div>
             <div class="col-md-4 agileits-w3layouts-grid">
-                <div class="wthree_agile_us">
+                <div class="wthree_agile_us gp-feature-card gp-feature-choice">
                     <div class="col-xs-3 agile-why-text">
-                        <div class="wthree_features_grid hvr-rectangle-out">
-                            <i class="fa fa-star" aria-hidden="true"></i>
+                        <div class="wthree_features_grid gp-feature-icon hvr-rectangle-out">
+                            <i class="fa fa-sliders" aria-hidden="true"></i>
                         </div>
                     </div>
                     <div class="col-xs-9 agile-why-text two">
+                        <span class="gp-feature-kicker">ارزیابی و مقایسه</span>
                         <h4>انتخاب مناسب</h4>
-                        <p>با انجام آزمایشات شنوایی سنجی و مقایسه سمعک ها بهترین گزینه را انتخاب نمایید .</p>
+                        <p>با انجام آزمایش شنوایی و مقایسه گزینه‌ها، انتخاب سمعک مناسب ساده‌تر، سریع‌تر و دقیق‌تر انجام می‌شود.</p>
                     </div>
 
                     <div class="clearfix"> </div>
                 </div>
-                <div class="wthree_agile_us">
+                <div class="wthree_agile_us gp-feature-card gp-feature-consult">
                     <div class="col-xs-3 agile-why-text">
-                        <div class="wthree_features_grid hvr-rectangle-out">
-                            <i class="fa fa-star" aria-hidden="true"></i>
+                        <div class="wthree_features_grid gp-feature-icon hvr-rectangle-out">
+                            <i class="fa fa-comments" aria-hidden="true"></i>
                         </div>
                     </div>
                     <div class="col-xs-9 agile-why-text two">
+                        <span class="gp-feature-kicker">شروع بدون دغدغه</span>
                         <h4>مشاوره رایگان</h4>
-                        <p>جلسه مشاوره پیرامون شنوایی سنجی و تجویز سمعک کاملا رایگان میباشد .</p>
+                        <p>برای بررسی شنوایی، پرسش‌های اولیه و آشنایی با مسیر تجویز سمعک، می‌توانید از مشاوره رایگان استفاده کنید.</p>
                     </div>
 
                     <div class="clearfix"> </div>
                 </div>
-                @*<div class="wthree_agile_us">
-                        <div class="col-xs-3 agile-why-text">
-                            <div class="wthree_features_grid hvr-rectangle-out">
-                                <i class="fa fa-cloud" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div class="col-xs-9 agile-why-text two">
-                            <h4>پرداخت آنلاین</h4>
-                            <p>کلینیک شنوایی و سمعک شکوه تجریش امکان پرداخت آنلاین هزینه را میدهد . با استفاده از درکاه بانک های معتبر  سفارش خود را نهایی کنید .</p>
-                        </div>
-
-                        <div class="clearfix"> </div>
-                    </div>*@
 
                 <div class="clearfix"> </div>
             </div>
@@ -505,98 +500,237 @@
 
 @if (blogs.Count() > 0)
 {
-    <br />
-    <div class="container-fluid">
-        <div class="text-center">
-            <h3>آخرین نوشته های بلاگ</h3>
-        </div>
-    </div>
-    <div class="container grids">
-        <div class="row">
-            @foreach (var item in blogs.Take(4).ToList())
-            {
-                <div class="col-md-3 col-sm-6 pull-right">
-                    <div class="product-grid5 card">
-                        <div class="product-image5 image-cropper text-center">
-                            <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
-                                @{
-                                    var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
-                                    if (ig != null)
-                                    {
-                                        string img = ig.FullPath;
-                                        <img src="@img" alt="@item.Title" title="@item.Title" class="pic-1 img-rounded" />
-                                    }
-                                }
-                                @{
-                                    var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
-                                    if (vd != null)
-                                    {
-                                        string vid = vd.FullPath;
-                                        <video src="@vid" controls style="height:auto !important;width:240px !important;"></video>
-                                    }
-                                }
+    <section class="gp-magazine-section" aria-label="مجله کلینیک شنوایی">
+        <div class="container">
+            <div class="gp-magazine-head">
+                <span class="gp-section-eyebrow">مجله کلینیک</span>
+                <h2>رشد آگاهی شنوایی از همین‌جا شروع می‌شود.</h2>
+                <p>راهنماهای ساده و کاربردی درباره تست شنوایی، انتخاب سمعک، مراقبت، تنظیم و تجربه شنیدن بهتر.</p>
+            </div>
+
+            <div class="gp-magazine-grid">
+                @foreach (var item in blogs.Take(3).ToList())
+                {
+                    var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
+                    var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
+                    <article class="gp-magazine-card">
+                        <a class="gp-magazine-media" hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                            @if (ig != null)
+                            {
+                                string img = ig.FullPath;
+                                <img src="@img" alt="@item.Title" title="@item.Title" loading="lazy" decoding="async" />
+                            }
+                            else if (vd != null)
+                            {
+                                string vid = vd.FullPath;
+                                <video src="@vid" muted playsinline preload="metadata"></video>
+                            }
+                            else
+                            {
+                                <span class="gp-magazine-fallback" aria-hidden="true">
+                                    <b>مجله</b>
+                                    <small>شنوایی و سمعک</small>
+                                </span>
+                            }
+                            <span class="gp-magazine-floating-tag">مقاله</span>
+                        </a>
+
+                        <div class="gp-magazine-content">
+                            <div class="gp-magazine-meta">
+                                <span>@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)</span>
+                                <span>@item.Survey بازدید</span>
+                            </div>
+                            <h3>
+                                <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">@item.Title</a>
+                            </h3>
+                            <p>@GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.ShortDesc, 90)</p>
+                            <a class="gp-magazine-read" hreflang="fa-IR" href="/blog/@item.Id/@item.SefUrl">
+                                ادامه مطلب
+                                <span aria-hidden="true">←</span>
                             </a>
                         </div>
-                        <div class="product-content text-center">
-                            <div class="price text-center rent name_item"> @item.Title </div>
-                            <h3 class="title">
-                                <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
-                                    @GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.ShortDesc, 45)
+                    </article>
+                }
+            </div>
+
+            @if (gpPopularBlogs != null && gpPopularBlogs.Count() > 0)
+            {
+                <div class="gp-popular-articles" aria-label="پرطرفدارترین مقاله‌های کلینیک">
+                    <div class="gp-popular-titlebar">
+                        <span>پرطرفدارترین‌ها</span>
+                        <p>۴ مقاله پربازدید با چیدمان جمع‌وجور و خوانا.</p>
+                    </div>
+
+                    <div class="gp-popular-grid">
+                        @{ var gpPopularIndex = 0; }
+                        @foreach (var item in gpPopularBlogs.ToList())
+                        {
+                            var gpPopularClass = gpPopularIndex == 1 ? "gp-popular-card is-featured" : "gp-popular-card";
+                            <article class="@gpPopularClass">
+                                @if (gpPopularIndex == 1)
+                                {
+                                    <span class="gp-popular-recommended">پیشنهادی</span>
+                                }
+                                <div class="gp-popular-card-head">
+                                    <span class="gp-popular-views">@item.Survey بازدید</span>
+                                    <span class="gp-popular-rank">@((gpPopularIndex + 1).ToString("00"))</span>
+                                </div>
+                                <h3>
+                                    <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">@item.Title</a>
+                                </h3>
+                                <p>@GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.ShortDesc, 72)</p>
+                                <a class="gp-popular-read" hreflang="fa-IR" href="/blog/@item.Id/@item.SefUrl">
+                                    مطالعه مقاله
+                                    <span aria-hidden="true">←</span>
                                 </a>
-                            </h3>
-                            <span class="badge badge-white ml-2">@item.Survey <i class="fa fa-bar-chart-o"></i></span>
-                            <div class="price to-bottom text-center"> @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false) </div>
-                        </div>
+                            </article>
+                            gpPopularIndex++;
+                        }
                     </div>
                 </div>
-                                    }
+            }
+
+            <div class="gp-magazine-action">
+                <a href="/blog/all" class="gp-magazine-all-link">
+                    مشاهده همه مقالات
+                    <span aria-hidden="true">←</span>
+                </a>
+            </div>
         </div>
-    </div>
-    <div class="container-fluid">
-        <div class="text-center">
-            <a href="/blog/all" class="btn btn-success more-blog"> مقالات بیشتر </a>
-        </div>
-    </div>
-                                    }<br />
+    </section>
+}
 
 @section Scripts{
     <script>
         $(document).ready(function () {
             $("#myModal").modal();
         });
-    </script>
-    @if (slider.Count() > 0)
-    {
-        <text>
-            <script type="text/javascript" src="~/library/engine1/wowslider.js"></script>
-            <script type="text/javascript" src="~/library/engine1/script.js"></script>
-            <script>
-                jQuery("#wowslider-container1").wowSlider({
-                    effect: "fade",
-                    prev: "",
-                    next: "",
-                    duration: 20 * 100,
-                    delay: 60 * 100,
-                    width: 750,
-                    height: 450,
-                    autoPlay: true,
-                    autoPlayVideo: false,
-                    playPause: true,
-                    stopOnHover: true,
-                    loop: false,
-                    bullets: 1,
-                    caption: false,
-                    captionEffect: "parallax",
-                    controls: true,
-                    controlsThumb: [],
-                    responsive: 1,
-                    fullScreen: true,
-                    gestures: 2,
-                    onBeforeStep: 0,
-                    images: 0
-                });
-            </script>
-        </text>
-    }
-}
 
+
+        (function () {
+            var sliders = document.querySelectorAll("[data-gp-auto-slider]");
+            if (!sliders || !sliders.length) {
+                return;
+            }
+
+            function getSlides(slider) {
+                return slider.querySelectorAll(".gp-auto-slide");
+            }
+
+            function getActiveIndex(slides) {
+                for (var i = 0; i < slides.length; i++) {
+                    if (slides[i].classList.contains("is-active")) {
+                        return i;
+                    }
+                }
+                return 0;
+            }
+
+            function goToSlide(slider, targetIndex) {
+                var slides = getSlides(slider);
+                if (!slides || slides.length <= 1) {
+                    return;
+                }
+
+                var dots = slider.querySelectorAll(".gp-v8-slider-dots button, .gp-v10-slider-dots button");
+                var activeIndex = getActiveIndex(slides);
+                var nextIndex = (targetIndex + slides.length) % slides.length;
+
+                if (activeIndex === nextIndex) {
+                    return;
+                }
+
+                for (var i = 0; i < slides.length; i++) {
+                    slides[i].classList.remove("is-active");
+                    slides[i].classList.remove("is-leaving");
+                }
+
+                slides[activeIndex].classList.add("is-leaving");
+                slides[nextIndex].classList.add("is-active");
+
+                for (var d = 0; d < dots.length; d++) {
+                    dots[d].classList.toggle("is-active", d === nextIndex);
+                }
+
+                window.setTimeout(function () {
+                    if (slides[activeIndex]) {
+                        slides[activeIndex].classList.remove("is-leaving");
+                    }
+                }, 750);
+            }
+
+            for (var s = 0; s < sliders.length; s++) {
+                (function (slider) {
+                    var startX = 0;
+                    var startY = 0;
+                    var moved = false;
+                    var threshold = 38;
+
+                    function onStart(x, y) {
+                        startX = x;
+                        startY = y;
+                        moved = false;
+                        slider.classList.add("is-dragging");
+                    }
+
+                    function onEnd(x, y) {
+                        slider.classList.remove("is-dragging");
+
+                        var dx = x - startX;
+                        var dy = y - startY;
+                        var distance = Math.max(Math.abs(dx), Math.abs(dy));
+
+                        if (distance < threshold) {
+                            return;
+                        }
+
+                        moved = true;
+                        var slides = getSlides(slider);
+                        var current = getActiveIndex(slides);
+
+                        if (Math.abs(dy) >= Math.abs(dx)) {
+                            goToSlide(slider, current + (dy < 0 ? 1 : -1));
+                        } else {
+                            goToSlide(slider, current + (dx < 0 ? 1 : -1));
+                        }
+                    }
+
+                    slider.addEventListener("touchstart", function (event) {
+                        if (event.touches && event.touches.length) {
+                            onStart(event.touches[0].clientX, event.touches[0].clientY);
+                        }
+                    }, { passive: true });
+
+                    slider.addEventListener("touchend", function (event) {
+                        if (event.changedTouches && event.changedTouches.length) {
+                            onEnd(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+                        }
+                    }, { passive: true });
+
+                    slider.addEventListener("mousedown", function (event) {
+                        if (event.button !== 0) {
+                            return;
+                        }
+                        onStart(event.clientX, event.clientY);
+
+                        function upHandler(upEvent) {
+                            document.removeEventListener("mouseup", upHandler);
+                            onEnd(upEvent.clientX, upEvent.clientY);
+                        }
+
+                        document.addEventListener("mouseup", upHandler);
+                    });
+
+                    slider.addEventListener("click", function (event) {
+                        if (moved) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            moved = false;
+                        }
+                    }, true);
+                })(sliders[s]);
+            }
+        })();
+
+    </script>
+}

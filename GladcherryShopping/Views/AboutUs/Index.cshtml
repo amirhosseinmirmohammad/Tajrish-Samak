@@ -1,139 +1,1081 @@
-﻿@{
-    ViewBag.Title = "درباره ما";
+﻿@using System.Web;
+@{
+    var gpCacheVersion = "20260603-tajrish-v36-about-local-video-optimized";
+    var gpBaseUrl = "https://tajrish-samak.ir";
+    var gpCanonicalUrl = gpBaseUrl + Request.Path;
+
+    ViewBag.Title = "درباره ما | کلینیک شنوایی و سمعک شکوه تجریش";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Metas{
-    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
-    <link rel="canonical" href="@string.Format("{0}{1}", "http://tajrish-samak.ir", Request.Path)">
-    <meta name="Keywords" content="تجویز سمعک">
-    <meta property="og:title" content="تجویز سمعک" />
-    @*<meta property="og:url" content="@facebook" />*@
-    <meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
-    <meta name="twitter:image" content="تجویز سمعک">
-    <meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
-    @*<meta name="twitter:site" content="@twitter">*@
-    <meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <meta name="description" content="درباره کلینیک شنوایی و سمعک شکوه تجریش؛ مرکزی تخصصی در حوزه ارزیابی شنوایی، تجویز و تنظیم سمعک با رویکرد احترام، دقت و خیرخواهی برای مراجعان." />
+    <link rel="canonical" href="@gpCanonicalUrl" />
+    <meta name="Keywords" content="درباره کلینیک شنوایی شکوه تجریش، کلینیک سمعک تجریش، تست شنوایی، تجویز سمعک، تنظیم سمعک، ادیولوژیست تجریش" />
+
+    <meta property="og:title" content="درباره ما | کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@gpCanonicalUrl" />
+    <meta property="og:description" content="آشنایی با مسیر، ارزش‌ها و خدمات کلینیک شنوایی و سمعک شکوه تجریش." />
+
+    <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta name="twitter:description" content="درباره کلینیک شنوایی و سمعک شکوه تجریش؛ دقت، احترام و مشاوره تخصصی در مسیر انتخاب سمعک." />
 }
 
 @section Styles{
-    <style>
-        p {
-            text-align: justify !important;
-        }
-    </style>
-    <!--Google jSON_LD Structure Data Region-->
     <script type="application/ld+json">
         {
-        "@@context": "http://schema.org",
-        "@@type": "Organization",
-        "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-        "description": "کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .",
-        "logo": "http://tajrish-samak.ir/images/logo_purple.png",
-        "url": "http://www.tajrish-samak.ir",
-        "sameAs": [ "https://www.instagram.com/tajrishsamak/",
-        "https://www.telegram.me/tajrish_samak/"],
-        "address": "تهران - میدان تجریش - خیابان شهرداری - رو به روی سینما آستارا - پلاک ۲۲۴ - ساختمان ۱۱۰ (ورودی قائم)",
-        "contactPoint": [{
-        "@@type": "ContactPoint",
-        "telephone": ["+98-21-22735588"],
-        "contactType": "customer service"
-        }]
+          "@@context": "https://schema.org",
+          "@@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@@type": "ListItem",
+              "position": 1,
+              "name": "صفحه اصلی",
+              "item": "https://tajrish-samak.ir/"
+            },
+            {
+              "@@type": "ListItem",
+              "position": 2,
+              "name": "درباره ما",
+              "item": "@gpCanonicalUrl"
+            }
+          ]
         }
     </script>
-    <!--Google jSON_LD Structure Data Region-->
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "AboutPage",
+          "name": "درباره کلینیک شنوایی و سمعک شکوه تجریش",
+          "url": "@gpCanonicalUrl",
+          "description": "آشنایی با کلینیک شنوایی و سمعک شکوه تجریش، مسیر شکل‌گیری مرکز و ارزش‌های اصلی آن در ارائه خدمات شنوایی و سمعک.",
+          "inLanguage": "fa-IR",
+          "mainEntity": {
+            "@@type": "MedicalBusiness",
+            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+            "url": "https://tajrish-samak.ir/",
+            "logo": "https://tajrish-samak.ir/images/logo_purple.webp",
+            "image": "https://tajrish-samak.ir/images/logo_purple.webp",
+            "telephone": "+982122735588",
+            "address": {
+              "@@type": "PostalAddress",
+              "addressCountry": "IR",
+              "addressRegion": "تهران",
+              "addressLocality": "تجریش",
+              "streetAddress": "میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۲۴، ساختمان ۱۱۰"
+            },
+            "sameAs": [
+              "https://www.instagram.com/tajrishsamak/",
+              "https://www.telegram.me/tajrish_samak/"
+            ]
+          }
+        }
+    </script>
+
+    <style id="gp-v32-about-modern-seo">
+        :root {
+            --gp-v32-purple: #4b1684;
+            --gp-v32-violet: #920ab6;
+            --gp-v32-pink: #e10b79;
+            --gp-v32-cyan: #0ba6b8;
+            --gp-v32-lime: #d8f512;
+            --gp-v32-ink: #20142d;
+            --gp-v32-muted: rgba(32,20,45,.68);
+            --gp-v32-card: rgba(255,255,255,.92);
+            --gp-v32-border: rgba(75,22,132,.10);
+            --gp-v32-shadow: 0 24px 60px rgba(74,18,107,.10);
+        }
+
+        .gp-about-page {
+            direction: rtl;
+            overflow: hidden;
+        }
+
+        .gp-about-hero {
+            position: relative;
+            margin: 22px auto 28px;
+            padding: clamp(28px, 4vw, 58px);
+            border-radius: 42px;
+            background:
+                radial-gradient(circle at 14% 10%, rgba(216,245,18,.25), transparent 24%),
+                radial-gradient(circle at 88% 24%, rgba(255,255,255,.15), transparent 22%),
+                linear-gradient(135deg, #4b1684 0%, #920ab6 54%, #e10b79 100%);
+            color: #fff;
+            box-shadow: 0 32px 80px rgba(74,18,107,.20);
+            isolation: isolate;
+            overflow: hidden;
+        }
+
+        .gp-about-hero::before,
+        .gp-about-hero::after {
+            content: "";
+            position: absolute;
+            border-radius: 999px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .gp-about-hero::before {
+            width: 270px;
+            height: 270px;
+            left: -96px;
+            top: -92px;
+            background: rgba(255,255,255,.13);
+            animation: gpV32Blob 10s ease-in-out infinite alternate;
+        }
+
+        .gp-about-hero::after {
+            width: 340px;
+            height: 340px;
+            right: -130px;
+            bottom: -172px;
+            background: rgba(11,166,184,.22);
+            animation: gpV32Blob 12s ease-in-out infinite alternate-reverse;
+        }
+
+        @@keyframes gpV32Blob {
+            to { transform: translate3d(24px, 18px, 0) scale(1.06); }
+        }
+
+        .gp-about-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(260px, .38fr);
+            gap: clamp(20px, 4vw, 46px);
+            align-items: center;
+        }
+
+        .gp-about-kicker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            color: #fff !important;
+            font-weight: 950;
+            backdrop-filter: blur(14px);
+        }
+
+        .gp-about-hero h1 {
+            margin: 16px 0 12px;
+            color: #fff !important;
+            font-size: clamp(32px, 5vw, 66px);
+            font-weight: 1000;
+            line-height: 1.34 !important;
+            letter-spacing: -.02em;
+        }
+
+        .gp-about-hero p {
+            max-width: 780px;
+            margin: 0;
+            color: rgba(255,255,255,.90) !important;
+            font-size: clamp(14px, 1.2vw, 18px);
+            font-weight: 850;
+            line-height: 2.1;
+            text-align: right !important;
+        }
+
+        .gp-about-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .gp-about-actions a {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 18px;
+            border-radius: 999px;
+            text-decoration: none !important;
+            font-weight: 950;
+        }
+
+        .gp-about-actions a:first-child {
+            background: #fff;
+            color: #4b1684 !important;
+            box-shadow: 0 18px 38px rgba(0,0,0,.14);
+        }
+
+        .gp-about-actions a:nth-child(2) {
+            background: rgba(255,255,255,.13);
+            border: 1px solid rgba(255,255,255,.24);
+            color: #fff !important;
+        }
+
+        .gp-about-stats {
+            display: grid;
+            gap: 12px;
+        }
+
+        .gp-about-stat {
+            min-height: 92px;
+            padding: 18px;
+            border-radius: 28px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            backdrop-filter: blur(14px);
+        }
+
+        .gp-about-stat strong {
+            display: block;
+            color: #fff !important;
+            font-size: 28px;
+            font-weight: 1000;
+            line-height: 1;
+        }
+
+        .gp-about-stat span {
+            display: block;
+            margin-top: 8px;
+            color: rgba(255,255,255,.82) !important;
+            font-weight: 850;
+        }
+
+        .gp-about-story-card,
+        .gp-about-video-card,
+        .gp-about-values-card {
+            border-radius: 34px;
+            background: var(--gp-v32-card);
+            border: 1px solid var(--gp-v32-border);
+            box-shadow: var(--gp-v32-shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .gp-about-story-card {
+            padding: clamp(20px, 3vw, 38px);
+            margin-bottom: 24px;
+        }
+
+        .gp-about-section-head {
+            max-width: 780px;
+            margin: 0 auto 22px;
+            text-align: center;
+        }
+
+        .gp-about-section-head span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 36px;
+            padding: 0 13px;
+            border-radius: 999px;
+            background: rgba(146,10,182,.08);
+            color: #6420a0 !important;
+            font-size: 13px;
+            font-weight: 950;
+        }
+
+        .gp-about-section-head h2 {
+            margin: 12px 0 8px;
+            color: var(--gp-v32-ink) !important;
+            font-size: clamp(24px, 3.2vw, 44px);
+            font-weight: 1000;
+            line-height: 1.45 !important;
+        }
+
+        .gp-about-section-head p {
+            margin: 0;
+            color: var(--gp-v32-muted) !important;
+            font-weight: 850;
+            line-height: 2;
+            text-align: center !important;
+        }
+
+        .gp-about-story-text {
+            max-width: 980px;
+            margin: 0 auto;
+            color: var(--gp-v32-muted) !important;
+            font-size: 16px;
+            font-weight: 750;
+            line-height: 2.35;
+            text-align: justify !important;
+        }
+
+        .gp-about-story-text p {
+            color: var(--gp-v32-muted) !important;
+            text-align: justify !important;
+            line-height: 2.35 !important;
+        }
+
+
+        .gp-about-clinic-gallery {
+            margin: 0 0 26px;
+            padding: clamp(18px, 2.6vw, 30px);
+            border-radius: 34px;
+            background:
+                radial-gradient(circle at 12% 12%, rgba(216,245,18,.13), transparent 24%),
+                linear-gradient(135deg, rgba(255,255,255,.94), rgba(252,248,255,.82));
+            border: 1px solid var(--gp-v32-border);
+            box-shadow: var(--gp-v32-shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .gp-about-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        .gp-about-gallery-card {
+            position: relative;
+            min-height: 430px;
+            border-radius: 30px;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid rgba(75,22,132,.08);
+            box-shadow: 0 18px 42px rgba(74,18,107,.08);
+            isolation: isolate;
+            transition: transform .24s ease, box-shadow .24s ease;
+        }
+
+        .gp-about-gallery-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 70px rgba(74,18,107,.15);
+        }
+
+        .gp-about-gallery-card img {
+            width: 100%;
+            height: 100%;
+            min-height: 430px;
+            object-fit: cover;
+            display: block;
+            transition: transform .35s ease, filter .35s ease;
+        }
+
+        .gp-about-gallery-card:hover img {
+            transform: scale(1.045);
+            filter: saturate(1.06);
+        }
+
+        .gp-about-gallery-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 36%, rgba(18,12,30,.78));
+            z-index: 1;
+        }
+
+        .gp-about-gallery-caption {
+            position: absolute;
+            right: 18px;
+            left: 18px;
+            bottom: 18px;
+            z-index: 2;
+            padding: 16px;
+            border-radius: 24px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.22);
+            backdrop-filter: blur(14px);
+            color: #fff;
+        }
+
+        .gp-about-gallery-caption span {
+            display: inline-flex;
+            min-height: 28px;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            margin-bottom: 8px;
+            border-radius: 999px;
+            background: rgba(216,245,18,.88);
+            color: #20142d !important;
+            font-size: 12px;
+            font-weight: 1000;
+        }
+
+        .gp-about-gallery-caption h3 {
+            margin: 0 0 6px;
+            color: #fff !important;
+            font-size: 20px;
+            font-weight: 1000;
+            line-height: 1.7 !important;
+        }
+
+        .gp-about-gallery-caption p {
+            margin: 0;
+            color: rgba(255,255,255,.86) !important;
+            font-size: 13px;
+            font-weight: 850;
+            line-height: 2;
+            text-align: right !important;
+        }
+
+        html.gp-dark-mode .gp-about-clinic-gallery {
+            background: rgba(24,24,40,.90) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-about-gallery-card {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        @@media(max-width: 991px) {
+            .gp-about-gallery-card,
+            .gp-about-gallery-card img {
+                min-height: 360px;
+            }
+        }
+
+        @@media(max-width: 768px) {
+            .gp-about-clinic-gallery {
+                border-radius: 28px;
+                padding: 14px;
+            }
+
+            .gp-about-gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-about-gallery-card,
+            .gp-about-gallery-card img {
+                min-height: 340px;
+                border-radius: 26px;
+            }
+
+            .gp-about-gallery-caption {
+                right: 12px;
+                left: 12px;
+                bottom: 12px;
+                padding: 14px;
+                border-radius: 22px;
+            }
+        }
+
+
+
+        /* V34: clinic folder gallery */
+        .gp-about-clinic-gallery {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gp-about-clinic-gallery::before {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            left: -120px;
+            top: -120px;
+            border-radius: 999px;
+            background: rgba(146,10,182,.08);
+            pointer-events: none;
+        }
+
+        .gp-about-gallery-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 14px !important;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gp-about-gallery-card {
+            min-height: 285px !important;
+            border-radius: 28px !important;
+        }
+
+        .gp-about-gallery-card:nth-child(1),
+        .gp-about-gallery-card:nth-child(7) {
+            grid-column: span 2;
+        }
+
+        .gp-about-gallery-card img {
+            min-height: 285px !important;
+            object-fit: cover !important;
+        }
+
+        .gp-about-gallery-caption {
+            right: 12px !important;
+            left: 12px !important;
+            bottom: 12px !important;
+            padding: 12px 13px !important;
+            border-radius: 20px !important;
+        }
+
+        .gp-about-gallery-caption h3 {
+            font-size: 16px !important;
+            margin-bottom: 2px !important;
+        }
+
+        .gp-about-gallery-caption p {
+            font-size: 12px !important;
+            line-height: 1.8 !important;
+        }
+
+        .gp-about-gallery-caption span {
+            min-height: 24px !important;
+            margin-bottom: 5px !important;
+            font-size: 11px !important;
+        }
+
+        @@media(max-width: 1100px) {
+            .gp-about-gallery-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+
+            .gp-about-gallery-card:nth-child(1),
+            .gp-about-gallery-card:nth-child(7) {
+                grid-column: span 1;
+            }
+        }
+
+        @@media(max-width: 640px) {
+            .gp-about-gallery-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .gp-about-gallery-card,
+            .gp-about-gallery-card img {
+                min-height: 320px !important;
+            }
+        }
+
+
+        .gp-about-values-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin: 24px 0;
+        }
+
+        .gp-about-value {
+            padding: 18px;
+            border-radius: 26px;
+            background: rgba(255,255,255,.70);
+            border: 1px solid rgba(75,22,132,.08);
+            box-shadow: 0 16px 38px rgba(74,18,107,.07);
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+
+        .gp-about-value:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 26px 54px rgba(74,18,107,.12);
+        }
+
+        .gp-about-value i {
+            width: 46px;
+            height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--gp-v32-purple), var(--gp-v32-violet));
+            color: #fff;
+            font-style: normal;
+            font-size: 21px;
+            margin-bottom: 12px;
+        }
+
+        .gp-about-value h3 {
+            margin: 0 0 8px;
+            color: var(--gp-v32-ink) !important;
+            font-size: 17px;
+            font-weight: 1000;
+            line-height: 1.7 !important;
+        }
+
+        .gp-about-value p {
+            margin: 0;
+            color: var(--gp-v32-muted) !important;
+            font-size: 13px;
+            font-weight: 850;
+            line-height: 2;
+            text-align: right !important;
+        }
+
+        .gp-about-video-card {
+            padding: clamp(18px, 2.5vw, 28px);
+            margin-bottom: 40px;
+        }
+
+        .gp-about-video-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(250px, 330px);
+            gap: 22px;
+            align-items: center;
+        }
+
+        .gp-about-video-frame {
+            position: relative;
+            overflow: hidden;
+            border-radius: 28px;
+            min-height: 360px;
+            background: linear-gradient(135deg, rgba(75,22,132,.08), rgba(11,166,184,.08));
+            border: 1px solid rgba(75,22,132,.10);
+        }
+
+        .gp-about-video-frame > div,
+        .gp-about-video-frame iframe {
+            width: 100% !important;
+            min-height: 360px !important;
+            border: 0 !important;
+            border-radius: 28px !important;
+        }
+
+        .gp-about-video-side {
+            text-align: center;
+            padding: 18px;
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(216,245,18,.18), transparent 28%),
+                linear-gradient(135deg, rgba(255,255,255,.74), rgba(255,255,255,.50));
+            border: 1px solid rgba(75,22,132,.08);
+        }
+
+        .gp-about-video-side img {
+            width: min(190px, 70%);
+            height: auto;
+            margin-bottom: 14px;
+            border-radius: 24px;
+        }
+
+        .gp-about-video-side h3 {
+            margin: 0 0 8px;
+            color: var(--gp-v32-ink) !important;
+            font-size: 20px;
+            font-weight: 1000;
+            line-height: 1.7 !important;
+        }
+
+        .gp-about-video-side p {
+            margin: 0;
+            color: var(--gp-v32-muted) !important;
+            font-weight: 850;
+            line-height: 2;
+            text-align: center !important;
+        }
+
+        .gp-about-final-cta {
+            margin-bottom: 44px;
+            padding: clamp(22px, 3vw, 34px);
+            border-radius: 34px;
+            background:
+                radial-gradient(circle at 10% 15%, rgba(216,245,18,.20), transparent 24%),
+                linear-gradient(135deg, #20142d, #4b1684);
+            color: #fff;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 18px;
+            align-items: center;
+            box-shadow: 0 24px 60px rgba(32,20,45,.20);
+        }
+
+        .gp-about-final-cta h2 {
+            margin: 0 0 6px;
+            color: #fff !important;
+            font-size: clamp(22px, 2.8vw, 34px);
+            font-weight: 1000;
+            line-height: 1.5 !important;
+        }
+
+        .gp-about-final-cta p {
+            margin: 0;
+            color: rgba(255,255,255,.80) !important;
+            font-weight: 850;
+            line-height: 2;
+            text-align: right !important;
+        }
+
+        .gp-about-final-cta a {
+            min-height: 52px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            border-radius: 999px;
+            background: #fff;
+            color: #4b1684 !important;
+            font-weight: 1000;
+            text-decoration: none !important;
+            white-space: nowrap;
+        }
+
+        html.gp-dark-mode .gp-about-page {
+            --gp-v32-ink: #f7f7fb;
+            --gp-v32-muted: rgba(246,247,251,.72);
+            --gp-v32-card: rgba(24,24,40,.88);
+            --gp-v32-border: rgba(255,255,255,.10);
+            --gp-v32-shadow: 0 24px 60px rgba(0,0,0,.20);
+        }
+
+        html.gp-dark-mode .gp-about-story-card,
+        html.gp-dark-mode .gp-about-video-card,
+        html.gp-dark-mode .gp-about-values-card {
+            background: rgba(24,24,40,.90) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-about-value,
+        html.gp-dark-mode .gp-about-video-side {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-about-section-head span {
+            background: rgba(255,255,255,.09) !important;
+            color: rgba(246,247,251,.88) !important;
+        }
+
+        html.gp-dark-mode .gp-about-section-head h2,
+        html.gp-dark-mode .gp-about-value h3,
+        html.gp-dark-mode .gp-about-video-side h3 {
+            color: #f7f7fb !important;
+        }
+
+        html.gp-dark-mode .gp-about-section-head p,
+        html.gp-dark-mode .gp-about-story-text,
+        html.gp-dark-mode .gp-about-story-text p,
+        html.gp-dark-mode .gp-about-value p,
+        html.gp-dark-mode .gp-about-video-side p {
+            color: rgba(246,247,251,.72) !important;
+        }
+
+
+        .gp-about-local-video-frame {
+            background: #101624 !important;
+        }
+
+        .gp-about-local-video {
+            width: 100% !important;
+            min-height: 360px !important;
+            max-height: 520px !important;
+            display: block !important;
+            object-fit: cover !important;
+            border: 0 !important;
+            border-radius: 28px !important;
+            background: #101624 !important;
+            box-shadow: 0 18px 42px rgba(74,18,107,.12);
+        }
+
+        html.gp-dark-mode .gp-about-local-video-frame {
+            background: rgba(255,255,255,.06) !important;
+        }
+
+        @@media(max-width: 768px) {
+            .gp-about-local-video {
+                min-height: 260px !important;
+                max-height: 360px !important;
+            }
+        }
+
+
+        @@media(max-width: 1100px) {
+            .gp-about-hero-grid,
+            .gp-about-video-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-about-stats {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .gp-about-values-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @@media(max-width: 768px) {
+            .gp-about-hero {
+                border-radius: 30px;
+                padding: 26px 20px;
+                text-align: center;
+            }
+
+            .gp-about-hero p {
+                text-align: center !important;
+            }
+
+            .gp-about-actions {
+                justify-content: center;
+            }
+
+            .gp-about-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-about-story-card,
+            .gp-about-video-card,
+            .gp-about-final-cta {
+                border-radius: 28px;
+            }
+
+            .gp-about-values-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-about-story-text,
+            .gp-about-story-text p {
+                font-size: 14px;
+                line-height: 2.25 !important;
+            }
+
+            .gp-about-video-frame,
+            .gp-about-video-frame > div,
+            .gp-about-video-frame iframe {
+                min-height: 280px !important;
+            }
+
+            .gp-about-final-cta {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .gp-about-final-cta p {
+                text-align: center !important;
+            }
+        }
+    </style>
 }
 
-<!-- banner-2 -->
-@*<div class="page-head_agile_info_w3l">
-
-    </div>*@
-<!-- //banner-2 -->
-<!-- page -->
-<div class="services-breadcrumb">
-    <div class="agile_inner_breadcrumb">
-        <div class="container">
-            <ul class="w3_short">
-                <li>
-                    <a href="/">صفحه اصلی</a>
-                    <i>|</i>
-                </li>
-                <li>درباره ما</li>
-            </ul>
-        </div>
-    </div>
-</div>
-<!-- //page -->
-<!-- contact page -->
-<div class="contact-w3l">
+<section class="gp-about-page" aria-label="درباره کلینیک شنوایی و سمعک شکوه تجریش">
     <div class="container">
-        <div class="">
-            <div class="container">
-                <!-- tittle heading -->
-                <div class="text-center">
-                    <h1 class="tittle-w3l text-center">
-                        درباره ما
-                        <span class="heading-style">
-                            <i></i>
-                            <i></i>
-                            <i></i>
-                        </span>
-                    </h1>
-                </div>
-                <!-- //tittle heading -->
-                <div class="w3l-welcome-text">
+        <section class="gp-about-hero" aria-label="معرفی کلینیک">
+            <div class="gp-about-hero-grid">
+                <div>
+                    <span class="gp-about-kicker">درباره ما</span>
+                    <h1>شنیدن بهتر، با دقت و احترام شروع می‌شود.</h1>
                     <p>
-                        کلینیک شنوایی و سمعک تجریش در سال 1381 به همت بانوی ادیولوژیست ، شکوه روحی تاسیس شد . ایشان فارغ التحصیل رشته شنوایی شناسی در دانشگاه علوم پزشکی ایران بودند که متاسفانه در سال 1391 پس از تحمل یک دوره بیماری سخت و طولانی به رحمت ایزدی پیوستند . شخصیت ، متانت و دانش نامبرده و البته اعمال خیر ایشان هنوز که هنوز است زبانزد خاص و عام است . یاد و خاطره ایشان تا همیشه باقی میماند .
-
-                        با تغییر نام کلینیک به کلینیک شنوایی و سمعک شکوه تجریش این مرکز پس از درگذشت نامبرده کمافی السابق با همان اصول اولیه که ایشان مدنظرشان بود بر اساس دقت ، احترام و خیرخواهی برای مراجعان خود به کار خود ادامه میدهد . امیدواریم بتوانیم با حسن انجام فعالیت های خود یاد آن بانوی نیکوکار را گرامی داشته و رضایت مراجعین خود را فراهم سازیم .
+                        کلینیک شنوایی و سمعک شکوه تجریش با تکیه بر تجربه، ارزیابی دقیق و نگاه انسانی به مراجعه‌کننده، مسیر انتخاب و تنظیم سمعک را شفاف‌تر و مطمئن‌تر می‌کند.
                     </p>
-                </div>
-            </div>
-        </div>
-        <!-- //welcome -->
-        <!-- video -->
-        <div class="about">
-            <div class="container">
-                <!-- tittle heading -->
-                <h3 class="tittle-w3l">
-                    مشاهده ویدیو
-                    <span class="heading-style">
-                        <i></i>
-                        <i></i>
-                        <i></i>
-                    </span>
-                </h3>
-                <!-- //tittle heading -->
-                <div class="about-tp">
-                    <div class="col-md-8 about-agileits-w3layouts-left">
-                        <div id="33019492101">
-                            <script type="text/JavaScript" src="https://www.aparat.com/embed/AgYDf?data[rnddiv]=33019492101&data[responsive]=yes"></script>
-                        </div>
+                    <div class="gp-about-actions">
+                        <a href="tel:02122735588">
+                            <span aria-hidden="true">☎</span>
+                            تماس
+                        </a>
+                        <a href="#gp-about-story">
+                            <span aria-hidden="true">⌄</span>
+                            مطالعه داستان کلینیک
+                        </a>
                     </div>
-                    <div class="col-md-4 about-agileits-w3layouts-right">
-                        <div class="img-video-about">
-                            <img src="~/images/pransa_logo_web.png" title="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" alt="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" width="200">
-                        </div>
-                        <h4>کلینیک شنوایی و سمعک شکوه تجریش</h4>
-                        <p id="un">ارائه انواع آزمایشات شنوایی و تجویز سمعک</p>
-                    </div>
-                    <div class="clearfix"></div>
                 </div>
-            </div>
-        </div>
-        <!-- //video-->
-        <!-- //about page -->
-    </div>
-</div>
 
+                <div class="gp-about-stats" aria-label="خلاصه کلینیک">
+                    <div class="gp-about-stat">
+                        <strong>۱۳۸۱</strong>
+                        <span>سال آغاز فعالیت</span>
+                    </div>
+                    <div class="gp-about-stat">
+                        <strong>۲۵+</strong>
+                        <span>سال تجربه تخصصی</span>
+                    </div>
+                    <div class="gp-about-stat">
+                        <strong>۴</strong>
+                        <span>اصل کاری: دقت، احترام، صداقت، پیگیری</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="gp-about-story-card" id="gp-about-story" aria-label="داستان کلینیک">
+            <div class="gp-about-section-head">
+                <span>روایت شکل‌گیری</span>
+                <h2>یادگاری از یک نگاه دقیق و خیرخواهانه</h2>
+                <p>این مرکز بر پایه دقت علمی، احترام به مراجعه‌کننده و خیرخواهی در مسیر درمان شکل گرفت.</p>
+            </div>
+
+            <div class="gp-about-story-text">
+                <p>
+                    کلینیک شنوایی و سمعک تجریش در سال ۱۳۸۱ به همت بانوی ادیولوژیست، شکوه روحی تأسیس شد. ایشان فارغ‌التحصیل رشته شنوایی‌شناسی از دانشگاه علوم پزشکی ایران بودند و پس از سال‌ها تلاش حرفه‌ای، متأسفانه در سال ۱۳۹۱ پس از تحمل یک دوره بیماری سخت و طولانی به رحمت ایزدی پیوستند. شخصیت، متانت، دانش و اعمال خیر ایشان هنوز زبانزد است و یاد و خاطره ایشان همواره زنده خواهد ماند.
+                </p>
+                <p>
+                    با تغییر نام مرکز به کلینیک شنوایی و سمعک شکوه تجریش، این مجموعه پس از درگذشت ایشان همچنان بر همان اصول اولیه ادامه مسیر داد: دقت، احترام و خیرخواهی برای مراجعان. امید ما این است که با حسن انجام خدمات تخصصی، یاد آن بانوی نیکوکار را گرامی بداریم و رضایت مراجعه‌کنندگان را فراهم کنیم.
+                </p>
+            </div>
+        </section>
+        <section class="gp-about-clinic-gallery" aria-label="تصاویر کلینیک شنوایی و سمعک شکوه تجریش">
+            <div class="gp-about-section-head">
+                <span>فضای کلینیک</span>
+                <h2>تصاویر کلینیک شکوه تجریش</h2>
+                <p>گالری تصاویر کلینیک، محیط خدمات و بخش‌هایی از تجربه مراجعه در مرکز شنوایی و سمعک شکوه تجریش.</p>
+            </div>
+
+            <div class="gp-about-gallery-grid">
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5885.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 1 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>01</span>
+                        <h3>فضای کلینیک</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5887.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 2 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>02</span>
+                        <h3>خدمات شنوایی</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5888.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 3 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>03</span>
+                        <h3>ارزیابی تخصصی</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5889.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 4 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>04</span>
+                        <h3>فضای کلینیک</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5890.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 5 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>05</span>
+                        <h3>خدمات شنوایی</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5891.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 6 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>06</span>
+                        <h3>ارزیابی تخصصی</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5892.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 7 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>07</span>
+                        <h3>فضای کلینیک</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5896.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 8 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>08</span>
+                        <h3>خدمات شنوایی</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5897.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 9 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>09</span>
+                        <h3>ارزیابی تخصصی</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5900.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 10 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>10</span>
+                        <h3>فضای کلینیک</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5901.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 11 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>11</span>
+                        <h3>خدمات شنوایی</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+
+                <article class="gp-about-gallery-card">
+                    <img src="@Url.Content("~/images/clinic/IMG_5902.webp")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="تصویر 12 از کلینیک شنوایی و سمعک شکوه تجریش" loading="lazy" decoding="async" />
+                    <div class="gp-about-gallery-caption">
+                        <span>12</span>
+                        <h3>ارزیابی تخصصی</h3>
+                        <p>نمایی از فضای کلینیک و مسیر ارائه خدمات شنوایی در شکوه تجریش.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="gp-about-values-grid" aria-label="ارزش‌های کلینیک">
+            <article class="gp-about-value">
+                <i aria-hidden="true">✓</i>
+                <h3>دقت در ارزیابی</h3>
+                <p>مسیر انتخاب سمعک با تست شنوایی و بررسی دقیق نیازهای فردی شروع می‌شود.</p>
+            </article>
+            <article class="gp-about-value">
+                <i aria-hidden="true">◌</i>
+                <h3>احترام به مراجعه‌کننده</h3>
+                <p>در هر مرحله، توضیح شفاف و تصمیم‌گیری آگاهانه برای ما مهم است.</p>
+            </article>
+            <article class="gp-about-value">
+                <i aria-hidden="true">⚙</i>
+                <h3>تنظیم تخصصی</h3>
+                <p>سمعک فقط خرید نیست؛ انتخاب، تنظیم و پیگیری درست نتیجه را می‌سازد.</p>
+            </article>
+            <article class="gp-about-value">
+                <i aria-hidden="true">↻</i>
+                <h3>پیگیری واقعی</h3>
+                <p>بعد از انتخاب، همراهی و اصلاح تنظیمات بخش مهمی از تجربه شنیدن بهتر است.</p>
+            </article>
+        </section>
+
+        <section class="gp-about-video-card" aria-label="ویدیوی معرفی کلینیک">
+            <div class="gp-about-section-head">
+                <span>مشاهده ویدیو</span>
+                <h2>نگاهی کوتاه به کلینیک</h2>
+                <p>برای آشنایی بیشتر با فضای خدمات و رویکرد کلینیک، ویدیوی معرفی را ببینید.</p>
+            </div>
+
+            <div class="gp-about-video-grid">
+                <div class="gp-about-video-frame gp-about-local-video-frame">
+                    <video class="gp-about-local-video"
+                           controls
+                           playsinline
+                           preload="metadata"
+                           poster="@Url.Content("~/content/images/clinic-slider-piano-poster.webp")">
+                        <source src="@Url.Content("~/content/images/clinic-slider-piano-mobile.mp4")" type="video/mp4" media="(max-width: 768px)" />
+                        <source src="@Url.Content("~/content/images/clinic-slider-piano-lite.mp4")" type="video/mp4" />
+                        مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+                    </video>
+                </div>
+
+                <aside class="gp-about-video-side">
+                    <img src="@Url.Content("~/images/pransa_logo_web.png")" title="کلینیک شنوایی و سمعک شکوه تجریش" alt="کلینیک شنوایی و سمعک شکوه تجریش" width="200" loading="lazy" decoding="async" />
+                    <h3>کلینیک شنوایی و سمعک شکوه تجریش</h3>
+                    <p>ارائه انواع آزمایشات شنوایی، مشاوره، تجویز و تنظیم سمعک</p>
+                </aside>
+            </div>
+        </section>
+
+        <section class="gp-about-final-cta" aria-label="تماس با کلینیک">
+            <div>
+                <h2>برای شروع مسیر شنیدن بهتر آماده‌اید؟</h2>
+                <p>با کلینیک تماس بگیرید تا برای ارزیابی، مشاوره و انتخاب مسیر مناسب راهنمایی شوید.</p>
+            </div>
+            <a href="tel:02122735588">تماس</a>
+        </section>
+    </div>
+</section>
 
 @if (TempData["Error"] != null)
 {
-        <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px">
         <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
+            <div class="modal-content" style="direction:rtl;text-align:right;">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">وضعیت پیام</h4>
@@ -151,11 +1093,9 @@
 
 @if (TempData["Success"] != null)
 {
-        <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px">
         <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
+            <div class="modal-content" style="direction:rtl;text-align:right;">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">وضعیت پیام</h4>
@@ -179,6 +1119,3 @@
         });
     </script>
 }
-
-
-

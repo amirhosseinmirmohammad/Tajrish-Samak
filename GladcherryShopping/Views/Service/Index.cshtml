@@ -1,369 +1,2119 @@
 ﻿@model Service
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = Model.Title + " | کلینیک شنوایی و سمعک شکوه تجریش";
-}
-@{
-    GladcherryShopping.Models.ApplicationDbContext db = new GladcherryShopping.Models.ApplicationDbContext();
-}
-@using System.Data.Entity;
+@using System;
 @using System.Linq;
+@using System.Web;
 @using System.Data.Entity;
 @using DataLayer.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    GladcherryShopping.Models.ApplicationDbContext db = new GladcherryShopping.Models.ApplicationDbContext();
+
+    var gpCacheVersion = "20260603-tajrish-v45-service-detail-newsletter-msg-spacing";
+    var gpBaseUrl = "https://tajrish-samak.ir";
+    var gpCanonicalUrl = gpBaseUrl + Request.Path;
+    var gpTitle = Model != null ? Model.Title : "خدمات شنوایی";
+    var gpMetaDesc = !string.IsNullOrWhiteSpace(Model.MetaDesc)
+        ? Model.MetaDesc
+        : "خدمات تخصصی شنوایی، ارزیابی شنوایی، تجویز و تنظیم سمعک در کلینیک شنوایی و سمعک شکوه تجریش.";
+    var gpMetaKey = !string.IsNullOrWhiteSpace(Model.MetaKey)
+        ? Model.MetaKey
+        : "خدمات شنوایی، تجویز سمعک، تنظیم سمعک، تست شنوایی، کلینیک شنوایی تجریش";
+
+    var gpImageItem = Model.Images != null
+        ? Model.Images
+            .Where(current =>
+                current.Extension.Contains("jpeg") ||
+                current.Extension.Contains("gif") ||
+                current.Extension.Contains("png") ||
+                current.Extension.Contains("jpg") ||
+                current.Extension.Contains("webp"))
+            .FirstOrDefault()
+        : null;
+
+    var gpVideoItem = Model.Images != null
+        ? Model.Images
+            .Where(current =>
+                current.Extension.Contains("mp4") ||
+                current.Extension.Contains("mpeg") ||
+                current.Extension.Contains("wmv"))
+            .FirstOrDefault()
+        : null;
+
+    var gpImageUrl = gpImageItem != null
+        ? gpBaseUrl + gpImageItem.FullPath
+        : gpBaseUrl + "/images/logo_purple.webp";
+
+    var gpRelatedServices = db.Services
+        .AsNoTracking()
+        .Include(current => current.Images)
+        .Where(current =>
+            current.IsVisible == true &&
+            current.Id != Model.Id &&
+            current.CategoryId == Model.CategoryId &&
+            current.Images.Count() > 0)
+        .OrderByDescending(current => current.Survey)
+        .Take(4)
+        .ToList();
+
+    ViewBag.Title = gpTitle + " | کلینیک شنوایی و سمعک شکوه تجریش";
+}
+
 @section Metas {
-    <meta name="description" content="@Model.MetaDesc">
-    <link rel="canonical" href="@string.Format("{0}{1}", "http://tajrish-samak.ir", Request.Path)">
-    <meta name="Keywords" content="@Model.MetaKey">
-    <meta property="og:title" content="کلینیک شنوایی و سمعک شکوه تجریش | @Model.Title" />
-    <meta name="twitter:description" content="@Model.MetaDesc" />
-    @if (Model.Images.Count() > 0)
-    {
-        <meta property="og:image" content="@string.Format("{0}{1}", "http://tajrish-samak.ir", Model.Images.FirstOrDefault().FullPath)" />
-        <meta name="twitter:image" content="@string.Format("{0}{1}", "http://tajrish-samak.ir", Model.Images.FirstOrDefault().FullPath)" />
-    }
-    else
-    {
-        <meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
-        <meta name="twitter:image" content="http://tajrish-samak.ir/images/logo_purple.png">
-    }
-    <meta name="twitter:label1" content="زمان خواندن" />
-    <meta name="twitter:data1" content="5 دقیقه" />
-    <meta property="article:tag" content="@Model.Title" />
-    <meta property="article:published_time" content="@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)Model.CreateDate,true,true)" />
-    <meta property="article:section" content="@Model.Category.PersianName" />
-    <meta property="og:url" content="@Request.Url.AbsoluteUri" />
-    <meta name="twitter:title" content="@Model.Title" />
+    <meta name="description" content="@gpMetaDesc" />
+    <link rel="canonical" href="@gpCanonicalUrl" />
+    <meta name="Keywords" content="@gpMetaKey" />
+
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:image" content="@gpImageUrl" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="@gpCanonicalUrl" />
+    <meta property="og:description" content="@gpMetaDesc" />
     <meta property="og:site_name" content="کلینیک شنوایی و سمعک شکوه تجریش" />
     <meta property="og:locale" content="fa_IR" />
-    <meta property="og:type" content="article" />
+
+    <meta name="twitter:title" content="@ViewBag.Title" />
+    <meta name="twitter:image" content="@gpImageUrl" />
+    <meta name="twitter:description" content="@gpMetaDesc" />
+    <meta name="twitter:label1" content="زمان خواندن" />
+    <meta name="twitter:data1" content="۵ دقیقه" />
+
+    <meta property="article:tag" content="@gpTitle" />
+    @if (Model.CreateDate != null)
+    {
+        <meta property="article:published_time" content="@Model.CreateDate.Value.ToString("yyyy-MM-dd")" />
+    }
+    @if (Model.Category != null)
+    {
+        <meta property="article:section" content="@Model.Category.PersianName" />
+    }
 }
 
 @section Styles{
-    @{
-        var url = "https://tajrish-samak.ir";
-        var body = Html.Raw(Model.Body);
-        var body2 = Html.Raw(Model.Body);
-        <link href="~/css/blog.css?v=1.0" rel="stylesheet" />
-    }
-    @if (Model.Images.Count() > 0)
-    {
-        <script type="application/ld+json">
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "BreadcrumbList",
+          "itemListElement": [
             {
-            "@@context": "http://schema.org",
-            "author": {
-            "@@type": "Person",
-            "name": "کلینیک شنوایی و سمعک شکوه تجریش"
+              "@@type": "ListItem",
+              "position": 1,
+              "name": "صفحه اصلی",
+              "item": "https://tajrish-samak.ir/"
             },
-            "@@type": "BlogPosting",
-            "mainEntityOfPage":"/blog/@Model.Id/@Model.SefUrl",
-            "headline": "@Model.Title",
-            "about": "@Model.Title",
-            "alternativeHeadline": "@Model.Title.ToString()",
-            "image": "@url@Model.Images.FirstOrDefault().FullPath",
-            "award": "Best article ever written",
-            "editor": "کلینیک شنوایی و سمعک شکوه تجریش",
-            "keywords": "@Model.MetaKey",
-            "publisher": {
-            "@@type": "organization",
-            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-            "logo": {
-            "@@type": "ImageObject",
-            "url": "http://tajrish-samak.ir/images/logo_purple.png"
-            }
-            },
-            "inLanguage":"fa-IR",
-            "wordcount": "@Model.Body.Count()",
-            "genre":"@Model.Category.PersianName",
-            "url": "@Request.Url.AbsoluteUri",
-            "datePublished": "@Model.CreateDate.Value.Date",
-            "dateCreated": "@Model.CreateDate.Value.Date",
-            "dateModified": "@Model.CreateDate.Value.Date",
-            "description": "@Model.Title.ToString()",
-            "articleBody": "@Model.Title"
-            }
-        </script>
-    }
-    else
-    {
-        <script type="application/ld+json">
             {
-            "@@context": "http://schema.org",
-            "author": {
-            "@@type": "Person",
-            "name": "کلینیک شنوایی و سمعک شکوه تجریش"
+              "@@type": "ListItem",
+              "position": 2,
+              "name": "خدمات شنوایی",
+              "item": "https://tajrish-samak.ir/Home/Services/@Model.CategoryId"
             },
-            "@@type": "BlogPosting",
-            "mainEntityOfPage":"/blog/@Model.Id/@Model.SefUrl",
-            "headline": "@Model.Title",
-            "about": "@Model.Title",
-            "alternativeHeadline": "@Model.Title.ToString()",
-            "image": "http://tajrish-samak.ir/images/logo_purple.png",
-            "award": "Best article ever written",
-            "editor": "کلینیک شنوایی و سمعک شکوه تجریش",
-            "keywords": "@Model.MetaKey",
-            "publisher": {
-            "@@type": "organization",
-            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-            "logo": {
-            "@@type": "ImageObject",
-            "url": "http://tajrish-samak.ir/images/logo_purple.png"
+            {
+              "@@type": "ListItem",
+              "position": 3,
+              "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpTitle))",
+              "item": "@gpCanonicalUrl"
             }
-            },
-            "inLanguage":"fa-IR",
-            "wordcount": "@Model.Body.Count()",
-            "genre":"@Model.Category.PersianName",
-            "datePublished": "@Model.CreateDate.Value.Date",
-            "dateCreated": "@Model.CreateDate.Value.Date",
-            "dateModified": "@Model.CreateDate.Value.Date",
-            "description": "@Model.Title.ToString()",
-            "articleBody": "@Model.Title"
-            }
-        </script>
-    }
+          ]
+        }
+    </script>
 
-    @if (Model.Images.Count() > 0)
-    {
-        <script type="application/ld+json">
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "Service",
+          "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpTitle))",
+          "description": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpMetaDesc))",
+          "image": "@gpImageUrl",
+          "url": "@gpCanonicalUrl",
+          "provider": {
+            "@@type": "MedicalBusiness",
+            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+            "url": "https://tajrish-samak.ir/",
+            "telephone": "+982122735588"
+          },
+          "areaServed": {
+            "@@type": "City",
+            "name": "تهران"
+          },
+          "serviceType": "خدمات شنوایی و سمعک"
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "Article",
+          "headline": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpTitle))",
+          "description": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpMetaDesc))",
+          "image": "@gpImageUrl",
+          "author": {
+            "@@type": "Organization",
+            "name": "کلینیک شنوایی و سمعک شکوه تجریش"
+          },
+          "publisher": {
+            "@@type": "Organization",
+            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+            "logo": {
+              "@@type": "ImageObject",
+              "url": "https://tajrish-samak.ir/images/logo_purple.webp"
+            }
+          },
+          "mainEntityOfPage": "@gpCanonicalUrl",
+          "inLanguage": "fa-IR"
+          @if (Model.CreateDate != null)
+          {
+              <text>,
+              "datePublished": "@Model.CreateDate.Value.ToString("yyyy-MM-dd")",
+              "dateModified": "@Model.CreateDate.Value.ToString("yyyy-MM-dd")"</text>
+          }
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "FAQPage",
+          "mainEntity": [
             {
-            "@@context": "http://schema.org",
-            "@@type": "BreadcrumbList",
-            "itemListElement": [{
-            "@@type": "ListItem",
-            "position": 1,
-            "item": {
-            "@@id": "http://tajrish-samak.ir",
-            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-            "image": "http://tajrish-samak.ir/images/logo_purple.png"
-            }
-            },{
-            "@@type": "ListItem",
-            "position": 2,
-            "item": {
-            "@@id": "@Request.Url.AbsoluteUri",
-            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-            "image": "@url@Model.Images.FirstOrDefault().FullPath"
-            }
-            }]
-            }
-        </script>
-    }
-    else
-    {
-        <script type="application/ld+json">
+              "@@type": "Question",
+              "name": "برای استفاده از این خدمت از کجا شروع کنم؟",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "برای شروع، بهتر است وضعیت شنوایی بررسی شود و سپس بر اساس نتیجه ارزیابی، مشاوره تخصصی و مسیر مناسب انتخاب شود."
+              }
+            },
             {
-            "@@context": "http://schema.org",
-            "@@type": "BreadcrumbList",
-            "itemListElement": [{
-            "@@type": "ListItem",
-            "position": 1,
-            "item": {
-            "@@id": "http://tajrish-samak.ir",
-            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-            "image": "http://tajrish-samak.ir/images/logo_purple.png"
+              "@@type": "Question",
+              "name": "آیا می‌توان این خدمت را برای بررسی بعدی نگه داشت؟",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "بله، می‌توانید این خدمت را به علاقه‌مندی اضافه کنید تا هنگام تماس یا مراجعه، سریع‌تر درباره آن مشورت کنید."
+              }
             }
-            },{
-            "@@type": "ListItem",
-            "position": 2,
-            "item": {
-            "@@id": "@Request.Url.AbsoluteUri",
-            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-            "image": "http://tajrish-samak.ir/images/logo_purple.png"
+          ]
+        }
+    </script>
+
+    <style id="gp-v28-service-detail-save-seo">
+        :root {
+            --gp-v28-purple: #4b1684;
+            --gp-v28-violet: #920ab6;
+            --gp-v28-pink: #e10b79;
+            --gp-v28-cyan: #0ba6b8;
+            --gp-v28-lime: #d8f512;
+            --gp-v28-heart: #e10b45;
+            --gp-v28-ink: #20142d;
+            --gp-v28-muted: rgba(32,20,45,.68);
+            --gp-v28-card: rgba(255,255,255,.92);
+            --gp-v28-border: rgba(75,22,132,.10);
+            --gp-v28-shadow: 0 24px 60px rgba(74,18,107,.10);
+        }
+
+        .gp-service-detail-page {
+            direction: rtl;
+            overflow: hidden;
+        }
+
+        .gp-service-detail-hero {
+            position: relative;
+            margin: 22px auto 28px;
+            padding: clamp(28px, 4vw, 56px);
+            border-radius: 42px;
+            background: radial-gradient(circle at 14% 10%, rgba(216,245,18,.25), transparent 24%), radial-gradient(circle at 88% 24%, rgba(255,255,255,.15), transparent 22%), linear-gradient(135deg, #4b1684 0%, #920ab6 54%, #e10b79 100%);
+            color: #fff;
+            box-shadow: 0 32px 80px rgba(74,18,107,.20);
+            isolation: isolate;
+            overflow: hidden;
+        }
+
+            .gp-service-detail-hero::before,
+            .gp-service-detail-hero::after {
+                content: "";
+                position: absolute;
+                border-radius: 999px;
+                pointer-events: none;
+                z-index: -1;
             }
-            }]
+
+            .gp-service-detail-hero::before {
+                width: 260px;
+                height: 260px;
+                left: -92px;
+                top: -88px;
+                background: rgba(255,255,255,.13);
+                animation: gpV28Blob 10s ease-in-out infinite alternate;
             }
-        </script>
-    }
+
+            .gp-service-detail-hero::after {
+                width: 330px;
+                height: 330px;
+                right: -128px;
+                bottom: -170px;
+                background: rgba(11,166,184,.22);
+                animation: gpV28Blob 12s ease-in-out infinite alternate-reverse;
+            }
+
+        @@keyframes gpV28Blob {
+            to {
+                transform: translate3d(24px, 18px, 0) scale(1.06);
+            }
+        }
+
+        .gp-service-detail-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(250px, .42fr);
+            gap: clamp(20px, 4vw, 46px);
+            align-items: center;
+        }
+
+        .gp-service-detail-kicker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            color: #fff !important;
+            font-weight: 950;
+            backdrop-filter: blur(14px);
+        }
+
+        .gp-service-detail-hero h1 {
+            margin: 16px 0 12px;
+            color: #fff !important;
+            font-size: clamp(30px, 4.6vw, 60px);
+            font-weight: 1000;
+            line-height: 1.36 !important;
+            letter-spacing: -.02em;
+        }
+
+        .gp-service-detail-hero p {
+            max-width: 780px;
+            margin: 0;
+            color: rgba(255,255,255,.90) !important;
+            font-size: clamp(14px, 1.2vw, 18px);
+            font-weight: 850;
+            line-height: 2.1;
+        }
+
+        .gp-service-detail-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+            .gp-service-detail-actions a,
+            .gp-service-detail-actions button {
+                min-height: 48px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 0 18px;
+                border-radius: 999px;
+                text-decoration: none !important;
+                font-weight: 950;
+                border: 0;
+                cursor: pointer;
+            }
+
+                .gp-service-detail-actions a:first-child {
+                    background: #fff;
+                    color: #4b1684 !important;
+                    box-shadow: 0 18px 38px rgba(0,0,0,.14);
+                }
+
+                .gp-service-detail-actions a:nth-child(2),
+                .gp-service-detail-fav {
+                    background: rgba(255,255,255,.13);
+                    border: 1px solid rgba(255,255,255,.24) !important;
+                    color: #fff !important;
+                }
+
+                    .gp-service-detail-fav .gp-heart-icon {
+                        color: #ff3f72 !important;
+                    }
+
+        .gp-service-detail-stats {
+            display: grid;
+            gap: 12px;
+        }
+
+        .gp-service-detail-stat {
+            min-height: 92px;
+            padding: 18px;
+            border-radius: 28px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            backdrop-filter: blur(14px);
+        }
+
+            .gp-service-detail-stat strong {
+                display: block;
+                color: #fff !important;
+                font-size: 28px;
+                font-weight: 1000;
+                line-height: 1;
+            }
+
+            .gp-service-detail-stat span {
+                display: block;
+                margin-top: 8px;
+                color: rgba(255,255,255,.82) !important;
+                font-weight: 850;
+            }
+
+        .gp-service-detail-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+            gap: 22px;
+            align-items: start;
+            margin-bottom: 40px;
+        }
+
+        .gp-service-main-card,
+        .gp-service-side-card {
+            border-radius: 34px;
+            background: var(--gp-v28-card);
+            border: 1px solid var(--gp-v28-border);
+            box-shadow: var(--gp-v28-shadow);
+            backdrop-filter: blur(18px);
+            overflow: hidden;
+        }
+
+        .gp-service-main-media {
+            position: relative;
+            background: #fff;
+        }
+
+            .gp-service-main-media img,
+            .gp-service-main-media video {
+                display: block;
+                width: 100%;
+                max-height: 480px;
+                object-fit: cover;
+                background: #fff;
+            }
+
+        .gp-service-main-body {
+            padding: clamp(18px, 2.4vw, 34px);
+        }
+
+        .gp-service-info-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-bottom: 18px;
+        }
+
+            .gp-service-info-strip span {
+                min-height: 34px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                padding: 0 12px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.08);
+                color: #6420a0 !important;
+                font-size: 12px;
+                font-weight: 900;
+            }
+
+        .gp-service-content {
+            color: var(--gp-v28-ink) !important;
+            font-size: 16px;
+            font-weight: 650;
+            line-height: 2.25;
+        }
+
+            .gp-service-content * {
+                max-width: 100%;
+            }
+
+            .gp-service-content p,
+            .gp-service-content li {
+                color: var(--gp-v28-muted) !important;
+                line-height: 2.25 !important;
+                font-size: 16px !important;
+            }
+
+            .gp-service-content h2,
+            .gp-service-content h3,
+            .gp-service-content h4 {
+                color: var(--gp-v28-ink) !important;
+                font-weight: 1000 !important;
+                line-height: 1.7 !important;
+                margin-top: 28px !important;
+            }
+
+            .gp-service-content img {
+                border-radius: 24px;
+                box-shadow: 0 16px 38px rgba(74,18,107,.10);
+                height: auto !important;
+            }
+
+        .gp-service-side {
+            position: sticky;
+            top: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .gp-service-side-card {
+            padding: 18px;
+        }
+
+            .gp-service-side-card h3 {
+                margin: 0 0 12px;
+                color: var(--gp-v28-ink) !important;
+                font-size: 18px;
+                font-weight: 1000;
+                line-height: 1.7 !important;
+            }
+
+            .gp-service-side-card p {
+                margin: 0 0 14px;
+                color: var(--gp-v28-muted) !important;
+                font-weight: 850;
+                line-height: 2;
+            }
+
+        .gp-newsletter-form {
+            display: grid;
+            gap: 9px;
+        }
+
+            .gp-newsletter-form input[type="email"] {
+                height: 48px;
+                border-radius: 16px;
+                border: 1px solid rgba(75,22,132,.12);
+                background: #fff;
+                padding: 0 13px;
+                color: var(--gp-v28-ink);
+                font-weight: 850;
+                outline: 0;
+            }
+
+            .gp-newsletter-form input[type="submit"],
+            .gp-side-cta {
+                min-height: 48px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 16px;
+                border: 0;
+                background: linear-gradient(135deg, var(--gp-v28-purple), var(--gp-v28-violet));
+                color: #fff !important;
+                font-weight: 1000;
+                text-decoration: none !important;
+                box-shadow: 0 16px 32px rgba(146,10,182,.17);
+            }
+
+        .gp-related-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .gp-related-service {
+            display: grid;
+            grid-template-columns: 72px minmax(0, 1fr);
+            gap: 10px;
+            align-items: center;
+            padding: 9px;
+            border-radius: 20px;
+            background: rgba(255,255,255,.65);
+            border: 1px solid rgba(75,22,132,.08);
+            text-decoration: none !important;
+            transition: transform .18s ease, background .18s ease;
+        }
+
+            .gp-related-service:hover {
+                transform: translateY(-2px);
+                background: #fff;
+            }
+
+            .gp-related-service img {
+                width: 72px;
+                height: 72px;
+                border-radius: 17px;
+                object-fit: cover;
+                background: #fff;
+            }
+
+            .gp-related-service strong {
+                display: block;
+                color: var(--gp-v28-ink) !important;
+                font-size: 13px;
+                font-weight: 950;
+                line-height: 1.8;
+            }
+
+            .gp-related-service span {
+                display: block;
+                color: var(--gp-v28-muted) !important;
+                font-size: 12px;
+                font-weight: 850;
+                margin-top: 3px;
+            }
+
+        .gp-social-links {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+            .gp-social-links a {
+                min-height: 42px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 15px;
+                text-decoration: none !important;
+                color: #fff !important;
+                font-weight: 950;
+            }
+
+                .gp-social-links a:nth-child(1) {
+                    background: #25D366;
+                }
+
+                .gp-social-links a:nth-child(2) {
+                    background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+                }
+
+                .gp-social-links a:nth-child(3) {
+                    background: #229ED9;
+                }
+
+        .gp-service-toast {
+            position: fixed;
+            right: 18px;
+            bottom: 92px;
+            z-index: 9999;
+            min-height: 48px;
+            max-width: min(330px, calc(100vw - 36px));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 18px;
+            border-radius: 999px;
+            background: rgba(29,20,48,.92);
+            color: #fff;
+            font-weight: 950;
+            box-shadow: 0 18px 42px rgba(0,0,0,.22);
+            transform: translateY(24px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform .22s ease, opacity .22s ease;
+        }
+
+            .gp-service-toast.is-visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        .gp-heart-icon {
+            color: var(--gp-v28-heart) !important;
+            font-family: Tahoma, Arial, sans-serif !important;
+            font-size: 18px !important;
+            line-height: 1 !important;
+            text-shadow: 0 6px 16px rgba(225,11,69,.20);
+        }
+
+
+
+
+
+
+        /* V45: service newsletter ajax message spacing fix */
+        .gp-newsletter-message-v45 {
+            display: block !important;
+            width: 100% !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            border-radius: 16px !important;
+            background: transparent !important;
+            color: #6420a0 !important;
+            font-size: 12px !important;
+            font-weight: 950 !important;
+            line-height: 1.9 !important;
+            text-align: center !important;
+            white-space: normal !important;
+            overflow: hidden !important;
+            transition: margin .18s ease, padding .18s ease, background .18s ease, border-color .18s ease;
+        }
+
+            .gp-newsletter-message-v45.is-visible {
+                min-height: 32px !important;
+                margin: 12px 0 0 !important;
+                padding: 8px 12px !important;
+                border: 1px solid rgba(146,10,182,.10) !important;
+                background: rgba(146,10,182,.065) !important;
+            }
+
+            .gp-newsletter-message-v45 #gpNewsMsg {
+                display: block !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                color: inherit !important;
+                font-size: inherit !important;
+                font-weight: inherit !important;
+                line-height: inherit !important;
+                text-align: center !important;
+            }
+
+        .gp-newsletter-form-v31 + .gp-newsletter-message-wrap-v45 {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        html.gp-dark-mode .gp-newsletter-message-v45.is-visible {
+            background: rgba(255,255,255,.075) !important;
+            border-color: rgba(255,255,255,.10) !important;
+            color: rgba(246,247,251,.88) !important;
+        }
+
+
+        /* V44: Compact long service content UX */
+        .gp-service-reading-progress {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 4px;
+            z-index: 2147482900;
+            background: linear-gradient(90deg, #d8f512, #920ab6, #e10b79);
+            box-shadow: 0 6px 18px rgba(146,10,182,.22);
+            transition: width .08s linear;
+        }
+
+        .gp-service-main-card {
+            position: relative;
+        }
+
+        .gp-service-content-wrap {
+            position: relative;
+        }
+
+        .gp-service-content {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+            .gp-service-content.is-collapsed {
+                max-height: 1350px;
+                overflow: hidden;
+            }
+
+        .gp-service-content-wrap.is-collapsed::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            height: 260px;
+            pointer-events: none;
+            background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.97) 74%);
+            z-index: 4;
+        }
+
+        .gp-article-read-more-box {
+            display: none;
+            position: relative;
+            z-index: 5;
+            margin: -96px auto 8px;
+            width: min(520px, 100%);
+            padding: 18px;
+            border-radius: 28px;
+            background: rgba(255,255,255,.82);
+            border: 1px solid rgba(75,22,132,.10);
+            box-shadow: 0 22px 60px rgba(74,18,107,.15);
+            backdrop-filter: blur(16px);
+            text-align: center;
+        }
+
+            .gp-article-read-more-box.is-visible {
+                display: block;
+            }
+
+            .gp-article-read-more-box strong {
+                display: block;
+                color: var(--gp-v28-ink) !important;
+                font-size: 16px;
+                font-weight: 1000;
+                line-height: 1.8;
+                margin-bottom: 6px;
+            }
+
+            .gp-article-read-more-box span {
+                display: block;
+                color: var(--gp-v28-muted) !important;
+                font-size: 13px;
+                font-weight: 850;
+                line-height: 2;
+                margin-bottom: 12px;
+            }
+
+        .gp-article-read-more-btn {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 220px;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--gp-v28-purple), var(--gp-v28-violet), var(--gp-v28-pink));
+            color: #fff !important;
+            font-weight: 1000;
+            box-shadow: 0 16px 34px rgba(146,10,182,.22);
+            cursor: pointer;
+        }
+
+        .gp-service-reading-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin: 0 auto 22px;
+            max-width: 860px;
+            padding: 12px;
+            border-radius: 24px;
+            background: rgba(146,10,182,.055);
+            border: 1px solid rgba(75,22,132,.08);
+        }
+
+        .gp-service-tool-btn {
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 13px;
+            border: 0;
+            border-radius: 999px;
+            background: #fff;
+            color: #6420a0 !important;
+            font-size: 12px;
+            font-weight: 1000;
+            box-shadow: 0 12px 28px rgba(74,18,107,.07);
+            cursor: pointer;
+            text-decoration: none !important;
+        }
+
+        .gp-service-content > p {
+            max-width: 760px;
+            margin-right: auto !important;
+            margin-left: auto !important;
+            text-align: justify !important;
+        }
+
+        .gp-service-content > h2,
+        .gp-service-content > h3 {
+            max-width: 820px;
+            margin-right: auto !important;
+            margin-left: auto !important;
+            padding: 16px 20px !important;
+            border-radius: 26px;
+            background: radial-gradient(circle at 12% 16%, rgba(216,245,18,.16), transparent 30%), linear-gradient(135deg, rgba(146,10,182,.085), rgba(255,255,255,.72));
+            border: 1px solid rgba(75,22,132,.08);
+            text-align: center !important;
+        }
+
+        .gp-service-content > h2 {
+            font-size: clamp(21px, 2.1vw, 30px) !important;
+        }
+
+        .gp-service-content > h3 {
+            font-size: clamp(18px, 1.7vw, 24px) !important;
+        }
+
+            .gp-service-content > h2::before,
+            .gp-service-content > h3::before {
+                content: "";
+                width: 36px;
+                height: 5px;
+                display: block;
+                margin: 0 auto 10px;
+                border-radius: 999px;
+                background: linear-gradient(90deg, #d8f512, #920ab6);
+            }
+
+        .gp-service-content > ul,
+        .gp-service-content > ol {
+            max-width: 760px;
+            margin-right: auto !important;
+            margin-left: auto !important;
+            padding: 18px 42px 18px 18px !important;
+            border-radius: 24px;
+            background: rgba(146,10,182,.045);
+            border: 1px solid rgba(75,22,132,.07);
+        }
+
+        .gp-service-toc-card {
+            display: none;
+        }
+
+            .gp-service-toc-card.is-visible {
+                display: block;
+            }
+
+        .gp-service-toc-list {
+            display: grid;
+            gap: 7px;
+            max-height: 310px;
+            overflow: auto;
+            padding-left: 4px;
+        }
+
+            .gp-service-toc-list a {
+                display: block;
+                padding: 10px 12px;
+                border-radius: 16px;
+                background: rgba(255,255,255,.66);
+                border: 1px solid rgba(75,22,132,.08);
+                color: var(--gp-v28-ink) !important;
+                text-decoration: none !important;
+                font-size: 12px;
+                font-weight: 900;
+                line-height: 1.8;
+                transition: transform .18s ease, background .18s ease;
+            }
+
+                .gp-service-toc-list a:hover {
+                    transform: translateY(-2px);
+                    background: #fff;
+                }
+
+        .gp-back-to-top {
+            position: fixed;
+            left: 18px;
+            bottom: 92px;
+            z-index: 9998;
+            width: 48px;
+            height: 48px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--gp-v28-purple), var(--gp-v28-violet));
+            color: #fff !important;
+            font-size: 20px;
+            font-weight: 1000;
+            box-shadow: 0 18px 42px rgba(74,18,107,.22);
+            cursor: pointer;
+        }
+
+            .gp-back-to-top.is-visible {
+                display: inline-flex;
+            }
+
+        html.gp-dark-mode .gp-service-content-wrap.is-collapsed::after {
+            background: linear-gradient(180deg, rgba(24,24,40,0), rgba(24,24,40,.98) 74%);
+        }
+
+        html.gp-dark-mode .gp-article-read-more-box {
+            background: rgba(24,24,40,.86);
+            border-color: rgba(255,255,255,.10);
+            box-shadow: 0 22px 60px rgba(0,0,0,.25);
+        }
+
+        html.gp-dark-mode .gp-service-reading-tools {
+            background: rgba(255,255,255,.055);
+            border-color: rgba(255,255,255,.10);
+        }
+
+        html.gp-dark-mode .gp-service-tool-btn,
+        html.gp-dark-mode .gp-service-toc-list a {
+            background: rgba(255,255,255,.075);
+            border-color: rgba(255,255,255,.10);
+            color: #fff !important;
+        }
+
+        html.gp-dark-mode .gp-service-content > h2,
+        html.gp-dark-mode .gp-service-content > h3,
+        html.gp-dark-mode .gp-service-content > ul,
+        html.gp-dark-mode .gp-service-content > ol {
+            background: rgba(255,255,255,.055);
+            border-color: rgba(255,255,255,.10);
+        }
+
+        @@media(max-width: 1100px) {
+            .gp-service-toc-card.is-visible {
+                display: none;
+            }
+        }
+
+        @@media(max-width: 768px) {
+            .gp-service-content.is-collapsed {
+                max-height: 1050px;
+            }
+
+            .gp-service-reading-tools {
+                margin-bottom: 16px;
+                padding: 10px;
+            }
+
+            .gp-service-tool-btn {
+                width: 100%;
+            }
+
+            .gp-service-content > p {
+                text-align: right !important;
+            }
+
+            .gp-service-content > h2,
+            .gp-service-content > h3 {
+                padding: 14px 14px !important;
+                border-radius: 22px;
+            }
+
+            .gp-article-read-more-box {
+                margin-top: -82px;
+                border-radius: 24px;
+            }
+
+            .gp-back-to-top {
+                left: 14px;
+                bottom: 86px;
+            }
+        }
+
+
+        /* V31: final visible contact icon + real newsletter submit button */
+        .gp-call-clinic-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 9px !important;
+            width: 100% !important;
+            min-height: 54px !important;
+            padding: 0 18px !important;
+            border-radius: 20px !important;
+        }
+
+            .gp-call-clinic-btn .gp-call-icon {
+                width: 31px !important;
+                height: 31px !important;
+                min-width: 31px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border-radius: 12px !important;
+                background: rgba(255,255,255,.18) !important;
+                color: #ffffff !important;
+                font-family: Tahoma, Arial, sans-serif !important;
+                font-size: 17px !important;
+                line-height: 1 !important;
+                margin: 0 !important;
+            }
+
+            .gp-call-clinic-btn strong {
+                color: #ffffff !important;
+                font-size: 15px !important;
+                font-weight: 1000 !important;
+                line-height: 1 !important;
+            }
+
+        .gp-newsletter-form-v31 {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) 78px !important;
+            gap: 8px !important;
+            align-items: center !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            overflow: visible !important;
+        }
+
+            .gp-newsletter-form-v31 .gp-news-email-v31 {
+                width: 100% !important;
+                min-width: 0 !important;
+                height: 52px !important;
+                display: block !important;
+                border-radius: 18px !important;
+                border: 1px solid rgba(75,22,132,.12) !important;
+                background: #ffffff !important;
+                color: var(--gp-v28-ink) !important;
+                font-size: 14px !important;
+                font-weight: 850 !important;
+                line-height: 52px !important;
+                padding: 0 14px !important;
+                margin: 0 !important;
+                outline: 0 !important;
+                box-shadow: inset 0 1px 0 rgba(255,255,255,.70) !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                appearance: none !important;
+                -webkit-appearance: none !important;
+            }
+
+        .gp-news-submit-v31 {
+            width: 78px !important;
+            min-width: 78px !important;
+            height: 52px !important;
+            min-height: 52px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: 0 !important;
+            outline: 0 !important;
+            border-radius: 18px !important;
+            background: linear-gradient(135deg, #4b1684, #920ab6, #e10b79) !important;
+            color: #ffffff !important;
+            font-family: inherit !important;
+            font-size: 14px !important;
+            font-weight: 1000 !important;
+            line-height: 1 !important;
+            text-align: center !important;
+            box-shadow: 0 14px 32px rgba(146,10,182,.22) !important;
+            cursor: pointer !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            overflow: visible !important;
+            text-indent: 0 !important;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            transform: translateZ(0);
+        }
+
+            .gp-news-submit-v31:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 22px 48px rgba(146,10,182,.28) !important;
+            }
+
+            .gp-news-submit-v31:disabled {
+                opacity: .72 !important;
+                cursor: wait !important;
+                transform: none !important;
+            }
+
+        .gp-news-msg-v31,
+        .gp-news-msg-v31 #gpNewsMsg {
+            display: block !important;
+            min-height: 24px !important;
+            margin-top: 8px !important;
+            color: #7b16a4 !important;
+            font-size: 12px !important;
+            font-weight: 900 !important;
+            line-height: 1.8 !important;
+        }
+
+        html.gp-dark-mode .gp-newsletter-form-v31 .gp-news-email-v31 {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.12) !important;
+            color: #ffffff !important;
+        }
+
+            html.gp-dark-mode .gp-newsletter-form-v31 .gp-news-email-v31::placeholder {
+                color: rgba(255,255,255,.55) !important;
+            }
+
+        html.gp-dark-mode .gp-news-msg-v31,
+        html.gp-dark-mode .gp-news-msg-v31 #gpNewsMsg {
+            color: rgba(246,247,251,.82) !important;
+        }
+
+        @@media(max-width: 420px) {
+            .gp-newsletter-form-v31 {
+                grid-template-columns: 1fr !important;
+            }
+
+            .gp-news-submit-v31 {
+                width: 100% !important;
+                min-width: 100% !important;
+            }
+        }
+
+
+        /* V30: force newsletter button visible + contact text only */
+        .gp-call-clinic-btn {
+            justify-content: center !important;
+            min-height: 52px !important;
+            padding: 0 18px !important;
+        }
+
+            .gp-call-clinic-btn strong {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                color: #fff !important;
+                font-size: 15px !important;
+                font-weight: 1000 !important;
+                line-height: 1 !important;
+            }
+
+        .gp-newsletter-form-v30 {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+            width: 100% !important;
+            margin: 0 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        .gp-newsletter-input-wrap {
+            width: 100% !important;
+            min-height: 52px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 0 12px !important;
+            border-radius: 18px !important;
+            background: #fff !important;
+            border: 1px solid rgba(75,22,132,.12) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.6) !important;
+        }
+
+            .gp-newsletter-input-wrap > span {
+                width: 30px !important;
+                height: 30px !important;
+                min-width: 30px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border-radius: 11px !important;
+                background: rgba(146,10,182,.10) !important;
+                color: #7b16a4 !important;
+                line-height: 1 !important;
+            }
+
+            .gp-newsletter-input-wrap input#textnews {
+                flex: 1 1 auto !important;
+                width: 100% !important;
+                min-width: 0 !important;
+                height: 50px !important;
+                display: block !important;
+                border: 0 !important;
+                outline: 0 !important;
+                background: transparent !important;
+                color: var(--gp-v28-ink) !important;
+                font-weight: 850 !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+
+        #btntext.gp-newsletter-submit-v30 {
+            width: 100% !important;
+            min-height: 54px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: 0 !important;
+            outline: 0 !important;
+            border-radius: 20px !important;
+            background: linear-gradient(135deg, #0ba6b8, #4b1684, #920ab6) !important;
+            color: #ffffff !important;
+            font-size: 15px !important;
+            font-weight: 1000 !important;
+            line-height: 1 !important;
+            text-align: center !important;
+            box-shadow: 0 18px 42px rgba(11,166,184,.20) !important;
+            cursor: pointer !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            transform: translateZ(0);
+        }
+
+            #btntext.gp-newsletter-submit-v30:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 26px 58px rgba(11,166,184,.26) !important;
+            }
+
+        .gp-service-side-card .newsletter,
+        .gp-service-side-card #msg {
+            display: block !important;
+            color: #7b16a4 !important;
+            font-weight: 900 !important;
+            line-height: 1.8 !important;
+        }
+
+        html.gp-dark-mode .gp-newsletter-input-wrap {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.12) !important;
+        }
+
+            html.gp-dark-mode .gp-newsletter-input-wrap > span {
+                background: rgba(255,255,255,.10) !important;
+                color: #fff !important;
+            }
+
+            html.gp-dark-mode .gp-newsletter-input-wrap input#textnews {
+                color: #fff !important;
+            }
+
+                html.gp-dark-mode .gp-newsletter-input-wrap input#textnews::placeholder {
+                    color: rgba(255,255,255,.55) !important;
+                }
+
+        html.gp-dark-mode .gp-service-side-card .newsletter,
+        html.gp-dark-mode .gp-service-side-card #msg {
+            color: rgba(246,247,251,.82) !important;
+        }
+
+
+        /* V29: Better sidebar buttons + responsive content tables */
+        .gp-call-clinic-btn {
+            position: relative;
+            overflow: hidden;
+            gap: 9px !important;
+            min-height: 54px !important;
+            border-radius: 20px !important;
+            background: radial-gradient(circle at 12% 15%, rgba(216,245,18,.28), transparent 26%), linear-gradient(135deg, #4b1684, #920ab6, #e10b79) !important;
+            box-shadow: 0 18px 42px rgba(146,10,182,.24) !important;
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+
+            .gp-call-clinic-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 26px 58px rgba(146,10,182,.30) !important;
+            }
+
+            .gp-call-clinic-btn span {
+                width: 32px;
+                height: 32px;
+                min-width: 32px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 12px;
+                background: rgba(255,255,255,.18);
+                color: #fff !important;
+                line-height: 1;
+            }
+
+            .gp-call-clinic-btn strong {
+                color: #fff !important;
+                font-weight: 1000 !important;
+            }
+
+            .gp-call-clinic-btn::after {
+                content: "";
+                position: absolute;
+                inset: -60% auto -60% -35%;
+                width: 32%;
+                background: linear-gradient(105deg, transparent, rgba(255,255,255,.52), transparent);
+                transform: skewX(-18deg);
+                animation: gpV29BtnShine 4.6s ease-in-out infinite;
+            }
+
+        @@keyframes gpV29BtnShine {
+            0%, 58% {
+                transform: skewX(-18deg) translateX(0);
+                opacity: 0;
+            }
+
+            72% {
+                opacity: .9;
+            }
+
+            100% {
+                transform: skewX(-18deg) translateX(520%);
+                opacity: 0;
+            }
+        }
+
+        .gp-newsletter-form {
+            display: grid !important;
+            gap: 10px !important;
+        }
+
+        .gp-newsletter-submit {
+            width: 100% !important;
+            min-height: 52px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 9px !important;
+            border: 0 !important;
+            border-radius: 19px !important;
+            background: radial-gradient(circle at 15% 20%, rgba(216,245,18,.24), transparent 26%), linear-gradient(135deg, #0ba6b8, #4b1684, #920ab6) !important;
+            color: #fff !important;
+            font-weight: 1000 !important;
+            line-height: 1 !important;
+            box-shadow: 0 18px 42px rgba(11,166,184,.18) !important;
+            cursor: pointer !important;
+            transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+        }
+
+            .gp-newsletter-submit:hover {
+                transform: translateY(-3px);
+                filter: saturate(1.08);
+                box-shadow: 0 26px 58px rgba(11,166,184,.24) !important;
+            }
+
+            .gp-newsletter-submit span {
+                width: 30px;
+                height: 30px;
+                min-width: 30px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 11px;
+                background: rgba(255,255,255,.18);
+                color: #fff !important;
+            }
+
+        .gp-newsletter {
+            margin-top: 8px !important;
+        }
+
+        .gp-service-content .gp-table-scroll {
+            width: 100%;
+            max-width: 100%;
+            margin: 22px 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            border-radius: 24px;
+            border: 1px solid rgba(75,22,132,.10);
+            background: linear-gradient(90deg, rgba(255,255,255,1), rgba(255,255,255,0)) right center / 24px 100% no-repeat, linear-gradient(270deg, rgba(255,255,255,1), rgba(255,255,255,0)) left center / 24px 100% no-repeat, rgba(255,255,255,.72);
+            box-shadow: 0 18px 42px rgba(74,18,107,.09);
+            -webkit-overflow-scrolling: touch;
+        }
+
+            .gp-service-content .gp-table-scroll::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            .gp-service-content .gp-table-scroll::-webkit-scrollbar-thumb {
+                border-radius: 999px;
+                background: linear-gradient(90deg, #4b1684, #920ab6, #e10b79);
+            }
+
+        .gp-service-content table {
+            width: 100% !important;
+            min-width: 640px;
+            margin: 0 !important;
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            background: #fff !important;
+            direction: rtl !important;
+            overflow: hidden;
+        }
+
+            .gp-service-content table th,
+            .gp-service-content table td {
+                padding: 14px 16px !important;
+                border: 0 !important;
+                border-bottom: 1px solid rgba(75,22,132,.09) !important;
+                border-left: 1px solid rgba(75,22,132,.06) !important;
+                color: var(--gp-v28-ink) !important;
+                font-size: 14px !important;
+                font-weight: 800 !important;
+                line-height: 1.9 !important;
+                vertical-align: middle !important;
+                white-space: normal !important;
+            }
+
+            .gp-service-content table th,
+            .gp-service-content table thead td {
+                background: linear-gradient(135deg, rgba(75,22,132,.10), rgba(146,10,182,.08)) !important;
+                color: #4b1684 !important;
+                font-weight: 1000 !important;
+            }
+
+            .gp-service-content table tr:nth-child(even) td {
+                background: rgba(146,10,182,.035) !important;
+            }
+
+            .gp-service-content table tr:hover td {
+                background: rgba(216,245,18,.13) !important;
+            }
+
+        .gp-service-content blockquote {
+            position: relative;
+            margin: 24px 0 !important;
+            padding: 18px 22px !important;
+            border: 0 !important;
+            border-right: 5px solid #920ab6 !important;
+            border-radius: 24px !important;
+            background: linear-gradient(135deg, rgba(146,10,182,.08), rgba(225,11,121,.06)) !important;
+            color: var(--gp-v28-ink) !important;
+            font-weight: 850 !important;
+            line-height: 2.1 !important;
+        }
+
+        .gp-service-content ul,
+        .gp-service-content ol {
+            padding-right: 22px !important;
+            margin: 18px 0 !important;
+        }
+
+        .gp-service-content li {
+            margin-bottom: 8px !important;
+        }
+
+        .gp-service-content a {
+            color: #7b16a4 !important;
+            font-weight: 950 !important;
+            text-decoration: none !important;
+            border-bottom: 1px dashed rgba(146,10,182,.34);
+        }
+
+        .gp-service-content iframe,
+        .gp-service-content video {
+            width: 100% !important;
+            max-width: 100% !important;
+            border-radius: 24px !important;
+            overflow: hidden;
+        }
+
+        @@media(max-width: 768px) {
+            .gp-call-clinic-btn,
+            .gp-newsletter-submit {
+                min-height: 50px !important;
+                border-radius: 18px !important;
+            }
+
+            .gp-service-content .gp-table-scroll {
+                border-radius: 20px;
+                margin: 18px 0;
+            }
+
+            .gp-service-content table {
+                min-width: 560px;
+            }
+
+                .gp-service-content table th,
+                .gp-service-content table td {
+                    padding: 12px 13px !important;
+                    font-size: 13px !important;
+                }
+        }
+
+
+        html.gp-dark-mode .gp-service-detail-page {
+            --gp-v28-ink: #f7f7fb;
+            --gp-v28-muted: rgba(246,247,251,.72);
+            --gp-v28-card: rgba(24,24,40,.88);
+            --gp-v28-border: rgba(255,255,255,.10);
+            --gp-v28-shadow: 0 24px 60px rgba(0,0,0,.20);
+        }
+
+        html.gp-dark-mode .gp-service-main-card,
+        html.gp-dark-mode .gp-service-side-card {
+            background: rgba(24,24,40,.90) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-service-info-strip span {
+            background: rgba(255,255,255,.09) !important;
+            color: rgba(246,247,251,.88) !important;
+        }
+
+        html.gp-dark-mode .gp-related-service,
+        html.gp-dark-mode .gp-newsletter-form input[type="email"] {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.10) !important;
+            color: #fff !important;
+        }
+
+            html.gp-dark-mode .gp-related-service strong,
+            html.gp-dark-mode .gp-service-side-card h3,
+            html.gp-dark-mode .gp-service-content h2,
+            html.gp-dark-mode .gp-service-content h3,
+            html.gp-dark-mode .gp-service-content h4 {
+                color: #f7f7fb !important;
+            }
+
+            html.gp-dark-mode .gp-related-service span,
+            html.gp-dark-mode .gp-service-side-card p,
+            html.gp-dark-mode .gp-service-content p,
+            html.gp-dark-mode .gp-service-content li {
+                color: rgba(246,247,251,.72) !important;
+            }
+
+        html.gp-dark-mode .gp-heart-icon {
+            color: #ff4f7c !important;
+        }
+
+
+        html.gp-dark-mode .gp-service-content .gp-table-scroll {
+            background: linear-gradient(90deg, rgba(24,24,40,1), rgba(24,24,40,0)) right center / 24px 100% no-repeat, linear-gradient(270deg, rgba(24,24,40,1), rgba(24,24,40,0)) left center / 24px 100% no-repeat, rgba(255,255,255,.06) !important;
+            border-color: rgba(255,255,255,.10) !important;
+            box-shadow: 0 18px 42px rgba(0,0,0,.20) !important;
+        }
+
+        html.gp-dark-mode .gp-service-content table {
+            background: rgba(24,24,40,.95) !important;
+        }
+
+            html.gp-dark-mode .gp-service-content table th,
+            html.gp-dark-mode .gp-service-content table td {
+                color: rgba(246,247,251,.86) !important;
+                border-bottom-color: rgba(255,255,255,.10) !important;
+                border-left-color: rgba(255,255,255,.08) !important;
+            }
+
+            html.gp-dark-mode .gp-service-content table th,
+            html.gp-dark-mode .gp-service-content table thead td {
+                background: rgba(255,255,255,.09) !important;
+                color: #fff !important;
+            }
+
+            html.gp-dark-mode .gp-service-content table tr:nth-child(even) td {
+                background: rgba(255,255,255,.035) !important;
+            }
+
+            html.gp-dark-mode .gp-service-content table tr:hover td {
+                background: rgba(216,245,18,.09) !important;
+            }
+
+        html.gp-dark-mode .gp-service-content blockquote {
+            background: rgba(255,255,255,.07) !important;
+            color: #f7f7fb !important;
+            border-right-color: #ff4f7c !important;
+        }
+
+        html.gp-dark-mode .gp-service-content a {
+            color: #ff9ac0 !important;
+            border-bottom-color: rgba(255,154,192,.35);
+        }
+
+        html.gp-dark-mode .gp-newsletter-submit,
+        html.gp-dark-mode .gp-call-clinic-btn {
+            box-shadow: 0 20px 50px rgba(0,0,0,.24) !important;
+        }
+
+
+        @@media(max-width: 1100px) {
+            .gp-service-detail-shell,
+            .gp-service-detail-hero-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-service-side {
+                position: relative;
+                top: auto;
+            }
+
+            .gp-service-detail-stats {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @@media(max-width: 768px) {
+            .gp-service-detail-hero {
+                border-radius: 30px;
+                padding: 26px 20px;
+                text-align: center;
+            }
+
+            .gp-service-detail-actions {
+                justify-content: center;
+            }
+
+            .gp-service-detail-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-service-main-card,
+            .gp-service-side-card {
+                border-radius: 28px;
+            }
+
+            .gp-service-main-body {
+                padding: 18px;
+            }
+
+            .gp-service-content p,
+            .gp-service-content li {
+                font-size: 14px !important;
+            }
+
+            .gp-service-toast {
+                left: 14px;
+                right: 14px;
+                bottom: 86px;
+            }
+
+            .gp-social-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 }
 
 @if (TempData["Error"] != null)
 {
     <div class="container text-center" style="direction:rtl !important;">
-        <div class="wrapper wrapper-content animated fadeIn">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="ibox float-e-margins">
-                        <div class="ibox-title">
-                            <div class="ibox-content">
-                                <div class="alert alert-danger">
-                                    @TempData["Error"]
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="alert alert-danger">@TempData["Error"]</div>
     </div>
 }
 
 @if (TempData["Success"] != null)
 {
     <div class="container text-center" style="direction:rtl !important;">
-        <div class="wrapper wrapper-content animated fadeIn">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="ibox float-e-margins">
-                        <div class="ibox-title">
-                            <div class="ibox-content">
-                                <div class="alert alert-success">
-                                    @TempData["Success"]
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="alert alert-success">@TempData["Success"]</div>
     </div>
 }
 
-<!-- single -->
-<section class="bottom-banner-w3layouts">
-    <div class="container py-md-3">
-        <h1 class="heading text-center mb-sm-5 mb-4" title="@Model.Title">@Model.Title </h1>
-        <div class="row inner-sec-w3ls-agileinfo">
-            <!--left-->
-            <div class="col-lg-8 left-blog-info text-left">
-                <div class="card">
-                    <a href="">
-                        @if (Model.Images.Count() > 0)
-                        {
-                            var ig = Model.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
-                            if (ig != null)
-                            {
-                                string img = ig.FullPath;
-                                <img src="@img" alt="@Model.Title" title="@Model.Title" class="card-img-top img-fluid" />
-                            }
-                            var vd = Model.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
-                            if (vd != null)
-                            {
-                                string vid = vd.FullPath;
-                                <video width="400" src="@vid" controls style="height:auto !important;width:100% !important;height:auto !important;"></video>
-                            }
-                        }
-                    </a>
-                    <div class="card-body">
-                        <ul class="blog-icons my-4">
-                            <li>
-                                <a href="#">
-                                    <span class="fa fa-calendar"></span> @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)Model.CreateDate, false, false)
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <span class="fa fa-eye"></span> @Model.Survey
-                                </a>
-                            </li>
+<div class="gp-service-reading-progress" id="gpServiceReadingProgress" aria-hidden="true"></div>
+<section class="gp-service-detail-page" aria-label="@gpTitle">
+    <div class="container">
+        <section class="gp-service-detail-hero" aria-label="معرفی خدمت">
+            <div class="gp-service-detail-hero-grid">
+                <div>
+                    <span class="gp-service-detail-kicker">خدمت تخصصی شنوایی</span>
+                    <h1>@gpTitle</h1>
+                    <p>@gpMetaDesc</p>
 
-                        </ul>
-                        <div class="body-blog">
-                            @Html.Raw(Model.Body)
-                        </div>
+                    <div class="gp-service-detail-actions">
+                        <a href="tel:02122735588">
+                            <span aria-hidden="true">☎</span>
+                            مشاوره سریع
+                        </a>
+                        <a href="#gp-service-content">
+                            <span aria-hidden="true">⌄</span>
+                            مطالعه جزئیات
+                        </a>
+                        <button type="button" class="gp-service-detail-fav" id="gpServiceFavoriteBtn" data-gp-save-service="@Model.Id" data-gp-save-title="@gpTitle">
+                            <span class="gp-heart-icon" aria-hidden="true">♡</span>
+                            علاقه‌مندی
+                        </button>
+                    </div>
+                </div>
+
+                <div class="gp-service-detail-stats" aria-label="خلاصه خدمت">
+                    <div class="gp-service-detail-stat">
+                        <strong>@Model.Survey</strong>
+                        <span>بازدید</span>
+                    </div>
+                    <div class="gp-service-detail-stat">
+                        <strong>۵</strong>
+                        <span>دقیقه زمان مطالعه</span>
+                    </div>
+                    <div class="gp-service-detail-stat">
+                        <strong>۲۵+</strong>
+                        <span>سال تجربه کلینیک</span>
                     </div>
                 </div>
             </div>
-            <!--//left-->
-            <!--right-->
-            <aside class="col-lg-4 right-blog-con text-left right-blog">
-                <div class="right-blog-info text-left card">
-                    <div class="tech-btm">
-                        <h4>عضویت در خبرنامه</h4>
-                        <p>با عضویت در خبرنامه تازه ترین های کلینیک شنوایی و سمعک شکوه تجریش را دریافت کنید</p>
-                        <form action="#" method="post">
-                            <input id="textnews" class="form-control" type="email" placeholder="ایمیل معتبر" required>
-                            <input id="btntext" class="form-control" type="submit" value="ثبت">
-                        </form>
-                        <div class="text-center">
-                            <h6 class="newsletter"><i id="msg"></i></h6>
-                        </div>
-                    </div>
-                    <div class="tech-btm">
-                        <h4>مطالب پربازدید</h4>
-                        @foreach (var item in db.Blogs.Where(current => current.IsVisible == true && current.CategoryId == Model.CategoryId && current.Id != Model.Id).OrderByDescending(current => current.Survey).Include(current => current.Images).Take(2))
+        </section>
+
+        <div class="gp-service-detail-shell">
+            <main class="gp-service-main-card" id="gp-service-content" aria-label="جزئیات خدمت">
+                @if (gpImageItem != null || gpVideoItem != null)
+                {
+                    <div class="gp-service-main-media">
+                        @if (gpImageItem != null)
                         {
-                            <div class="blog-grids row mb-3">
-                                <div class="col-md-5 blog-grid-left">
-                                    <a title="@item.Title" href="/blog/@item.Id/@item.SefUrl">
-                                        @if (item.Images.Count() > 0)
-                                        {
-                                            var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
-                                            if (ig != null)
-                                            {
-                                                string img = ig.FullPath;
-                                                <img src="@img" alt="@item.Title" title="@item.Title" class="card-img-top img-fluid" />
-                                            }
-                                            var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
-                                            if (vd != null)
-                                            {
-                                                string vid = vd.FullPath;
-                                                <video width="400" src="@vid" controls style="height:auto !important;width:100% !important;height:auto !important;"></video>
-                                            }
-                                        }
-                                    </a>
-                                </div>
-                                <div class="col-md-7 blog-grid-right">
-                                    <h5>
-                                        <a title="@item.Title" href="/blog/@item.Id/@item.SefUrl">@item.Title </a>
-                                    </h5>
-                                    <div class="sub-meta">
-                                        <span>
-                                            <span class="fa fa-clock-o"></span> @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                            <img src="@gpImageItem.FullPath" alt="@gpTitle" title="@gpTitle" loading="eager" decoding="async" />
+                        }
+                        @if (gpVideoItem != null)
+                        {
+                            <video src="@gpVideoItem.FullPath" controls playsinline></video>
                         }
                     </div>
-                    <div class="tech-btm widget_social text-center">
-                        <h4>کلینیک شنوایی و سمعک شکوه تجریش در شبکه های اجتماعی</h4>
-                        <ul>
-                            <li>
-                                <a class="whatsapp" href="https://wa.me/+989393388985">
-                                    <span class="count">واتساپ</span>
+                }
+
+                <div class="gp-service-main-body">
+                    <div class="gp-service-info-strip">
+                        @if (Model.CreateDate != null)
+                        {
+                            <span>📅 @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)Model.CreateDate, false, false)</span>
+                        }
+                        <span>👁 @Model.Survey بازدید</span>
+                        @if (Model.Category != null)
+                        {
+                            <span>📌 @Model.Category.PersianName</span>
+                        }
+                    </div>
+
+                    <div class="gp-service-reading-tools" aria-label="ابزار مطالعه جزئیات خدمت">
+                        <button type="button" class="gp-service-tool-btn" id="gpExpandServiceTop">مطالعه کامل</button>
+                        <button type="button" class="gp-service-tool-btn" id="gpCopyServiceLink">کپی لینک</button>
+                    </div>
+
+                    <div class="gp-service-content-wrap is-collapsed" id="gpServiceContentWrap">
+                        <article class="gp-service-content is-collapsed" id="gpServiceContent">
+                            @Html.Raw(Model.Body)
+                        </article>
+                    </div>
+
+                    <div class="gp-article-read-more-box is-visible" id="gpReadMoreBox">
+                        <strong>بقیه مقاله</strong>
+                        <span>در ادامه</span>
+                        <button type="button" class="gp-article-read-more-btn" id="gpReadMoreBtn">ادامه مطالعه</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="gp-service-side" aria-label="اطلاعات تکمیلی">
+                <div class="gp-service-side-card">
+                    <h3>مشاوره قبل از مراجعه</h3>
+                    <p>برای اینکه سریع‌تر مسیر درست را انتخاب کنید، می‌توانید درباره این خدمت با کلینیک تماس بگیرید.</p>
+                    <a class="gp-side-cta gp-call-clinic-btn" href="tel:02122735588">
+                        <span class="gp-call-icon" aria-hidden="true">☎</span>
+                        <strong>تماس</strong>
+                    </a>
+                </div>
+
+
+                <div class="gp-service-side-card gp-service-toc-card" id="gpServiceTocCard">
+                    <h3>فهرست سریع</h3>
+                    <div class="gp-service-toc-list" id="gpServiceTocList"></div>
+                </div>
+
+                <div class="gp-service-side-card">
+                    <h3>عضویت در خبرنامه</h3>
+                    <p>تازه‌ترین مطالب و نکات شنوایی را دریافت کنید.</p>
+                    <form class="gp-newsletter-form gp-newsletter-form-v31" action="javascript:void(0);" method="post" novalidate>
+                        <input id="gpNewsEmail" class="gp-news-email-v31" name="email" type="email" placeholder="ایمیل معتبر" autocomplete="email" required />
+                        <button id="gpNewsSubmit" class="gp-news-submit-v31" type="button">
+                            ثبت
+                        </button>
+                    </form>
+                    <div class="text-center gp-newsletter-message-wrap-v45">
+                        <h6 class="newsletter gp-news-msg-v31 gp-newsletter-message-v45"><i id="gpNewsMsg"></i></h6>
+                    </div>
+                </div>
+
+                @if (gpRelatedServices.Count() > 0)
+                {
+                    <div class="gp-service-side-card">
+                        <h3>خدمات مرتبط</h3>
+                        <div class="gp-related-list">
+                            @foreach (var item in gpRelatedServices)
+                            {
+                                var relatedImage = item.Images != null && item.Images.FirstOrDefault() != null
+                                    ? item.Images.FirstOrDefault().FullPath
+                                    : Url.Content("~/images/logo_purple.webp");
+
+                                <a class="gp-related-service" title="@item.Title" href="/service/@item.Id/@item.SefUrl">
+                                    <img src="@relatedImage" alt="@item.Title" title="@item.Title" loading="lazy" decoding="async" />
+                                    <span>
+                                        <strong>@item.Title</strong>
+                                        <span>بررسی خدمت</span>
+                                    </span>
                                 </a>
-                            </li>
-                            @*<li>
-                                    <a class="twitter" href="#">
-                                        <span class="count">توئیتر</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="facebook" href="#">
-                                        <span class="count">فیس بوک</span>
-                                    </a>
-                                </li>*@
-                            <li>
-                                <a target="_blank" rel="noreferrer" class="instagram" href="https://www.instagram.com/tajrishsamak/">
-                                    <span class="count">اینستاگرام</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a target="_blank" rel="noreferrer" class="telegram" href="https://www.telegram.me/sthc/">
-                                    <span class="count">تلگرام</span>
-                                </a>
-                            </li>
-                            @*<li>
-                                    <a class="youtube" href="#">
-                                        <span class="count">یوتیوب</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="linkedin-in" href="#">
-                                        <span class="count">لینکدین</span>
-                                    </a>
-                                </li>*@
-                        </ul>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="gp-service-side-card">
+                    <h3>شبکه‌های اجتماعی</h3>
+                    <div class="gp-social-links">
+                        <a class="whatsapp" href="https://wa.me/+989393388985">واتساپ</a>
+                        <a target="_blank" rel="noreferrer" class="instagram" href="https://www.instagram.com/tajrishsamak/">اینستاگرام</a>
+                        <a target="_blank" rel="noreferrer" class="telegram" href="https://www.telegram.me/sthc/">تلگرام</a>
                     </div>
                 </div>
             </aside>
         </div>
     </div>
+
+    <button type="button" class="gp-back-to-top" id="gpBackToTop" aria-label="بازگشت به بالا">↑</button>
+    <div class="gp-service-toast" id="gpServiceToast" aria-live="polite">به علاقه‌مندی اضافه شد</div>
 </section>
-<!-- //contact -->
 
 @section Scripts{
+    <script>
+        (function () {
+            var storageKey = "gpTajrishFavoriteServices";
+            var button = document.getElementById("gpServiceFavoriteBtn");
+            var toast = document.getElementById("gpServiceToast");
 
+
+
+
+            function setupCompactServiceReading() {
+                var content = document.getElementById("gpServiceContent");
+                var wrap = document.getElementById("gpServiceContentWrap");
+                var readMoreBox = document.getElementById("gpReadMoreBox");
+                var readMoreBtn = document.getElementById("gpReadMoreBtn");
+                var expandTop = document.getElementById("gpExpandServiceTop");
+                var copyBtn = document.getElementById("gpCopyServiceLink");
+                var progress = document.getElementById("gpServiceReadingProgress");
+                var backTop = document.getElementById("gpBackToTop");
+                var tocCard = document.getElementById("gpServiceTocCard");
+                var tocList = document.getElementById("gpServiceTocList");
+
+                function expandContent() {
+                    if (content) {
+                        content.classList.remove("is-collapsed");
+                    }
+
+                    if (wrap) {
+                        wrap.classList.remove("is-collapsed");
+                    }
+
+                    if (readMoreBox) {
+                        readMoreBox.classList.remove("is-visible");
+                    }
+
+                    if (expandTop) {
+                        expandTop.textContent = "متن کامل باز است";
+                    }
+                }
+
+                if (readMoreBtn) {
+                    readMoreBtn.addEventListener("click", expandContent);
+                }
+
+                if (expandTop) {
+                    expandTop.addEventListener("click", expandContent);
+                }
+
+                if (copyBtn) {
+                    copyBtn.addEventListener("click", function () {
+                        var url = window.location.href;
+
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(url).then(function () {
+                                copyBtn.textContent = "لینک کپی شد";
+                                window.setTimeout(function () {
+                                    copyBtn.textContent = "کپی لینک";
+                                }, 1600);
+                            });
+                        } else {
+                            copyBtn.textContent = url;
+                        }
+                    });
+                }
+
+                function buildToc() {
+                    if (!content || !tocCard || !tocList) {
+                        return;
+                    }
+
+                    var headings = content.querySelectorAll("h2, h3");
+                    if (!headings.length) {
+                        return;
+                    }
+
+                    for (var i = 0; i < headings.length; i++) {
+                        var heading = headings[i];
+                        var text = (heading.textContent || "").trim();
+
+                        if (!text) {
+                            continue;
+                        }
+
+                        if (!heading.id) {
+                            heading.id = "service-heading-" + (i + 1);
+                        }
+
+                        var link = document.createElement("a");
+                        link.href = "#" + heading.id;
+                        link.textContent = text.length > 72 ? text.substring(0, 72) + "..." : text;
+                        tocList.appendChild(link);
+                    }
+
+                    if (tocList.children.length) {
+                        tocCard.classList.add("is-visible");
+                    }
+                }
+
+                function updateProgress() {
+                    var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+                    var doc = document.documentElement;
+                    var scrollable = Math.max(1, doc.scrollHeight - window.innerHeight);
+                    var percent = Math.min(100, Math.max(0, (scrollTop / scrollable) * 100));
+
+                    if (progress) {
+                        progress.style.width = percent + "%";
+                    }
+
+                    if (backTop) {
+                        backTop.classList.toggle("is-visible", scrollTop > 720);
+                    }
+                }
+
+                if (backTop) {
+                    backTop.addEventListener("click", function () {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                    });
+                }
+
+                buildToc();
+                updateProgress();
+                window.addEventListener("scroll", updateProgress, { passive: true });
+                window.addEventListener("resize", updateProgress);
+            }
+
+
+            function setupNewsletter() {
+                var emailInput = document.getElementById("gpNewsEmail");
+                var submitButton = document.getElementById("gpNewsSubmit");
+                var msg = document.getElementById("gpNewsMsg");
+
+                if (!emailInput || !submitButton) {
+                    return;
+                }
+
+                function setMsg(text, isOk) {
+                    if (!msg) {
+                        return;
+                    }
+
+                    msg.textContent = text;
+                    msg.style.color = isOk ? "#0ba66f" : "#e10b45";
+
+                    var box = msg.closest(".gp-newsletter-message-v45");
+                    if (box) {
+                        box.classList.toggle("is-visible", !!text);
+                        box.style.border = isOk ? "1px solid rgba(11,166,111,.16)" : "1px solid rgba(225,11,69,.16)";
+                        box.style.background = isOk ? "rgba(11,166,111,.075)" : "rgba(225,11,69,.075)";
+                    }
+                }
+
+                submitButton.addEventListener("click", function (event) {
+                    event.preventDefault();
+
+                    var email = (emailInput.value || "").trim();
+                    if (!email) {
+                        setMsg("لطفاً ایمیل را وارد کنید.", false);
+                        return;
+                    }
+
+                    submitButton.disabled = true;
+                    submitButton.textContent = "در حال ثبت...";
+
+                    fetch("/Home/NewsLetter?text=" + encodeURIComponent(email), {
+                        method: "GET",
+                        credentials: "same-origin",
+                        headers: { "X-Requested-With": "XMLHttpRequest" }
+                    })
+                        .then(function (response) {
+                            return response.json();
+                        })
+                        .then(function (data) {
+                            setMsg(data && data.text ? data.text : "درخواست ثبت شد.", data && data.status == 1);
+                            if (data && data.status == 1) {
+                                emailInput.value = "";
+                            }
+                        })
+                        .catch(function () {
+                            setMsg("خطا در ثبت ایمیل. دوباره تلاش کنید.", false);
+                        })
+                        .finally(function () {
+                            submitButton.disabled = false;
+                            submitButton.textContent = "ثبت";
+                        });
+                });
+            }
+
+            setupNewsletter();
+
+
+            function wrapContentTables() {
+                var content = document.querySelector(".gp-service-content");
+                if (!content) {
+                    return;
+                }
+
+                var tables = content.querySelectorAll("table");
+                for (var i = 0; i < tables.length; i++) {
+                    var table = tables[i];
+
+                    if (table.parentElement && table.parentElement.classList.contains("gp-table-scroll")) {
+                        continue;
+                    }
+
+                    var wrapper = document.createElement("div");
+                    wrapper.className = "gp-table-scroll";
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            }
+
+            wrapContentTables();
+            setupCompactServiceReading();
+
+
+            if (!button) {
+                return;
+            }
+
+            function readSaved() {
+                try {
+                    var raw = window.localStorage.getItem(storageKey);
+                    var data = raw ? JSON.parse(raw) : [];
+                    return Array.isArray(data) ? data : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function writeSaved(items) {
+                try {
+                    window.localStorage.setItem(storageKey, JSON.stringify(items));
+                } catch (e) { }
+            }
+
+            function showToast(text) {
+                if (!toast) {
+                    return;
+                }
+                toast.textContent = text;
+                toast.classList.add("is-visible");
+                window.clearTimeout(showToast._timer);
+                showToast._timer = window.setTimeout(function () {
+                    toast.classList.remove("is-visible");
+                }, 1700);
+            }
+
+            function updateUI() {
+                var id = button.getAttribute("data-gp-save-service");
+                var saved = readSaved();
+                var isSaved = saved.some(function (item) {
+                    return String(item.id) === String(id);
+                });
+
+                button.classList.toggle("is-saved", isSaved);
+                button.innerHTML = isSaved
+                    ? '<span class="gp-heart-icon" aria-hidden="true">♥</span> علاقه‌مندی'
+                    : '<span class="gp-heart-icon" aria-hidden="true">♡</span> علاقه‌مندی';
+            }
+
+            button.addEventListener("click", function () {
+                var id = button.getAttribute("data-gp-save-service");
+                var title = button.getAttribute("data-gp-save-title") || "خدمت";
+                var saved = readSaved();
+                var exists = saved.some(function (item) {
+                    return String(item.id) === String(id);
+                });
+
+                if (exists) {
+                    saved = saved.filter(function (item) {
+                        return String(item.id) !== String(id);
+                    });
+                    writeSaved(saved);
+                    showToast("از علاقه‌مندی حذف شد");
+                } else {
+                    saved.push({
+                        id: id,
+                        title: title,
+                        savedAt: new Date().toISOString()
+                    });
+                    writeSaved(saved);
+                    showToast("به علاقه‌مندی اضافه شد");
+                }
+
+                updateUI();
+            });
+
+            updateUI();
+        })();
+    </script>
 }
-
-
-

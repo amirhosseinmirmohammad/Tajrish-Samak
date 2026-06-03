@@ -1,369 +1,813 @@
 ﻿@using DataLayer.ViewModels.PagerViewModel
 @model PagerViewModels<DataLayer.Models.Blog>
-@{ GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();}
 @using MvcPager
-@{
-    Layout = null;
-    //string twitter = "@TajrishSamak";
-    //string facebook = "https://facebook.com/TajrishSamak";
-}
+@using System;
+@using System.Linq;
+@using System.Collections.Generic;
+@using System.Web;
 @using System.Data.Entity;
+@{
+    GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();
 
-<!DOCTYPE HTML>
-<html>
-<head>
-    <title>بلاگ کلینیک شنوایی و سمعک شکوه تجریش | خرید سمعک ، تجویز سمعک</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
-    <meta name="Keywords" content="تجویز سمعک">
-    <meta property="og:title" content="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" />
-    <meta property="og:url" content="http://tajrish-samak.ir.com/" />
-    <meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
-    <meta name="twitter:image" content="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک">
-    @*<meta property="og:url" content="@facebook" />
-    <meta name="twitter:site" content="@twitter">*@
-    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-    <link href="~/css/blog/bootstrap.css" rel='stylesheet' type='text/css' />
-    <link href="~/css/blog/style.css" rel="stylesheet" />
-    <!--Custom-Theme-files-->
-    <script src="~/css/blog/jquery.min.js"> </script>
-    <!--/script-->
-    <script type="text/javascript" src="~/css/blog/move-top.js"></script>
-    <script type="text/javascript" src="~/css/blog/easing.js"></script>
-    <script type="text/javascript">
-        jQuery(document).ready(function ($) {
-            $(".scroll").click(function (event) {
-                event.preventDefault();
-                $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 900);
-            });
-        });
+    var gpCacheVersion = "20260603-tajrish-v40-blog-magazine-no-slider";
+    var gpBaseUrl = "https://tajrish-samak.ir";
+    var gpCanonicalUrl = gpBaseUrl + Request.Path;
+
+    var gpBlogs = Model != null && Model.data != null
+        ? Model.data.ToList()
+        : new List<DataLayer.Models.Blog>();
+    var gpPopularBlogs = content.Blogs
+            .AsNoTracking()
+            .Include(current => current.Images)
+            .Where(current => current.IsVisible == true && current.Images.Count() > 0)
+            .OrderByDescending(current => current.Survey)
+            .Take(5)
+            .ToList();
+
+    var gpRecentBlogs = content.Blogs
+        .AsNoTracking()
+        .Include(current => current.Images)
+        .Where(current => current.IsVisible == true && current.Images.Count() > 0)
+        .OrderByDescending(current => current.CreateDate)
+        .Take(5)
+        .ToList();
+
+    ViewBag.Title = "مجله کلینیک | کلینیک شنوایی و سمعک شکوه تجریش";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@functions {
+    public string GetBlogImage(DataLayer.Models.Blog blog)
+    {
+        if (blog == null || blog.Images == null)
+        {
+            return "";
+        }
+
+        var image = blog.Images
+            .Where(current =>
+                current.Extension != null &&
+                (
+                    current.Extension.Contains("jpeg") ||
+                    current.Extension.Contains("gif") ||
+                    current.Extension.Contains("png") ||
+                    current.Extension.Contains("jpg") ||
+                    current.Extension.Contains("webp")
+                ))
+            .FirstOrDefault();
+
+        return image != null ? image.FullPath : "";
+    }
+
+    public string GetBlogVideo(DataLayer.Models.Blog blog)
+    {
+        if (blog == null || blog.Images == null)
+        {
+            return "";
+        }
+
+        var video = blog.Images
+            .Where(current =>
+                current.Extension != null &&
+                (
+                    current.Extension.Contains("mp4") ||
+                    current.Extension.Contains("mpeg") ||
+                    current.Extension.Contains("wmv")
+                ))
+            .FirstOrDefault();
+
+        return video != null ? video.FullPath : "";
+    }
+}
+
+@section Metas{
+    <meta name="description" content="مجله کلینیک شنوایی و سمعک شکوه تجریش؛ مقالات آموزشی درباره سلامت گوش، کم‌شنوایی، تست شنوایی، انتخاب سمعک، تنظیم سمعک و مراقبت‌های شنوایی." />
+    <link rel="canonical" href="@gpCanonicalUrl" />
+    <meta name="Keywords" content="مجله شنوایی، مقالات سمعک، سلامت گوش، تست شنوایی، کم شنوایی، انتخاب سمعک، تنظیم سمعک، کلینیک شنوایی تجریش" />
+
+    <meta property="og:title" content="مجله کلینیک | کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@gpCanonicalUrl" />
+    <meta property="og:description" content="مطالب آموزشی و کاربردی درباره سلامت شنوایی، سمعک و مراقبت از گوش در مجله کلینیک شکوه تجریش." />
+
+    <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta name="twitter:description" content="مطالب آموزشی درباره سلامت گوش، کم‌شنوایی، تست شنوایی و انتخاب سمعک." />
+}
+
+@section Styles{
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@@type": "ListItem",
+              "position": 1,
+              "name": "صفحه اصلی",
+              "item": "https://tajrish-samak.ir/"
+            },
+            {
+              "@@type": "ListItem",
+              "position": 2,
+              "name": "مجله کلینیک",
+              "item": "@gpCanonicalUrl"
+            }
+          ]
+        }
     </script>
 
-</head>
-<body>
-    <!-- header-section-starts -->
-        <div class="h-top" id="home">
-            <div class="top-header">
-                    <ul class="cl-effect-16 top-nag">
-                        <li><a class="active" href="/" data-hover="خانه">خانه</a></li>
-                        <li><a href="/aboutus" data-hover="درباره ما">درباره ما</a></li>
-                        <li><a href="/contactus" data-hover="تماس با ما">تماس با ما</a></li>
-                        <li><a href="/terms" data-hover="قوانین و مقررات">قوانین و مقررات</a></li>
-                    </ul>
-                <div class="search-box">
-                    <div class="b-search">
-                        <form method="get" action="/Blog/All">
-                            <input type="text" name="q" value="جستجو" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '';}">
-                            <input type="submit" value="">
-                        </form>
-                    </div>
-                </div>
-
-                <div class="clearfix"></div>
-            </div>
-        </div>
-    <div class="full">
-        @*<div class="col-md-3 top-nav">
-                <div class="cat">
-                    <div class="logo">
-                        <a href="/blog/all"><img src="~/images/pransa_logo_web.png" width="100" /></a>
-                    </div>
-                    <div class="top-menu">
-                        <span class="menu"> </span>
-                        <ul class="cl-effect-16">
-                            @foreach (var category in content.Categories.Where(current => current.ParentId == null).OrderByDescending(current => current.PersianName).ToList())
-                            {
-                            <li><a title="@category.PersianName" href="/Home/Products/@category.Id">@category.PersianName</a></li>
-                            }
-                        </ul>
-                        <!-- script-for-nav -->
-                        <script>
-                            $( "span.menu" ).click(function() {
-                              $( ".top-menu ul" ).slideToggle(300, function() {
-                                // Animation complete.
-                              });
-                            });
-                        </script>
-                        <!-- script-for-nav -->
-                        <ul class="side-icons">
-                            <li><a class="fb" href="#"></a></li>
-                            <li><a class="twitt" href="#"></a></li>
-                            <li><a class="goog" href="#"></a></li>
-                            <li><a class="drib" href="#"></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>*@
-        @{
-            var slider = content.Sliders.OrderByDescending(current => current.LastDate);
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "Blog",
+          "name": "مجله کلینیک شنوایی و سمعک شکوه تجریش",
+          "url": "@gpCanonicalUrl",
+          "description": "مقالات آموزشی کلینیک شنوایی و سمعک شکوه تجریش درباره سلامت گوش، شنوایی و سمعک.",
+          "inLanguage": "fa-IR",
+          "publisher": {
+            "@@type": "MedicalBusiness",
+            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+            "url": "https://tajrish-samak.ir/",
+            "logo": "https://tajrish-samak.ir/images/logo_purple.webp",
+            "telephone": "+982122735588"
+          }
         }
-        <div class="col-md-12 main">
-            <!--banner-section-->
-            <div class="banner-section">
-                <h3 class="tittle">مجله تصویری کلینیک شنوایی و سمعک شکوه تجریش <i class="glyphicon glyphicon-picture"></i></h3>
-                @if (slider != null && slider.Count() > 0)
-                {
-                    <div class="banner">
-                        <div class="callbacks_container">
-                            <ul class="rslides" id="slider4">
-                                @foreach (var item in slider.ToList())
-                                {
-                                    <li>
-                                        <img src="@item.Image" class="img-responsive" title="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" alt="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" style="width:100%;">
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                        <!--banner-->
-                        <script src="~/css/blog/responsiveslides.min.js"></script>
-                        <script>
-                            // You can also use "$(window).load(function() {"
-                            $(function () {
-                                // Slideshow 4
-                                $("#slider4").responsiveSlides({
-                                    auto: true,
-                                    pager: true,
-                                    nav: true,
-                                    speed: 500,
-                                    namespace: "callbacks",
-                                    before: function () {
-                                        $('.events').append("<li>before event fired.</li>");
-                                    },
-                                    after: function () {
-                                        $('.events').append("<li>after event fired.</li>");
-                                    }
-                                });
+    </script>
 
-                            });
-                        </script>
-                        <div class="clearfix"> </div>
-                        <div class="b-bottom">
-                            <h5 class="top"><a href="/">خرید و تجویز سمعک ، انجام تمامی آزمایشات شنوایی</a></h5>
-                        </div>
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "ItemList",
+          "name": "آخرین مقالات مجله کلینیک",
+          "url": "@gpCanonicalUrl",
+          "numberOfItems": "@gpBlogs.Count()",
+          "itemListElement": [
+            @{
+                var gpSchemaIndex = 1;
+                var gpSchemaItems = gpBlogs.Take(4).ToList();
+            }
+            @foreach (var item in gpSchemaItems)
+            {
+                <text>{
+                  "@@type": "ListItem",
+                  "position": @gpSchemaIndex,
+                  "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(item.Title))",
+                  "url": "https://tajrish-samak.ir/blog/@item.Id/@item.SefUrl"
+                }</text>
+                if (gpSchemaIndex < gpSchemaItems.Count())
+                {
+                    <text>,</text>
+                }
+                gpSchemaIndex++;
+            }
+          ]
+        }
+    </script>
+
+    <style id="gp-v39-blog-magazine-modern">
+        :root {
+            --gp-v39-purple: #4b1684;
+            --gp-v39-violet: #920ab6;
+            --gp-v39-pink: #e10b79;
+            --gp-v39-cyan: #0ba6b8;
+            --gp-v39-lime: #d8f512;
+            --gp-v39-ink: #20142d;
+            --gp-v39-muted: rgba(32,20,45,.68);
+            --gp-v39-card: rgba(255,255,255,.92);
+            --gp-v39-border: rgba(75,22,132,.10);
+            --gp-v39-shadow: 0 24px 60px rgba(74,18,107,.10);
+        }
+
+        .gp-blog-page {
+            direction: rtl;
+            overflow: hidden;
+        }
+
+        .gp-blog-hero {
+            position: relative;
+            margin: 22px auto 28px;
+            padding: clamp(28px, 4vw, 58px);
+            border-radius: 42px;
+            background: radial-gradient(circle at 14% 10%, rgba(216,245,18,.25), transparent 24%), radial-gradient(circle at 88% 24%, rgba(255,255,255,.15), transparent 22%), linear-gradient(135deg, #4b1684 0%, #920ab6 54%, #e10b79 100%);
+            color: #fff;
+            box-shadow: 0 32px 80px rgba(74,18,107,.20);
+            isolation: isolate;
+            overflow: hidden;
+        }
+
+            .gp-blog-hero::before,
+            .gp-blog-hero::after {
+                content: "";
+                position: absolute;
+                border-radius: 999px;
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .gp-blog-hero::before {
+                width: 270px;
+                height: 270px;
+                left: -96px;
+                top: -92px;
+                background: rgba(255,255,255,.13);
+                animation: gpV39Blob 10s ease-in-out infinite alternate;
+            }
+
+            .gp-blog-hero::after {
+                width: 340px;
+                height: 340px;
+                right: -130px;
+                bottom: -172px;
+                background: rgba(11,166,184,.22);
+                animation: gpV39Blob 12s ease-in-out infinite alternate-reverse;
+            }
+
+        @@keyframes gpV39Blob {
+            to {
+                transform: translate3d(24px, 18px, 0) scale(1.06);
+            }
+        }
+
+        .gp-blog-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, .42fr);
+            gap: clamp(20px, 4vw, 46px);
+            align-items: center;
+        }
+
+        .gp-blog-kicker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            color: #fff !important;
+            font-weight: 950;
+            backdrop-filter: blur(14px);
+        }
+
+        .gp-blog-hero h1 {
+            margin: 16px 0 12px;
+            color: #fff !important;
+            font-size: clamp(32px, 5vw, 66px);
+            font-weight: 1000;
+            line-height: 1.34 !important;
+            letter-spacing: -.02em;
+        }
+
+        .gp-blog-hero p {
+            max-width: 780px;
+            margin: 0;
+            color: rgba(255,255,255,.90) !important;
+            font-size: clamp(14px, 1.2vw, 18px);
+            font-weight: 850;
+            line-height: 2.1;
+        }
+
+        .gp-blog-search {
+            display: grid;
+            grid-template-columns: minmax(0,1fr) 62px;
+            gap: 8px;
+            margin-top: 24px;
+            max-width: 620px;
+        }
+
+            .gp-blog-search input {
+                height: 54px;
+                border: 1px solid rgba(255,255,255,.22) !important;
+                border-radius: 22px !important;
+                background: rgba(255,255,255,.16) !important;
+                color: #fff !important;
+                font-weight: 900 !important;
+                padding: 0 16px !important;
+                outline: 0 !important;
+                backdrop-filter: blur(14px);
+            }
+
+                .gp-blog-search input::placeholder {
+                    color: rgba(255,255,255,.70) !important;
+                }
+
+            .gp-blog-search button {
+                height: 54px;
+                border: 0;
+                border-radius: 22px;
+                background: #fff;
+                color: #4b1684 !important;
+                font-size: 21px;
+                font-weight: 1000;
+                box-shadow: 0 18px 38px rgba(0,0,0,.14);
+            }
+
+        .gp-blog-hero-cards {
+            display: grid;
+            gap: 12px;
+        }
+
+        .gp-blog-hero-card {
+            min-height: 92px;
+            padding: 18px;
+            border-radius: 28px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            backdrop-filter: blur(14px);
+        }
+
+            .gp-blog-hero-card strong {
+                display: block;
+                color: #fff !important;
+                font-size: 26px;
+                font-weight: 1000;
+                line-height: 1;
+            }
+
+            .gp-blog-hero-card span {
+                display: block;
+                margin-top: 8px;
+                color: rgba(255,255,255,.82) !important;
+                font-weight: 850;
+                line-height: 1.8;
+            }
+
+        .gp-blog-list-card,
+        .gp-blog-side-card {
+            border-radius: 34px;
+            background: var(--gp-v39-card);
+            border: 1px solid var(--gp-v39-border);
+            box-shadow: var(--gp-v39-shadow);
+            backdrop-filter: blur(18px);
+        }
+
+
+        /* V40: Slider removed, tighten magazine layout */
+        .gp-blog-shell {
+            margin-top: 0;
+        }
+
+        .gp-blog-list-card {
+            position: relative;
+        }
+
+
+        .gp-blog-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+            gap: 22px;
+            align-items: start;
+            margin-bottom: 42px;
+        }
+
+        .gp-blog-list-card {
+            padding: clamp(16px, 2.2vw, 26px);
+        }
+
+        .gp-blog-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .gp-blog-card {
+            display: flex;
+            flex-direction: column;
+            min-height: 420px;
+            border-radius: 30px;
+            background: #fff;
+            border: 1px solid rgba(75,22,132,.08);
+            box-shadow: 0 18px 42px rgba(74,18,107,.08);
+            overflow: hidden;
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+
+            .gp-blog-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 30px 70px rgba(74,18,107,.15);
+            }
+
+        .gp-blog-card-media {
+            position: relative;
+            height: 215px;
+            background: #fbf7ff;
+            overflow: hidden;
+            text-decoration: none !important;
+        }
+
+            .gp-blog-card-media img,
+            .gp-blog-card-media video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .gp-blog-card-media::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(180deg, transparent 42%, rgba(16,22,36,.48));
+                pointer-events: none;
+            }
+
+        .gp-blog-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            min-height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: #d8f512;
+            color: #1d1430 !important;
+            font-size: 12px;
+            font-weight: 1000;
+            z-index: 2;
+        }
+
+        .gp-blog-card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 17px;
+        }
+
+            .gp-blog-card-body h2 {
+                margin: 0 0 9px;
+                font-size: 18px;
+                font-weight: 1000;
+                line-height: 1.8 !important;
+            }
+
+                .gp-blog-card-body h2 a {
+                    color: var(--gp-v39-ink) !important;
+                    text-decoration: none !important;
+                }
+
+            .gp-blog-card-body p {
+                margin: 0 0 16px;
+                color: var(--gp-v39-muted) !important;
+                font-size: 13px;
+                font-weight: 850;
+                line-height: 2;
+            }
+
+        .gp-blog-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin: auto 0 14px;
+        }
+
+            .gp-blog-meta span {
+                min-height: 30px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 10px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.08);
+                color: #6420a0 !important;
+                font-size: 12px;
+                font-weight: 900;
+            }
+
+        .gp-blog-read-more {
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 17px;
+            background: linear-gradient(135deg, var(--gp-v39-purple), var(--gp-v39-violet));
+            color: #fff !important;
+            font-weight: 1000;
+            text-decoration: none !important;
+            box-shadow: 0 16px 32px rgba(146,10,182,.17);
+        }
+
+        .gp-blog-side {
+            position: sticky;
+            top: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .gp-blog-side-card {
+            padding: 18px;
+        }
+
+            .gp-blog-side-card h3 {
+                margin: 0 0 14px;
+                color: var(--gp-v39-ink) !important;
+                font-size: 20px;
+                font-weight: 1000;
+                line-height: 1.7 !important;
+            }
+
+        .gp-side-posts {
+            display: grid;
+            gap: 10px;
+        }
+
+        .gp-side-post {
+            display: grid;
+            grid-template-columns: 74px minmax(0, 1fr);
+            gap: 10px;
+            align-items: center;
+            padding: 9px;
+            border-radius: 20px;
+            background: rgba(255,255,255,.65);
+            border: 1px solid rgba(75,22,132,.08);
+            text-decoration: none !important;
+            transition: transform .18s ease, background .18s ease;
+        }
+
+            .gp-side-post:hover {
+                transform: translateY(-2px);
+                background: #fff;
+            }
+
+            .gp-side-post img {
+                width: 74px;
+                height: 74px;
+                border-radius: 17px;
+                object-fit: cover;
+                background: #fff;
+            }
+
+            .gp-side-post strong {
+                display: block;
+                color: var(--gp-v39-ink) !important;
+                font-size: 13px;
+                font-weight: 950;
+                line-height: 1.8;
+            }
+
+            .gp-side-post span {
+                display: block;
+                color: var(--gp-v39-muted) !important;
+                font-size: 12px;
+                font-weight: 850;
+                margin-top: 3px;
+            }
+
+        .gp-blog-pagination {
+            margin-top: 22px;
+            padding: 16px;
+            border-radius: 26px;
+            background: rgba(255,255,255,.70);
+            border: 1px solid rgba(75,22,132,.08);
+        }
+
+            .gp-blog-pagination .pagination {
+                margin: 0;
+            }
+
+        html.gp-dark-mode .gp-blog-page {
+            --gp-v39-ink: #f7f7fb;
+            --gp-v39-muted: rgba(246,247,251,.72);
+            --gp-v39-card: rgba(24,24,40,.88);
+            --gp-v39-border: rgba(255,255,255,.10);
+            --gp-v39-shadow: 0 24px 60px rgba(0,0,0,.20);
+        }
+
+        html.gp-dark-mode .gp-blog-list-card,
+        html.gp-dark-mode .gp-blog-side-card,
+        html.gp-dark-mode .gp-blog-pagination {
+            background: rgba(24,24,40,.90) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-blog-section-head span,
+        html.gp-dark-mode .gp-blog-meta span {
+            background: rgba(255,255,255,.09) !important;
+            color: rgba(246,247,251,.88) !important;
+        }
+
+        html.gp-dark-mode .gp-blog-card,
+        html.gp-dark-mode .gp-side-post {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+            html.gp-dark-mode .gp-side-post:hover {
+                background: rgba(255,255,255,.10) !important;
+            }
+
+        @@media(max-width: 1100px) {
+            .gp-blog-hero-grid,
+            .gp-blog-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-blog-hero-cards {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .gp-blog-side {
+                position: relative;
+                top: auto;
+            }
+        }
+
+        @@media(max-width: 768px) {
+            .gp-blog-hero {
+                border-radius: 30px;
+                padding: 26px 20px;
+                text-align: center;
+            }
+
+            .gp-blog-search {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-blog-hero-cards,
+            .gp-blog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-blog-section-head {
+                text-align: center;
+                justify-content: center;
+            }
+
+            .gp-blog-list-card,
+            .gp-blog-side-card {
+                border-radius: 28px;
+            }
+
+            .gp-blog-card {
+                min-height: auto;
+            }
+        }
+    </style>
+}
+
+<section class="gp-blog-page" aria-label="مجله کلینیک شنوایی و سمعک شکوه تجریش">
+    <div class="container">
+        <section class="gp-blog-hero" aria-label="معرفی مجله کلینیک">
+            <div class="gp-blog-hero-grid">
+                <div>
+                    <span class="gp-blog-kicker">مجله کلینیک</span>
+                    <h1>رشد آگاهی شنوایی از همین‌جا شروع می‌شود.</h1>
+                    <p>
+                        مطالب کاربردی درباره سلامت گوش، کم‌شنوایی، تست شنوایی، انتخاب سمعک و مراقبت‌های روزمره را اینجا بخوانید.
+                    </p>
+
+                    <form class="gp-blog-search" method="get" action="/Blog/All">
+                        <input type="search" name="q" placeholder="جستجو در مقالات..." />
+                        <button type="submit" aria-label="جستجو">⌕</button>
+                    </form>
+                </div>
+
+                <div class="gp-blog-hero-cards" aria-label="خلاصه مجله">
+                    <div class="gp-blog-hero-card">
+                        <strong>@gpBlogs.Count()</strong>
+                        <span>مقاله در این صفحه</span>
+                    </div>
+                    <div class="gp-blog-hero-card">
+                        <strong>۵</strong>
+                        <span>پربازدیدترین مقاله</span>
+                    </div>
+                    <div class="gp-blog-hero-card">
+                        <strong>۲۵+</strong>
+                        <span>سال تجربه کلینیک</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <div class="gp-blog-shell">
+            <main class="gp-blog-list-card" aria-label="آخرین مقالات">
+                <div class="gp-blog-section-head">
+                    <div>
+                        <span>آخرین مطالب</span>
+                        <h2>مقالات تازه مجله</h2>
+                    </div>
+                    <p>مطالب آموزشی و کاربردی برای تصمیم‌گیری بهتر درباره شنوایی و سمعک.</p>
+                </div>
+
+                @if (gpBlogs.Count() > 0)
+                {
+                    <div class="gp-blog-grid">
+                        @foreach (var item in gpBlogs.Take(4))
+                        {
+                            var blogImage = GetBlogImage(item);
+                            var blogVideo = GetBlogVideo(item);
+
+                            <article class="gp-blog-card" itemscope itemtype="https://schema.org/BlogPosting">
+                                <a class="gp-blog-card-media" hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl" itemprop="url">
+                                    <span class="gp-blog-badge">مقاله</span>
+                                    @if (!string.IsNullOrWhiteSpace(blogImage))
+                                    {
+                                        <img src="@blogImage" alt="@item.Title" title="@item.Title" loading="lazy" decoding="async" itemprop="image" />
+                                    }
+                                    else if (!string.IsNullOrWhiteSpace(blogVideo))
+                                    {
+                                        <video src="@blogVideo" muted playsinline preload="metadata"></video>
+                                    }
+                                    else
+                                    {
+                                        <img src="@Url.Content("~/images/logo_purple.webp")" alt="@item.Title" title="@item.Title" loading="lazy" decoding="async" />
+                                    }
+                                </a>
+
+                                <div class="gp-blog-card-body">
+                                    <h2 itemprop="headline">
+                                        <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">@item.Title</a>
+                                    </h2>
+
+                                    <p itemprop="description">@GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.ShortDesc, 115)</p>
+
+                                    <div class="gp-blog-meta">
+                                        @if (item.CreateDate != null)
+                                        {
+                                            <span>@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)</span>
+                                        }
+                                        <span>@item.Survey بازدید</span>
+                                    </div>
+
+                                    <a class="gp-blog-read-more" href="/blog/@item.Id/@item.SefUrl" title="@item.Title">مطالعه مقاله</a>
+                                </div>
+                            </article>
+                        }
                     </div>
                 }
-                <!--//banner-->
-                <!--/top-news-->
-                <div class="top-news">
-                    <div class="top-inner">
-                        @foreach (var item in Model.data.Take(4))
-                        {
-                            <div class="col-md-6 top-text">
-                                <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
-                                    @{
-                                        var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
-                                        if (ig != null)
-                                        {
-                                            string img = ig.FullPath;
-                                            <img src="@img" alt="@item.Title" title="@item.Title" class="img-responsive" />
-                                        }
-                                    }
-                                    @{
-                                        var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
-                                        if (vd != null)
-                                        {
-                                            string vid = vd.FullPath;
-                                            <video width="400" src="@vid" controls style="height:auto !important;width:80% !important;height:auto !important;margin-top:15px !important;"></video>
-                                        }
-                                    }
-                                </a>
-                                <h5 class="top">
-                                    <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
-                                    </a>
-                                </h5>
-                                <p>@item.ShortDesc</p>
-                                @*<p>
-                                    @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)
-                                <a class="span_link" href="#">
-                                    <span class="glyphicon glyphicon-eye-open">
-                                    </span>@item.Survey
-                                </a>
-                                <a class="span_link" href="/blog/@item.Id/@item.SefUrl">
-                                    <span class="glyphicon glyphicon-circle-arrow-right">
-                                    </span>
-                                </a>
-                            </p>*@
-                        </div>
-                                        }
-                        <div class="clearfix"> </div>
-                    </div><br />
-                    <div class="text-center">
-                        <div class="col-md-12" style="direction: ltr">
+                else
+                {
+                    <div class="gp-blog-pagination text-center">
+                        موردی برای نمایش وجود ندارد.
+                    </div>
+                }
+
+                <div class="gp-blog-pagination text-center">
+                    <nav aria-label="صفحه‌بندی مقالات">
+                        <div style="direction:ltr">
                             <ul class="pagination pagination-sm">
                                 <li>@Html.Pager(4, Model.CurrentPage, Model.TotalItemCount)</li>
                             </ul>
                         </div>
-                    </div>
+                    </nav>
                 </div>
-                <!--//top-news-->
-            </div>
-            <!--//banner-section-->
-            <div class="banner-right-text">
-                <h3 class="tittle">پربازدیدترین ها  <i class="glyphicon glyphicon-facetime-video"></i></h3>
-                <!--/general-news-->
-                <div class="general-news">
-                    <div class="general-inner">
-                        @foreach (var item in Model.data.OrderByDescending(current => current.Survey).Take(1))
+            </main>
+
+            <aside class="gp-blog-side" aria-label="پربازدیدترین و تازه‌ترین مقالات">
+                <section class="gp-blog-side-card">
+                    <h3>پربازدیدترین‌ها</h3>
+                    <div class="gp-side-posts">
+                        @foreach (var item in gpPopularBlogs)
                         {
-                            <div class="general-text">
-                                <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
-                                    @{
-                                        var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
-                                        if (ig != null)
-                                        {
-                                            string img = ig.FullPath;
-                                            <img src="@img" alt="@item.Title" title="@item.Title" class="img-responsive" />
-                                        }
-                                    }
-                                    @{
-                                        var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
-                                        if (vd != null)
-                                        {
-                                            string vid = vd.FullPath;
-                                            <video width="400" src="@vid" controls style="height:auto !important;width:100% !important;height:auto !important;"></video>
-                                        }
-                                    }
-                                </a><br />
-                                <h5 class="top">
-                                    <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
-                                        @item.Title
-                                    </a>
-                                </h5>
-                                <p>@item.ShortDesc</p>
-                                <p><a class="span_link" href="/blog/@item.Id/@item.SefUrl"> @item.Survey </a><a class="span_link" href="/blog/@item.Id/@item.SefUrl"><span class="glyphicon glyphicon-eye-open"></span></a></p>
-                            </div>
-                                        }
-                        @foreach (var item in Model.data.OrderByDescending(current => current.Survey).Skip(1).Take(4))
+                            var itemImage = GetBlogImage(item);
+                            <a class="gp-side-post" href="/blog/@item.Id/@item.SefUrl" title="@item.Title">
+                                @if (!string.IsNullOrWhiteSpace(itemImage))
+                                {
+                                    <img src="@itemImage" alt="@item.Title" title="@item.Title" loading="lazy" decoding="async" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content("~/images/logo_purple.webp")" alt="@item.Title" title="@item.Title" loading="lazy" decoding="async" />
+                                }
+                                <span>
+                                    <strong>@GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.Title, 46)</strong>
+                                    <span>@item.Survey بازدید</span>
+                                </span>
+                            </a>
+                        }
+                    </div>
+                </section>
+
+                <section class="gp-blog-side-card">
+                    <h3>تازه‌ترین‌ها</h3>
+                    <div class="gp-side-posts">
+                        @foreach (var item in gpRecentBlogs)
                         {
-                            <div class="edit-pics">
-                                <div class="editor-pics">
-                                    <div class="col-md-3 item-pic">
-                                        @{
-                                            var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
-                                            if (ig != null)
-                                            {
-                                                string img = ig.FullPath;
-                                                <img src="@img" alt="@item.Title" title="@item.Title" class="img-responsive" />
-                                            }
-                                        }
-                                        @{
-                                            var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
-                                            if (vd != null)
-                                            {
-                                                string vid = vd.FullPath;
-                                                <video width="400" src="@vid" controls style="height:auto !important;width:100% !important;height:auto !important;"></video>
-                                            }
-                                        }
-                                    </div>
-                                    <div class="col-md-9 item-details">
-                                        <h5 class="inner two">
-                                            <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
-                                                @item.ShortDesc
-                                            </a>
-                                        </h5>
-                                        <div class="td-post-date two">
-                                            <i class="glyphicon glyphicon-time">
-                                            </i>@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)
-                                            <a href="/blog/@item.Id/@item.SefUrl">
-                                                <i class="glyphicon glyphicon-eye-open">
-                                                </i>@item.Survey
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </div>
-                                            }
-                        <div class="media">
-                            <h3 class="tittle media">تصادفی <i class="glyphicon glyphicon-random"></i></h3>
-                            @foreach (var item in Model.data.OrderByDescending(current => Guid.NewGuid()).Take(2))
-                            {
-                                <div class="general-text two">
-                                    <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
-                                        @{
-                                            var ig = item.Images.Where(current => current.Extension.Contains("jpeg") || current.Extension.Contains("gif") || current.Extension.Contains("png") || current.Extension.Contains("jpg") || current.Extension.Contains("webp")).FirstOrDefault();
-                                            if (ig != null)
-                                            {
-                                                string img = ig.FullPath;
-                                                <img src="@img" alt="@item.Title" title="@item.Title" class="img-responsive" />
-                                            }
-                                        }
-                                        @{
-                                            var vd = item.Images.Where(current => current.Extension.Contains("mp4") || current.Extension.Contains("mpeg") || current.Extension.Contains("wmv")).FirstOrDefault();
-                                            if (vd != null)
-                                            {
-                                                string vid = vd.FullPath;
-                                                <video width="400" src="@vid" controls style="height:auto !important;width:100% !important;height:auto !important;"></video>
-                                            }
-                                        }
-                                    </a>
-                                    <h5 class="top">
-                                        <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
-                                        </a>
-                                    </h5>
-                                    <p>@item.ShortDesc</p>
-                                    <p>
-                                        @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)
-                                    </p>
-                                </div>
-                                            }
-                        </div>
+                            var itemImage = GetBlogImage(item);
+                            <a class="gp-side-post" href="/blog/@item.Id/@item.SefUrl" title="@item.Title">
+                                @if (!string.IsNullOrWhiteSpace(itemImage))
+                                {
+                                    <img src="@itemImage" alt="@item.Title" title="@item.Title" loading="lazy" decoding="async" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content("~/images/logo_purple.webp")" alt="@item.Title" title="@item.Title" loading="lazy" decoding="async" />
+                                }
+                                <span>
+                                    <strong>@GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.Title, 46)</strong>
+                                    @if (item.CreateDate != null)
+                                    {
+                                        <span>@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)</span>
+                                    }
+                                </span>
+                            </a>
+                        }
                     </div>
-                </div>
-                <!--//general-news-->
-                <!--/news-->
-                <!--/news-->
-            </div>
-            <div class="clearfix"> </div>
-            <!--/footer-->
-            <div class="footer">
-                <div class="footer-top">
-                    <div class="col-md-4 footer-grid">
-                        <h4>کلینیک شنوایی و سمعک شکوه تجریش </h4>
-                        <ul class="bottom">
-                            <li>خرید و تجویز سمعک </li>
-                            <li>انجام آزمایشات شنوایی </li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4 footer-grid">
-                        <h4>تماس با ما</h4>
-                        <ul class="bottom">
-                            <li><i class="glyphicon glyphicon-phone"></i>8985 338 0939 </li>
-                            <li><i class="glyphicon glyphicon-envelope"></i><a href="mailto:info@TajrishSamak.com">info@TajrishSamak.com</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4 footer-grid">
-                        <h4>آدرس</h4>
-                        <ul class="bottom">
-                            <li><i class="glyphicon glyphicon-map-marker"></i>ایران ، تهران </li>
-                            <li><i class="glyphicon glyphicon-earphone"></i>5588 2273 021 </li>
-                        </ul>
-                    </div>
-                    <div class="clearfix"> </div>
-                </div>
-            </div>
-            <div class="copy">
-                <p> تمامی حقوق برای کلینیک شنوایی و سمعک شکوه تجریش محفوظ است  &copy;</p>
-            </div>
-            <div class="clearfix"> </div>
+                </section>
+            </aside>
         </div>
-        <div class="clearfix"> </div>
     </div>
-    <!--//footer-->
-    <!--start-smooth-scrolling-->
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            $().UItoTop({ easingType: 'easeOutQuart' });
-
-        });
-    </script>
-    <a href="#home" id="toTop" class="scroll" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
-</body>
-</html>
-<script src="~/Scripts/persianumber.min.js"></script>
-<script type="text/javascript">
-        $(document).ready(function () {
-            $('body').persiaNumber();
-        });
-</script>
+</section>

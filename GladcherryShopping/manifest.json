@@ -1,0 +1,21 @@
+{
+  "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+  "short_name": "تجریش سمعک",
+  "description": "ارزیابی شنوایی، تجویز و تنظیم تخصصی سمعک",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#920ab6",
+  "dir": "rtl",
+  "lang": "fa-IR",
+  "icons": [
+    {
+      "src": "/images/logo_purple.webp",
+      "sizes": "296x80",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ]
+}

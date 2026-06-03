@@ -19,7 +19,10 @@ namespace GladcherryShopping.Controllers
 {
     public class HomeController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private const int ProductPageSize = 6;
+        private const int BlogPageSize = 8;
+        private const int ServicePageSize = 8;
+        private readonly ApplicationDbContext db = new ApplicationDbContext();
         public ActionResult Index()
         {
             return View();
@@ -29,38 +32,55 @@ namespace GladcherryShopping.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SubmitMessage([Bind(Include = "Id,FullName,Body,Email")] SiteMessage model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                model.RegisterDate = DateTime.Now;
-                db.SiteMessages.Add(model);
-                db.SaveChanges();
-                TempData["Success"] = "پیام شما با موفقیت در سیستم ثبت گردید";
+                TempData["Error"] = "متاسفانه خطایی رخ داده است لطفا اطلاعات خود را بررسی و مجدد تلاش نمایید";
                 return RedirectToAction("Index", "ContactUs");
             }
-            TempData["Error"] = "متاسفانه خطایی رخ داده است لطفا اطلاعات خود را بررسی و مجدد تلاش نمایید";
+
+            model.RegisterDate = DateTime.Now;
+            db.SiteMessages.Add(model);
+
+            try
+            {
+                db.SaveChanges();
+                TempData["Success"] = "پیام شما با موفقیت در سیستم ثبت گردید";
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "خطایی رخ داده است لطفا مجدد تلاش فرمایید .";
+            }
+
             return RedirectToAction("Index", "ContactUs");
         }
 
         [HttpGet]
         public JsonResult NewsLetter([Bind(Include = "Email")] string text, NewsLetter newsletter)
         {
-            if (text == string.Empty || text == null)
+            if (string.IsNullOrWhiteSpace(text))
             {
                 return Json(new { text = "لطفا ایمیل خود را وارد نمایید .", status = 0 }, JsonRequestBehavior.AllowGet);
             }
+
+            text = text.Trim();
+
             if (!new EmailAddressAttribute().IsValid(text))
             {
                 return Json(new { text = "لطفا ایمیل معتبری را وارد نمایید .", status = 0 }, JsonRequestBehavior.AllowGet);
             }
 
-            var email = db.NewsLetters.Where(n => n.Email == text).FirstOrDefault();
-            if (email != null)
+            bool emailExists = db.NewsLetters
+                .AsNoTracking()
+                .Any(current => current.Email == text);
+
+            if (emailExists)
             {
                 return Json(new { text = "ایمیل شما قبلا در سیستم ثبت شده است .", status = 0 }, JsonRequestBehavior.AllowGet);
             }
 
             newsletter.Email = text;
             db.NewsLetters.Add(newsletter);
+
             try
             {
                 db.SaveChanges();
@@ -68,7 +88,6 @@ namespace GladcherryShopping.Controllers
             }
             catch (Exception)
             {
-
                 return Json(new { text = "خطایی رخ داده است لطفا مجدد تلاش فرمایید .", status = 0 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -177,51 +196,93 @@ namespace GladcherryShopping.Controllers
         [HttpGet]
         public ActionResult Services(int? id, int page = 1)
         {
-            if (id == null)
+            if (!id.HasValue)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ServiceCategory category = db.ServiceCategories.Where(current => current.Id == id).FirstOrDefault();
-            if (category == null)
+
+            page = NormalizePage(page);
+
+            bool categoryExists = db.ServiceCategories
+                .AsNoTracking()
+                .Any(current => current.Id == id.Value);
+
+            if (!categoryExists)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var blog = new List<Service>();
-            blog = db.Services.Where(current => current.Images.Count > 0 && current.IsVisible == true && current.CategoryId == id).Include(current => current.Images).ToList();
-            if (blog.Count() == 0)
+
+            IQueryable<Service> query = db.Services
+                .AsNoTracking()
+                .Where(current =>
+                    current.Images.Any() &&
+                    current.IsVisible == true &&
+                    current.CategoryId == id.Value);
+
+            int totalCount = query.Count();
+
+            if (totalCount == 0)
             {
                 TempData["NotFound"] = "هنوز خدماتی در این گروه وجود ندارد .";
             }
-            PagerViewModels<Service> BlogViewModels = new PagerViewModels<Service>();
-            BlogViewModels.data = blog.OrderByDescending(current => current.CreateDate).Skip((page - 1) * 16).Take(16).ToList();
-            BlogViewModels.CurrentPage = page;
-            BlogViewModels.TotalItemCount = blog.Count();
-            return View(BlogViewModels);
+
+            PagerViewModels<Service> serviceViewModels = new PagerViewModels<Service>();
+            serviceViewModels.CurrentPage = page;
+            serviceViewModels.TotalItemCount = totalCount;
+            serviceViewModels.data = query
+                .Include(current => current.Images)
+                .OrderByDescending(current => current.CreateDate)
+                .Skip((page - 1) * ServicePageSize)
+                .Take(ServicePageSize)
+                .ToList();
+
+            return View(serviceViewModels);
         }
 
         [HttpGet]
         public ActionResult Blogs(int? id, int page = 1)
         {
-            if (id == null)
+            if (!id.HasValue)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = db.Categories.Where(current => current.Id == id).FirstOrDefault();
-            if (category == null)
+
+            page = NormalizePage(page);
+
+            bool categoryExists = db.Categories
+                .AsNoTracking()
+                .Any(current => current.Id == id.Value);
+
+            if (!categoryExists)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var blog = new List<Blog>();
-            blog = db.Blogs.Where(current => current.Images.Count > 0 && current.IsVisible == true && current.CategoryId == id).Include(current => current.Images).ToList();
-            if (blog.Count() == 0)
+
+            IQueryable<Blog> query = db.Blogs
+                .AsNoTracking()
+                .Where(current =>
+                    current.Images.Any() &&
+                    current.IsVisible == true &&
+                    current.CategoryId == id.Value);
+
+            int totalCount = query.Count();
+
+            if (totalCount == 0)
             {
                 TempData["NotFound"] = "هنوز مطلبی در این گروه وجود ندارد .";
             }
-            PagerViewModels<Blog> BlogViewModels = new PagerViewModels<Blog>();
-            BlogViewModels.data = blog.OrderByDescending(current => current.CreateDate).Skip((page - 1) * 16).Take(16).ToList();
-            BlogViewModels.CurrentPage = page;
-            BlogViewModels.TotalItemCount = blog.Count();
-            return View(BlogViewModels);
+
+            PagerViewModels<Blog> blogViewModels = new PagerViewModels<Blog>();
+            blogViewModels.CurrentPage = page;
+            blogViewModels.TotalItemCount = totalCount;
+            blogViewModels.data = query
+                .Include(current => current.Images)
+                .OrderByDescending(current => current.CreateDate)
+                .Skip((page - 1) * BlogPageSize)
+                .Take(BlogPageSize)
+                .ToList();
+
+            return View(blogViewModels);
         }
 
         public ActionResult Products(int? id, int page = 1)
@@ -256,32 +317,50 @@ namespace GladcherryShopping.Controllers
 
         public ActionResult Brands(int? id, int page = 1)
         {
-            if (id == null)
+            if (!id.HasValue)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand category = db.Brands.Where(current => current.Id == id).Include(current => current.SubCategories).FirstOrDefault();
-            if (category == null)
+
+            page = NormalizePage(page);
+
+            Brand brand = db.Brands
+                .AsNoTracking()
+                .Include(current => current.SubCategories)
+                .FirstOrDefault(current => current.Id == id.Value);
+
+            if (brand == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            else
+
+            PagerViewModels<Product> productViewModels = new PagerViewModels<Product>();
+            productViewModels.CurrentPage = page;
+            ViewBag.CategoryName = brand.PersianName;
+
+            if (brand.SubCategories.Any())
             {
-                PagerViewModels<Product> ProductViewModels = new PagerViewModels<Product>();
-                ViewBag.CategoryName = category.PersianName.ToString();
-                if (category.SubCategories.Count() > 0)
-                {
-                    ViewBag.CategoryId = category.Id;
-                }
-                else
-                {
-                    var products = db.Products.Where(current => current.BrandId == id);
-                    ProductViewModels.CurrentPage = page;
-                    ProductViewModels.data = products.OrderByDescending(current => current.CreateDate).ThenByDescending(current => current.PersianName).Skip((page - 1) * 12).Take(12).ToList();
-                    ProductViewModels.TotalItemCount = products.Count();
-                }
-                return View(ProductViewModels);
+                ViewBag.CategoryId = brand.Id;
+                productViewModels.data = new List<Product>();
+                productViewModels.TotalItemCount = 0;
+                return View(productViewModels);
             }
+
+            IQueryable<Product> query = db.Products
+                .AsNoTracking()
+                .Where(current =>
+                    current.BrandId == id.Value &&
+                    current.SiteFirstImage != null);
+
+            productViewModels.TotalItemCount = query.Count();
+            productViewModels.data = query
+                .OrderByDescending(current => current.CreateDate)
+                .ThenByDescending(current => current.PersianName)
+                .Skip((page - 1) * ProductPageSize)
+                .Take(ProductPageSize)
+                .ToList();
+
+            return View(productViewModels);
         }
 
 
@@ -393,43 +472,57 @@ namespace GladcherryShopping.Controllers
 
         public string CartCount()
         {
-            List<HttpCookie> lst = new List<HttpCookie>();
-            for (int i = Request.Cookies.Count - 1; i >= 0; i--)
-            {
-                if (lst.Where(p => p.Name == Request.Cookies[i].Name).Any() == false)
-                    lst.Add(Request.Cookies[i]);
-            }
-            int CartCount = lst.Where(p => p.Name.StartsWith("Cart_")).Count();
-            return CartCount.ToString();
+            int cartCount = GetUniqueCookies()
+                .Count(current => current.Name.StartsWith("Cart_"));
+
+            return cartCount.ToString();
         }
 
         public string CartPrice()
         {
-            List<HttpCookie> lst = new List<HttpCookie>();
-            for (int i = Request.Cookies.Count - 1; i >= 0; i--)
+            List<HttpCookie> cartCookies = GetUniqueCookies()
+                .Where(current => current.Name.StartsWith("Cart_"))
+                .ToList();
+
+            if (!cartCookies.Any())
             {
-                if (lst.Where(p => p.Name == Request.Cookies[i].Name).Any() == false)
-                    lst.Add(Request.Cookies[i]);
+                return "0";
             }
-            int TotalPrice = 0;
-            foreach (var item in lst.Where(p => p.Name.StartsWith("Cart_")))
+
+            List<long> productIds = cartCookies
+                .Select(current => SafeConvertLong(current.Name.Substring(5)))
+                .Where(current => current > 0)
+                .ToList();
+
+            List<Product> products = db.Products
+                .AsNoTracking()
+                .Where(current => productIds.Contains(current.Id))
+                .ToList();
+
+            int totalPrice = 0;
+
+            foreach (var item in cartCookies)
             {
-                string idstring = item.Name.Substring(5);
-                int id = Convert.ToInt32(idstring);
-                int CartCount = Convert.ToInt32(item.Value);
-                Product product = db.Products.Find(id);
+                long productId = SafeConvertLong(item.Name.Substring(5));
+                int cartCount = SafeConvertInt(item.Value);
+                Product product = products.FirstOrDefault(current => current.Id == productId);
+
+                if (product == null || cartCount <= 0)
+                {
+                    continue;
+                }
+
+                int unitPrice = product.UnitPrice;
+
                 if (product.DiscountPercent > 0)
                 {
-                    var discountPrice = product.UnitPrice - (product.UnitPrice) * (product.DiscountPercent) / 100;
-                    TotalPrice += CartCount * discountPrice;
+                    unitPrice = product.UnitPrice - (product.UnitPrice * product.DiscountPercent / 100);
                 }
-                else
-                {
-                    TotalPrice += CartCount * product.UnitPrice;
-                }
+
+                totalPrice += cartCount * unitPrice;
             }
-            string x = string.Format("{0:n0}", TotalPrice.ToString());
-            return TotalPrice.ToString("N0").Replace(System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NumberGroupSeparator, "");
+
+            return totalPrice.ToString("N0").Replace(System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NumberGroupSeparator, "");
         }
 
         [HttpGet]
@@ -1157,6 +1250,51 @@ namespace GladcherryShopping.Controllers
         public ActionResult Result()
         {
             return View();
+        }
+
+
+        private List<HttpCookie> GetUniqueCookies()
+        {
+            List<HttpCookie> result = new List<HttpCookie>();
+
+            for (int i = Request.Cookies.Count - 1; i >= 0; i--)
+            {
+                HttpCookie cookie = Request.Cookies[i];
+
+                if (cookie != null && result.Any(current => current.Name == cookie.Name) == false)
+                {
+                    result.Add(cookie);
+                }
+            }
+
+            return result;
+        }
+
+        private int SafeConvertInt(string value)
+        {
+            int result;
+            return int.TryParse(value, out result) ? result : 0;
+        }
+
+        private long SafeConvertLong(string value)
+        {
+            long result;
+            return long.TryParse(value, out result) ? result : 0;
+        }
+
+        private int NormalizePage(int page)
+        {
+            return page < 1 ? 1 : page;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
 
         #region SamanBank

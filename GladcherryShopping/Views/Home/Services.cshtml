@@ -1,86 +1,890 @@
 ﻿@using DataLayer.ViewModels.PagerViewModel
 @model PagerViewModels<DataLayer.Models.Service>
 @using MvcPager
-@using Microsoft.AspNet.Identity;
-@using System.Web.Mvc;
-@using System.Data.Entity;
-@using DataLayer.Models;
+@using System;
+@using System.Linq;
 @{
-    ViewBag.Title = "خدمات";
+    var gpCacheVersion = "20260603-tajrish-v27-services-save-seo";
+    var gpBaseUrl = "https://tajrish-samak.ir";
+    var gpCanonicalUrl = gpBaseUrl + Request.Path;
+    var gpServices = Model != null && Model.data != null
+        ? Model.data.ToList()
+        : new List<DataLayer.Models.Service>();
+
+    ViewBag.Title = "خدمات شنوایی | کلینیک شنوایی و سمعک شکوه تجریش";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Metas{
-    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
-    <link rel="canonical" href="@string.Format("{0}{1}", "http://tajrish-samak.ir", Request.Path)">
-    <meta name="Keywords" content="تجویز سمعک">
-    <meta property="og:title" content="تجویز سمعک" />
-    @*<meta property="og:url" content="@facebook" />*@
-    <meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
-    <meta name="twitter:image" content="تجویز سمعک">
-    <meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
-    @*<meta name="twitter:site" content="@twitter">*@
-    <meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <meta name="description" content="خدمات کلینیک شنوایی و سمعک شکوه تجریش شامل ارزیابی شنوایی، تجویز و تنظیم سمعک، مشاوره تخصصی، پیگیری و خدمات مرتبط با سلامت شنوایی." />
+    <link rel="canonical" href="@gpCanonicalUrl" />
+    <meta name="Keywords" content="خدمات شنوایی، کلینیک شنوایی، تجویز سمعک، تنظیم سمعک، تست شنوایی، مشاوره سمعک، شکوه تجریش" />
+    <meta property="og:title" content="خدمات شنوایی | کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@gpCanonicalUrl" />
+    <meta property="og:description" content="مشاهده خدمات شنوایی کلینیک شکوه تجریش؛ بررسی خدمات، افزودن به علاقه‌مندی و دریافت مشاوره تخصصی." />
+    <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta name="twitter:description" content="خدمات شنوایی، تجویز و تنظیم سمعک، تست شنوایی و مشاوره تخصصی در کلینیک شکوه تجریش." />
 }
 
-
 @section Styles{
-    <style>
-        .cat_blog {
-            float: right !important;
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@@type": "ListItem",
+              "position": 1,
+              "name": "صفحه اصلی",
+              "item": "https://tajrish-samak.ir/"
+            },
+            {
+              "@@type": "ListItem",
+              "position": 2,
+              "name": "خدمات شنوایی",
+              "item": "@gpCanonicalUrl"
+            }
+          ]
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "ItemList",
+          "name": "خدمات شنوایی کلینیک شکوه تجریش",
+          "url": "@gpCanonicalUrl",
+          "numberOfItems": "@gpServices.Count()",
+          "itemListElement": [
+            @{
+                var gpSchemaIndex = 1;
+                var gpSchemaItems = gpServices.Take(8).ToList();
+            }
+            @foreach (var item in gpSchemaItems)
+            {
+                <text>{
+                  "@@type": "ListItem",
+                  "position": @gpSchemaIndex,
+                  "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(item.Title))",
+                  "url": "https://tajrish-samak.ir/service/@item.Id/@item.SefUrl"
+                }</text>
+                if (gpSchemaIndex < gpSchemaItems.Count())
+                {
+                    <text>,</text>
+                }
+                gpSchemaIndex++;
+            }
+          ]
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@@type": "Question",
+              "name": "برای انتخاب خدمت مناسب شنوایی از کجا شروع کنم؟",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "بهترین شروع، بررسی علائم، انجام ارزیابی شنوایی و دریافت مشاوره تخصصی از شنوایی‌شناس است."
+              }
+            },
+            {
+              "@@type": "Question",
+              "name": "آیا می‌توان خدمات موردنظر را برای بررسی بعدی نگه داشت؟",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "در این صفحه می‌توانید خدمات مناسب را به علاقه‌مندی اضافه کنید تا هنگام تماس یا مراجعه، سریع‌تر درباره آن‌ها مشورت کنید."
+              }
+            }
+          ]
+        }
+    </script>
+
+    <style id="gp-v27-services-save-seo">
+        :root {
+            --gp-v27-purple: #4b1684;
+            --gp-v27-violet: #920ab6;
+            --gp-v27-pink: #e10b79;
+            --gp-v27-cyan: #0ba6b8;
+            --gp-v27-lime: #d8f512;
+            --gp-v27-heart: #e10b45;
+            --gp-v27-ink: #20142d;
+            --gp-v27-muted: rgba(32, 20, 45, .66);
+            --gp-v27-card: rgba(255,255,255,.90);
+            --gp-v27-border: rgba(75,22,132,.10);
+            --gp-v27-shadow: 0 24px 60px rgba(74,18,107,.10);
+        }
+
+        .gp-services-page {
+            direction: rtl;
+            overflow: hidden;
+        }
+
+        .gp-services-hero {
+            position: relative;
+            margin: 22px auto 28px;
+            padding: clamp(28px, 4vw, 56px);
+            border-radius: 42px;
+            background: radial-gradient(circle at 14% 10%, rgba(216,245,18,.25), transparent 24%), radial-gradient(circle at 88% 24%, rgba(255,255,255,.15), transparent 22%), linear-gradient(135deg, #4b1684 0%, #920ab6 54%, #e10b79 100%);
+            color: #fff;
+            box-shadow: 0 32px 80px rgba(74,18,107,.20);
+            isolation: isolate;
+            overflow: hidden;
+        }
+
+            .gp-services-hero::before,
+            .gp-services-hero::after {
+                content: "";
+                position: absolute;
+                border-radius: 999px;
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .gp-services-hero::before {
+                width: 260px;
+                height: 260px;
+                left: -92px;
+                top: -88px;
+                background: rgba(255,255,255,.13);
+                animation: gpV27Blob 10s ease-in-out infinite alternate;
+            }
+
+            .gp-services-hero::after {
+                width: 330px;
+                height: 330px;
+                right: -128px;
+                bottom: -170px;
+                background: rgba(11,166,184,.22);
+                animation: gpV27Blob 12s ease-in-out infinite alternate-reverse;
+            }
+
+        @@keyframes gpV27Blob {
+            to {
+                transform: translate3d(24px, 18px, 0) scale(1.06);
+            }
+        }
+
+        .gp-services-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(250px, .40fr);
+            gap: clamp(20px, 4vw, 46px);
+            align-items: center;
+        }
+
+        .gp-services-kicker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            color: #fff !important;
+            font-weight: 950;
+            backdrop-filter: blur(14px);
+        }
+
+        .gp-services-hero h1 {
+            margin: 16px 0 12px;
+            color: #fff !important;
+            font-size: clamp(30px, 4.8vw, 62px);
+            font-weight: 1000;
+            line-height: 1.34 !important;
+            letter-spacing: -.02em;
+        }
+
+        .gp-services-hero p {
+            max-width: 780px;
+            margin: 0;
+            color: rgba(255,255,255,.90) !important;
+            font-size: clamp(14px, 1.2vw, 18px);
+            font-weight: 850;
+            line-height: 2.1;
+        }
+
+        .gp-services-hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+            .gp-services-hero-actions a,
+            .gp-service-counter-chip {
+                min-height: 48px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 0 18px;
+                border-radius: 999px;
+                text-decoration: none !important;
+                font-weight: 950;
+            }
+
+                .gp-services-hero-actions a:first-child {
+                    background: #fff;
+                    color: #4b1684 !important;
+                    box-shadow: 0 18px 38px rgba(0,0,0,.14);
+                }
+
+                .gp-services-hero-actions a:nth-child(2),
+                .gp-service-counter-chip {
+                    background: rgba(255,255,255,.13);
+                    border: 1px solid rgba(255,255,255,.24);
+                    color: #fff !important;
+                }
+
+                    .gp-service-counter-chip > span:first-child {
+                        color: #ff3f72 !important;
+                        font-size: 18px;
+                        text-shadow: 0 6px 18px rgba(255, 63, 114, .25);
+                    }
+
+        .gp-services-stats {
+            display: grid;
+            gap: 12px;
+        }
+
+        .gp-services-stat-card {
+            min-height: 92px;
+            padding: 18px;
+            border-radius: 28px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            backdrop-filter: blur(14px);
+        }
+
+            .gp-services-stat-card strong {
+                display: block;
+                color: #fff !important;
+                font-size: 28px;
+                font-weight: 1000;
+                line-height: 1;
+            }
+
+            .gp-services-stat-card span {
+                display: block;
+                margin-top: 8px;
+                color: rgba(255,255,255,.82) !important;
+                font-weight: 850;
+            }
+
+        .gp-services-list-card {
+            padding: clamp(16px, 2.2vw, 26px);
+            margin-bottom: 40px;
+            border-radius: 34px;
+            background: var(--gp-v27-card);
+            border: 1px solid var(--gp-v27-border);
+            box-shadow: var(--gp-v27-shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .gp-services-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+            .gp-services-toolbar h2 {
+                margin: 0;
+                color: var(--gp-v27-ink) !important;
+                font-size: clamp(22px, 2.4vw, 34px);
+                font-weight: 1000;
+                line-height: 1.5 !important;
+            }
+
+            .gp-services-toolbar p {
+                margin: 4px 0 0;
+                color: var(--gp-v27-muted) !important;
+                font-weight: 850;
+                line-height: 1.9;
+            }
+
+        .gp-service-hints {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+            .gp-service-hints span {
+                min-height: 34px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 11px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.08);
+                color: #6420a0 !important;
+                font-weight: 900;
+                font-size: 12px;
+            }
+
+        .gp-services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .gp-service-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 392px;
+            border-radius: 30px;
+            background: #fff;
+            border: 1px solid rgba(75,22,132,.08);
+            box-shadow: 0 18px 42px rgba(74,18,107,.08);
+            overflow: hidden;
+            transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease;
+        }
+
+            .gp-service-card:hover {
+                transform: translateY(-7px);
+                box-shadow: 0 30px 72px rgba(74,18,107,.15);
+            }
+
+        .gp-service-media {
+            position: relative;
+            height: 186px;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle at 20% 10%, rgba(146,10,182,.12), transparent 30%), linear-gradient(135deg, #fff, #fbf7ff);
+            text-decoration: none !important;
+            overflow: hidden;
+        }
+
+            .gp-service-media img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform .25s ease;
+            }
+
+        .gp-service-card:hover .gp-service-media img {
+            transform: scale(1.06);
+        }
+
+        .gp-service-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            min-height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: #d8f512;
+            color: #1d1430 !important;
+            font-size: 12px;
+            font-weight: 1000;
+            box-shadow: 0 12px 24px rgba(216,245,18,.22);
+        }
+
+        .gp-service-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 17px;
+        }
+
+        .gp-service-title {
+            margin: 0 0 8px;
+            color: var(--gp-v27-ink) !important;
+            font-size: 17px;
+            font-weight: 1000;
+            line-height: 1.8 !important;
+        }
+
+            .gp-service-title a {
+                color: inherit !important;
+                text-decoration: none !important;
+            }
+
+        .gp-service-desc {
+            margin: 0 0 14px;
+            color: var(--gp-v27-muted) !important;
+            font-size: 13px;
+            font-weight: 850;
+            line-height: 2;
+        }
+
+        .gp-service-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin: auto 0 14px;
+        }
+
+            .gp-service-meta span {
+                min-height: 30px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 10px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.08);
+                color: #6420a0 !important;
+                font-size: 12px;
+                font-weight: 900;
+            }
+
+        .gp-service-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .gp-service-details,
+        .gp-service-favorite {
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border-radius: 17px;
+            text-decoration: none !important;
+            font-weight: 1000;
+            transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+            white-space: nowrap;
+        }
+
+        .gp-service-details {
+            background: linear-gradient(135deg, var(--gp-v27-purple), var(--gp-v27-violet));
+            color: #fff !important;
+            box-shadow: 0 16px 32px rgba(146,10,182,.17);
+        }
+
+        .gp-service-favorite {
+            min-width: 0;
+            border: 1px solid rgba(225,11,69,.26);
+            background: #fff;
+            color: #d7194f !important;
+            cursor: pointer;
+        }
+
+        .gp-heart-icon {
+            color: var(--gp-v27-heart) !important;
+            font-family: Tahoma, Arial, sans-serif !important;
+            font-size: 18px !important;
+            line-height: 1 !important;
+            text-shadow: 0 6px 16px rgba(225,11,69,.20);
+        }
+
+        .gp-service-favorite.is-saved {
+            background: rgba(225,11,69,.10) !important;
+            border-color: rgba(225,11,69,.30) !important;
+            color: #d7194f !important;
+        }
+
+        .gp-service-details:hover,
+        .gp-service-favorite:hover {
+            transform: translateY(-2px);
+        }
+
+        .gp-empty-services {
+            padding: 38px;
+            border-radius: 28px;
+            text-align: center;
+            background: rgba(146,10,182,.06);
+            color: var(--gp-v27-ink);
+            font-weight: 950;
+        }
+
+        .gp-service-pagination {
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 28px;
+            background: rgba(255,255,255,.70);
+            border: 1px solid rgba(75,22,132,.08);
+        }
+
+            .gp-service-pagination .pagination {
+                margin: 0;
+            }
+
+        .gp-service-toast {
+            position: fixed;
+            right: 18px;
+            bottom: 92px;
+            z-index: 9999;
+            min-height: 48px;
+            max-width: min(330px, calc(100vw - 36px));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 18px;
+            border-radius: 999px;
+            background: rgba(29,20,48,.92);
+            color: #fff;
+            font-weight: 950;
+            box-shadow: 0 18px 42px rgba(0,0,0,.22);
+            transform: translateY(24px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform .22s ease, opacity .22s ease;
+        }
+
+            .gp-service-toast.is-visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        html.gp-dark-mode .gp-services-page {
+            --gp-v27-ink: #f7f7fb;
+            --gp-v27-muted: rgba(246,247,251,.72);
+            --gp-v27-card: rgba(24,24,40,.88);
+            --gp-v27-border: rgba(255,255,255,.10);
+            --gp-v27-shadow: 0 24px 60px rgba(0,0,0,.20);
+        }
+
+        html.gp-dark-mode .gp-services-list-card,
+        html.gp-dark-mode .gp-service-pagination {
+            background: rgba(24,24,40,.90) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-service-card {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-service-title,
+        html.gp-dark-mode .gp-service-title a,
+        html.gp-dark-mode .gp-services-toolbar h2 {
+            color: #f7f7fb !important;
+        }
+
+        html.gp-dark-mode .gp-service-desc,
+        html.gp-dark-mode .gp-services-toolbar p {
+            color: rgba(246,247,251,.72) !important;
+        }
+
+        html.gp-dark-mode .gp-service-meta span,
+        html.gp-dark-mode .gp-service-hints span {
+            background: rgba(255,255,255,.09) !important;
+            color: rgba(246,247,251,.88) !important;
+        }
+
+        html.gp-dark-mode .gp-service-favorite {
+            background: rgba(225,11,69,.10) !important;
+            color: #ff6b93 !important;
+            border-color: rgba(255,107,147,.28) !important;
+        }
+
+            html.gp-dark-mode .gp-service-favorite.is-saved {
+                background: rgba(255,79,124,.16) !important;
+                color: #ff7ba0 !important;
+                border-color: rgba(255,79,124,.34) !important;
+            }
+
+        html.gp-dark-mode .gp-heart-icon {
+            color: #ff4f7c !important;
+        }
+
+        html.gp-dark-mode .gp-empty-services {
+            background: rgba(255,255,255,.08) !important;
+            color: #fff !important;
+        }
+
+        @@media(max-width: 1200px) {
+            .gp-services-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @@media(max-width: 991px) {
+            .gp-services-hero-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-services-stats {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .gp-services-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @@media(max-width: 768px) {
+            .gp-services-hero {
+                border-radius: 30px;
+                padding: 26px 20px;
+                text-align: center;
+            }
+
+            .gp-services-hero-actions {
+                justify-content: center;
+            }
+
+            .gp-services-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-services-list-card {
+                padding: 14px;
+                border-radius: 28px;
+            }
+
+            .gp-services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-services-toolbar {
+                text-align: center;
+                justify-content: center;
+            }
+
+            .gp-service-hints {
+                justify-content: center;
+            }
+
+            .gp-service-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-service-favorite {
+                width: 100%;
+            }
+
+            .gp-service-toast {
+                left: 14px;
+                right: 14px;
+                bottom: 86px;
+            }
         }
     </style>
 }
 
-<div class="services-breadcrumb">
-    <div class="agile_inner_breadcrumb">
-        <div class="container">
-            <ul class="w3_short">
-                <li>
-                    <a href="/">صفحه اصلی</a>
-                    <i>|</i>
-                </li>
-                <li>خدمات</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-@if (Model.data.Count() > 0)
-{
-    <div class="container grids">
-        <div class="row">
-            @foreach (var item in Model.data.ToList())
-            {
-                <div class="col-md-3 col-sm-6 text-right cat_blog">
-                    <div class="product-grid5 card">
-                        <div class="product-image5 image-cropper text-center">
-                            <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/service/@item.Id/@item.SefUrl">
-                                <img class="pic-1 img-rounded" src="@item.Images.FirstOrDefault().FullPath" alt="@item.Title @item.Title" title="@item.Title @item.Title">
-                            </a>
-                        </div>
-                        <div class="product-content text-center">
-                            <div class="price text-center rent name_item"> @item.Title </div>
-                            <h3 class="title">
-                                <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/service/@item.Id/@item.SefUrl">
-                                    @GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.ShortDesc, 45)
-                                </a>
-                            </h3>
-                            <span class="badge badge-danger ml-2">@item.Survey <i class="fa fa-bar-chart-o"></i></span>
-                            <div class="price to-bottom text-center"> @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false) </div>
-                        </div>
+<section class="gp-services-page" aria-label="خدمات شنوایی">
+    <div class="container">
+        <section class="gp-services-hero" aria-label="معرفی خدمات کلینیک">
+            <div class="gp-services-hero-grid">
+                <div>
+                    <span class="gp-services-kicker">خدمات کلینیک</span>
+                    <h1>خدمات شنوایی را دقیق‌تر بررسی کنید.</h1>
+                    <p>
+                        از ارزیابی شنوایی تا مشاوره، تجویز و پیگیری سمعک؛ خدمات موردنظر را ببینید، به علاقه‌مندی اضافه کنید و هنگام تماس یا مراجعه سریع‌تر تصمیم بگیرید.
+                    </p>
+                    <div class="gp-services-hero-actions">
+                        <a href="tel:02122735588">
+                            <span aria-hidden="true">☎</span>
+                            مشاوره سریع
+                        </a>
+                        <a href="#gp-services-list">
+                            <span aria-hidden="true">⌄</span>
+                            مشاهده خدمات
+                        </a>
+                        <span class="gp-service-counter-chip" id="gpServiceCounterChip">
+                            <span aria-hidden="true">♡</span>
+                            <b id="gpServiceCounter">۰</b>
+                            علاقه‌مندی
+                        </span>
                     </div>
                 </div>
+
+                <div class="gp-services-stats" aria-label="خلاصه خدمات">
+                    <div class="gp-services-stat-card">
+                        <strong>@gpServices.Count()</strong>
+                        <span>خدمت قابل بررسی</span>
+                    </div>
+                    <div class="gp-services-stat-card">
+                        <strong>۴</strong>
+                        <span>مرحله مسیر: بررسی، علاقه‌مندی، تماس، مراجعه</span>
+                    </div>
+                    <div class="gp-services-stat-card">
+                        <strong>۲۵+</strong>
+                        <span>سال تجربه کلینیک</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <main class="gp-services-list-card" id="gp-services-list" aria-label="لیست خدمات">
+            <div class="gp-services-toolbar">
+                <div>
+                    <h2>خدمات قابل بررسی</h2>
+                    <p>هر خدمتی که به نیاز شما نزدیک‌تر بود به علاقه‌مندی اضافه کنید تا موقع مشاوره سریع‌تر درباره‌اش صحبت شود.</p>
+                </div>
+                <div class="gp-service-hints">
+                    <span>علاقه‌مندی سریع</span>
+                    <span>مشاوره تخصصی</span>
+                </div>
+            </div>
+
+            @if (gpServices.Count() > 0)
+            {
+                <div class="gp-services-grid">
+                    @foreach (var item in gpServices)
+                    {
+                        var gpImage = item.Images != null && item.Images.FirstOrDefault() != null
+                            ? item.Images.FirstOrDefault().FullPath
+                            : Url.Content("~/images/logo_purple.webp");
+
+                        <article class="gp-service-card" itemscope itemtype="https://schema.org/Service">
+                            <a class="gp-service-media" hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/service/@item.Id/@item.SefUrl" itemprop="url">
+                                <img src="@gpImage" alt="@item.Title" title="@item.Title" loading="lazy" decoding="async" itemprop="image" />
+                                <span class="gp-service-badge">خدمت</span>
+                            </a>
+
+                            <div class="gp-service-body">
+                                <h2 class="gp-service-title" itemprop="name">
+                                    <a hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/service/@item.Id/@item.SefUrl">
+                                        @item.Title
+                                    </a>
+                                </h2>
+
+                                <p class="gp-service-desc" itemprop="description">
+                                    @GladCherryShopping.Helpers.FunctionsHelper.Truncate(item.ShortDesc, 92)
+                                </p>
+
+                                <div class="gp-service-meta">
+                                    <span>@item.Survey بازدید</span>
+                                    @if (item.CreateDate != null)
+                                    {
+                                        <span>@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, false, false)</span>
+                                    }
+                                </div>
+
+                                <div class="gp-service-actions">
+                                    <a class="gp-service-details" hreflang="fa-IR" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/service/@item.Id/@item.SefUrl">
+                                        بررسی
+                                    </a>
+                                    <button type="button" class="gp-service-favorite" data-gp-save-service="@item.Id" data-gp-save-title="@item.Title">
+                                        <span class="gp-heart-icon" aria-hidden="true">♡</span>
+                                        علاقه‌مندی
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
             }
-        </div>
+            else
+            {
+                <div class="gp-empty-services">
+                    هنوز خدمتی برای نمایش ثبت نشده است. برای مشاوره مستقیم با کلینیک تماس بگیرید.
+                </div>
+            }
+
+            <div class="gp-service-pagination text-center">
+                <nav aria-label="صفحه‌بندی خدمات">
+                    <div style="direction:ltr">
+                        <ul class="pagination pagination-sm">
+                            <li>@Html.Pager(8, Model.CurrentPage, Model.TotalItemCount)</li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </main>
     </div>
+
+    <div class="gp-service-toast" id="gpServiceToast" aria-live="polite">به علاقه‌مندی اضافه شد</div>
+</section>
+
+@section Scripts{
+    <script>(function () {
+            var storageKey = "gpTajrishFavoriteServices";
+            var buttons = document.querySelectorAll("[data-gp-save-service]");
+            var counter = document.getElementById("gpServiceCounter");
+            var toast = document.getElementById("gpServiceToast");
+
+            function toPersianNumber(value) {
+                return String(value).replace(/[0-9]/g, function (digit) {
+                    return "۰۱۲۳۴۵۶۷۸۹"[digit];
+                });
+            }
+
+            function readSaved() {
+                try {
+                    var raw = window.localStorage.getItem(storageKey);
+                    var data = raw ? JSON.parse(raw) : [];
+                    return Array.isArray(data) ? data : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function writeSaved(items) {
+                try {
+                    window.localStorage.setItem(storageKey, JSON.stringify(items));
+                } catch (e) { }
+            }
+
+            function showToast(text) {
+                if (!toast) {
+                    return;
+                }
+                toast.textContent = text;
+                toast.classList.add("is-visible");
+                window.clearTimeout(showToast._timer);
+                showToast._timer = window.setTimeout(function () {
+                    toast.classList.remove("is-visible");
+                }, 1700);
+            }
+
+            function updateUI() {
+                var saved = readSaved();
+
+                if (counter) {
+                    counter.textContent = toPersianNumber(saved.length);
+                }
+
+                for (var i = 0; i < buttons.length; i++) {
+                    var id = buttons[i].getAttribute("data-gp-save-service");
+                    var isSaved = saved.some(function (item) {
+                        return String(item.id) === String(id);
+                    });
+
+                    buttons[i].classList.toggle("is-saved", isSaved);
+                    buttons[i].innerHTML = isSaved
+                        ? '<span class="gp-heart-icon" aria-hidden="true">♥</span> علاقه‌مندی'
+                        : '<span class="gp-heart-icon" aria-hidden="true">♡</span> علاقه‌مندی';
+                }
+            }
+
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].addEventListener("click", function () {
+                    var id = this.getAttribute("data-gp-save-service");
+                    var title = this.getAttribute("data-gp-save-title") || "خدمت";
+                    var saved = readSaved();
+                    var exists = saved.some(function (item) {
+                        return String(item.id) === String(id);
+                    });
+
+                    if (exists) {
+                        saved = saved.filter(function (item) {
+                            return String(item.id) !== String(id);
+                        });
+                        writeSaved(saved);
+                        showToast("از علاقه‌مندی حذف شد");
+                    } else {
+                        saved.push({
+                            id: id,
+                            title: title,
+                            savedAt: new Date().toISOString()
+                        });
+                        writeSaved(saved);
+                        showToast("به علاقه‌مندی اضافه شد");
+                    }
+
+                    updateUI();
+                });
+            }
+
+            updateUI();
+        })();</script>
 }
-<div class="text-center" style="display:flex;justify-content:center;">
-    <div class="loadmore1">
-        <div style="direction: ltr">
-            <ul class="pagination pagination-sm">
-                <li>@Html.Pager(16, Model.CurrentPage, Model.TotalItemCount)</li>
-            </ul>
-        </div>
-    </div>
-</div><br />

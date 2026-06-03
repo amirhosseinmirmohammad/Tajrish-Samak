@@ -1,188 +1,837 @@
 ﻿@{
-    ViewBag.Title = "تماس با ما";
+    var gpCacheVersion = "20260603-tajrish-v37-contact-modern-seo";
+    var gpBaseUrl = "https://tajrish-samak.ir";
+    var gpCanonicalUrl = gpBaseUrl + Request.Path;
+
+    ViewBag.Title = "تماس با ما | کلینیک شنوایی و سمعک شکوه تجریش";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Metas{
-<meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
-<link rel="canonical" href="@string.Format("{0}{1}", "http://tajrish-samak.ir", Request.Path)">
-<meta name="Keywords" content="تجویز سمعک">
-<meta property="og:title" content="تجویز سمعک" />
-@*<meta property="og:url" content="@facebook" />*@
-<meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
-<meta name="twitter:image" content="تجویز سمعک">
-<meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
-@*<meta name="twitter:site" content="@twitter">*@
-<meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <meta name="description" content="تماس با کلینیک شنوایی و سمعک شکوه تجریش؛ آدرس، شماره تماس، مسیر‌یابی، فرم ارسال پیام و راه‌های ارتباطی برای مشاوره شنوایی، تست شنوایی و تجویز سمعک." />
+    <link rel="canonical" href="@gpCanonicalUrl" />
+    <meta name="Keywords" content="تماس با کلینیک شنوایی تجریش، آدرس سمعک تجریش، شماره کلینیک سمعک، تست شنوایی تجریش، مشاوره سمعک، شکوه تجریش" />
+
+    <meta property="og:title" content="تماس با ما | کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@gpCanonicalUrl" />
+    <meta property="og:description" content="راه‌های ارتباطی، آدرس، مسیر‌یابی و فرم تماس کلینیک شنوایی و سمعک شکوه تجریش." />
+
+    <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta name="twitter:description" content="تماس، آدرس، مسیر‌یابی و مشاوره کلینیک شنوایی و سمعک شکوه تجریش." />
 }
 
 @section Styles{
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" />
-        <!--Google jSON_LD Structure Data Region-->
-<script type="application/ld+json">
-    {
-    "@@context": "http://schema.org",
-    "@@type": "Organization",
-    "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-    "description": "کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .",
-    "logo": "http://tajrish-samak.ir/images/logo_purple.png",
-    "url": "http://www.tajrish-samak.ir",
-    "sameAs": [ "https://www.instagram.com/tajrishsamak/",
-    "https://www.telegram.me/tajrish_samak/"],
-    "address": "تهران - میدان تجریش - خیابان شهرداری - رو به روی سینما آستارا - پلاک ۲۲۴ - ساختمان ۱۱۰ (ورودی قائم)",
-    "contactPoint": [{
-    "@@type": "ContactPoint",
-    "telephone": ["+98-21-22735588"],
-    "contactType": "customer service"
-    }]
-    }
-</script>
-<!--Google jSON_LD Structure Data Region-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@@type": "ListItem",
+              "position": 1,
+              "name": "صفحه اصلی",
+              "item": "https://tajrish-samak.ir/"
+            },
+            {
+              "@@type": "ListItem",
+              "position": 2,
+              "name": "تماس با ما",
+              "item": "@gpCanonicalUrl"
+            }
+          ]
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": ["LocalBusiness", "MedicalBusiness"],
+          "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+          "description": "کلینیک شنوایی و سمعک شکوه تجریش ارائه‌دهنده خدمات ارزیابی شنوایی، مشاوره، تجویز و تنظیم تخصصی سمعک است.",
+          "logo": "https://tajrish-samak.ir/images/logo_purple.webp",
+          "image": "https://tajrish-samak.ir/images/logo_purple.webp",
+          "url": "https://tajrish-samak.ir/",
+          "telephone": ["+982122735588", "+982122735599", "+989393388985"],
+          "email": "tajrishsamak@gmail.com",
+          "address": {
+            "@@type": "PostalAddress",
+            "addressCountry": "IR",
+            "addressRegion": "تهران",
+            "addressLocality": "تجریش",
+            "streetAddress": "میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰"
+          },
+          "geo": {
+            "@@type": "GeoCoordinates",
+            "latitude": 35.806270,
+            "longitude": 51.430387
+          },
+          "contactPoint": [
+            {
+              "@@type": "ContactPoint",
+              "telephone": "+982122735588",
+              "contactType": "customer service",
+              "areaServed": "IR",
+              "availableLanguage": "fa"
+            }
+          ],
+          "sameAs": [
+            "https://www.instagram.com/tajrishsamak/",
+            "https://www.telegram.me/sthc/",
+            "https://wa.me/+989393388985"
+          ]
+        }
+    </script>
+
+    <style id="gp-v37-contact-modern-seo">
+        :root {
+            --gp-v37-purple: #4b1684;
+            --gp-v37-violet: #920ab6;
+            --gp-v37-pink: #e10b79;
+            --gp-v37-cyan: #0ba6b8;
+            --gp-v37-lime: #d8f512;
+            --gp-v37-ink: #20142d;
+            --gp-v37-muted: rgba(32,20,45,.68);
+            --gp-v37-card: rgba(255,255,255,.92);
+            --gp-v37-border: rgba(75,22,132,.10);
+            --gp-v37-shadow: 0 24px 60px rgba(74,18,107,.10);
+        }
+
+        .gp-contact-page {
+            direction: rtl;
+            overflow: hidden;
+        }
+
+        .gp-contact-hero {
+            position: relative;
+            margin: 22px auto 28px;
+            padding: clamp(28px, 4vw, 58px);
+            border-radius: 42px;
+            background: radial-gradient(circle at 14% 10%, rgba(216,245,18,.25), transparent 24%), radial-gradient(circle at 88% 24%, rgba(255,255,255,.15), transparent 22%), linear-gradient(135deg, #4b1684 0%, #920ab6 54%, #e10b79 100%);
+            color: #fff;
+            box-shadow: 0 32px 80px rgba(74,18,107,.20);
+            isolation: isolate;
+            overflow: hidden;
+        }
+
+            .gp-contact-hero::before,
+            .gp-contact-hero::after {
+                content: "";
+                position: absolute;
+                border-radius: 999px;
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .gp-contact-hero::before {
+                width: 270px;
+                height: 270px;
+                left: -96px;
+                top: -92px;
+                background: rgba(255,255,255,.13);
+                animation: gpV37Blob 10s ease-in-out infinite alternate;
+            }
+
+            .gp-contact-hero::after {
+                width: 340px;
+                height: 340px;
+                right: -130px;
+                bottom: -172px;
+                background: rgba(11,166,184,.22);
+                animation: gpV37Blob 12s ease-in-out infinite alternate-reverse;
+            }
+
+        @@keyframes gpV37Blob {
+            to {
+                transform: translate3d(24px, 18px, 0) scale(1.06);
+            }
+        }
+
+        .gp-contact-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(260px, .42fr);
+            gap: clamp(20px, 4vw, 46px);
+            align-items: center;
+        }
+
+        .gp-contact-kicker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            color: #fff !important;
+            font-weight: 950;
+            backdrop-filter: blur(14px);
+        }
+
+        .gp-contact-hero h1 {
+            margin: 16px 0 12px;
+            color: #fff !important;
+            font-size: clamp(32px, 5vw, 66px);
+            font-weight: 1000;
+            line-height: 1.34 !important;
+            letter-spacing: -.02em;
+        }
+
+        .gp-contact-hero p {
+            max-width: 780px;
+            margin: 0;
+            color: rgba(255,255,255,.90) !important;
+            font-size: clamp(14px, 1.2vw, 18px);
+            font-weight: 850;
+            line-height: 2.1;
+        }
+
+        .gp-contact-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+            .gp-contact-actions a {
+                min-height: 48px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 0 18px;
+                border-radius: 999px;
+                text-decoration: none !important;
+                font-weight: 950;
+            }
+
+                .gp-contact-actions a:first-child {
+                    background: #fff;
+                    color: #4b1684 !important;
+                    box-shadow: 0 18px 38px rgba(0,0,0,.14);
+                }
+
+                .gp-contact-actions a:nth-child(2),
+                .gp-contact-actions a:nth-child(3) {
+                    background: rgba(255,255,255,.13);
+                    border: 1px solid rgba(255,255,255,.24);
+                    color: #fff !important;
+                }
+
+        .gp-contact-quick-cards {
+            display: grid;
+            gap: 12px;
+        }
+
+        .gp-contact-quick-card {
+            min-height: 92px;
+            padding: 18px;
+            border-radius: 28px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            backdrop-filter: blur(14px);
+        }
+
+            .gp-contact-quick-card strong {
+                display: block;
+                color: #fff !important;
+                font-size: 18px;
+                font-weight: 1000;
+                line-height: 1.7;
+            }
+
+            .gp-contact-quick-card span,
+            .gp-contact-quick-card a {
+                display: block;
+                margin-top: 5px;
+                color: rgba(255,255,255,.84) !important;
+                font-weight: 850;
+                text-decoration: none !important;
+                direction: ltr;
+                unicode-bidi: isolate;
+            }
+
+        .gp-contact-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(300px, 410px);
+            gap: 22px;
+            align-items: stretch;
+            margin-bottom: 28px;
+        }
+
+        .gp-contact-form-card,
+        .gp-contact-info-card,
+        .gp-contact-map-card,
+        .gp-contact-social-card {
+            border-radius: 34px;
+            background: var(--gp-v37-card);
+            border: 1px solid var(--gp-v37-border);
+            box-shadow: var(--gp-v37-shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .gp-contact-form-card {
+            padding: clamp(20px, 3vw, 34px);
+        }
+
+        .gp-contact-form-head {
+            margin-bottom: 18px;
+        }
+
+            .gp-contact-form-head span {
+                display: inline-flex;
+                min-height: 36px;
+                align-items: center;
+                justify-content: center;
+                padding: 0 13px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.08);
+                color: #6420a0 !important;
+                font-size: 13px;
+                font-weight: 950;
+            }
+
+            .gp-contact-form-head h2 {
+                margin: 12px 0 8px;
+                color: var(--gp-v37-ink) !important;
+                font-size: clamp(24px, 3.2vw, 42px);
+                font-weight: 1000;
+                line-height: 1.45 !important;
+            }
+
+            .gp-contact-form-head p {
+                margin: 0;
+                color: var(--gp-v37-muted) !important;
+                font-weight: 850;
+                line-height: 2;
+            }
+
+        .gp-contact-form {
+            display: grid;
+            gap: 12px;
+        }
+
+        .gp-contact-field {
+            position: relative;
+        }
+
+            .gp-contact-field input,
+            .gp-contact-field textarea {
+                width: 100%;
+                border: 1px solid rgba(75,22,132,.12) !important;
+                border-radius: 20px !important;
+                background: rgba(255,255,255,.82) !important;
+                color: var(--gp-v37-ink) !important;
+                font-size: 14px !important;
+                font-weight: 850 !important;
+                outline: 0 !important;
+                box-shadow: inset 0 1px 0 rgba(255,255,255,.70) !important;
+                transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+            }
+
+            .gp-contact-field input {
+                height: 54px;
+                padding: 0 16px !important;
+            }
+
+            .gp-contact-field textarea {
+                min-height: 160px;
+                padding: 16px !important;
+                resize: vertical;
+                line-height: 2;
+            }
+
+                .gp-contact-field input:focus,
+                .gp-contact-field textarea:focus {
+                    border-color: rgba(146,10,182,.35) !important;
+                    box-shadow: 0 14px 34px rgba(146,10,182,.10) !important;
+                    transform: translateY(-1px);
+                }
+
+        .gp-contact-submit {
+            min-height: 54px;
+            border: 0;
+            border-radius: 20px;
+            background: radial-gradient(circle at 15% 20%, rgba(216,245,18,.24), transparent 26%), linear-gradient(135deg, var(--gp-v37-purple), var(--gp-v37-violet), var(--gp-v37-pink));
+            color: #fff !important;
+            font-weight: 1000;
+            box-shadow: 0 18px 42px rgba(146,10,182,.20);
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+            .gp-contact-submit:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 26px 58px rgba(146,10,182,.28);
+            }
+
+        .gp-contact-side {
+            display: grid;
+            gap: 16px;
+        }
+
+        .gp-contact-info-card,
+        .gp-contact-social-card {
+            padding: 18px;
+        }
+
+            .gp-contact-info-card h2,
+            .gp-contact-social-card h2 {
+                margin: 0 0 14px;
+                color: var(--gp-v37-ink) !important;
+                font-size: 20px;
+                font-weight: 1000;
+                line-height: 1.7 !important;
+            }
+
+        .gp-contact-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .gp-contact-item {
+            display: grid;
+            grid-template-columns: 42px minmax(0, 1fr);
+            gap: 10px;
+            align-items: center;
+            padding: 11px;
+            border-radius: 22px;
+            background: rgba(255,255,255,.64);
+            border: 1px solid rgba(75,22,132,.08);
+            text-decoration: none !important;
+            transition: transform .18s ease, background .18s ease;
+        }
+
+            .gp-contact-item:hover {
+                transform: translateY(-2px);
+                background: #fff;
+            }
+
+        .gp-contact-icon {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--gp-v37-purple), var(--gp-v37-violet));
+            color: #fff !important;
+            font-size: 18px;
+            font-style: normal;
+        }
+
+        .gp-contact-item strong {
+            display: block;
+            color: var(--gp-v37-ink) !important;
+            font-size: 13px;
+            font-weight: 1000;
+            line-height: 1.8;
+        }
+
+        .gp-contact-item span {
+            display: block;
+            margin-top: 2px;
+            color: var(--gp-v37-muted) !important;
+            font-size: 13px;
+            font-weight: 850;
+            line-height: 1.8;
+        }
+
+        .gp-contact-item.gp-ltr span {
+            direction: ltr;
+            text-align: right;
+            unicode-bidi: isolate;
+        }
+
+        .gp-direction-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 9px;
+            margin-top: 12px;
+        }
+
+            .gp-direction-buttons a {
+                min-height: 48px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                border-radius: 18px;
+                text-decoration: none !important;
+                font-weight: 1000;
+            }
+
+                .gp-direction-buttons a:first-child {
+                    background: #fff;
+                    color: var(--gp-v37-purple) !important;
+                    border: 1px solid rgba(75,22,132,.12);
+                }
+
+                .gp-direction-buttons a:nth-child(2) {
+                    background: linear-gradient(135deg, var(--gp-v37-cyan), var(--gp-v37-violet));
+                    color: #fff !important;
+                }
+
+        .gp-contact-socials {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+            .gp-contact-socials a {
+                min-height: 46px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 17px;
+                text-decoration: none !important;
+                color: #fff !important;
+                font-weight: 1000;
+                font-size: 17px;
+                transition: transform .18s ease;
+            }
+
+                .gp-contact-socials a:hover {
+                    transform: translateY(-2px);
+                }
+
+                .gp-contact-socials a:nth-child(1) {
+                    background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+                }
+
+                .gp-contact-socials a:nth-child(2) {
+                    background: #229ED9;
+                }
+
+                .gp-contact-socials a:nth-child(3) {
+                    background: #25D366;
+                }
+
+                .gp-contact-socials a:nth-child(4) {
+                    background: #4b1684;
+                }
+
+        .gp-contact-map-card {
+            padding: 14px;
+            margin-bottom: 42px;
+            overflow: hidden;
+        }
+
+        .gp-map-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 8px 8px 14px;
+        }
+
+            .gp-map-head h2 {
+                margin: 0;
+                color: var(--gp-v37-ink) !important;
+                font-size: 22px;
+                font-weight: 1000;
+                line-height: 1.6 !important;
+            }
+
+            .gp-map-head p {
+                margin: 0;
+                color: var(--gp-v37-muted) !important;
+                font-size: 13px;
+                font-weight: 850;
+                line-height: 1.9;
+            }
+
+        #map {
+            width: 100%;
+            height: 430px;
+            border-radius: 28px;
+            overflow: hidden;
+            border: 1px solid rgba(75,22,132,.10);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.60);
+            z-index: 1;
+        }
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 20px !important;
+            direction: rtl;
+            text-align: center;
+            font-family: inherit;
+        }
+
+        .leaflet-popup-content {
+            margin: 14px !important;
+            min-width: 190px;
+        }
+
+        .gp-map-popup img {
+            width: 110px;
+            height: auto;
+            margin-bottom: 8px;
+        }
+
+        .gp-map-popup strong {
+            display: block;
+            color: #4b1684;
+            font-weight: 1000;
+            margin-bottom: 6px;
+        }
+
+        .gp-map-popup span {
+            display: block;
+            color: #5f5268;
+            font-weight: 800;
+            line-height: 1.8;
+        }
+
+        html.gp-dark-mode .gp-contact-page {
+            --gp-v37-ink: #f7f7fb;
+            --gp-v37-muted: rgba(246,247,251,.72);
+            --gp-v37-card: rgba(24,24,40,.88);
+            --gp-v37-border: rgba(255,255,255,.10);
+            --gp-v37-shadow: 0 24px 60px rgba(0,0,0,.20);
+        }
+
+        html.gp-dark-mode .gp-contact-form-card,
+        html.gp-dark-mode .gp-contact-info-card,
+        html.gp-dark-mode .gp-contact-map-card,
+        html.gp-dark-mode .gp-contact-social-card {
+            background: rgba(24,24,40,.90) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-contact-form-head span {
+            background: rgba(255,255,255,.09) !important;
+            color: rgba(246,247,251,.88) !important;
+        }
+
+        html.gp-dark-mode .gp-contact-field input,
+        html.gp-dark-mode .gp-contact-field textarea,
+        html.gp-dark-mode .gp-contact-item {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.10) !important;
+            color: #fff !important;
+        }
+
+            html.gp-dark-mode .gp-contact-field input::placeholder,
+            html.gp-dark-mode .gp-contact-field textarea::placeholder {
+                color: rgba(255,255,255,.52) !important;
+            }
+
+            html.gp-dark-mode .gp-contact-item:hover {
+                background: rgba(255,255,255,.10) !important;
+            }
+
+        html.gp-dark-mode .gp-direction-buttons a:first-child {
+            background: rgba(255,255,255,.08) !important;
+            color: #fff !important;
+            border-color: rgba(255,255,255,.12);
+        }
+
+        html.gp-dark-mode .leaflet-tile {
+            filter: brightness(.72) contrast(1.08) saturate(.75);
+        }
+
+        @@media(max-width: 1100px) {
+            .gp-contact-hero-grid,
+            .gp-contact-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-contact-quick-cards {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @@media(max-width: 768px) {
+            .gp-contact-hero {
+                border-radius: 30px;
+                padding: 26px 20px;
+                text-align: center;
+            }
+
+            .gp-contact-actions {
+                justify-content: center;
+            }
+
+            .gp-contact-quick-cards,
+            .gp-direction-buttons,
+            .gp-contact-socials {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-contact-form-card,
+            .gp-contact-info-card,
+            .gp-contact-map-card,
+            .gp-contact-social-card {
+                border-radius: 28px;
+            }
+
+            .gp-map-head {
+                text-align: center;
+                justify-content: center;
+            }
+
+            #map {
+                height: 330px;
+                border-radius: 24px;
+            }
+        }
+    </style>
 }
 
-<!-- banner-2 -->
-@*<div class="page-head_agile_info_w3l">
-
-</div>*@
-<!-- //banner-2 -->
-<!-- page -->
-<div class="services-breadcrumb">
-    <div class="agile_inner_breadcrumb">
-        <div class="container">
-            <ul class="w3_short">
-                <li>
-                    <a href="/">صفحه اصلی</a>
-                    <i>|</i>
-                </li>
-                <li>تماس با ما</li>
-            </ul>
-        </div>
-    </div>
-</div>
-<!-- //page -->
-<!-- contact page -->
-<div class="contact-w3l">
+<section class="gp-contact-page" aria-label="تماس با کلینیک شنوایی و سمعک شکوه تجریش">
     <div class="container">
-        <!-- tittle heading -->
-        <div class="text-center">
-            <h1 class="tittle-w3l text-center">
-                تماس با ما
-                <span class="heading-style">
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                </span>
-            </h1>
-        </div>
-        <!-- //tittle heading -->
-        <!-- contact -->
-        <div class="contact agileits">
-            <div class="contact-agileinfo">
-                <div class="contact-form wthree">
-                    <form method="post" action="/Home/SubmitMessage">
-                        @Html.AntiForgeryToken()
-                        <div class="">
-                            <input type="text" placeholder="نام و نام خانوادگی" name="FullName" required>
-                        </div>
-                        <div class="">
-                            <input type="email" placeholder="ایمیل" name="Email">
-                        </div>
-                        <div class="">
-                            <textarea placeholder="پیام" required name="Body"></textarea>
-                        </div>
-                        <div class="text-center">
-                            <input type="submit" value="ارسال">
-                        </div>
-                    </form>
-                </div>
-                <div class="contact-right wthree">
-                    <div class="col-xs-12 contact-text w3-agileits pull-right">
-                        <h4>با ما در ارتباط باشید</h4>
-                        <p>
-                            <i class="fa fa-map-marker"></i>
-                            تهران - میدان تجریش - خیابان شهرداری - رو به روی سینما آستارا - پلاک 214- ساختمان ۱۱۰ (ورودی قائم)
-                        </p>
-                        <p>
-                            <a href="tel:09393388985">
-                                <i class="fa fa-mobile"></i>
-                                موبایل : 09393388985
-                            </a>
-                        </p>
-                        <p>
-                            <a href="tel:02122735588">
-                                <i class="fa fa-phone"></i>
-                                ثابت : 02122735588
-                            </a>
-                        </p>
-                        <p>
-                            <a href="tel:02122735599">
-                                <i class="fa fa-phone"></i>
-                                ثابت : 02122735599
-                            </a>
-                        </p>
-                        <p>
-                            <a href="mailto:tajrishsamak@gmail.com">
-                                <i class="fa fa-envelope-o"></i> ایمیل :
-                            tajrishsamak@gmail.com
-                            </a>
-                        </p><br />
-                        <a target="_blank" rel="noreferrer" href="https://maps.google.com/?saddr=Current+Location&daddr=35.806270,51.430387">
-                            مسیریابی با گوگل مپ
-                            <img src="~/images/google-maps-ios-icon-100808079-large.png" width="75" height="75" />
-                        </a><br />
-                        <a target="_blank" rel="noreferrer" href="https://www.waze.com/livemap/directions?navigate=yes&latlng=35.806270%2C51.430387">
-                            مسیریابی با ویز
-                            <img src="~/images/waze-icon-png-13.png" width="75" height="75" />
+        <section class="gp-contact-hero" aria-label="معرفی راه‌های ارتباطی">
+            <div class="gp-contact-hero-grid">
+                <div>
+                    <span class="gp-contact-kicker">تماس با ما</span>
+                    <h1>برای شنیدن بهتر، همین‌جا شروع کنید.</h1>
+                    <p>
+                        برای مشاوره، تست شنوایی، تجویز یا تنظیم سمعک می‌توانید با کلینیک شنوایی و سمعک شکوه تجریش تماس بگیرید یا پیام بگذارید.
+                    </p>
+                    <div class="gp-contact-actions">
+                        <a href="tel:02122735588">
+                            <span aria-hidden="true">☎</span>
+                            تماس
+                        </a>
+                        <a href="#gp-contact-form">
+                            <span aria-hidden="true">✉</span>
+                            ارسال پیام
+                        </a>
+                        <a href="#gp-contact-map">
+                            <span aria-hidden="true">⌖</span>
+                            مسیر‌یابی
                         </a>
                     </div>
-                    @*<div class="col-xs-5 contact-agile">
-                        <img src="~/images/logo_purple.png" alt="کلینیک شنوایی و سمعک شکوه تجریش" title="کلینیک شنوایی و سمعک شکوه تجریش">
-                    </div>*@
-                    <div class="clearfix"> </div>
+                </div>
+
+                <div class="gp-contact-quick-cards" aria-label="تماس سریع">
+                    <div class="gp-contact-quick-card">
+                        <strong>موبایل</strong>
+                        <a href="tel:09393388985">0939 338 8985</a>
+                    </div>
+                    <div class="gp-contact-quick-card">
+                        <strong>تلفن ثابت</strong>
+                        <a href="tel:02122735588">021 2273 5588</a>
+                    </div>
+                    <div class="gp-contact-quick-card">
+                        <strong>ایمیل</strong>
+                        <a href="mailto:tajrishsamak@gmail.com">tajrishsamak@gmail.com</a>
+                    </div>
                 </div>
             </div>
+        </section>
+
+        <div class="gp-contact-shell">
+            <main class="gp-contact-form-card" id="gp-contact-form" aria-label="فرم تماس">
+                <div class="gp-contact-form-head">
+                    <span>پیام مستقیم</span>
+                    <h2>سؤال یا درخواست مشاوره دارید؟</h2>
+                    <p>پیام خود را بفرستید؛ تیم کلینیک برای راهنمایی درباره تست شنوایی، انتخاب سمعک یا پیگیری خدمات با شما ارتباط می‌گیرد.</p>
+                </div>
+
+                <form class="gp-contact-form" method="post" action="/Home/SubmitMessage">
+                    @Html.AntiForgeryToken()
+                    <div class="gp-contact-field">
+                        <input type="text" placeholder="نام و نام خانوادگی" name="FullName" required />
+                    </div>
+                    <div class="gp-contact-field">
+                        <input type="email" placeholder="ایمیل" name="Email" />
+                    </div>
+                    <div class="gp-contact-field">
+                        <textarea placeholder="پیام شما" required name="Body"></textarea>
+                    </div>
+                    <button type="submit" class="gp-contact-submit">ارسال پیام</button>
+                </form>
+            </main>
+
+            <aside class="gp-contact-side" aria-label="اطلاعات تماس">
+                <section class="gp-contact-info-card">
+                    <h2>راه‌های ارتباطی</h2>
+                    <div class="gp-contact-list">
+                        <div class="gp-contact-item">
+                            <i class="gp-contact-icon" aria-hidden="true">⌖</i>
+                            <span>
+                                <strong>آدرس</strong>
+                                <span>تهران، میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰، ورودی قائم</span>
+                            </span>
+                        </div>
+
+                        <a class="gp-contact-item gp-ltr" href="tel:09393388985">
+                            <i class="gp-contact-icon" aria-hidden="true">✆</i>
+                            <span>
+                                <strong>موبایل</strong>
+                                <span>0939 338 8985</span>
+                            </span>
+                        </a>
+
+                        <a class="gp-contact-item gp-ltr" href="tel:02122735588">
+                            <i class="gp-contact-icon" aria-hidden="true">☎</i>
+                            <span>
+                                <strong>تلفن ثابت</strong>
+                                <span>021 2273 5588</span>
+                            </span>
+                        </a>
+
+                        <a class="gp-contact-item gp-ltr" href="tel:02122735599">
+                            <i class="gp-contact-icon" aria-hidden="true">☎</i>
+                            <span>
+                                <strong>تلفن ثابت</strong>
+                                <span>021 2273 5599</span>
+                            </span>
+                        </a>
+
+                        <a class="gp-contact-item gp-ltr" href="mailto:tajrishsamak@gmail.com">
+                            <i class="gp-contact-icon" aria-hidden="true">✉</i>
+                            <span>
+                                <strong>ایمیل</strong>
+                                <span>tajrishsamak@gmail.com</span>
+                            </span>
+                        </a>
+                    </div>
+
+                    <div class="gp-direction-buttons">
+                        <a target="_blank" rel="noreferrer" href="https://maps.google.com/?saddr=Current+Location&daddr=35.806270,51.430387">گوگل مپ</a>
+                        <a target="_blank" rel="noreferrer" href="https://www.waze.com/livemap/directions?navigate=yes&latlng=35.806270%2C51.430387">ویز</a>
+                    </div>
+                </section>
+
+                <section class="gp-contact-social-card">
+                    <h2>شبکه‌های اجتماعی</h2>
+                    <div class="gp-contact-socials">
+                        <a target="_blank" rel="noreferrer" href="https://www.instagram.com/tajrishsamak/" aria-label="اینستاگرام">◎</a>
+                        <a target="_blank" rel="noreferrer" href="https://www.telegram.me/sthc/" aria-label="تلگرام">➤</a>
+                        <a target="_blank" rel="noreferrer" href="https://wa.me/+989393388985" aria-label="واتساپ">☎</a>
+                        <a href="tel:09393388985" aria-label="تماس موبایل">✆</a>
+                    </div>
+                </section>
+            </aside>
         </div>
-        <!-- //contact -->
-        <div class="sub-some child-momu text-center">
-            <h5>با ما در شبکه های اجتماعی همراه باشید</h5>
-            <ul>
-                <li>
-                    <a target="_blank" href="https://www.instagram.com/tajrishsamak/">
-                        <i class="fa-brands fa-instagram fa-2x"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fa-brands fa-facebook fa-2x"></i>
-                    </a>
-                </li>
-                <li>
-                    <a target="_blank" rel="noreferrer" href="https://www.telegram.me/sthc/">
-                        <i class="fa fa-paper-plane-o fa-2x"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://wa.me/+989393388985">
-                        <i class="fa-brands fa-whatsapp fa-2x"></i>
-                    </a>
-                </li>
-            </ul>
-        </div><br />
+
+        <section class="gp-contact-map-card" id="gp-contact-map" aria-label="نقشه کلینیک">
+            <div class="gp-map-head">
+                <div>
+                    <h2>موقعیت کلینیک روی نقشه</h2>
+                    <p>میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، ساختمان ۱۱۰</p>
+                </div>
+                <div class="gp-direction-buttons">
+                    <a target="_blank" rel="noreferrer" href="https://maps.google.com/?saddr=Current+Location&daddr=35.806270,51.430387">گوگل مپ</a>
+                    <a target="_blank" rel="noreferrer" href="https://www.waze.com/livemap/directions?navigate=yes&latlng=35.806270%2C51.430387">ویز</a>
+                </div>
+            </div>
+            <div id="map"></div>
+        </section>
     </div>
-</div>
-<!-- map -->
-<div class="map w3layouts">
-    <div id="map" style="width:100%;height:370px"></div>
-</div>
-<!-- //map -->
+</section>
 
 @if (TempData["Error"] != null)
 {
-        <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px">
         <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
+            <div class="modal-content" style="direction:rtl;text-align:right;">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">وضعیت پیام</h4>
@@ -200,11 +849,9 @@
 
 @if (TempData["Success"] != null)
 {
-        <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px">
         <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
+            <div class="modal-content" style="direction:rtl;text-align:right;">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">وضعیت پیام</h4>
@@ -222,29 +869,48 @@
 
 @section Scripts{
     @Scripts.Render("~/bundles/jqueryval")
+
     <script>
         $(document).ready(function () {
             $("#myModal").modal();
         });
     </script>
-<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
-<script>
-        var map, newMarker, markerLocation;
-        var theMarker = {};
-        $(function () {
-            map = L.map('map').setView([35.806270, 51.430387], 18);
-            L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: 'کلینیک شنوایی و سمعک شکوه تجریش',
-                maxZoom: 18
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        (function () {
+            var mapBox = document.getElementById("map");
+
+            if (!mapBox || typeof L === "undefined") {
+                return;
+            }
+
+            var lat = 35.806270;
+            var lng = 51.430387;
+
+            var map = L.map("map", {
+                scrollWheelZoom: false,
+                zoomControl: true
+            }).setView([lat, lng], 18);
+
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "کلینیک شنوایی و سمعک شکوه تجریش",
+                maxZoom: 19
             }).addTo(map);
-            newMarkerGroup = new L.LayerGroup();
-            map.addLayer(newMarkerGroup);
-            markerLocation = L.marker([35.806270, 51.430387]).addTo(map)
-            .bindPopup("<div style='text-align:center !important;' id='infoWindow' style='text-align:center;padding:2px;'><img id='logoboxwindow' style='width:100px;padding-top:15px !important;' src='/images/logo_purple.png'/><p id='infoWindowHeader' style='font-weight:bold;font-size:16px'>کلینیک شنوایی و سمعک تجریش</p><p id='infoWindowStreetName' style='font-size:14px;border-bottom:1px solid rgba(123,123,123,0.4);padding-bottom:5px;'</p><p id='infoWindowNumber' style='font-size:12px'><span id='mobileNumbebrInfo'>09393388985</span> | <span id='TelNumbebrInfo'>02122735588</span> | <span id='TelNumbebrInfo2'>02122735599</span></p><br/><span id='email'>tajrishsamak@gmail.com</span><p id='infoWindowWeb' style='font-size:12px;font-weight:bold'><span id='websiteInfo'></span>&nbsp; &nbsp;<span id='emailInfo'></span></p><p id='infoWindowZipCode' style='font-size:12px'></p></div>")
-            .openPopup();
-        });
-</script>
+
+            var popupHtml =
+                "<div class='gp-map-popup'>" +
+                "<img src='/images/logo_purple.webp' alt='کلینیک شنوایی و سمعک شکوه تجریش' />" +
+                "<strong>کلینیک شنوایی و سمعک شکوه تجریش</strong>" +
+                "<span>میدان تجریش، خیابان شهرداری</span>" +
+                "<span>021 2273 5588</span>" +
+                "</div>";
+
+            L.marker([lat, lng]).addTo(map).bindPopup(popupHtml).openPopup();
+
+            window.setTimeout(function () {
+                map.invalidateSize();
+            }, 450);
+        })();
+    </script>
 }
-
-
-

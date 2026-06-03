@@ -15,7 +15,8 @@ namespace GladcherryShopping.Controllers
 {
     public class ProductController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private const int ProductPageSize = 6;
+        private readonly ApplicationDbContext db = new ApplicationDbContext();
         // GET: Product
         public ActionResult Details(long? id)
         {
@@ -23,7 +24,12 @@ namespace GladcherryShopping.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Where(current => current.Id == id).Include(current => current.RelatedProducts).Include(current => current.category).FirstOrDefault();
+            Product product = db.Products
+                .AsNoTracking()
+                .Where(current => current.Id == id)
+                .Include(current => current.RelatedProducts)
+                .Include(current => current.category)
+                .FirstOrDefault();
             if (product == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -40,44 +46,63 @@ namespace GladcherryShopping.Controllers
         [HttpGet]
         public ActionResult Search(string Search, int page = 1)
         {
-            var products = db.Products.Where(current => current.PersianName.Contains(Search) || current.EnglishName.Contains(Search) || current.Description.Contains(Search));
-            PagerViewModels<Product> ProductViewModels = new PagerViewModels<Product>();
-            ProductViewModels.CurrentPage = page;
-            ProductViewModels.data = products.OrderByDescending(current => current.CreateDate).ThenByDescending(current => current.PersianName).Skip((page - 1) * 10).Take(10).ToList();
-            ProductViewModels.TotalItemCount = products.Count();
-            return View("All", ProductViewModels);
+            page = NormalizePage(page);
+
+            IQueryable<Product> query = db.Products
+                .AsNoTracking()
+                .Where(current => current.SiteFirstImage != null);
+
+            if (!string.IsNullOrWhiteSpace(Search))
+            {
+                query = query.Where(current =>
+                    current.PersianName.Contains(Search) ||
+                    current.EnglishName.Contains(Search) ||
+                    current.Description.Contains(Search));
+            }
+
+            PagerViewModels<Product> productViewModels = CreateProductPager(query, page);
+            return View("All", productViewModels);
         }
 
         [HttpGet]
-        public ActionResult Filter(string Title, byte? Discount, int? Category, int? Min, int? Max, int page = 1 )
+        public ActionResult Filter(string Title, byte? Discount, int? Category, int? Min, int? Max, int page = 1)
         {
-            List<Product> products = new List<Product>();
-            IQueryable<Product> query = db.Products.Where(current => current.SiteFirstImage != null);
-            if(!string.IsNullOrEmpty(Title))
+            page = NormalizePage(page);
+
+            IQueryable<Product> query = db.Products
+                .AsNoTracking()
+                .Where(current => current.SiteFirstImage != null);
+
+            if (!string.IsNullOrWhiteSpace(Title))
             {
-                query = query.Where(current => current.PersianName.Contains(Title) || current.Description.Contains(Title) || current.EnglishName.Contains(Title));
+                query = query.Where(current =>
+                    current.PersianName.Contains(Title) ||
+                    current.Description.Contains(Title) ||
+                    current.EnglishName.Contains(Title));
             }
-            if (Category != null)
+
+            if (Category.HasValue)
             {
-                query = query.Where(current => current.CategoryId == Category);
+                query = query.Where(current => current.CategoryId == Category.Value);
             }
-            if (Discount != null)
+
+            if (Discount.HasValue)
             {
-                query = query.Where(current => current.DiscountPercent >= Discount);
+                query = query.Where(current => current.DiscountPercent >= Discount.Value);
             }
-            if (Min != null)
+
+            if (Min.HasValue)
             {
-                query = query.Where(current => current.UnitPrice >= Min);
+                query = query.Where(current => current.UnitPrice >= Min.Value);
             }
-            if (Max != null)
+
+            if (Max.HasValue)
             {
-                query = query.Where(current => current.UnitPrice <= Max);
+                query = query.Where(current => current.UnitPrice <= Max.Value);
             }
-            PagerViewModels<Product> ProductViewModels = new PagerViewModels<Product>();
-            ProductViewModels.CurrentPage = page;
-            ProductViewModels.data = query.OrderByDescending(current => current.CreateDate).ThenByDescending(current => current.PersianName).Skip((page - 1) * 12).Take(12).ToList();
-            ProductViewModels.TotalItemCount = query.Count();
-            return View("All", ProductViewModels);
+
+            PagerViewModels<Product> productViewModels = CreateProductPager(query, page);
+            return View("All", productViewModels);
         }
 
         [HttpPost]
@@ -108,38 +133,73 @@ namespace GladcherryShopping.Controllers
 
         public ActionResult All(string Search, int page = 1)
         {
-            PagerViewModels<Product> ProductViewModels = new PagerViewModels<Product>();
-            var products = new List<Product>();
-            if (!string.IsNullOrEmpty(Search))
+            page = NormalizePage(page);
+
+            IQueryable<Product> query = db.Products
+                .AsNoTracking()
+                .Where(current => current.SiteFirstImage != null);
+
+            if (!string.IsNullOrWhiteSpace(Search))
             {
-                products = db.Products.Where(current => current.PersianName.Contains(Search) || current.EnglishName.Contains(Search) || current.Description.Contains(Search)).ToList();
+                query = query.Where(current =>
+                    current.PersianName.Contains(Search) ||
+                    current.EnglishName.Contains(Search) ||
+                    current.Description.Contains(Search));
             }
-            else
-            {
-                products = db.Products.ToList();
-                ProductViewModels.data = products.OrderByDescending(current => current.CreateDate).ThenByDescending(current => current.PersianName).Skip((page - 1) * 10).Take(10).ToList();
-                ProductViewModels.TotalItemCount = products.Count();
-            }
-            ProductViewModels.CurrentPage = page;
-            return View(ProductViewModels);
+
+            PagerViewModels<Product> productViewModels = CreateProductPager(query, page);
+            return View(productViewModels);
         }
 
         public ActionResult Special(string Search, int page = 1)
         {
-            PagerViewModels<Product> ProductViewModels = new PagerViewModels<Product>();
-            var products = new List<Product>();
-            if (!string.IsNullOrEmpty(Search))
+            page = NormalizePage(page);
+
+            IQueryable<Product> query = db.Products
+                .AsNoTracking()
+                .Where(current => current.SiteFirstImage != null && current.IsSpecial == true);
+
+            if (!string.IsNullOrWhiteSpace(Search))
             {
-                products = db.Products.Where(current => current.PersianName.Contains(Search) || current.EnglishName.Contains(Search) || current.Description.Contains(Search)).ToList();
+                query = query.Where(current =>
+                    current.PersianName.Contains(Search) ||
+                    current.EnglishName.Contains(Search) ||
+                    current.Description.Contains(Search));
             }
-            else
-            {
-                products = db.Products.Where(current => current.IsSpecial == true).ToList();
-                ProductViewModels.data = products.Where(current => current.IsSpecial == true).OrderByDescending(current => current.CreateDate).ThenByDescending(current => current.PersianName).Skip((page - 1) * 10).Take(10).ToList();
-                ProductViewModels.TotalItemCount = products.Where(current => current.IsSpecial == true).Count();
-            }
-            ProductViewModels.CurrentPage = page;
-            return View(ProductViewModels);
+
+            PagerViewModels<Product> productViewModels = CreateProductPager(query, page);
+            return View(productViewModels);
         }
+
+        private PagerViewModels<Product> CreateProductPager(IQueryable<Product> query, int page)
+        {
+            PagerViewModels<Product> productViewModels = new PagerViewModels<Product>();
+            productViewModels.CurrentPage = page;
+            productViewModels.TotalItemCount = query.Count();
+            productViewModels.data = query
+                .OrderByDescending(current => current.CreateDate)
+                .ThenByDescending(current => current.PersianName)
+                .Skip((page - 1) * ProductPageSize)
+                .Take(ProductPageSize)
+                .ToList();
+
+            return productViewModels;
+        }
+
+        private int NormalizePage(int page)
+        {
+            return page < 1 ? 1 : page;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
     }
 }

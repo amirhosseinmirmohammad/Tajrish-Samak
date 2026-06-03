@@ -1,170 +1,721 @@
-﻿
-@{
-    ViewBag.Title = "قوانین و مقررات";
+﻿@{
+    var gpCacheVersion = "20260603-tajrish-v38-terms-modern-seo";
+    var gpBaseUrl = "https://tajrish-samak.ir";
+    var gpCanonicalUrl = gpBaseUrl + Request.Path;
+
+    ViewBag.Title = "قوانین و مقررات | کلینیک شنوایی و سمعک شکوه تجریش";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Metas{
-<meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
-<meta name="Keywords" content="تجویز سمعک">
-<meta property="og:title" content="تجویز سمعک" />
-@*<meta property="og:url" content="@facebook" />*@
-<meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
-<meta name="twitter:image" content="تجویز سمعک">
-<meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
-@*<meta name="twitter:site" content="@twitter">*@
-<meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <meta name="description" content="قوانین و مقررات استفاده از وب‌سایت کلینیک شنوایی و سمعک شکوه تجریش؛ شامل شرایط استفاده، حساب کاربری، اطلاعات شخصی، حقوق محتوا و رعایت قوانین جمهوری اسلامی ایران." />
+    <link rel="canonical" href="@gpCanonicalUrl" />
+    <meta name="Keywords" content="قوانین و مقررات شکوه تجریش، شرایط استفاده سایت، قوانین سمعک، کلینیک شنوایی تجریش، حریم اطلاعات، کپی رایت" />
+
+    <meta property="og:title" content="قوانین و مقررات | کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@gpCanonicalUrl" />
+    <meta property="og:description" content="شرایط استفاده، قوانین حساب کاربری، اطلاعات شخصی و حقوق محتوا در وب‌سایت کلینیک شنوایی و سمعک شکوه تجریش." />
+
+    <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta name="twitter:description" content="قوانین و مقررات استفاده از وب‌سایت کلینیک شنوایی و سمعک شکوه تجریش." />
 }
 
 @section Styles{
-        <!--Google jSON_LD Structure Data Region-->
-<script type="application/ld+json">
-    {
-    "@@context": "http://schema.org",
-    "@@type": "Organization",
-    "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-    "description": "کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .",
-    "logo": "http://tajrish-samak.ir/images/logo_purple.png",
-    "url": "http://www.tajrish-samak.ir",
-    "sameAs": [ "https://www.instagram.com/tajrishsamak/",
-    "https://www.telegram.me/tajrish_samak/"],
-    "address": "تهران - میدان تجریش - خیابان شهرداری - رو به روی سینما آستارا - پلاک ۲۲۴ - ساختمان ۱۱۰ (ورودی قائم)",
-    "contactPoint": [{
-    "@@type": "ContactPoint",
-    "telephone": ["+98-21-22735588"],
-    "contactType": "customer service"
-    }]
-    }
-</script>
-<!--Google jSON_LD Structure Data Region-->
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@@type": "ListItem",
+              "position": 1,
+              "name": "صفحه اصلی",
+              "item": "https://tajrish-samak.ir/"
+            },
+            {
+              "@@type": "ListItem",
+              "position": 2,
+              "name": "قوانین و مقررات",
+              "item": "@gpCanonicalUrl"
+            }
+          ]
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "WebPage",
+          "name": "قوانین و مقررات کلینیک شنوایی و سمعک شکوه تجریش",
+          "url": "@gpCanonicalUrl",
+          "description": "قوانین و مقررات استفاده از وب‌سایت کلینیک شنوایی و سمعک شکوه تجریش.",
+          "inLanguage": "fa-IR",
+          "isPartOf": {
+            "@@type": "WebSite",
+            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+            "url": "https://tajrish-samak.ir/"
+          },
+          "publisher": {
+            "@@type": "MedicalBusiness",
+            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+            "url": "https://tajrish-samak.ir/",
+            "logo": "https://tajrish-samak.ir/images/logo_purple.webp",
+            "telephone": "+982122735588"
+          }
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@@type": "Question",
+              "name": "وب‌سایت شکوه تجریش تحت چه قوانینی فعالیت می‌کند؟",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "وب‌سایت شکوه تجریش به عنوان یک وب‌سایت تخصصی سمعک و شنوایی‌سنجی، خود را ملزم به رعایت قوانین مکتوب و عرفی کشور می‌داند."
+              }
+            },
+            {
+              "@@type": "Question",
+              "name": "آیا هر کاربر می‌تواند چند حساب کاربری داشته باشد؟",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "هر کاربر تنها مجاز به انتخاب و استفاده از یک حساب کاربری است و استفاده از چند نام کاربری می‌تواند باعث محدودیت یا حذف حساب شود."
+              }
+            },
+            {
+              "@@type": "Question",
+              "name": "استفاده از محتوای سایت چه شرایطی دارد؟",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "استفاده از اطلاعات سایت با ذکر شکوه تجریش به عنوان منبع و در چارچوب قوانین اعلام‌شده مجاز است."
+              }
+            }
+          ]
+        }
+    </script>
+
+    <style id="gp-v38-terms-modern-seo">
+        :root {
+            --gp-v38-purple: #4b1684;
+            --gp-v38-violet: #920ab6;
+            --gp-v38-pink: #e10b79;
+            --gp-v38-cyan: #0ba6b8;
+            --gp-v38-lime: #d8f512;
+            --gp-v38-ink: #20142d;
+            --gp-v38-muted: rgba(32,20,45,.68);
+            --gp-v38-card: rgba(255,255,255,.92);
+            --gp-v38-border: rgba(75,22,132,.10);
+            --gp-v38-shadow: 0 24px 60px rgba(74,18,107,.10);
+        }
+
+        .gp-terms-page {
+            direction: rtl;
+            overflow: hidden;
+        }
+
+        .gp-terms-hero {
+            position: relative;
+            margin: 22px auto 28px;
+            padding: clamp(28px, 4vw, 58px);
+            border-radius: 42px;
+            background: radial-gradient(circle at 14% 10%, rgba(216,245,18,.25), transparent 24%), radial-gradient(circle at 88% 24%, rgba(255,255,255,.15), transparent 22%), linear-gradient(135deg, #4b1684 0%, #920ab6 54%, #e10b79 100%);
+            color: #fff;
+            box-shadow: 0 32px 80px rgba(74,18,107,.20);
+            isolation: isolate;
+            overflow: hidden;
+        }
+
+            .gp-terms-hero::before,
+            .gp-terms-hero::after {
+                content: "";
+                position: absolute;
+                border-radius: 999px;
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .gp-terms-hero::before {
+                width: 270px;
+                height: 270px;
+                left: -96px;
+                top: -92px;
+                background: rgba(255,255,255,.13);
+                animation: gpV38Blob 10s ease-in-out infinite alternate;
+            }
+
+            .gp-terms-hero::after {
+                width: 340px;
+                height: 340px;
+                right: -130px;
+                bottom: -172px;
+                background: rgba(11,166,184,.22);
+                animation: gpV38Blob 12s ease-in-out infinite alternate-reverse;
+            }
+
+        @@keyframes gpV38Blob {
+            to {
+                transform: translate3d(24px, 18px, 0) scale(1.06);
+            }
+        }
+
+        .gp-terms-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(260px, .38fr);
+            gap: clamp(20px, 4vw, 46px);
+            align-items: center;
+        }
+
+        .gp-terms-kicker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            color: #fff !important;
+            font-weight: 950;
+            backdrop-filter: blur(14px);
+        }
+
+        .gp-terms-hero h1 {
+            margin: 16px 0 12px;
+            color: #fff !important;
+            font-size: clamp(32px, 5vw, 66px);
+            font-weight: 1000;
+            line-height: 1.34 !important;
+            letter-spacing: -.02em;
+        }
+
+        .gp-terms-hero p {
+            max-width: 780px;
+            margin: 0;
+            color: rgba(255,255,255,.90) !important;
+            font-size: clamp(14px, 1.2vw, 18px);
+            font-weight: 850;
+            line-height: 2.1;
+        }
+
+        .gp-terms-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+            .gp-terms-actions a {
+                min-height: 48px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 0 18px;
+                border-radius: 999px;
+                text-decoration: none !important;
+                font-weight: 950;
+            }
+
+                .gp-terms-actions a:first-child {
+                    background: #fff;
+                    color: #4b1684 !important;
+                    box-shadow: 0 18px 38px rgba(0,0,0,.14);
+                }
+
+                .gp-terms-actions a:nth-child(2) {
+                    background: rgba(255,255,255,.13);
+                    border: 1px solid rgba(255,255,255,.24);
+                    color: #fff !important;
+                }
+
+        .gp-terms-stats {
+            display: grid;
+            gap: 12px;
+        }
+
+        .gp-terms-stat {
+            min-height: 92px;
+            padding: 18px;
+            border-radius: 28px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            backdrop-filter: blur(14px);
+        }
+
+            .gp-terms-stat strong {
+                display: block;
+                color: #fff !important;
+                font-size: 28px;
+                font-weight: 1000;
+                line-height: 1;
+            }
+
+            .gp-terms-stat span {
+                display: block;
+                margin-top: 8px;
+                color: rgba(255,255,255,.82) !important;
+                font-weight: 850;
+                line-height: 1.8;
+            }
+
+        .gp-terms-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(270px, 340px);
+            gap: 22px;
+            align-items: start;
+            margin-bottom: 42px;
+        }
+
+        .gp-terms-card,
+        .gp-terms-side-card {
+            border-radius: 34px;
+            background: var(--gp-v38-card);
+            border: 1px solid var(--gp-v38-border);
+            box-shadow: var(--gp-v38-shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .gp-terms-card {
+            padding: clamp(18px, 2.5vw, 30px);
+        }
+
+        .gp-terms-section-head {
+            margin-bottom: 18px;
+        }
+
+            .gp-terms-section-head span {
+                display: inline-flex;
+                min-height: 36px;
+                align-items: center;
+                justify-content: center;
+                padding: 0 13px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.08);
+                color: #6420a0 !important;
+                font-size: 13px;
+                font-weight: 950;
+            }
+
+            .gp-terms-section-head h2 {
+                margin: 12px 0 8px;
+                color: var(--gp-v38-ink) !important;
+                font-size: clamp(24px, 3.2vw, 42px);
+                font-weight: 1000;
+                line-height: 1.45 !important;
+            }
+
+            .gp-terms-section-head p {
+                margin: 0;
+                color: var(--gp-v38-muted) !important;
+                font-weight: 850;
+                line-height: 2;
+            }
+
+        .gp-terms-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .gp-terms-item {
+            border-radius: 26px;
+            background: rgba(255,255,255,.68);
+            border: 1px solid rgba(75,22,132,.08);
+            overflow: hidden;
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+
+            .gp-terms-item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 18px 42px rgba(74,18,107,.08);
+                background: #fff;
+            }
+
+        .gp-terms-toggle {
+            width: 100%;
+            min-height: 68px;
+            display: grid;
+            grid-template-columns: 44px minmax(0, 1fr) 32px;
+            gap: 12px;
+            align-items: center;
+            border: 0;
+            background: transparent;
+            padding: 12px 14px;
+            text-align: right;
+            cursor: pointer;
+        }
+
+        .gp-terms-icon {
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 17px;
+            background: linear-gradient(135deg, var(--gp-v38-purple), var(--gp-v38-violet));
+            color: #fff !important;
+            font-size: 19px;
+            font-style: normal;
+        }
+
+        .gp-terms-toggle strong {
+            color: var(--gp-v38-ink) !important;
+            font-size: 16px;
+            font-weight: 1000;
+            line-height: 1.8;
+        }
+
+        .gp-terms-arrow {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(146,10,182,.08);
+            color: #6420a0 !important;
+            font-weight: 1000;
+            transition: transform .2s ease;
+        }
+
+        .gp-terms-item.is-open .gp-terms-arrow {
+            transform: rotate(180deg);
+        }
+
+        .gp-terms-content {
+            display: none;
+            padding: 0 70px 18px 18px;
+        }
+
+        .gp-terms-item.is-open .gp-terms-content {
+            display: block;
+        }
+
+        .gp-terms-content p {
+            margin: 0;
+            color: var(--gp-v38-muted) !important;
+            font-size: 14px;
+            font-weight: 850;
+            line-height: 2.25;
+            text-align: justify;
+        }
+
+        .gp-terms-side {
+            position: sticky;
+            top: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .gp-terms-side-card {
+            padding: 18px;
+        }
+
+            .gp-terms-side-card h3 {
+                margin: 0 0 10px;
+                color: var(--gp-v38-ink) !important;
+                font-size: 19px;
+                font-weight: 1000;
+                line-height: 1.7 !important;
+            }
+
+            .gp-terms-side-card p {
+                margin: 0;
+                color: var(--gp-v38-muted) !important;
+                font-weight: 850;
+                line-height: 2;
+            }
+
+            .gp-terms-side-card a {
+                width: 100%;
+                min-height: 48px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 12px;
+                border-radius: 18px;
+                background: linear-gradient(135deg, var(--gp-v38-purple), var(--gp-v38-violet));
+                color: #fff !important;
+                text-decoration: none !important;
+                font-weight: 1000;
+                box-shadow: 0 16px 34px rgba(146,10,182,.18);
+            }
+
+        .gp-terms-note {
+            padding: 18px;
+            border-radius: 26px;
+            background: radial-gradient(circle at 12% 12%, rgba(216,245,18,.18), transparent 24%), linear-gradient(135deg, rgba(75,22,132,.08), rgba(225,11,121,.06));
+            border: 1px solid rgba(146,10,182,.10);
+        }
+
+            .gp-terms-note strong {
+                display: block;
+                color: var(--gp-v38-ink) !important;
+                font-size: 16px;
+                font-weight: 1000;
+                line-height: 1.8;
+                margin-bottom: 6px;
+            }
+
+            .gp-terms-note span {
+                display: block;
+                color: var(--gp-v38-muted) !important;
+                font-size: 13px;
+                font-weight: 850;
+                line-height: 2;
+            }
+
+        html.gp-dark-mode .gp-terms-page {
+            --gp-v38-ink: #f7f7fb;
+            --gp-v38-muted: rgba(246,247,251,.72);
+            --gp-v38-card: rgba(24,24,40,.88);
+            --gp-v38-border: rgba(255,255,255,.10);
+            --gp-v38-shadow: 0 24px 60px rgba(0,0,0,.20);
+        }
+
+        html.gp-dark-mode .gp-terms-card,
+        html.gp-dark-mode .gp-terms-side-card {
+            background: rgba(24,24,40,.90) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-terms-section-head span,
+        html.gp-dark-mode .gp-terms-arrow {
+            background: rgba(255,255,255,.09) !important;
+            color: rgba(246,247,251,.88) !important;
+        }
+
+        html.gp-dark-mode .gp-terms-item {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+            html.gp-dark-mode .gp-terms-item:hover {
+                background: rgba(255,255,255,.10) !important;
+            }
+
+        html.gp-dark-mode .gp-terms-note {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        @@media(max-width: 1100px) {
+            .gp-terms-hero-grid,
+            .gp-terms-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-terms-stats {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .gp-terms-side {
+                position: relative;
+                top: auto;
+            }
+        }
+
+        @@media(max-width: 768px) {
+            .gp-terms-hero {
+                border-radius: 30px;
+                padding: 26px 20px;
+                text-align: center;
+            }
+
+            .gp-terms-actions {
+                justify-content: center;
+            }
+
+            .gp-terms-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-terms-card,
+            .gp-terms-side-card {
+                border-radius: 28px;
+            }
+
+            .gp-terms-toggle {
+                grid-template-columns: 40px minmax(0, 1fr) 30px;
+                gap: 9px;
+                padding: 11px;
+            }
+
+            .gp-terms-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 15px;
+            }
+
+            .gp-terms-content {
+                padding: 0 14px 16px;
+            }
+
+                .gp-terms-content p {
+                    text-align: right;
+                }
+        }
+    </style>
 }
 
-<!-- banner-2 -->
-@*<div class="page-head_agile_info_w3l">
-
-</div>*@
-<!-- //banner-2 -->
-<!-- page -->
-<div class="services-breadcrumb">
-    <div class="agile_inner_breadcrumb">
-        <div class="container">
-            <ul class="w3_short">
-                <li>
-                    <a href="/">صفحه اصلی</a>
-                    <i>|</i>
-                </li>
-                <li>قوانین و مقررات</li>
-            </ul>
-        </div>
-    </div>
-</div>
-<!-- //page -->
-<!-- FAQ-help-page -->
-<div class="faqs-w3l">
+<section class="gp-terms-page" aria-label="قوانین و مقررات کلینیک شنوایی و سمعک شکوه تجریش">
     <div class="container">
-        <!-- tittle heading -->
-        <div class="text-center">
-            <h1 class="tittle-w3l text-center">
-                قوانین و مقررات
-                <span class="heading-style">
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                </span>
-            </h1>
-        </div>
-        <!-- //tittle heading -->
-        <h3 class="w3-head">قوانین و مقررات</h3>
-<div class="container">
-    <div class="faq-w3agile">
-        <ul class="faq">
-            <li class="item1">
-                <a href="#" title="کلینیک شنوایی و سمعک شکوه تجریش">کلینیک شنوایی و سمعک شکوه تجریش</a>
-                <ul>
-                    <li class="subitem1">
-                        <p>
-                            تجویز سمعک و انجام آزمایشات شنوایی
-                        </p>
-                    </li>
-                </ul>
-            </li>
-            <li class="item2">
-                <a href="#" title="کلینیک شنوایی و سمعک شکوه تجریش">قوانین حکومتی</a>
-                <ul>
-                    <li class="subitem1">
-                        <p>
-                            وب‌ سایت شکوه تجریش ، یک وب‌ سایت تخصصی سمعک و شنوایی سنجی است که تحت قوانین جمهوری اسلامی ایران فعالیت می کند. این وب‌ سایت ‌به عنوان یک نشریه‌ الکترونیکی ، تمام قوانین مکتوب و یا عرفی حاكم بر کشور را محترم می‌شمارد و خود را موظف به پیروی از آنها می‌داند .
-                        </p>
-                    </li>
-                </ul>
-            </li>
-            <li class="item3">
-                <a href="#" title="کلینیک شنوایی و سمعک شکوه تجریش">حساب کاربری</a>
-                <ul>
-                    <li class="subitem1">
-                        <p>
-                            هر کاربر تنها حق انتخاب یک نام کاربری را دارد و در صورت فعالیت با بیش از یک نام ، حساب کاربری وی محدود و یا حذف خواهد شد .
-                        </p>
-                    </li>
-                </ul>
-            </li>
-            <li class="item4">
-                <a href="#" title="کلینیک شنوایی و سمعک شکوه تجریش">اطلاعات شخصی</a>
-                <ul>
-                    <li class="subitem1">
-                        <p>
-                            در این وب سایت، ثبت کننده اطلاعات، شخصا مالک مطالب ارائه شده محسوب می شود و این سایت نسبت به اطلاعات ارائه شده هیچگونه مسئولیتی را به عهده نخواهد گرفت .
-                        </p>
-                    </li>
-                </ul>
-            </li>
-            <li class="item5">
-                <a href="#" title="کلینیک شنوایی و سمعک شکوه تجریش">کپی رایت</a>
-                <ul>
-                    <li class="subitem1">
-                        <p>
-                            بهره برداری و استفاده از اطلاعات این سایت با ذکر شکوه تجریش به عنوان منبع و برای مقاصد مطابق با قوانین اعلام شده ، مجاز می باشد و در صورت بروز هر گونه تخلف، پیگرد قانونی خواهد داشت .
-                        </p>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-</div>
-    </div>
-</div>
-<!-- //FAQ-help-page -->
+        <section class="gp-terms-hero" aria-label="معرفی قوانین و مقررات">
+            <div class="gp-terms-hero-grid">
+                <div>
+                    <span class="gp-terms-kicker">قوانین و مقررات</span>
+                    <h1>شفاف، ساده و قابل فهم.</h1>
+                    <p>
+                        استفاده از وب‌سایت کلینیک شنوایی و سمعک شکوه تجریش به معنی پذیرش چارچوب‌های قانونی، حقوق محتوا و اصول استفاده درست از خدمات آنلاین سایت است.
+                    </p>
+                    <div class="gp-terms-actions">
+                        <a href="#gp-terms-list">
+                            <span aria-hidden="true">⌄</span>
+                            مطالعه قوانین
+                        </a>
+                        <a href="/contactus">
+                            <span aria-hidden="true">☎</span>
+                            تماس با کلینیک
+                        </a>
+                    </div>
+                </div>
 
+                <div class="gp-terms-stats" aria-label="خلاصه قوانین">
+                    <div class="gp-terms-stat">
+                        <strong>۵</strong>
+                        <span>بخش اصلی قوانین</span>
+                    </div>
+                    <div class="gp-terms-stat">
+                        <strong>۱</strong>
+                        <span>حساب کاربری برای هر کاربر</span>
+                    </div>
+                    <div class="gp-terms-stat">
+                        <strong>✓</strong>
+                        <span>استفاده از محتوا با ذکر منبع</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="gp-terms-shell">
+            <main class="gp-terms-card" id="gp-terms-list" aria-label="لیست قوانین">
+                <div class="gp-terms-section-head">
+                    <span>راهنمای استفاده</span>
+                    <h2>قوانین استفاده از سایت</h2>
+                    <p>موارد زیر برای شفافیت بیشتر، به‌صورت دسته‌بندی‌شده و قابل باز شدن نمایش داده شده‌اند.</p>
+                </div>
+
+                <div class="gp-terms-list">
+                    <article class="gp-terms-item is-open">
+                        <button type="button" class="gp-terms-toggle" aria-expanded="true">
+                            <i class="gp-terms-icon" aria-hidden="true">✓</i>
+                            <strong>کلینیک شنوایی و سمعک شکوه تجریش</strong>
+                            <span class="gp-terms-arrow" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="gp-terms-content">
+                            <p>تجویز سمعک و انجام آزمایشات شنوایی از محورهای اصلی خدمات کلینیک شنوایی و سمعک شکوه تجریش است.</p>
+                        </div>
+                    </article>
+
+                    <article class="gp-terms-item">
+                        <button type="button" class="gp-terms-toggle" aria-expanded="false">
+                            <i class="gp-terms-icon" aria-hidden="true">§</i>
+                            <strong>قوانین حکومتی</strong>
+                            <span class="gp-terms-arrow" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="gp-terms-content">
+                            <p>وب‌سایت شکوه تجریش، یک وب‌سایت تخصصی سمعک و شنوایی‌سنجی است که تحت قوانین جمهوری اسلامی ایران فعالیت می‌کند. این وب‌سایت به عنوان یک نشریه الکترونیکی، تمام قوانین مکتوب و عرفی حاکم بر کشور را محترم می‌شمارد و خود را موظف به پیروی از آن‌ها می‌داند.</p>
+                        </div>
+                    </article>
+
+                    <article class="gp-terms-item">
+                        <button type="button" class="gp-terms-toggle" aria-expanded="false">
+                            <i class="gp-terms-icon" aria-hidden="true">◎</i>
+                            <strong>حساب کاربری</strong>
+                            <span class="gp-terms-arrow" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="gp-terms-content">
+                            <p>هر کاربر تنها حق انتخاب یک نام کاربری را دارد و در صورت فعالیت با بیش از یک نام، حساب کاربری وی محدود یا حذف خواهد شد.</p>
+                        </div>
+                    </article>
+
+                    <article class="gp-terms-item">
+                        <button type="button" class="gp-terms-toggle" aria-expanded="false">
+                            <i class="gp-terms-icon" aria-hidden="true">◇</i>
+                            <strong>اطلاعات شخصی</strong>
+                            <span class="gp-terms-arrow" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="gp-terms-content">
+                            <p>در این وب‌سایت، ثبت‌کننده اطلاعات شخصاً مالک مطالب ارائه‌شده محسوب می‌شود و این سایت نسبت به اطلاعات ارائه‌شده هیچ‌گونه مسئولیتی را به عهده نخواهد گرفت.</p>
+                        </div>
+                    </article>
+
+                    <article class="gp-terms-item">
+                        <button type="button" class="gp-terms-toggle" aria-expanded="false">
+                            <i class="gp-terms-icon" aria-hidden="true">©</i>
+                            <strong>کپی‌رایت</strong>
+                            <span class="gp-terms-arrow" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="gp-terms-content">
+                            <p>بهره‌برداری و استفاده از اطلاعات این سایت با ذکر شکوه تجریش به عنوان منبع و برای مقاصد مطابق با قوانین اعلام‌شده مجاز است و در صورت بروز هرگونه تخلف، پیگرد قانونی خواهد داشت.</p>
+                        </div>
+                    </article>
+                </div>
+            </main>
+
+            <aside class="gp-terms-side" aria-label="اطلاعات تکمیلی قوانین">
+                <section class="gp-terms-side-card">
+                    <h3>نیاز به توضیح بیشتر دارید؟</h3>
+                    <p>اگر درباره قوانین، حساب کاربری یا نحوه استفاده از محتوای سایت سؤال دارید، می‌توانید با کلینیک تماس بگیرید.</p>
+                    <a href="/contactus">تماس با ما</a>
+                </section>
+
+                <section class="gp-terms-side-card">
+                    <div class="gp-terms-note">
+                        <strong>نکته مهم</strong>
+                        <span>استفاده از سایت به معنی پذیرش این قوانین است. در صورت تغییر قوانین، نسخه به‌روزشده در همین صفحه منتشر می‌شود.</span>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </div>
+</section>
 
 @section Scripts{
-    <!-- script for tabs -->
     <script>
-        $(function () {
+        (function () {
+            var items = document.querySelectorAll(".gp-terms-item");
 
-            var menu_ul = $('.faq > li > ul'),
-				menu_a = $('.faq > li > a');
+            for (var i = 0; i < items.length; i++) {
+                var button = items[i].querySelector(".gp-terms-toggle");
 
-            menu_ul.hide();
-
-            menu_a.click(function (e) {
-                e.preventDefault();
-                if (!$(this).hasClass('active')) {
-                    menu_a.removeClass('active');
-                    menu_ul.filter(':visible').slideUp('normal');
-                    $(this).addClass('active').next().stop(true, true).slideDown('normal');
-                } else {
-                    $(this).removeClass('active');
-                    $(this).next().stop(true, true).slideUp('normal');
+                if (!button) {
+                    continue;
                 }
-            });
 
-        });
+                button.addEventListener("click", function () {
+                    var currentItem = this.closest(".gp-terms-item");
+                    var isOpen = currentItem.classList.contains("is-open");
+
+                    for (var j = 0; j < items.length; j++) {
+                        items[j].classList.remove("is-open");
+                        var btn = items[j].querySelector(".gp-terms-toggle");
+                        if (btn) {
+                            btn.setAttribute("aria-expanded", "false");
+                        }
+                    }
+
+                    if (!isOpen) {
+                        currentItem.classList.add("is-open");
+                        this.setAttribute("aria-expanded", "true");
+                    }
+                });
+            }
+        })();
     </script>
-    <!-- script for tabs -->
-
 }
-
-
-
-
-

@@ -462,6 +462,24 @@
     <Content Include="Content\css\owl.carousel.css" />
     <Content Include="Content\css\responsive.css" />
     <Content Include="Content\Gallery\style.css" />
+    <Content Include="Content\images\clinic-slider-piano-lite.mp4" />
+    <Content Include="Content\images\clinic-slider-piano-mobile.mp4" />
+    <Content Include="Content\images\slider\0cutyu2y.f4k.jpg" />
+    <Content Include="Content\images\slider\apgh5z4i.hxg.jpeg" />
+    <Content Include="Content\images\slider\cv04favl.azq.png" />
+    <Content Include="Content\images\slider\fbm51n1d.0ns.jpg" />
+    <Content Include="Content\images\slider\fx23wtre.11l.jpg" />
+    <Content Include="Content\images\slider\hilqruiu.fch.jpeg" />
+    <Content Include="Content\images\slider\jykgmjlx.y4u.jpg" />
+    <Content Include="Content\images\slider\ka2upiz4.zux.jpg" />
+    <Content Include="Content\images\slider\lto321g1.1x4.jpg" />
+    <Content Include="Content\images\slider\m2rnf3zy.lvn.jpg" />
+    <Content Include="Content\images\slider\medpbil1.sfo.jpg" />
+    <Content Include="Content\images\slider\oy5tgt23.umx.jpg" />
+    <Content Include="Content\images\slider\pdvrw10r.jxm.jpg" />
+    <Content Include="Content\images\slider\pfbqqfdn.gvh.jpg" />
+    <Content Include="Content\images\slider\w0tacqio.ego.jpg" />
+    <Content Include="Content\images\slider\z31e5ca0.nzs.jpg" />
     <Content Include="Content\js\bxslider.min.js" />
     <Content Include="Content\js\jquery.easing.1.3.min.js" />
     <Content Include="Content\js\jquery.sticky.js" />
@@ -627,6 +645,7 @@
     <Content Include="css\easy-responsive-tabs.css" />
     <Content Include="css\flexslider.css" />
     <Content Include="css\font-awesome.css" />
+    <Content Include="css\gp-tajrish-modern.css" />
     <Content Include="css\jquery-ui1.css" />
     <Content Include="css\popuo-box.css" />
     <Content Include="css\style.css" />
@@ -811,6 +830,7 @@
     <Content Include="js\creditly.js" />
     <Content Include="js\easing.js" />
     <Content Include="js\easyResponsiveTabs.js" />
+    <Content Include="js\gp-tajrish-modern.js" />
     <Content Include="js\imagezoom.js" />
     <Content Include="js\jquery-2.1.4.min.js" />
     <Content Include="js\jquery-ui.js" />
@@ -821,6 +841,7 @@
     <Content Include="js\move-top.js" />
     <Content Include="js\SmoothScroll.min.js" />
     <Content Include="js\wow.min.js" />
+    <Content Include="offline.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Administrator\Views\web.config" />
@@ -1036,6 +1057,22 @@
     <Content Include="images\pransa_logo_web.webp" />
     <Content Include="images\user_chat.webp" />
     <Content Include="images\pr_bg.webp" />
+    <Content Include="images\clinic\IMG_5885.webp" />
+    <Content Include="images\clinic\IMG_5887.webp" />
+    <Content Include="images\clinic\IMG_5888.webp" />
+    <Content Include="images\clinic\IMG_5889.webp" />
+    <Content Include="images\clinic\IMG_5890.webp" />
+    <Content Include="images\clinic\IMG_5891.webp" />
+    <Content Include="images\clinic\IMG_5892.webp" />
+    <Content Include="images\clinic\IMG_5896.webp" />
+    <Content Include="images\clinic\IMG_5897.webp" />
+    <Content Include="images\clinic\IMG_5900.webp" />
+    <Content Include="images\clinic\IMG_5901.webp" />
+    <Content Include="images\clinic\IMG_5902.webp" />
+    <Content Include="Content\lottie\tajrish-loader.lottie.json" />
+    <Content Include="Content\images\clinic-slider-piano-poster.webp" />
+    <Content Include="Content\images\logo_purple.webp" />
+    <None Include="manifest.json" />
     <None Include="Properties\PublishProfiles\GladCherry Co.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\calendar-fa.js" />
@@ -1133,6 +1170,7 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Content Include="service-worker.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
