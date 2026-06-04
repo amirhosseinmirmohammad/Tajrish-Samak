@@ -17,29 +17,33 @@ namespace GladcherryShopping.Controllers
     {
         private const int ProductPageSize = 6;
         private readonly ApplicationDbContext db = new ApplicationDbContext();
-        // GET: Product
+
         public ActionResult Details(long? id)
         {
-            if (id == null)
+            if (!id.HasValue)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Product product = db.Products
                 .AsNoTracking()
-                .Where(current => current.Id == id)
                 .Include(current => current.RelatedProducts)
                 .Include(current => current.category)
-                .FirstOrDefault();
+                .FirstOrDefault(current => current.Id == id.Value);
+
             if (product == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return HttpNotFound();
             }
-            var cookie = new HttpCookie("SeenProduct_" + product.Id.ToString(), 1.ToString());
+
+            HttpCookie cookie = new HttpCookie("SeenProduct_" + product.Id, "1");
             cookie.Expires = DateTime.Now.AddMonths(1);
             cookie.HttpOnly = true;
             Response.Cookies.Add(cookie);
+
             ProductDetailViewModel viewmodel = new ProductDetailViewModel();
             viewmodel.product = product;
+
             return View(viewmodel);
         }
 
@@ -60,7 +64,9 @@ namespace GladcherryShopping.Controllers
                     current.Description.Contains(Search));
             }
 
+            PopulateProductListingViewBags(null, false);
             PagerViewModels<Product> productViewModels = CreateProductPager(query, page);
+
             return View("All", productViewModels);
         }
 
@@ -101,7 +107,9 @@ namespace GladcherryShopping.Controllers
                 query = query.Where(current => current.UnitPrice <= Max.Value);
             }
 
+            PopulateProductListingViewBags(Category, false);
             PagerViewModels<Product> productViewModels = CreateProductPager(query, page);
+
             return View("All", productViewModels);
         }
 
@@ -109,16 +117,31 @@ namespace GladcherryShopping.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult InsertComment([Bind(Include = "Id,Text,DateTime,IsApprove,UserId,ProductId,Email,FullName")] Comment comment, long ProductId, string Email, string FullName)
         {
+            bool productExists = db.Products
+                .AsNoTracking()
+                .Any(current => current.Id == ProductId);
+
+            if (!productExists)
+            {
+                TempData["error"] = "محصول مورد نظر پیدا نشد .";
+                return RedirectToAction("All");
+            }
+
             if (User.Identity.IsAuthenticated)
             {
                 string UserId = User.Identity.GetUserId();
                 comment.UserId = UserId;
             }
+
+            comment.Id = 0;
             comment.Fullname = FullName;
             comment.Email = Email;
             comment.ProductId = ProductId;
             comment.DateTime = DateTime.Now;
+            comment.IsApprove = false;
+
             db.Comments.Add(comment);
+
             try
             {
                 db.SaveChanges();
@@ -128,16 +151,49 @@ namespace GladcherryShopping.Controllers
             {
                 TempData["error"] = "خطایی رخ داده است لطفا مجدد تلاش فرمایید .";
             }
+
             return RedirectToAction("Details", new { id = comment.ProductId });
         }
 
-        public ActionResult All(string Search, int page = 1)
+        [HttpGet]
+        public ActionResult All(int? id, string Search, int page = 1)
         {
             page = NormalizePage(page);
 
             IQueryable<Product> query = db.Products
                 .AsNoTracking()
                 .Where(current => current.SiteFirstImage != null);
+
+            bool showSubCategories = false;
+
+            if (id.HasValue)
+            {
+                Category category = db.Categories
+                    .AsNoTracking()
+                    .FirstOrDefault(current => current.Id == id.Value && current.IsBlog == false);
+
+                if (category == null)
+                {
+                    return HttpNotFound();
+                }
+
+                List<Category> subCategories = db.Categories
+                    .AsNoTracking()
+                    .Where(current => current.ParentId == id.Value && current.IsBlog == false)
+                    .OrderByDescending(current => current.PersianName)
+                    .ToList();
+
+                showSubCategories = subCategories.Any();
+
+                ViewBag.CategoryId = id.Value;
+                ViewBag.CategoryName = category.PersianName;
+                ViewBag.SubCategories = subCategories;
+
+                if (!showSubCategories)
+                {
+                    query = query.Where(current => current.CategoryId == id.Value);
+                }
+            }
 
             if (!string.IsNullOrWhiteSpace(Search))
             {
@@ -147,10 +203,16 @@ namespace GladcherryShopping.Controllers
                     current.Description.Contains(Search));
             }
 
-            PagerViewModels<Product> productViewModels = CreateProductPager(query, page);
+            PopulateProductListingViewBags(id, showSubCategories);
+
+            PagerViewModels<Product> productViewModels = showSubCategories
+                ? CreateEmptyProductPager(page)
+                : CreateProductPager(query, page);
+
             return View(productViewModels);
         }
 
+        [HttpGet]
         public ActionResult Special(string Search, int page = 1)
         {
             page = NormalizePage(page);
@@ -167,8 +229,57 @@ namespace GladcherryShopping.Controllers
                     current.Description.Contains(Search));
             }
 
+            PopulateProductListingViewBags(null, false);
             PagerViewModels<Product> productViewModels = CreateProductPager(query, page);
+
             return View(productViewModels);
+        }
+
+        private void PopulateProductListingViewBags(int? categoryId, bool showSubCategories)
+        {
+            ViewBag.ShowSubCategories = showSubCategories;
+
+            if (categoryId.HasValue)
+            {
+                ViewBag.CategoryId = categoryId.Value;
+
+                if (ViewBag.CategoryName == null)
+                {
+                    string categoryName = db.Categories
+                        .AsNoTracking()
+                        .Where(current => current.Id == categoryId.Value)
+                        .Select(current => current.PersianName)
+                        .FirstOrDefault();
+
+                    if (!string.IsNullOrWhiteSpace(categoryName))
+                    {
+                        ViewBag.CategoryName = categoryName;
+                    }
+                }
+
+                if (ViewBag.SubCategories == null)
+                {
+                    ViewBag.SubCategories = db.Categories
+                        .AsNoTracking()
+                        .Where(current => current.ParentId == categoryId.Value && current.IsBlog == false)
+                        .OrderByDescending(current => current.PersianName)
+                        .ToList();
+                }
+            }
+
+            ViewBag.Categories = db.Categories
+                .AsNoTracking()
+                .Include(current => current.Products)
+                .Where(current => current.Products.Count() > 0 && current.IsBlog == false)
+                .OrderByDescending(current => current.PersianName)
+                .ToList();
+
+            ViewBag.PopularProducts = db.Products
+                .AsNoTracking()
+                .Where(current => current.SiteFirstImage != null)
+                .OrderByDescending(current => current.CreateDate)
+                .Take(6)
+                .ToList();
         }
 
         private PagerViewModels<Product> CreateProductPager(IQueryable<Product> query, int page)
@@ -182,6 +293,16 @@ namespace GladcherryShopping.Controllers
                 .Skip((page - 1) * ProductPageSize)
                 .Take(ProductPageSize)
                 .ToList();
+
+            return productViewModels;
+        }
+
+        private PagerViewModels<Product> CreateEmptyProductPager(int page)
+        {
+            PagerViewModels<Product> productViewModels = new PagerViewModels<Product>();
+            productViewModels.CurrentPage = page;
+            productViewModels.TotalItemCount = 0;
+            productViewModels.data = new List<Product>();
 
             return productViewModels;
         }
@@ -200,6 +321,5 @@ namespace GladcherryShopping.Controllers
 
             base.Dispose(disposing);
         }
-
     }
 }

@@ -1,45 +1,74 @@
 ﻿@model DataLayer.ViewModels.PagerViewModel.PagerViewModels<DataLayer.Models.Product>
 @using MvcPager
-@using System.Data.Entity;
+@using System.Collections.Generic;
 @{
-    GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();
-
-    var gpCacheVersion = "20260603-tajrish-v25-favorites-6-controller";
+    var gpCacheVersion = "20260604-tajrish-v77-brand-geo-links";
     var gpBaseUrl = "https://tajrish-samak.ir";
-    var gpCanonicalUrl = gpBaseUrl + Request.Path;
-    var gpCurrentProducts = Model.data
-        .Where(current => current.SiteFirstImage != null)
-        .OrderByDescending(current => current.CreateDate)
-        .Take(6)
-        .ToList();
+    var gpCategoryName = ViewBag.CategoryName != null ? ViewBag.CategoryName.ToString() : "محصولات سمعک";
+    bool gpHasSubCategories = ViewBag.ShowSubCategories != null && (bool)ViewBag.ShowSubCategories;
+    int? gpCategoryId = ViewBag.CategoryId != null ? (int?)ViewBag.CategoryId : null;
 
-    var gpCategories = content.Categories
-        .Include(current => current.Products)
-        .Where(current => current.Products.Count() > 0 && current.IsBlog == false)
-        .OrderByDescending(current => current.PersianName)
-        .ToList();
+    var gpCanonicalPath = gpHasSubCategories && gpCategoryId.HasValue
+        ? "/Product/All/" + gpCategoryId.Value
+        : "/Product/All";
 
-    var gpPopularProducts = content.Products
-        .Where(current => current.SiteFirstImage != null)
-        .OrderByDescending(current => current.CreateDate)
-        .Take(6)
-        .ToList();
+    var gpCanonicalUrl = gpBaseUrl + gpCanonicalPath;
 
-    ViewBag.Title = "جدیدترین سمعک‌ها | کلینیک شنوایی و سمعک شکوه تجریش";
+    var gpCurrentProducts = Model != null && Model.data != null
+        ? Model.data
+            .Where(current => current.SiteFirstImage != null)
+            .OrderByDescending(current => current.CreateDate)
+            .Take(6)
+            .ToList()
+        : new List<DataLayer.Models.Product>();
+
+    var gpCategories = ViewBag.Categories as IEnumerable<DataLayer.Models.Category>;
+    var gpCategoriesList = gpCategories != null
+        ? gpCategories.ToList()
+        : new List<DataLayer.Models.Category>();
+
+    var gpPopularProducts = ViewBag.PopularProducts as IEnumerable<DataLayer.Models.Product>;
+    var gpPopularProductsList = gpPopularProducts != null
+        ? gpPopularProducts.ToList()
+        : gpCurrentProducts.Take(6).ToList();
+
+    var gpSubCategories = ViewBag.SubCategories as IEnumerable<DataLayer.Models.Category>;
+    var gpSubCategoriesList = gpSubCategories != null
+        ? gpSubCategories.ToList()
+        : new List<DataLayer.Models.Category>();
+
+    var gpMetaDescription = "مشاهده " + gpCategoryName + " در کلینیک شنوایی و سمعک شکوه تجریش؛ بررسی مدل‌ها، افزودن به علاقه‌مندی، مشاوره تخصصی و انتخاب سمعک متناسب با تست شنوایی در تهران و تجریش.";
+    var gpMetaKeywords = "سمعک، " + gpCategoryName + "، خرید سمعک، تجویز سمعک، تنظیم سمعک، سمعک دیجیتال، سمعک نامرئی، کلینیک شنوایی تجریش، تست شنوایی تهران";
+
+    ViewBag.Title = gpHasSubCategories
+        ? "انواع " + gpCategoryName + " | کلینیک شنوایی و سمعک شکوه تجریش"
+        : gpCategoryName + " | کلینیک شنوایی و سمعک شکوه تجریش";
+
+    ViewBag.CanonicalUrl = gpCanonicalUrl;
+    ViewBag.MetaDescription = gpMetaDescription;
+    ViewBag.MetaKeywords = gpMetaKeywords;
+
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Metas{
-    <meta name="description" content="مشاهده جدیدترین سمعک‌ها در کلینیک شنوایی و سمعک شکوه تجریش؛ بررسی مدل‌ها، افزودن گزینه‌های مناسب به علاقه‌مندی، دریافت مشاوره و انتخاب سمعک بر اساس تست شنوایی." />
+    <meta name="description" content="@gpMetaDescription" />
     <link rel="canonical" href="@gpCanonicalUrl" />
-    <meta name="Keywords" content="جدیدترین سمعک، خرید سمعک، تجویز سمعک، سمعک دیجیتال، سمعک نامرئی، سمعک پشت گوشی، کلینیک شنوایی تجریش" />
-    <meta property="og:title" content="جدیدترین سمعک‌ها | کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta name="Keywords" content="@gpMetaKeywords" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <meta property="og:title" content="@ViewBag.Title" />
     <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="@gpCanonicalUrl" />
-    <meta property="og:description" content="جدیدترین سمعک‌ها را ببینید، گزینه‌های مناسب را به علاقه‌مندی اضافه کنید و برای انتخاب دقیق‌تر مشاوره بگیرید." />
+    <meta property="og:description" content="@gpMetaDescription" />
+    <meta property="og:site_name" content="کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta property="og:locale" content="fa_IR" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewBag.Title" />
     <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
-    <meta name="twitter:description" content="جدیدترین سمعک‌ها، فیلتر بر اساس دسته‌بندی، علاقه‌مندی محصول و مشاوره تخصصی انتخاب سمعک." />
+    <meta name="twitter:description" content="@gpMetaDescription" />
 }
 
 @section Styles{
@@ -57,42 +86,45 @@
             {
               "@@type": "ListItem",
               "position": 2,
-              "name": "جدیدترین سمعک‌ها",
+              "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpCategoryName))",
               "item": "@gpCanonicalUrl"
             }
           ]
         }
     </script>
 
-    <script type="application/ld+json">
-        {
-          "@@context": "https://schema.org",
-          "@@type": "ItemList",
-          "name": "جدیدترین سمعک‌های کلینیک شکوه تجریش",
-          "url": "@gpCanonicalUrl",
-          "numberOfItems": "@gpCurrentProducts.Count()",
-          "itemListElement": [
-            @{
-                var gpSchemaIndex = 1;
-                var gpSchemaItems = gpCurrentProducts.Take(6).ToList();
-            }
-            @foreach (var item in gpSchemaItems)
+    @if (!gpHasSubCategories)
+    {
+        <script type="application/ld+json">
             {
-                <text>{
-                  "@@type": "ListItem",
-                  "position": @gpSchemaIndex,
-                  "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(item.PersianName))",
-                  "url": "https://tajrish-samak.ir/Product/Details/@item.Id"
-                }</text>
-                if (gpSchemaIndex < gpSchemaItems.Count())
-                {
-                    <text>,</text>
+              "@@context": "https://schema.org",
+              "@@type": "ItemList",
+              "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpCategoryName))",
+              "url": "@gpCanonicalUrl",
+              "numberOfItems": @gpCurrentProducts.Count(),
+              "itemListElement": [
+                @{
+                    var gpSchemaIndex = 1;
+                    var gpSchemaItems = gpCurrentProducts.Take(6).ToList();
                 }
-                gpSchemaIndex++;
+                @foreach (var item in gpSchemaItems)
+                {
+                    <text>{
+                      "@@type": "ListItem",
+                      "position": @gpSchemaIndex,
+                      "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(item.PersianName))",
+                      "url": "https://tajrish-samak.ir/Product/Details/@item.Id"
+                    }</text>
+                    if (gpSchemaIndex < gpSchemaItems.Count())
+                    {
+                        <text>,</text>
+                    }
+                    gpSchemaIndex++;
+                }
+              ]
             }
-          ]
-        }
-    </script>
+        </script>
+    }
 
     <script type="application/ld+json">
         {
@@ -101,103 +133,154 @@
           "mainEntity": [
             {
               "@@type": "Question",
-              "name": "چطور سمعک مناسب را انتخاب کنیم؟",
+              "name": "برای انتخاب سمعک مناسب از کجا شروع کنیم؟",
               "acceptedAnswer": {
                 "@@type": "Answer",
-                "text": "انتخاب سمعک باید بر اساس نتیجه تست شنوایی، سبک زندگی، نیاز شنیداری، بودجه و نظر متخصص شنوایی انجام شود."
+                "text": "بهترین شروع، انجام تست شنوایی و بررسی نیاز شنیداری، سبک زندگی و شرایط استفاده توسط متخصص شنوایی است."
               }
             },
             {
               "@@type": "Question",
-              "name": "آیا می‌توان چند مدل سمعک را برای بررسی بعدی ذخیره کرد؟",
+              "name": "آیا می‌توان چند مدل سمعک را برای بررسی بعدی نگه داشت؟",
               "acceptedAnswer": {
                 "@@type": "Answer",
-                "text": "در این صفحه می‌توانید گزینه‌های مناسب را به علاقه‌مندی اضافه کنید و بعد برای مشاوره یا مقایسه دوباره به آن‌ها برگردید."
-              }
-            },
-            {
-              "@@type": "Question",
-              "name": "آیا مشاوره انتخاب سمعک ضروری است؟",
-              "acceptedAnswer": {
-                "@@type": "Answer",
-                "text": "بله، مشاوره تخصصی کمک می‌کند مدل سمعک با نوع کم‌شنوایی، راحتی استفاده و نیاز روزمره فرد هماهنگ شود."
+                "text": "در این صفحه می‌توانید محصولات مناسب را به علاقه‌مندی اضافه کنید تا هنگام تماس یا مراجعه، مقایسه سریع‌تر انجام شود."
               }
             }
           ]
         }
     </script>
 
-    <style id="gp-v24-save-seo-products-page">
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "CollectionPage",
+          "@@id": "@gpCanonicalUrl#collection",
+          "url": "@gpCanonicalUrl",
+          "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(ViewBag.Title))",
+          "description": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpMetaDescription))",
+          "inLanguage": "fa-IR",
+          "isPartOf": {
+            "@@type": "WebSite",
+            "@@id": "https://tajrish-samak.ir/#website",
+            "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+            "url": "https://tajrish-samak.ir/"
+          },
+          "about": [
+            { "@@type": "Thing", "name": "سمعک" },
+            { "@@type": "Thing", "name": "خرید سمعک" },
+            { "@@type": "Thing", "name": "تجویز سمعک" },
+            { "@@type": "Thing", "name": "تنظیم سمعک" },
+            { "@@type": "Place", "name": "تهران" },
+            { "@@type": "Place", "name": "تجریش" }
+          ]
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": ["LocalBusiness", "MedicalBusiness", "MedicalClinic"],
+          "@@id": "https://tajrish-samak.ir/#tajrish-samak",
+          "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+          "url": "https://tajrish-samak.ir/",
+          "telephone": ["+982122735588", "+982122735599", "+989393388985"],
+          "priceRange": "$$",
+          "address": {
+            "@@type": "PostalAddress",
+            "addressCountry": "IR",
+            "addressRegion": "تهران",
+            "addressLocality": "تهران",
+            "streetAddress": "میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰"
+          },
+          "areaServed": [
+            { "@@type": "City", "name": "تهران" },
+            { "@@type": "Place", "name": "تجریش" },
+            { "@@type": "Place", "name": "شمیرانات" },
+            { "@@type": "Place", "name": "نیاوران" },
+            { "@@type": "Place", "name": "قیطریه" },
+            { "@@type": "Place", "name": "زعفرانیه" },
+            { "@@type": "Place", "name": "الهیه" },
+            { "@@type": "Place", "name": "فرمانیه" }
+          ],
+          "medicalSpecialty": ["Audiology", "Hearing Aid Fitting", "Hearing Test"]
+        }
+    </script>
+
+    <style id="gp-v77-product-brand-geo-links">
         :root {
-            --gp-v24-purple: #4b1684;
-            --gp-v24-violet: #920ab6;
-            --gp-v24-pink: #e10b79;
-            --gp-v24-cyan: #0ba6b8;
-            --gp-v24-ink: #20142d;
-            --gp-v24-muted: rgba(32, 20, 45, .66);
-            --gp-v24-card: rgba(255,255,255,.88);
-            --gp-v24-border: rgba(75,22,132,.10);
-            --gp-v24-shadow: 0 24px 60px rgba(74,18,107,.10);
+            --gp-v26-purple: #4b1684;
+            --gp-v26-violet: #920ab6;
+            --gp-v26-pink: #e10b79;
+            --gp-v26-cyan: #0ba6b8;
+            --gp-v26-lime: #d8f512;
+            --gp-v26-heart: #e10b45;
+            --gp-v26-ink: #20142d;
+            --gp-v26-muted: rgba(32, 20, 45, .66);
+            --gp-v26-card: rgba(255,255,255,.90);
+            --gp-v26-border: rgba(75,22,132,.10);
+            --gp-v26-shadow: 0 24px 60px rgba(74,18,107,.10);
         }
 
-        .gp-products-page {
+        .gp-category-page {
             direction: rtl;
             overflow: hidden;
         }
 
-        .gp-products-hero {
+        .gp-category-hero {
             position: relative;
             margin: 22px auto 28px;
             padding: clamp(28px, 4vw, 56px);
             border-radius: 42px;
-            background:
-                radial-gradient(circle at 12% 12%, rgba(216,245,18,.26), transparent 24%),
-                radial-gradient(circle at 88% 24%, rgba(255,255,255,.16), transparent 22%),
-                linear-gradient(135deg, #4b1684 0%, #920ab6 52%, #e10b79 100%);
+            background: radial-gradient(circle at 14% 10%, rgba(216,245,18,.25), transparent 24%), radial-gradient(circle at 88% 24%, rgba(255,255,255,.15), transparent 22%), linear-gradient(135deg, #4b1684 0%, #920ab6 54%, #e10b79 100%);
             color: #fff;
             box-shadow: 0 32px 80px rgba(74,18,107,.20);
             isolation: isolate;
+            overflow: hidden;
         }
 
-        .gp-products-hero::before,
-        .gp-products-hero::after {
-            content: "";
-            position: absolute;
-            border-radius: 999px;
-            pointer-events: none;
-            z-index: -1;
+            .gp-category-hero::before,
+            .gp-category-hero::after {
+                content: "";
+                position: absolute;
+                border-radius: 999px;
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .gp-category-hero::before {
+                width: 260px;
+                height: 260px;
+                left: -92px;
+                top: -88px;
+                background: rgba(255,255,255,.13);
+                animation: gpV26Blob 10s ease-in-out infinite alternate;
+            }
+
+            .gp-category-hero::after {
+                width: 330px;
+                height: 330px;
+                right: -128px;
+                bottom: -170px;
+                background: rgba(11,166,184,.22);
+                animation: gpV26Blob 12s ease-in-out infinite alternate-reverse;
+            }
+
+        @@keyframes gpV26Blob {
+            to {
+                transform: translate3d(24px, 18px, 0) scale(1.06);
+            }
         }
 
-        .gp-products-hero::before {
-            width: 260px;
-            height: 260px;
-            left: -92px;
-            top: -88px;
-            background: rgba(255,255,255,.13);
-            animation: gpV24Blob 10s ease-in-out infinite alternate;
-        }
-
-        .gp-products-hero::after {
-            width: 320px;
-            height: 320px;
-            right: -120px;
-            bottom: -170px;
-            background: rgba(11,166,184,.22);
-            animation: gpV24Blob 12s ease-in-out infinite alternate-reverse;
-        }
-
-        @@keyframes gpV24Blob {
-            to { transform: translate3d(24px, 18px, 0) scale(1.06); }
-        }
-
-        .gp-products-hero-grid {
+        .gp-category-hero-grid {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(260px, .42fr);
+            grid-template-columns: minmax(0, 1fr) minmax(250px, .40fr);
             gap: clamp(20px, 4vw, 46px);
             align-items: center;
         }
 
-        .gp-products-kicker {
+        .gp-category-kicker {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -211,16 +294,16 @@
             backdrop-filter: blur(14px);
         }
 
-        .gp-products-hero h1 {
+        .gp-category-hero h1 {
             margin: 16px 0 12px;
             color: #fff !important;
-            font-size: clamp(30px, 4.8vw, 64px);
+            font-size: clamp(30px, 4.8vw, 62px);
             font-weight: 1000;
-            line-height: 1.32 !important;
+            line-height: 1.34 !important;
             letter-spacing: -.02em;
         }
 
-        .gp-products-hero p {
+        .gp-category-hero p {
             max-width: 780px;
             margin: 0;
             color: rgba(255,255,255,.90) !important;
@@ -229,45 +312,51 @@
             line-height: 2.1;
         }
 
-        .gp-products-hero-actions {
+        .gp-category-hero-actions {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 24px;
         }
 
-        .gp-products-hero-actions a,
-        .gp-saved-counter-chip {
-            min-height: 48px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 0 18px;
-            border-radius: 999px;
-            text-decoration: none !important;
-            font-weight: 950;
-        }
+            .gp-category-hero-actions a,
+            .gp-favorite-counter-chip {
+                min-height: 48px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 0 18px;
+                border-radius: 999px;
+                text-decoration: none !important;
+                font-weight: 950;
+            }
 
-        .gp-products-hero-actions a:first-child {
-            background: #fff;
-            color: #4b1684 !important;
-            box-shadow: 0 18px 38px rgba(0,0,0,.14);
-        }
+                .gp-category-hero-actions a:first-child {
+                    background: #fff;
+                    color: #4b1684 !important;
+                    box-shadow: 0 18px 38px rgba(0,0,0,.14);
+                }
 
-        .gp-products-hero-actions a:nth-child(2),
-        .gp-saved-counter-chip {
-            background: rgba(255,255,255,.13);
-            border: 1px solid rgba(255,255,255,.24);
-            color: #fff !important;
-        }
+                .gp-category-hero-actions a:nth-child(2),
+                .gp-favorite-counter-chip {
+                    background: rgba(255,255,255,.13);
+                    border: 1px solid rgba(255,255,255,.24);
+                    color: #fff !important;
+                }
 
-        .gp-products-stats {
+                    .gp-favorite-counter-chip > span:first-child {
+                        color: #ff3f72 !important;
+                        font-size: 18px;
+                        text-shadow: 0 6px 18px rgba(255, 63, 114, .25);
+                    }
+
+        .gp-category-stats {
             display: grid;
             gap: 12px;
         }
 
-        .gp-products-stat-card {
+        .gp-category-stat-card {
             min-height: 92px;
             padding: 18px;
             border-radius: 28px;
@@ -276,22 +365,22 @@
             backdrop-filter: blur(14px);
         }
 
-        .gp-products-stat-card strong {
-            display: block;
-            color: #fff !important;
-            font-size: 28px;
-            font-weight: 1000;
-            line-height: 1;
-        }
+            .gp-category-stat-card strong {
+                display: block;
+                color: #fff !important;
+                font-size: 28px;
+                font-weight: 1000;
+                line-height: 1;
+            }
 
-        .gp-products-stat-card span {
-            display: block;
-            margin-top: 8px;
-            color: rgba(255,255,255,.82) !important;
-            font-weight: 850;
-        }
+            .gp-category-stat-card span {
+                display: block;
+                margin-top: 8px;
+                color: rgba(255,255,255,.82) !important;
+                font-weight: 850;
+            }
 
-        .gp-products-shell {
+        .gp-category-shell {
             display: grid;
             grid-template-columns: minmax(250px, 300px) minmax(0, 1fr);
             gap: 22px;
@@ -299,16 +388,17 @@
             margin-bottom: 40px;
         }
 
-        .gp-products-sidebar,
-        .gp-products-list-card {
+        .gp-category-sidebar,
+        .gp-category-list-card,
+        .gp-subcategory-card {
             border-radius: 34px;
-            background: var(--gp-v24-card);
-            border: 1px solid var(--gp-v24-border);
-            box-shadow: var(--gp-v24-shadow);
+            background: var(--gp-v26-card);
+            border: 1px solid var(--gp-v26-border);
+            box-shadow: var(--gp-v26-shadow);
             backdrop-filter: blur(18px);
         }
 
-        .gp-products-sidebar {
+        .gp-category-sidebar {
             position: sticky;
             top: 16px;
             padding: 18px;
@@ -322,17 +412,16 @@
             margin-bottom: 14px;
         }
 
-        .gp-filter-card h2,
-        .gp-filter-card h3 {
-            margin: 0 0 12px;
-            color: var(--gp-v24-ink) !important;
-            font-size: 16px;
-            font-weight: 1000;
-            line-height: 1.7 !important;
-        }
+            .gp-filter-card h2,
+            .gp-filter-card h3 {
+                margin: 0 0 12px;
+                color: var(--gp-v26-ink) !important;
+                font-size: 16px;
+                font-weight: 1000;
+                line-height: 1.7 !important;
+            }
 
         .gp-filter-search {
-            position: relative;
             display: flex;
             align-items: center;
             min-height: 48px;
@@ -342,28 +431,28 @@
             border: 1px solid rgba(75,22,132,.10);
         }
 
-        .gp-filter-search input[type="search"] {
-            flex: 1;
-            min-width: 0;
-            height: 48px;
-            border: 0 !important;
-            outline: 0 !important;
-            padding: 0 14px;
-            background: transparent;
-            color: var(--gp-v24-ink);
-            font-weight: 850;
-        }
+            .gp-filter-search input[type="search"] {
+                flex: 1;
+                min-width: 0;
+                height: 48px;
+                border: 0 !important;
+                outline: 0 !important;
+                padding: 0 14px;
+                background: transparent;
+                color: var(--gp-v26-ink);
+                font-weight: 850;
+            }
 
-        .gp-filter-search button {
-            width: 48px;
-            height: 48px;
-            border: 0;
-            background: linear-gradient(135deg, var(--gp-v24-purple), var(--gp-v24-violet));
-            color: #fff;
-            font-weight: 1000;
-        }
+            .gp-filter-search button {
+                width: 48px;
+                height: 48px;
+                border: 0;
+                background: linear-gradient(135deg, var(--gp-v26-purple), var(--gp-v26-violet));
+                color: #fff;
+                font-weight: 1000;
+            }
 
-        .gp-category-list {
+        .gp-category-filter-list {
             max-height: 330px;
             overflow: auto;
             padding: 0;
@@ -371,42 +460,42 @@
             list-style: none;
         }
 
-        .gp-category-list li {
-            margin-bottom: 8px;
-        }
+            .gp-category-filter-list li {
+                margin-bottom: 8px;
+            }
 
-        .gp-category-list label {
-            width: 100%;
-            min-height: 42px;
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            padding: 8px 10px;
-            border-radius: 16px;
-            background: rgba(255,255,255,.62);
-            border: 1px solid rgba(75,22,132,.08);
-            color: rgba(32,20,45,.78);
-            font-weight: 850;
-            cursor: pointer;
-            transition: transform .18s ease, border-color .18s ease, background .18s ease;
-        }
+            .gp-category-filter-list label {
+                width: 100%;
+                min-height: 42px;
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                padding: 8px 10px;
+                border-radius: 16px;
+                background: rgba(255,255,255,.62);
+                border: 1px solid rgba(75,22,132,.08);
+                color: rgba(32,20,45,.78);
+                font-weight: 850;
+                cursor: pointer;
+                transition: transform .18s ease, border-color .18s ease, background .18s ease;
+            }
 
-        .gp-category-list label:hover {
-            transform: translateY(-2px);
-            border-color: rgba(146,10,182,.22);
-            background: #fff;
-        }
+                .gp-category-filter-list label:hover {
+                    transform: translateY(-2px);
+                    border-color: rgba(146,10,182,.22);
+                    background: #fff;
+                }
 
-        .gp-category-list input {
-            accent-color: var(--gp-v24-violet);
-        }
+            .gp-category-filter-list input {
+                accent-color: var(--gp-v26-violet);
+            }
 
         .gp-filter-submit {
             width: 100%;
             min-height: 48px;
             border: 0;
             border-radius: 18px;
-            background: linear-gradient(135deg, var(--gp-v24-purple), var(--gp-v24-violet), var(--gp-v24-pink));
+            background: linear-gradient(135deg, var(--gp-v26-purple), var(--gp-v26-violet), var(--gp-v26-pink));
             color: #fff;
             font-weight: 1000;
             box-shadow: 0 16px 32px rgba(146,10,182,.18);
@@ -430,39 +519,39 @@
             transition: transform .18s ease, background .18s ease;
         }
 
-        .gp-side-product:hover {
-            transform: translateY(-2px);
-            background: #fff;
-        }
+            .gp-side-product:hover {
+                transform: translateY(-2px);
+                background: #fff;
+            }
 
-        .gp-side-product img {
-            width: 62px;
-            height: 62px;
-            border-radius: 16px;
-            object-fit: contain;
-            background: #fff;
-        }
+            .gp-side-product img {
+                width: 62px;
+                height: 62px;
+                border-radius: 16px;
+                object-fit: contain;
+                background: #fff;
+            }
 
-        .gp-side-product strong {
-            display: block;
-            color: var(--gp-v24-ink) !important;
-            font-size: 13px;
-            font-weight: 950;
-            line-height: 1.8;
-        }
+            .gp-side-product strong {
+                display: block;
+                color: var(--gp-v26-ink) !important;
+                font-size: 13px;
+                font-weight: 950;
+                line-height: 1.8;
+            }
 
-        .gp-side-product span {
-            display: block;
-            color: var(--gp-v24-muted) !important;
-            font-size: 12px;
-            font-weight: 850;
-        }
+            .gp-side-product span {
+                display: block;
+                color: var(--gp-v26-muted) !important;
+                font-size: 12px;
+                font-weight: 850;
+            }
 
-        .gp-products-list-card {
+        .gp-category-list-card {
             padding: clamp(16px, 2.2vw, 26px);
         }
 
-        .gp-products-toolbar {
+        .gp-category-toolbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -471,20 +560,20 @@
             margin-bottom: 18px;
         }
 
-        .gp-products-toolbar h2 {
-            margin: 0;
-            color: var(--gp-v24-ink) !important;
-            font-size: clamp(22px, 2.4vw, 34px);
-            font-weight: 1000;
-            line-height: 1.5 !important;
-        }
+            .gp-category-toolbar h2 {
+                margin: 0;
+                color: var(--gp-v26-ink) !important;
+                font-size: clamp(22px, 2.4vw, 34px);
+                font-weight: 1000;
+                line-height: 1.5 !important;
+            }
 
-        .gp-products-toolbar p {
-            margin: 4px 0 0;
-            color: var(--gp-v24-muted) !important;
-            font-weight: 850;
-            line-height: 1.9;
-        }
+            .gp-category-toolbar p {
+                margin: 4px 0 0;
+                color: var(--gp-v26-muted) !important;
+                font-weight: 850;
+                line-height: 1.9;
+            }
 
         .gp-view-hints {
             display: flex;
@@ -493,26 +582,28 @@
             flex-wrap: wrap;
         }
 
-        .gp-view-hints span {
-            min-height: 34px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 11px;
-            border-radius: 999px;
-            background: rgba(146,10,182,.08);
-            color: #6420a0 !important;
-            font-weight: 900;
-            font-size: 12px;
-        }
+            .gp-view-hints span {
+                min-height: 34px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 11px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.08);
+                color: #6420a0 !important;
+                font-weight: 900;
+                font-size: 12px;
+            }
 
-        .gp-products-grid {
+        .gp-category-products-grid,
+        .gp-subcategory-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 16px;
         }
 
-        .gp-seo-product-card {
+        .gp-category-product-card,
+        .gp-subcategory-card {
             position: relative;
             display: flex;
             flex-direction: column;
@@ -525,35 +616,38 @@
             transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease;
         }
 
-        .gp-seo-product-card:hover {
-            transform: translateY(-7px);
-            box-shadow: 0 30px 72px rgba(74,18,107,.15);
-        }
+            .gp-category-product-card:hover,
+            .gp-subcategory-card:hover {
+                transform: translateY(-7px);
+                box-shadow: 0 30px 72px rgba(74,18,107,.15);
+            }
 
-        .gp-seo-product-media {
+        .gp-category-product-media,
+        .gp-subcategory-media {
             position: relative;
             height: 190px;
             display: grid;
             place-items: center;
             padding: 18px;
-            background:
-                radial-gradient(circle at 20% 10%, rgba(146,10,182,.12), transparent 30%),
-                linear-gradient(135deg, #fff, #fbf7ff);
+            background: radial-gradient(circle at 20% 10%, rgba(146,10,182,.12), transparent 30%), linear-gradient(135deg, #fff, #fbf7ff);
             text-decoration: none !important;
         }
 
-        .gp-seo-product-media img {
-            max-width: 100%;
-            max-height: 152px;
-            object-fit: contain;
-            transition: transform .22s ease;
-        }
+            .gp-category-product-media img,
+            .gp-subcategory-media img {
+                max-width: 100%;
+                max-height: 152px;
+                object-fit: contain;
+                transition: transform .22s ease;
+            }
 
-        .gp-seo-product-card:hover .gp-seo-product-media img {
+        .gp-category-product-card:hover .gp-category-product-media img,
+        .gp-subcategory-card:hover .gp-subcategory-media img {
             transform: scale(1.05);
         }
 
-        .gp-product-new-badge {
+        .gp-product-new-badge,
+        .gp-subcategory-badge {
             position: absolute;
             top: 14px;
             right: 14px;
@@ -570,32 +664,36 @@
             box-shadow: 0 12px 24px rgba(216,245,18,.22);
         }
 
-        .gp-product-card-body {
+        .gp-product-card-body,
+        .gp-subcategory-body {
             flex: 1;
             display: flex;
             flex-direction: column;
             padding: 17px;
         }
 
-        .gp-product-card-body h2 {
-            margin: 0 0 8px;
-            font-size: 17px;
-            font-weight: 1000;
-            line-height: 1.8 !important;
-        }
+            .gp-product-card-body h2,
+            .gp-subcategory-body h2 {
+                margin: 0 0 8px;
+                font-size: 17px;
+                font-weight: 1000;
+                line-height: 1.8 !important;
+            }
 
-        .gp-product-card-body h2 a {
-            color: var(--gp-v24-ink) !important;
-            text-decoration: none !important;
-        }
+                .gp-product-card-body h2 a,
+                .gp-subcategory-body h2 a {
+                    color: var(--gp-v26-ink) !important;
+                    text-decoration: none !important;
+                }
 
-        .gp-product-card-body p {
-            margin: 0 0 14px;
-            color: var(--gp-v24-muted) !important;
-            font-size: 13px;
-            font-weight: 850;
-            line-height: 2;
-        }
+            .gp-product-card-body p,
+            .gp-subcategory-body p {
+                margin: 0 0 14px;
+                color: var(--gp-v26-muted) !important;
+                font-size: 13px;
+                font-weight: 850;
+                line-height: 2;
+            }
 
         .gp-product-card-meta {
             display: flex;
@@ -604,27 +702,28 @@
             margin: auto 0 14px;
         }
 
-        .gp-product-card-meta span {
-            min-height: 30px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 10px;
-            border-radius: 999px;
-            background: rgba(146,10,182,.08);
-            color: #6420a0 !important;
-            font-size: 12px;
-            font-weight: 900;
-        }
+            .gp-product-card-meta span {
+                min-height: 30px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 10px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.08);
+                color: #6420a0 !important;
+                font-size: 12px;
+                font-weight: 900;
+            }
 
         .gp-product-actions {
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: 1fr 1fr;
             gap: 8px;
         }
 
         .gp-product-details,
-        .gp-product-save {
+        .gp-product-favorite,
+        .gp-subcategory-link {
             min-height: 46px;
             display: inline-flex;
             align-items: center;
@@ -634,30 +733,41 @@
             text-decoration: none !important;
             font-weight: 1000;
             transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+            white-space: nowrap;
         }
 
-        .gp-product-details {
-            background: linear-gradient(135deg, var(--gp-v24-purple), var(--gp-v24-violet));
+        .gp-product-details,
+        .gp-subcategory-link {
+            background: linear-gradient(135deg, var(--gp-v26-purple), var(--gp-v26-violet));
             color: #fff !important;
             box-shadow: 0 16px 32px rgba(146,10,182,.17);
         }
 
-        .gp-product-save {
-            min-width: 92px;
-            border: 1px solid rgba(146,10,182,.18);
+        .gp-product-favorite {
+            min-width: 0;
+            border: 1px solid rgba(225,11,69,.26);
             background: #fff;
-            color: #6420a0 !important;
+            color: #d7194f !important;
             cursor: pointer;
         }
 
-        .gp-product-save.is-saved {
-            background: #d8f512;
-            border-color: transparent;
-            color: #1d1430 !important;
+        .gp-heart-icon {
+            color: var(--gp-v26-heart) !important;
+            font-family: Tahoma, Arial, sans-serif !important;
+            font-size: 18px !important;
+            line-height: 1 !important;
+            text-shadow: 0 6px 16px rgba(225,11,69,.20);
+        }
+
+        .gp-product-favorite.is-saved {
+            background: rgba(225,11,69,.10) !important;
+            border-color: rgba(225,11,69,.30) !important;
+            color: #d7194f !important;
         }
 
         .gp-product-details:hover,
-        .gp-product-save:hover {
+        .gp-product-favorite:hover,
+        .gp-subcategory-link:hover {
             transform: translateY(-2px);
         }
 
@@ -666,7 +776,7 @@
             border-radius: 28px;
             text-align: center;
             background: rgba(146,10,182,.06);
-            color: var(--gp-v24-ink);
+            color: var(--gp-v26-ink);
             font-weight: 950;
         }
 
@@ -678,11 +788,11 @@
             border: 1px solid rgba(75,22,132,.08);
         }
 
-        .gp-product-pagination .pagination {
-            margin: 0;
-        }
+            .gp-product-pagination .pagination {
+                margin: 0;
+            }
 
-        .gp-save-toast {
+        .gp-favorite-toast {
             position: fixed;
             right: 18px;
             bottom: 92px;
@@ -694,7 +804,7 @@
             justify-content: center;
             padding: 0 18px;
             border-radius: 999px;
-            background: rgba(29, 20, 48, .92);
+            background: rgba(29,20,48,.92);
             color: #fff;
             font-weight: 950;
             box-shadow: 0 18px 42px rgba(0,0,0,.22);
@@ -704,103 +814,141 @@
             transition: transform .22s ease, opacity .22s ease;
         }
 
-        .gp-save-toast.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-
-        /* V25: 6 items, cleaner review button, red favorite heart */
-        .gp-products-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-        }
-
-        .gp-product-actions {
-            grid-template-columns: 1fr 1fr !important;
-            align-items: stretch;
-        }
-
-        .gp-product-details {
-            min-width: 0 !important;
-            white-space: nowrap !important;
-        }
-
-        .gp-product-save {
-            min-width: 0 !important;
-            white-space: nowrap !important;
-            color: #d7194f !important;
-            border-color: rgba(215, 25, 79, .28) !important;
-            background: rgba(255, 255, 255, .96) !important;
-        }
-
-        .gp-product-save .gp-heart-icon,
-        .gp-saved-counter-chip > span:first-child {
-            color: #e10b45 !important;
-            font-family: Tahoma, Arial, sans-serif !important;
-            font-size: 18px !important;
-            line-height: 1 !important;
-            text-shadow: 0 6px 16px rgba(225, 11, 69, .20);
-        }
-
-        .gp-product-save.is-saved {
-            background: rgba(225, 11, 69, .10) !important;
-            border-color: rgba(225, 11, 69, .28) !important;
-            color: #d7194f !important;
-        }
-
-        .gp-product-save.is-saved .gp-heart-icon {
-            color: #e10b45 !important;
-        }
-
-        .gp-product-save:hover {
-            background: rgba(225, 11, 69, .08) !important;
-            box-shadow: 0 14px 28px rgba(225, 11, 69, .10);
-        }
-
-        html.gp-dark-mode .gp-product-save {
-            background: rgba(225, 11, 69, .10) !important;
-            color: #ff6b93 !important;
-            border-color: rgba(255, 107, 147, .28) !important;
-        }
-
-        html.gp-dark-mode .gp-product-save .gp-heart-icon,
-        html.gp-dark-mode .gp-saved-counter-chip > span:first-child {
-            color: #ff4f7c !important;
-        }
-
-        html.gp-dark-mode .gp-product-save.is-saved {
-            background: rgba(255, 79, 124, .16) !important;
-            color: #ff7ba0 !important;
-            border-color: rgba(255, 79, 124, .34) !important;
-        }
-
-        @@media(max-width: 1100px) {
-            .gp-products-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            }
-        }
-
-        @@media(max-width: 768px) {
-            .gp-products-grid {
-                grid-template-columns: 1fr !important;
+            .gp-favorite-toast.is-visible {
+                opacity: 1;
+                transform: translateY(0);
             }
 
-            .gp-product-actions {
-                grid-template-columns: 1fr !important;
+
+
+        /* V77: brand links for product category GEO */
+        .gp-product-brand-links {
+            margin: 26px 0 0;
+            padding: 18px;
+            border-radius: 30px;
+            background: radial-gradient(circle at 10% 10%, rgba(216,245,18,.16), transparent 28%), linear-gradient(135deg, rgba(146,10,182,.075), rgba(225,11,121,.045));
+            border: 1px solid rgba(75,22,132,.09);
+            box-shadow: 0 18px 44px rgba(74,18,107,.08);
+        }
+
+            .gp-product-brand-links h2 {
+                margin: 0 0 12px;
+                color: var(--gp-v26-ink) !important;
+                font-size: clamp(18px, 2vw, 26px);
+                font-weight: 1000;
+                line-height: 1.8 !important;
+                text-align: center;
             }
+
+        .gp-product-brand-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 9px;
+        }
+
+            .gp-product-brand-grid a {
+                min-height: 52px;
+                display: inline-flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 8px 12px;
+                border-radius: 18px;
+                background: rgba(255,255,255,.78);
+                border: 1px solid rgba(75,22,132,.08);
+                color: #6420a0 !important;
+                font-size: 12px;
+                font-weight: 1000;
+                text-decoration: none !important;
+                text-align: center;
+                line-height: 1.6;
+            }
+
+                .gp-product-brand-grid a small {
+                    color: rgba(32,20,45,.58) !important;
+                    font-size: 11px;
+                    font-weight: 900;
+                }
+
+        html.gp-dark-mode .gp-product-brand-links {
+            background: rgba(255,255,255,.055) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-product-brand-grid a {
+            background: rgba(255,255,255,.075) !important;
+            border-color: rgba(255,255,255,.10) !important;
+            color: #fff !important;
+        }
+
+            html.gp-dark-mode .gp-product-brand-grid a small {
+                color: rgba(246,247,251,.68) !important;
+            }
+
+        /* V73: product category GEO internal links */
+        .gp-product-geo-links {
+            margin: 26px 0 0;
+            padding: 18px;
+            border-radius: 30px;
+            background: radial-gradient(circle at 10% 10%, rgba(216,245,18,.16), transparent 28%), linear-gradient(135deg, rgba(146,10,182,.075), rgba(225,11,121,.045));
+            border: 1px solid rgba(75,22,132,.09);
+            box-shadow: 0 18px 44px rgba(74,18,107,.08);
+        }
+
+            .gp-product-geo-links h2 {
+                margin: 0 0 12px;
+                color: var(--gp-v26-ink) !important;
+                font-size: clamp(18px, 2vw, 26px);
+                font-weight: 1000;
+                line-height: 1.8 !important;
+                text-align: center;
+            }
+
+        .gp-product-geo-link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 9px;
+        }
+
+            .gp-product-geo-link-grid a {
+                min-height: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 13px;
+                border-radius: 999px;
+                background: rgba(255,255,255,.78);
+                border: 1px solid rgba(75,22,132,.08);
+                color: #6420a0 !important;
+                font-size: 12px;
+                font-weight: 1000;
+                text-decoration: none !important;
+                text-align: center;
+                line-height: 1.8;
+            }
+
+        html.gp-dark-mode .gp-product-geo-links {
+            background: rgba(255,255,255,.055) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-product-geo-link-grid a {
+            background: rgba(255,255,255,.075) !important;
+            border-color: rgba(255,255,255,.10) !important;
+            color: #fff !important;
         }
 
         /* Dark mode */
-        html.gp-dark-mode .gp-products-page {
-            --gp-v24-ink: #f7f7fb;
-            --gp-v24-muted: rgba(246,247,251,.72);
-            --gp-v24-card: rgba(24, 24, 40, .88);
-            --gp-v24-border: rgba(255,255,255,.10);
-            --gp-v24-shadow: 0 24px 60px rgba(0,0,0,.20);
+        html.gp-dark-mode .gp-category-page {
+            --gp-v26-ink: #f7f7fb;
+            --gp-v26-muted: rgba(246,247,251,.72);
+            --gp-v26-card: rgba(24,24,40,.88);
+            --gp-v26-border: rgba(255,255,255,.10);
+            --gp-v26-shadow: 0 24px 60px rgba(0,0,0,.20);
         }
 
-        html.gp-dark-mode .gp-products-sidebar,
-        html.gp-dark-mode .gp-products-list-card,
+        html.gp-dark-mode .gp-category-sidebar,
+        html.gp-dark-mode .gp-category-list-card,
         html.gp-dark-mode .gp-filter-card,
         html.gp-dark-mode .gp-product-pagination {
             background: rgba(24,24,40,.90) !important;
@@ -808,49 +956,58 @@
         }
 
         html.gp-dark-mode .gp-filter-search,
-        html.gp-dark-mode .gp-category-list label,
+        html.gp-dark-mode .gp-category-filter-list label,
         html.gp-dark-mode .gp-side-product,
-        html.gp-dark-mode .gp-seo-product-card {
+        html.gp-dark-mode .gp-category-product-card,
+        html.gp-dark-mode .gp-subcategory-card {
             background: rgba(255,255,255,.07) !important;
             border-color: rgba(255,255,255,.10) !important;
         }
 
-        html.gp-dark-mode .gp-filter-search input[type="search"] {
-            color: #fff !important;
-        }
+            html.gp-dark-mode .gp-filter-search input[type="search"] {
+                color: #fff !important;
+            }
 
-        html.gp-dark-mode .gp-filter-search input[type="search"]::placeholder {
-            color: rgba(255,255,255,.55) !important;
-        }
+                html.gp-dark-mode .gp-filter-search input[type="search"]::placeholder {
+                    color: rgba(255,255,255,.55) !important;
+                }
 
-        html.gp-dark-mode .gp-category-list label,
-        html.gp-dark-mode .gp-side-product strong,
-        html.gp-dark-mode .gp-product-card-body h2 a,
-        html.gp-dark-mode .gp-products-toolbar h2,
-        html.gp-dark-mode .gp-filter-card h2,
-        html.gp-dark-mode .gp-filter-card h3 {
-            color: #f7f7fb !important;
-        }
+            html.gp-dark-mode .gp-category-filter-list label,
+            html.gp-dark-mode .gp-side-product strong,
+            html.gp-dark-mode .gp-product-card-body h2 a,
+            html.gp-dark-mode .gp-subcategory-body h2 a,
+            html.gp-dark-mode .gp-category-toolbar h2,
+            html.gp-dark-mode .gp-filter-card h2,
+            html.gp-dark-mode .gp-filter-card h3 {
+                color: #f7f7fb !important;
+            }
 
-        html.gp-dark-mode .gp-side-product span,
-        html.gp-dark-mode .gp-product-card-body p,
-        html.gp-dark-mode .gp-products-toolbar p {
-            color: rgba(246,247,251,.72) !important;
-        }
+            html.gp-dark-mode .gp-side-product span,
+            html.gp-dark-mode .gp-product-card-body p,
+            html.gp-dark-mode .gp-subcategory-body p,
+            html.gp-dark-mode .gp-category-toolbar p {
+                color: rgba(246,247,251,.72) !important;
+            }
 
-        html.gp-dark-mode .gp-seo-product-media {
+        html.gp-dark-mode .gp-category-product-media,
+        html.gp-dark-mode .gp-subcategory-media {
             background: rgba(255,255,255,.88) !important;
         }
 
-        html.gp-dark-mode .gp-product-save {
-            background: rgba(255,255,255,.08) !important;
-            color: #fff !important;
-            border-color: rgba(255,255,255,.16) !important;
+        html.gp-dark-mode .gp-product-favorite {
+            background: rgba(225,11,69,.10) !important;
+            color: #ff6b93 !important;
+            border-color: rgba(255,107,147,.28) !important;
         }
 
-        html.gp-dark-mode .gp-product-save.is-saved {
-            background: #d8f512 !important;
-            color: #151525 !important;
+            html.gp-dark-mode .gp-product-favorite.is-saved {
+                background: rgba(255,79,124,.16) !important;
+                color: #ff7ba0 !important;
+                border-color: rgba(255,79,124,.34) !important;
+            }
+
+        html.gp-dark-mode .gp-heart-icon {
+            color: #ff4f7c !important;
         }
 
         html.gp-dark-mode .gp-product-card-meta span,
@@ -865,57 +1022,59 @@
         }
 
         @@media(max-width: 1100px) {
-            .gp-products-shell {
+            .gp-category-shell {
                 grid-template-columns: 1fr;
             }
 
-            .gp-products-sidebar {
+            .gp-category-sidebar {
                 position: relative;
                 top: auto;
                 order: 2;
             }
 
-            .gp-products-list-card {
+            .gp-category-list-card {
                 order: 1;
             }
 
-            .gp-products-grid {
+            .gp-category-products-grid,
+            .gp-subcategory-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
-            .gp-products-hero-grid {
+            .gp-category-hero-grid {
                 grid-template-columns: 1fr;
             }
 
-            .gp-products-stats {
+            .gp-category-stats {
                 grid-template-columns: repeat(3, minmax(0, 1fr));
             }
         }
 
         @@media(max-width: 768px) {
-            .gp-products-hero {
+            .gp-category-hero {
                 border-radius: 30px;
                 padding: 26px 20px;
                 text-align: center;
             }
 
-            .gp-products-hero-actions {
+            .gp-category-hero-actions {
                 justify-content: center;
             }
 
-            .gp-products-stats {
+            .gp-category-stats {
                 grid-template-columns: 1fr;
             }
 
-            .gp-products-shell {
+            .gp-category-shell {
                 gap: 16px;
             }
 
-            .gp-products-grid {
+            .gp-category-products-grid,
+            .gp-subcategory-grid {
                 grid-template-columns: 1fr;
             }
 
-            .gp-products-toolbar {
+            .gp-category-toolbar {
                 text-align: center;
                 justify-content: center;
             }
@@ -924,17 +1083,14 @@
                 justify-content: center;
             }
 
-            .gp-products-sidebar {
+            .gp-category-sidebar,
+            .gp-category-list-card {
                 padding: 14px;
                 border-radius: 28px;
             }
 
-            .gp-products-list-card {
-                padding: 14px;
-                border-radius: 28px;
-            }
-
-            .gp-seo-product-card {
+            .gp-category-product-card,
+            .gp-subcategory-card {
                 min-height: auto;
             }
 
@@ -942,11 +1098,11 @@
                 grid-template-columns: 1fr;
             }
 
-            .gp-product-save {
+            .gp-product-favorite {
                 width: 100%;
             }
 
-            .gp-save-toast {
+            .gp-favorite-toast {
                 left: 14px;
                 right: 14px;
                 bottom: 86px;
@@ -955,26 +1111,26 @@
     </style>
 }
 
-<section class="gp-products-page" aria-label="جدیدترین سمعک‌ها">
+<section class="gp-category-page" aria-label="@gpCategoryName">
     <div class="container">
-        <section class="gp-products-hero" aria-label="معرفی صفحه جدیدترین سمعک‌ها">
-            <div class="gp-products-hero-grid">
+        <section class="gp-category-hero" aria-label="معرفی دسته محصولات">
+            <div class="gp-category-hero-grid">
                 <div>
-                    <span class="gp-products-kicker">جدیدترین سمعک‌ها</span>
-                    <h1>انواع سمعک در کلینیک شنوایی شکوه تجریش</h1>
+                    <span class="gp-category-kicker">دسته‌بندی سمعک</span>
+                    <h1>@(gpHasSubCategories ? "انواع " + gpCategoryName : gpCategoryName)</h1>
                     <p>
-                        مدل‌های جدید را ببینید، گزینه‌های مناسب را به علاقه‌مندی اضافه کنید و بعد با مشاوره تخصصی کلینیک شکوه تجریش، انتخاب نهایی را بر اساس تست شنوایی انجام دهید.
+                        محصولات این دسته را بررسی کنید، مدل‌های مناسب را به علاقه‌مندی اضافه کنید و برای انتخاب دقیق‌تر بر اساس تست شنوایی از مشاوره کلینیک استفاده کنید.
                     </p>
-                    <div class="gp-products-hero-actions">
+                    <div class="gp-category-hero-actions">
                         <a href="tel:02122735588">
                             <span aria-hidden="true">☎</span>
                             مشاوره سریع
                         </a>
-                        <a href="#gp-products-grid">
+                        <a href="#gp-category-content">
                             <span aria-hidden="true">⌄</span>
-                            مشاهده سمعک‌ها
+                            مشاهده گزینه‌ها
                         </a>
-                        <span class="gp-saved-counter-chip" id="gpSavedCounterChip">
+                        <span class="gp-favorite-counter-chip" id="gpSavedCounterChip">
                             <span aria-hidden="true">♡</span>
                             <b id="gpSavedCounter">۰</b>
                             علاقه‌مندی
@@ -982,16 +1138,16 @@
                     </div>
                 </div>
 
-                <div class="gp-products-stats" aria-label="مزیت‌های صفحه">
-                    <div class="gp-products-stat-card">
-                        <strong>@gpCurrentProducts.Count()</strong>
-                        <span>گزینه قابل بررسی</span>
+                <div class="gp-category-stats" aria-label="خلاصه دسته">
+                    <div class="gp-category-stat-card">
+                        <strong>@(gpHasSubCategories ? "چند" : gpCurrentProducts.Count().ToString())</strong>
+                        <span>@(gpHasSubCategories ? "زیرگروه قابل بررسی" : "گزینه در این صفحه")</span>
                     </div>
-                    <div class="gp-products-stat-card">
+                    <div class="gp-category-stat-card">
                         <strong>۴</strong>
-                        <span>مرحله انتخاب: تست، مقایسه، ذخیره، مشاوره</span>
+                        <span>مرحله انتخاب: تست، مقایسه، علاقه‌مندی، مشاوره</span>
                     </div>
-                    <div class="gp-products-stat-card">
+                    <div class="gp-category-stat-card">
                         <strong>۲۵+</strong>
                         <span>سال تجربه کلینیک</span>
                     </div>
@@ -999,99 +1155,173 @@
             </div>
         </section>
 
-        <div class="gp-products-shell">
-            <aside class="gp-products-sidebar" aria-label="فیلتر و پیشنهادها">
-                <form action="/Product/Filter" method="get">
-                    <div class="gp-filter-card">
-                        <h2>جستجوی سریع</h2>
-                        <div class="gp-filter-search">
-                            <input type="search" placeholder="نام مدل یا برند سمعک..." name="Title" required />
-                            <button type="submit" aria-label="جستجو">⌕</button>
+        @if (!gpHasSubCategories)
+        {
+            <div class="gp-category-shell" id="gp-category-content">
+                <aside class="gp-category-sidebar" aria-label="فیلتر و پیشنهادها">
+                    <form action="/Product/Filter" method="get">
+                        <div class="gp-filter-card">
+                            <h2>جستجوی سریع</h2>
+                            <div class="gp-filter-search">
+                                <input type="search" placeholder="نام مدل یا برند سمعک..." name="Title" required />
+                                <button type="submit" aria-label="جستجو">⌕</button>
+                            </div>
+                        </div>
+
+                        <div class="gp-filter-card">
+                            <h3>دسته‌بندی سمعک</h3>
+                            <ul class="gp-category-filter-list">
+                                @if (gpCategoriesList.Count() == 0)
+                                {
+                                    <li>
+                                        <label>
+                                            <span>دسته‌بندی برای نمایش وجود ندارد.</span>
+                                        </label>
+                                    </li>
+                                }
+                                @foreach (var category in gpCategoriesList)
+                                {
+                                    <li>
+                                        <label>
+                                            <input name="Category" type="radio" value="@category.Id" />
+                                            <span>@category.PersianName</span>
+                                        </label>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                        <button type="submit" class="gp-filter-submit">اعمال فیلترها</button>
+                    </form>
+
+                    <div class="gp-filter-card" style="margin-top:14px;">
+                        <h3>پیشنهادهای پربازدید</h3>
+                        <div class="gp-side-popular">
+                            @if (gpPopularProductsList.Count() == 0)
+                            {
+                                <div class="gp-empty-products" style="padding:18px;border-radius:18px;">محصول پیشنهادی برای نمایش وجود ندارد.</div>
+                            }
+                            @foreach (var item in gpPopularProductsList)
+                            {
+                                <a class="gp-side-product" title="@item.PersianName" href="/Product/Details/@item.Id">
+                                    <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName" loading="lazy" decoding="async" />
+                                    <span>
+                                        <strong>@item.PersianName</strong>
+                                        <span>مشاهده و بررسی</span>
+                                    </span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </aside>
+
+                <main class="gp-category-list-card" aria-label="محصولات دسته">
+                    <div class="gp-category-toolbar">
+                        <div>
+                            <h2>گزینه‌های قابل بررسی در @gpCategoryName</h2>
+                            <p>هر محصولی که مناسب بود به علاقه‌مندی اضافه کنید تا موقع تماس یا مراجعه سریع‌تر مقایسه شود.</p>
+                        </div>
+                        <div class="gp-view-hints">
+                            <span>علاقه‌مندی سریع</span>
+                            <span>مشاوره تخصصی</span>
+                            <span>ریسپانسیو</span>
                         </div>
                     </div>
 
-                    <div class="gp-filter-card">
-                        <h3>دسته‌بندی سمعک</h3>
-                        <ul class="gp-category-list">
-                            @foreach (var category in gpCategories)
+                    @if (gpCurrentProducts.Count() > 0)
+                    {
+                        <div class="gp-category-products-grid">
+                            @foreach (var item in gpCurrentProducts)
                             {
-                                <li>
-                                    <label>
-                                        <input name="Category" type="radio" value="@category.Id" />
-                                        <span>@category.PersianName</span>
-                                    </label>
-                                </li>
+                                <article class="gp-category-product-card" itemscope itemtype="https://schema.org/Product">
+                                    <a class="gp-category-product-media" title="@item.PersianName" href="/Product/Details/@item.Id" itemprop="url">
+                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName" loading="lazy" decoding="async" itemprop="image" />
+                                        <span class="gp-product-new-badge">جدید</span>
+                                    </a>
+
+                                    <div class="gp-product-card-body">
+                                        <h2 itemprop="name">
+                                            <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
+                                        </h2>
+                                        <p itemprop="description">
+                                            مناسب برای بررسی اولیه، افزودن به علاقه‌مندی و دریافت مشاوره بر اساس تست شنوایی.
+                                        </p>
+
+                                        <div class="gp-product-card-meta">
+                                            <span>تجویز تخصصی</span>
+                                            <span>تنظیم دقیق</span>
+                                            <span>قابل مقایسه</span>
+                                        </div>
+
+                                        <div class="gp-product-actions">
+                                            <a title="@item.PersianName" class="gp-product-details" href="/Product/Details/@item.Id">
+                                                بررسی
+                                            </a>
+                                            <button type="button" class="gp-product-favorite" data-gp-save-product="@item.Id" data-gp-save-title="@item.PersianName">
+                                                <span class="gp-heart-icon" aria-hidden="true">♡</span>
+                                                علاقه‌مندی
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
                             }
-                        </ul>
-                    </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="gp-empty-products">
+                            در حال حاضر محصولی برای این دسته وجود ندارد. برای مشاوره مستقیم با کلینیک تماس بگیرید.
+                        </div>
+                    }
+                </main>
+            </div>
 
-                    <button type="submit" class="gp-filter-submit">اعمال فیلترها</button>
-                </form>
-
-                <div class="gp-filter-card" style="margin-top:14px;">
-                    <h3>پیشنهادهای پربازدید</h3>
-                    <div class="gp-side-popular">
-                        @foreach (var item in gpPopularProducts)
-                        {
-                            <a class="gp-side-product" title="@item.PersianName" href="/Product/Details/@item.Id">
-                                <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName" loading="lazy" decoding="async" />
-                                <span>
-                                    <strong>@item.PersianName</strong>
-                                    <span>مشاهده و بررسی</span>
-                                </span>
-                            </a>
-                        }
-                    </div>
-                </div>
-            </aside>
-
-            <main class="gp-products-list-card" aria-label="لیست جدیدترین سمعک‌ها">
-                <div class="gp-products-toolbar">
+            <div class="gp-product-pagination text-center">
+                <nav aria-label="صفحه‌بندی محصولات">
+                    <ul class="pagination pagination-sm">
+                        <li>@Html.Pager(6, Model.CurrentPage, Model.TotalItemCount)</li>
+                    </ul>
+                </nav>
+            </div>
+        }
+        else
+        {
+            <main class="gp-category-list-card" id="gp-category-content" aria-label="زیرگروه‌های دسته">
+                <div class="gp-category-toolbar">
                     <div>
-                        <h2>جدیدترین گزینه‌های قابل بررسی</h2>
-                        <p>هر محصولی که مناسب بود به علاقه‌مندی اضافه کنید تا موقع تماس یا مراجعه، سریع‌تر مقایسه شود.</p>
+                        <h2>انواع @gpCategoryName</h2>
+                        <p>زیرگروه مورد نظر را انتخاب کنید تا مدل‌های مرتبط و گزینه‌های قابل بررسی را ببینید.</p>
                     </div>
                     <div class="gp-view-hints">
-                        <span>علاقه‌مندی سریع</span>
-                        <span>مشاوره تخصصی</span>
-                        <span>سازگار با موبایل</span>
+                        <span>دسته‌بندی مرتب</span>
+                        <span>انتخاب سریع</span>
+                        <span>موبایل‌پسند</span>
                     </div>
                 </div>
 
-                @if (gpCurrentProducts.Count() > 0)
+                @if (gpSubCategoriesList.Count() > 0)
                 {
-                    <div class="gp-products-grid" id="gp-products-grid">
-                        @foreach (var item in gpCurrentProducts)
+                    <div class="gp-subcategory-grid">
+                        @foreach (var cat in gpSubCategoriesList)
                         {
-                            <article class="gp-seo-product-card" itemscope itemtype="https://schema.org/Product">
-                                <a class="gp-seo-product-media" title="@item.PersianName" href="/Product/Details/@item.Id" itemprop="url">
-                                    <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName" loading="lazy" decoding="async" itemprop="image" />
-                                    <span class="gp-product-new-badge">جدید</span>
+                            <article class="gp-subcategory-card">
+                                <a class="gp-subcategory-media" href="/Product/All/@cat.Id" title="@cat.PersianName">
+                                    @if (cat.SmallImage != null)
+                                    {
+                                        <img src="@cat.SmallImage" alt="@cat.PersianName" title="@cat.PersianName" loading="lazy" decoding="async" />
+                                    }
+                                    else
+                                    {
+                                        <img src="@Url.Content("~/images/pransa_logo_web.png")" alt="@cat.PersianName" title="@cat.PersianName" loading="lazy" decoding="async" />
+                                    }
+                                    <span class="gp-subcategory-badge">دسته</span>
                                 </a>
-
-                                <div class="gp-product-card-body">
-                                    <h2 itemprop="name">
-                                        <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
+                                <div class="gp-subcategory-body">
+                                    <h2>
+                                        <a href="/Product/All/@cat.Id" title="@cat.PersianName">@cat.PersianName</a>
                                     </h2>
-                                    <p itemprop="description">
-                                        مناسب برای بررسی اولیه، ذخیره در لیست انتخاب‌ها و دریافت مشاوره بر اساس تست شنوایی.
-                                    </p>
-
-                                    <div class="gp-product-card-meta">
-                                        <span>تجویز تخصصی</span>
-                                        <span>تنظیم دقیق</span>
-                                        <span>قابل مقایسه</span>
-                                    </div>
-
-                                    <div class="gp-product-actions">
-                                        <a title="@item.PersianName" class="gp-product-details" href="/Product/Details/@item.Id">
-                                            بررسی
-                                        </a>
-                                        <button type="button" class="gp-product-save" data-gp-save-product="@item.Id" data-gp-save-title="@item.PersianName">
-                                            <span class="gp-heart-icon" aria-hidden="true">♡</span>
-                                            علاقه‌مندی
-                                        </button>
-                                    </div>
+                                    <p>مشاهده محصولات این زیرگروه و بررسی گزینه‌های مناسب برای مشاوره تخصصی.</p>
+                                    <a class="gp-subcategory-link" href="/Product/All/@cat.Id" title="@cat.PersianName">مشاهده محصولات</a>
                                 </div>
                             </article>
                         }
@@ -1100,30 +1330,58 @@
                 else
                 {
                     <div class="gp-empty-products">
-                        در حال حاضر محصولی برای نمایش وجود ندارد. برای مشاوره مستقیم با کلینیک تماس بگیرید.
+                        فعلاً زیرگروهی برای این دسته ثبت نشده است.
                     </div>
                 }
             </main>
-        </div>
-
-        <div class="gp-product-pagination text-center">
-            <nav aria-label="صفحه‌بندی محصولات">
-                @{
-                    string Search = Request.QueryString["Search"];
-                    string Title = Request.QueryString["Title"];
-                    string Min = Request.QueryString["Min"];
-                    string Max = Request.QueryString["Max"];
-                    string Category = Request.QueryString["Category"];
-                    string Discount = Request.QueryString["Discount"];
-                }
-                <ul class="pagination pagination-sm">
-                    <li>@Html.Pager(6, Model.CurrentPage, Model.TotalItemCount, new RouteValueDictionary { { "Search", Search }, { "Category", Category }, { "Discount", Discount }, { "Title", Title }, { "Min", Min }, { "Max", Max } })</li>
-                </ul>
-            </nav>
-        </div>
+        }
     </div>
 
-    <div class="gp-save-toast" id="gpSaveToast" aria-live="polite">به علاقه‌مندی اضافه شد</div>
+
+    <div class="container">
+        <section class="gp-product-geo-links" aria-label="لینک‌های مرتبط شنوایی و سمعک">
+            <h2>مسیرهای مرتبط برای انتخاب بهتر سمعک</h2>
+            <div class="gp-product-geo-link-grid">
+                <a href="/tehran/hearing-test">تست شنوایی در تهران</a>
+                <a href="/tajrish/hearing-test">تست شنوایی در تجریش</a>
+                <a href="/tehran/hearing-aid">خرید سمعک در تهران</a>
+                <a href="/tajrish/hearing-aid">خرید سمعک در تجریش</a>
+                <a href="/tehran/hearing-aid-adjustment">تنظیم سمعک در تهران</a>
+                <a href="/tajrish/hearing-aid-adjustment">تنظیم سمعک در تجریش</a>
+                <a href="/niavaran/hearing-test">تست شنوایی نیاوران</a>
+                <a href="/qeytarieh/hearing-test">تست شنوایی قیطریه</a>
+                <a href="/zaferanieh/hearing-test">تست شنوایی زعفرانیه</a>
+                <a href="/elahiyeh/hearing-test">تست شنوایی الهیه</a>
+                <a href="/farmanieh/hearing-test">تست شنوایی فرمانیه</a>
+            </div>
+        </section>
+    </div>
+
+
+    <div class="container">
+        <section class="gp-product-brand-links" aria-label="برندهای سمعک">
+            <h2>برندهای سمعک برای بررسی و مشاوره</h2>
+            <div class="gp-product-brand-grid">
+                <a href="/hearing-aid-brands/widex" title="سمعک ویدکس | Widex"><span>ویدکس</span><small>Widex</small></a>
+                <a href="/hearing-aid-brands/signia" title="سمعک سیگنیا | Signia"><span>سیگنیا</span><small>Signia</small></a>
+                <a href="/hearing-aid-brands/oticon" title="سمعک اتیکن | Oticon"><span>اتیکن</span><small>Oticon</small></a>
+                <a href="/hearing-aid-brands/phonak" title="سمعک فوناک | Phonak"><span>فوناک</span><small>Phonak</small></a>
+                <a href="/hearing-aid-brands/resound" title="سمعک ریساند | ReSound"><span>ریساند</span><small>ReSound</small></a>
+                <a href="/hearing-aid-brands/starkey" title="سمعک استارکی | Starkey"><span>استارکی</span><small>Starkey</small></a>
+                <a href="/hearing-aid-brands/bernafon" title="سمعک برنافن | Bernafon"><span>برنافن</span><small>Bernafon</small></a>
+                <a href="/hearing-aid-brands/unitron" title="سمعک یونیترون | Unitron"><span>یونیترون</span><small>Unitron</small></a>
+                <a href="/hearing-aid-brands/hansaton" title="سمعک هنساتون | Hansaton"><span>هنساتون</span><small>Hansaton</small></a>
+                <a href="/hearing-aid-brands/beltone" title="سمعک بلتون | Beltone"><span>بلتون</span><small>Beltone</small></a>
+                <a href="/hearing-aid-brands/audifon" title="سمعک ادیفون | Audifon"><span>ادیفون</span><small>Audifon</small></a>
+                <a href="/hearing-aid-brands/sonic" title="سمعک سونیک | Sonic"><span>سونیک</span><small>Sonic</small></a>
+                <a href="/hearing-aid-brands/interton" title="سمعک اینترتون | Interton"><span>اینترتون</span><small>Interton</small></a>
+                <a href="/hearing-aid-brands/rion" title="سمعک ریون | Rion"><span>ریون</span><small>Rion</small></a>
+                <a href="/hearing-aid-brands/coselgi" title="سمعک کوسلجی | Coselgi"><span>کوسلجی</span><small>Coselgi</small></a>
+            </div>
+        </section>
+    </div>
+
+    <div class="gp-favorite-toast" id="gpSaveToast" aria-live="polite">به علاقه‌مندی اضافه شد</div>
 </section>
 
 @section Scripts{
@@ -1170,6 +1428,7 @@
 
             function updateUI() {
                 var saved = readSaved();
+
                 if (counter) {
                     counter.textContent = toPersianNumber(saved.length);
                 }
@@ -1218,14 +1477,5 @@
 
             updateUI();
         })();
-    </script>
-
-    <script src="~/Scripts/jquery.jscrollpane.min.js"></script>
-    <script>
-        $(function () {
-            if ($('.scroll-pane').length && $.fn.jScrollPane) {
-                $('.scroll-pane').jScrollPane();
-            }
-        });
     </script>
 }

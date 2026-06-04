@@ -1,24 +1,444 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>تجریش سمعک | آفلاین</title>
-  <style>
-    body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#fbf7ff,#fff);color:#4a126b;text-align:center;padding:20px}
-    .box{max-width:460px;background:#fff;border-radius:28px;padding:28px;box-shadow:0 20px 60px rgba(74,18,107,.16);border:1px solid rgba(146,10,182,.12)}
-    .ear{width:84px;height:84px;border-radius:28px;margin:0 auto 16px;background:linear-gradient(135deg,#920ab6,#e10b79);display:grid;place-items:center;color:#fff;font-size:42px}
-    h1{font-size:20px;line-height:2;margin:0 0 8px}
-    p{line-height:2;color:#74667d;margin:0}
-    a{display:inline-flex;margin-top:18px;padding:10px 18px;border-radius:16px;background:linear-gradient(135deg,#920ab6,#e10b79);color:#fff;text-decoration:none;font-weight:900}
-  </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#920ab6">
+    <title>اتصال اینترنت قطع است | تجریش سمعک</title>
+    <style>
+        :root {
+            --gp-purple: #920ab6;
+            --gp-deep: #4b1684;
+            --gp-pink: #e10b79;
+            --gp-lime: #d8f512;
+            --gp-ink: #20142d;
+            --gp-muted: rgba(32,20,45,.68);
+            --gp-card: rgba(255,255,255,.82);
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            min-height: 100%;
+            font-family: Tahoma, Arial, sans-serif;
+            background:
+                radial-gradient(circle at 12% 12%, rgba(216,245,18,.20), transparent 28%),
+                radial-gradient(circle at 88% 8%, rgba(225,11,121,.15), transparent 26%),
+                radial-gradient(circle at 50% 100%, rgba(146,10,182,.14), transparent 38%),
+                #fbf8ff;
+            color: var(--gp-ink);
+        }
+
+        body {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            overflow-x: hidden;
+        }
+
+        .gp-offline-shell {
+            width: min(760px, 100%);
+            position: relative;
+        }
+
+        .gp-offline-card {
+            position: relative;
+            padding: clamp(26px, 5vw, 46px);
+            border-radius: 42px;
+            background: var(--gp-card);
+            border: 1px solid rgba(146,10,182,.14);
+            box-shadow: 0 32px 90px rgba(74,18,107,.16);
+            backdrop-filter: blur(18px) saturate(150%);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .gp-offline-card::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.55), transparent 32%),
+                radial-gradient(circle at 12% 0, rgba(216,245,18,.20), transparent 26%),
+                radial-gradient(circle at 86% 16%, rgba(146,10,182,.15), transparent 30%);
+            pointer-events: none;
+        }
+
+        .gp-offline-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .gp-offline-icon {
+            width: 116px;
+            height: 116px;
+            margin: 0 auto 18px;
+            border-radius: 32px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #fff, #f5eaff);
+            border: 1px solid rgba(146,10,182,.12);
+            box-shadow: 0 22px 50px rgba(146,10,182,.18);
+        }
+
+        .gp-ear {
+            position: relative;
+            width: 74px;
+            height: 74px;
+            border-radius: 50%;
+            border: 10px solid var(--gp-purple);
+            border-left-color: transparent;
+            transform: rotate(-20deg);
+            filter: drop-shadow(0 10px 14px rgba(146,10,182,.20));
+        }
+
+        .gp-ear::before {
+            content: "";
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 8px solid var(--gp-purple);
+            border-left-color: transparent;
+            left: 10px;
+            top: 8px;
+        }
+
+        .gp-ear::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 999px;
+            background: var(--gp-purple);
+            left: 1px;
+            bottom: -1px;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            color: var(--gp-ink);
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 1000;
+            line-height: 1.35;
+        }
+
+        p {
+            max-width: 560px;
+            margin: 0 auto 22px;
+            color: var(--gp-muted);
+            font-size: 15px;
+            font-weight: 850;
+            line-height: 2.1;
+        }
+
+        .gp-offline-status {
+            width: fit-content;
+            max-width: 100%;
+            margin: 0 auto 22px;
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(146,10,182,.075);
+            color: var(--gp-deep);
+            font-size: 13px;
+            font-weight: 950;
+        }
+
+        .gp-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: #ff4d6d;
+            box-shadow: 0 0 0 7px rgba(255,77,109,.12);
+            animation: gpPulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes gpPulse {
+            0%, 100% { transform: scale(.92); opacity: .72; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+
+        .gp-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .gp-btn {
+            border: 0;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 1000;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+        .gp-btn:hover { transform: translateY(-2px); }
+
+        .gp-btn-primary {
+            color: #fff;
+            background: linear-gradient(135deg, var(--gp-deep), var(--gp-purple), var(--gp-pink));
+            box-shadow: 0 16px 34px rgba(146,10,182,.24);
+        }
+
+        .gp-btn-secondary {
+            color: var(--gp-deep);
+            background: #fff;
+            border: 1px solid rgba(146,10,182,.14);
+        }
+
+        .gp-mini-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .gp-mini-links a {
+            min-height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.72);
+            color: var(--gp-deep);
+            border: 1px solid rgba(146,10,182,.10);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 950;
+        }
+
+        .gp-note {
+            margin-top: 20px;
+            color: rgba(32,20,45,.52);
+            font-size: 12px;
+            font-weight: 850;
+            line-height: 2;
+        }
+
+        @media (max-width: 520px) {
+            body { padding: 14px; }
+            .gp-offline-card { border-radius: 30px; }
+            .gp-offline-icon { width: 96px; height: 96px; border-radius: 26px; }
+            .gp-ear { transform: rotate(-20deg) scale(.78); }
+            .gp-actions { flex-direction: column; }
+            .gp-btn { width: 100%; }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            html, body {
+                background:
+                    radial-gradient(circle at 12% 12%, rgba(216,245,18,.10), transparent 28%),
+                    radial-gradient(circle at 88% 8%, rgba(225,11,121,.14), transparent 26%),
+                    radial-gradient(circle at 50% 100%, rgba(146,10,182,.18), transparent 38%),
+                    #10101d;
+                color: #fff;
+            }
+
+            .gp-offline-card {
+                background: rgba(24,24,40,.86);
+                border-color: rgba(255,255,255,.10);
+                box-shadow: 0 32px 90px rgba(0,0,0,.32);
+            }
+
+            h1 { color: #fff; }
+            p { color: rgba(246,247,251,.72); }
+            .gp-offline-status {
+                background: rgba(255,255,255,.075);
+                color: #fff;
+            }
+            .gp-btn-secondary,
+            .gp-mini-links a {
+                background: rgba(255,255,255,.08);
+                border-color: rgba(255,255,255,.10);
+                color: #fff;
+            }
+            .gp-note { color: rgba(246,247,251,.54); }
+        }
+    
+        /* V85: retry button animation */
+        .gp-btn {
+            position: relative;
+            overflow: hidden;
+            outline: none !important;
+            box-shadow: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .gp-btn:focus,
+        .gp-btn:active {
+            outline: none !important;
+            box-shadow: 0 16px 34px rgba(146,10,182,.18);
+            transform: none;
+        }
+
+        .gp-btn.is-checking {
+            pointer-events: none;
+            opacity: .9;
+            padding-right: 42px;
+        }
+
+        .gp-btn.is-checking::before {
+            content: "";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            width: 16px;
+            height: 16px;
+            margin-top: -8px;
+            border-radius: 999px;
+            border: 2px solid currentColor;
+            border-top-color: transparent;
+            animation: gpRetrySpin .72s linear infinite;
+        }
+
+        .gp-btn.is-checking::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.30), transparent);
+            transform: translateX(110%);
+            animation: gpRetryShine 1s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes gpRetrySpin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes gpRetryShine {
+            0% { transform: translateX(110%); }
+            100% { transform: translateX(-110%); }
+        }
+
+</style>
 </head>
 <body>
-  <main class="box">
-    <div class="ear">⌕</div>
-    <h1>اتصال اینترنت در دسترس نیست</h1>
-    <p>بعضی بخش‌های کلینیک شنوایی و سمعک شکوه تجریش ذخیره شده‌اند. دوباره اتصال را بررسی کنید.</p>
-    <a href="/">بازگشت به صفحه اصلی</a>
-  </main>
+    <main class="gp-offline-shell">
+        <section class="gp-offline-card" aria-labelledby="gpOfflineTitle">
+            <div class="gp-offline-content">
+                <div class="gp-offline-icon" aria-hidden="true">
+                    <span class="gp-ear"></span>
+                </div>
+
+                <h1 id="gpOfflineTitle">اتصال اینترنت قطع شده</h1>
+                <p>
+                    صفحه‌ای که می‌خواستید باز شود فعلاً در دسترس نیست. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید؛
+                    اگر صفحه قبلاً باز شده باشد، ممکن است نسخه ذخیره‌شده آن نمایش داده شود.
+                </p>
+
+                <div class="gp-offline-status" id="gpOfflineStatus">
+                    <span class="gp-dot" aria-hidden="true"></span>
+                    <span>در حال بررسی وضعیت اتصال...</span>
+                </div>
+
+                <div class="gp-actions">
+                    <button type="button" class="gp-btn gp-btn-primary" id="gpRetryBtn">بررسی مجدد</button>
+                    <a class="gp-btn gp-btn-secondary" href="tel:02122735588">تماس با کلینیک</a>
+                </div>
+
+                <nav class="gp-mini-links" aria-label="لینک‌های سریع">
+                    <a href="/">صفحه اصلی</a>
+                    <a href="/tehran/hearing-test">تست شنوایی</a>
+                    <a href="/tehran/hearing-aid">خرید سمعک</a>
+                    <a href="/contactus">تماس با ما</a>
+                </nav>
+
+                <div class="gp-note">
+                    شکوه تجریش کنار شماست؛ حتی وقتی اینترنت قهر کرده و رفته چای بخوره.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (function () {
+            var retryBtn = document.getElementById("gpRetryBtn");
+            var status = document.getElementById("gpOfflineStatus");
+
+            function setStatus(isOnline) {
+                if (!status) return;
+                status.innerHTML = isOnline
+                    ? '<span class="gp-dot" style="background:#19c37d;box-shadow:0 0 0 7px rgba(25,195,125,.12)" aria-hidden="true"></span><span>اتصال برگشته؛ صفحه را دوباره باز می‌کنیم...</span>'
+                    : '<span class="gp-dot" aria-hidden="true"></span><span>هنوز اتصال اینترنت برقرار نیست.</span>';
+            }
+
+            function setRetryChecking(isChecking) {
+                if (!retryBtn) return;
+
+                if (isChecking) {
+                    retryBtn.classList.add("is-checking");
+                    retryBtn.setAttribute("aria-busy", "true");
+                    retryBtn.textContent = "در حال بررسی";
+                } else {
+                    retryBtn.classList.remove("is-checking");
+                    retryBtn.removeAttribute("aria-busy");
+                    retryBtn.textContent = "بررسی مجدد";
+                }
+            }
+
+            function retry() {
+                setRetryChecking(true);
+
+                if (navigator.onLine) {
+                    setStatus(true);
+                    setTimeout(function () {
+                        setRetryChecking(false);
+                        window.location.reload();
+                    }, 700);
+                    return;
+                }
+
+                fetch("/", { method: "HEAD", cache: "no-store" })
+                    .then(function () {
+                        setStatus(true);
+                        setTimeout(function () {
+                            setRetryChecking(false);
+                            window.location.reload();
+                        }, 700);
+                    })
+                    .catch(function () {
+                        setTimeout(function () {
+                            setStatus(false);
+                            setRetryChecking(false);
+                        }, 700);
+                    });
+            }
+
+            if (retryBtn) {
+                retryBtn.addEventListener("click", retry);
+            }
+
+            window.addEventListener("online", function () {
+                setStatus(true);
+                setTimeout(function () { window.location.reload(); }, 650);
+            });
+
+            window.addEventListener("offline", function () {
+                setStatus(false);
+            });
+
+            setStatus(navigator.onLine);
+        })();
+    </script>
 </body>
 </html>

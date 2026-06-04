@@ -1,0 +1,829 @@
+@using System;
+@using System.Linq;
+@using System.Web;
+@* V63: clean list marker style, no broken pseudo numbers. Keep this file saved as UTF-8 with signature/BOM. *@
+@{
+    dynamic page = ViewBag.Page;
+    if (page == null)
+    {
+        Response.StatusCode = 404;
+        return;
+    }
+
+    Response.ContentEncoding = System.Text.Encoding.UTF8;
+    Response.Charset = "utf-8";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var baseUrl = "https://tajrish-samak.ir";
+    var logoUrl = baseUrl + Url.Content("~/images/logo_purple.webp");
+}
+
+@functions {
+    public string J(object value)
+    {
+        var s = value == null ? "" : value.ToString();
+        var sb = new System.Text.StringBuilder();
+
+        foreach (var ch in s)
+        {
+            switch (ch)
+            {
+                case '\\': sb.Append("\\\\"); break;
+                case '"': sb.Append("\\\""); break;
+                case '\r': sb.Append("\\r"); break;
+                case '\n': sb.Append("\\n"); break;
+                case '\t': sb.Append("\\t"); break;
+                default:
+                    if (ch < 32 || ch > 126)
+                    {
+                        sb.Append("\\u");
+                        sb.Append(((int)ch).ToString("x4"));
+                    }
+                    else
+                    {
+                        sb.Append(ch);
+                    }
+                    break;
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    public string Entity(object value)
+    {
+        var s = value == null ? "" : value.ToString();
+        var sb = new System.Text.StringBuilder();
+
+        foreach (var ch in s)
+        {
+            if (ch == '&')
+            {
+                sb.Append("&amp;");
+            }
+            else if (ch == '<')
+            {
+                sb.Append("&lt;");
+            }
+            else if (ch == '>')
+            {
+                sb.Append("&gt;");
+            }
+            else if (ch == '"')
+            {
+                sb.Append("&quot;");
+            }
+            else if (ch == '\'')
+            {
+                sb.Append("&#x27;");
+            }
+            else if (ch > 126)
+            {
+                sb.Append("&#x");
+                sb.Append(((int)ch).ToString("X"));
+                sb.Append(";");
+            }
+            else
+            {
+                sb.Append(ch);
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    public IHtmlString H(object value)
+    {
+        return new HtmlString(Entity(value));
+    }
+
+    public string T(string value)
+    {
+        return value;
+    }
+}
+
+@section Metas{
+    <meta name="description" content="@Html.Raw(Entity(page.MetaDescription))" />
+    <link rel="canonical" href="@(page.Canonical)" />
+    <meta name="Keywords" content="@string.Join(", ", page.Keywords)" />
+
+    <meta property="og:title" content="@Html.Raw(Entity(page.Title))" />
+    <meta property="og:description" content="@Html.Raw(Entity(page.MetaDescription))" />
+    <meta property="og:url" content="@(page.Canonical)" />
+    <meta property="og:image" content="@logoUrl" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fa_IR" />
+
+    <meta name="twitter:title" content="@Html.Raw(Entity(page.Title))" />
+    <meta name="twitter:description" content="@Html.Raw(Entity(page.MetaDescription))" />
+    <meta name="twitter:image" content="@logoUrl" />
+}
+
+@section Styles{
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@graph": [
+            {
+              "@@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@@type": "ListItem",
+                  "position": 1,
+                  "name": "@Html.Raw(J(T("\u0635\u0641\u062D\u0647 \u0627\u0635\u0644\u06CC")))",
+                  "item": "https://tajrish-samak.ir/"
+                },
+                {
+                  "@@type": "ListItem",
+                  "position": 2,
+                  "name": "@Html.Raw(J(page.MainService))",
+                  "item": "@page.Canonical"
+                }
+              ]
+            },
+            {
+              "@@type": "Service",
+              "@@id": "@page.Canonical#service",
+              "name": "@Html.Raw(J(page.H1))",
+              "serviceType": "@Html.Raw(J(page.MainService))",
+              "description": "@Html.Raw(J(page.MetaDescription))",
+              "areaServed": [
+                @for (var i = 0; i < page.Areas.Length; i++)
+                {
+                    <text>{ "@@type": "Place", "name": "@Html.Raw(J(page.Areas[i]))" }@(i < page.Areas.Length - 1 ? "," : "")</text>
+                }
+              ],
+              "provider": {
+                "@@type": ["LocalBusiness", "MedicalBusiness", "MedicalClinic"],
+                "@@id": "https://tajrish-samak.ir/#tajrish-samak",
+                "name": "@Html.Raw(J(T("\u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0634\u0646\u0648\u0627\u06CC\u06CC \u0648 \u0633\u0645\u0639\u06A9 \u0634\u06A9\u0648\u0647 \u062A\u062C\u0631\u06CC\u0634")))",
+                "url": "https://tajrish-samak.ir/",
+                "telephone": "+982122735588",
+                "address": {
+                  "@@type": "PostalAddress",
+                  "addressCountry": "IR",
+                  "addressRegion": "@Html.Raw(J(T("\u062A\u0647\u0631\u0627\u0646")))",
+                  "addressLocality": "@Html.Raw(J(T("\u062A\u0647\u0631\u0627\u0646")))",
+                  "streetAddress": "@Html.Raw(J(T("\u0645\u06CC\u062F\u0627\u0646 \u062A\u062C\u0631\u06CC\u0634\u060C \u062E\u06CC\u0627\u0628\u0627\u0646 \u0634\u0647\u0631\u062F\u0627\u0631\u06CC\u060C \u0631\u0648\u0628\u0647\u200C\u0631\u0648\u06CC \u0633\u06CC\u0646\u0645\u0627 \u0622\u0633\u062A\u0627\u0631\u0627\u060C \u067E\u0644\u0627\u06A9 \u06F2\u06F1\u06F4\u060C \u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u06F1\u06F1\u06F0")))"
+                }
+              }
+            },
+            {
+              "@@type": "FAQPage",
+              "@@id": "@page.Canonical#faq",
+              "mainEntity": [
+                @for (var i = 0; i < page.Faqs.Length; i++)
+                {
+                    <text>{
+                      "@@type": "Question",
+                      "name": "@Html.Raw(J(page.Faqs[i].Question))",
+                      "acceptedAnswer": {
+                        "@@type": "Answer",
+                        "text": "@Html.Raw(J(page.Faqs[i].Answer))"
+                      }
+                    }@(i < page.Faqs.Length - 1 ? "," : "")</text>
+                }
+              ]
+            },
+            {
+              "@@type": "WebPage",
+              "@@id": "@page.Canonical#webpage",
+              "url": "@page.Canonical",
+              "name": "@Html.Raw(J(page.Title))",
+              "description": "@Html.Raw(J(page.MetaDescription))",
+              "inLanguage": "fa-IR",
+              "about": {
+                "@@id": "https://tajrish-samak.ir/#tajrish-samak"
+              }
+            }
+          ]
+        }
+    </script>
+
+    <style id="gp-v55-geo-landing-pages">
+        :root {
+            --gp-v55-purple: #4b1684;
+            --gp-v55-violet: #920ab6;
+            --gp-v55-pink: #e10b79;
+            --gp-v55-cyan: #0ba6b8;
+            --gp-v55-lime: #d8f512;
+            --gp-v55-ink: #20142d;
+            --gp-v55-muted: rgba(32,20,45,.68);
+            --gp-v55-card: rgba(255,255,255,.92);
+            --gp-v55-border: rgba(75,22,132,.10);
+            --gp-v55-shadow: 0 24px 60px rgba(74,18,107,.10);
+        }
+
+        .gp-geo-page {
+            direction: rtl;
+            overflow: hidden;
+        }
+
+        .gp-geo-hero {
+            position: relative;
+            margin: 24px auto 26px;
+            padding: clamp(28px, 4.5vw, 62px);
+            border-radius: 44px;
+            background: radial-gradient(circle at 12% 10%, rgba(216,245,18,.25), transparent 24%), radial-gradient(circle at 86% 20%, rgba(255,255,255,.15), transparent 24%), linear-gradient(135deg, #4b1684 0%, #920ab6 54%, #e10b79 100%);
+            color: #fff;
+            box-shadow: 0 32px 82px rgba(74,18,107,.20);
+            isolation: isolate;
+            overflow: hidden;
+        }
+
+            .gp-geo-hero::before,
+            .gp-geo-hero::after {
+                content: "";
+                position: absolute;
+                border-radius: 999px;
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .gp-geo-hero::before {
+                width: 280px;
+                height: 280px;
+                left: -96px;
+                top: -100px;
+                background: rgba(255,255,255,.13);
+                animation: gpV55Blob 11s ease-in-out infinite alternate;
+            }
+
+            .gp-geo-hero::after {
+                width: 360px;
+                height: 360px;
+                right: -148px;
+                bottom: -185px;
+                background: rgba(11,166,184,.22);
+                animation: gpV55Blob 13s ease-in-out infinite alternate-reverse;
+            }
+
+        @@keyframes gpV55Blob {
+            to {
+                transform: translate3d(24px, 18px, 0) scale(1.06);
+            }
+        }
+
+        .gp-geo-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(270px, .35fr);
+            gap: clamp(20px, 4vw, 46px);
+            align-items: center;
+        }
+
+        .gp-geo-kicker {
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.22);
+            color: #fff !important;
+            font-weight: 950;
+            backdrop-filter: blur(14px);
+        }
+
+        .gp-geo-hero h1 {
+            margin: 16px 0 12px;
+            color: #fff !important;
+            font-size: clamp(31px, 5vw, 68px);
+            font-weight: 1000;
+            line-height: 1.35 !important;
+            letter-spacing: -.02em;
+        }
+
+        .gp-geo-hero p {
+            max-width: 840px;
+            margin: 0;
+            color: rgba(255,255,255,.90) !important;
+            font-size: clamp(14px, 1.2vw, 18px);
+            font-weight: 850;
+            line-height: 2.1;
+        }
+
+        .gp-geo-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+            .gp-geo-actions a {
+                min-height: 50px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 0 18px;
+                border-radius: 999px;
+                text-decoration: none !important;
+                font-weight: 1000;
+            }
+
+                .gp-geo-actions a:first-child {
+                    background: #fff;
+                    color: #4b1684 !important;
+                    box-shadow: 0 18px 38px rgba(0,0,0,.14);
+                }
+
+                .gp-geo-actions a:nth-child(2) {
+                    background: rgba(255,255,255,.13);
+                    border: 1px solid rgba(255,255,255,.24);
+                    color: #fff !important;
+                }
+
+        .gp-geo-stats {
+            display: grid;
+            gap: 12px;
+        }
+
+        .gp-geo-stat {
+            min-height: 92px;
+            padding: 18px;
+            border-radius: 28px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.20);
+            backdrop-filter: blur(14px);
+        }
+
+            .gp-geo-stat strong {
+                display: block;
+                color: #fff !important;
+                font-size: 28px;
+                font-weight: 1000;
+                line-height: 1;
+            }
+
+            .gp-geo-stat span {
+                display: block;
+                margin-top: 8px;
+                color: rgba(255,255,255,.82) !important;
+                font-weight: 850;
+                line-height: 1.8;
+            }
+
+        .gp-geo-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+            gap: 22px;
+            align-items: start;
+            margin-bottom: 42px;
+        }
+
+        .gp-geo-card,
+        .gp-geo-side-card {
+            border-radius: 34px;
+            background: var(--gp-v55-card);
+            border: 1px solid var(--gp-v55-border);
+            box-shadow: var(--gp-v55-shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .gp-geo-main {
+            padding: clamp(18px, 2.5vw, 34px);
+        }
+
+            .gp-geo-main h2,
+            .gp-geo-side-card h3 {
+                margin: 0 0 14px;
+                color: var(--gp-v55-ink) !important;
+                font-size: clamp(22px, 2.6vw, 34px);
+                font-weight: 1000;
+                line-height: 1.7 !important;
+            }
+
+                .gp-geo-main h2::after,
+                .gp-geo-side-card h3::after {
+                    content: "";
+                    width: 48px;
+                    height: 4px;
+                    display: block;
+                    margin-top: 8px;
+                    border-radius: 999px;
+                    background: linear-gradient(90deg, var(--gp-v55-lime), var(--gp-v55-violet));
+                }
+
+            .gp-geo-main p,
+            .gp-geo-side-card p {
+                color: var(--gp-v55-muted) !important;
+                font-size: 15px;
+                font-weight: 850;
+                line-height: 2.15;
+            }
+
+        .gp-geo-answer {
+            position: relative;
+            padding: 20px;
+            border-radius: 28px;
+            background: radial-gradient(circle at 8% 10%, rgba(216,245,18,.16), transparent 32%), linear-gradient(135deg, rgba(146,10,182,.08), rgba(225,11,121,.05));
+            border: 1px solid rgba(75,22,132,.09);
+            margin-bottom: 22px;
+        }
+
+        .gp-geo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 14px;
+            margin: 18px 0 24px;
+        }
+
+        .gp-geo-mini {
+            padding: 16px;
+            border-radius: 24px;
+            background: rgba(255,255,255,.72);
+            border: 1px solid rgba(75,22,132,.08);
+        }
+
+            .gp-geo-mini strong {
+                display: block;
+                color: var(--gp-v55-ink) !important;
+                font-weight: 1000;
+                line-height: 1.8;
+                margin-bottom: 5px;
+            }
+
+            .gp-geo-mini span {
+                display: block;
+                color: var(--gp-v55-muted) !important;
+                font-size: 13px;
+                font-weight: 850;
+                line-height: 2;
+            }
+
+        .gp-geo-list {
+            display: grid;
+            gap: 10px;
+            margin: 18px 0 24px;
+            padding: 0;
+            list-style: none;
+        }
+
+            .gp-geo-list li {
+                position: relative;
+                padding: 16px 58px 16px 18px;
+                border-radius: 22px;
+                background: rgba(146,10,182,.055);
+                color: var(--gp-v55-muted) !important;
+                font-size: 14px;
+                font-weight: 850;
+                line-height: 2;
+                overflow: hidden;
+                isolation: isolate;
+            }
+
+                .gp-geo-list li::before {
+                    content: "\2713";
+                    position: absolute;
+                    right: 16px;
+                    top: 50%;
+                    width: 28px;
+                    height: 28px;
+                    transform: translateY(-50%);
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 12px;
+                    background: linear-gradient(135deg, var(--gp-v55-purple), var(--gp-v55-violet));
+                    color: #fff;
+                    font-family: Arial, Tahoma, sans-serif;
+                    font-size: 15px;
+                    font-weight: 900;
+                    line-height: 1;
+                    z-index: 1;
+                    box-shadow: 0 10px 22px rgba(146,10,182,.18);
+                }
+
+                .gp-geo-list li::after {
+                    content: "";
+                    position: absolute;
+                    inset: auto 0 0 auto;
+                    width: 86px;
+                    height: 86px;
+                    border-radius: 999px;
+                    background: radial-gradient(circle, rgba(146,10,182,.075), transparent 68%);
+                    transform: translate(28px, 38px);
+                    pointer-events: none;
+                    z-index: -1;
+                }
+
+        .gp-geo-side {
+            position: sticky;
+            top: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .gp-geo-side-card {
+            padding: 18px;
+        }
+
+        .gp-geo-chip-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+            .gp-geo-chip-list a,
+            .gp-geo-chip-list span {
+                min-height: 32px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 11px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.075);
+                color: #6420a0 !important;
+                font-size: 12px;
+                font-weight: 950;
+                text-decoration: none !important;
+            }
+
+        .gp-geo-side-cta {
+            min-height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--gp-v55-purple), var(--gp-v55-violet), var(--gp-v55-pink));
+            color: #fff !important;
+            font-weight: 1000;
+            text-decoration: none !important;
+            box-shadow: 0 16px 34px rgba(146,10,182,.18);
+        }
+
+        .gp-geo-faq {
+            display: grid;
+            gap: 10px;
+        }
+
+            .gp-geo-faq details {
+                border-radius: 22px;
+                background: rgba(255,255,255,.72);
+                border: 1px solid rgba(75,22,132,.08);
+                overflow: hidden;
+            }
+
+            .gp-geo-faq summary {
+                cursor: pointer;
+                padding: 15px 18px;
+                color: var(--gp-v55-ink) !important;
+                font-weight: 1000;
+                line-height: 1.8;
+            }
+
+            .gp-geo-faq details p {
+                margin: 0;
+                padding: 0 18px 16px;
+                font-size: 14px;
+            }
+
+        html.gp-dark-mode .gp-geo-page {
+            --gp-v55-ink: #f7f7fb;
+            --gp-v55-muted: rgba(246,247,251,.72);
+            --gp-v55-card: rgba(24,24,40,.88);
+            --gp-v55-border: rgba(255,255,255,.10);
+            --gp-v55-shadow: 0 24px 60px rgba(0,0,0,.20);
+        }
+
+        html.gp-dark-mode .gp-geo-card,
+        html.gp-dark-mode .gp-geo-side-card {
+            background: rgba(24,24,40,.90) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-geo-mini,
+        html.gp-dark-mode .gp-geo-faq details,
+        html.gp-dark-mode .gp-geo-list li {
+            background: rgba(255,255,255,.07) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-geo-chip-list a,
+        html.gp-dark-mode .gp-geo-chip-list span {
+            background: rgba(255,255,255,.075) !important;
+            color: rgba(246,247,251,.86) !important;
+        }
+
+        html.gp-lang-en .gp-geo-page,
+        html.gp-lang-en .gp-geo-page * {
+            direction: ltr;
+            text-align: left;
+        }
+
+        html.gp-lang-en .gp-geo-list li {
+            padding: 16px 18px 16px 58px;
+        }
+
+            html.gp-lang-en .gp-geo-list li::before {
+                right: auto;
+                left: 16px;
+            }
+
+            html.gp-lang-en .gp-geo-list li::after {
+                inset: auto auto 0 0;
+                transform: translate(-28px, 38px);
+            }
+
+        @@media(max-width: 1100px) {
+            .gp-geo-hero-grid,
+            .gp-geo-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-geo-stats {
+                grid-template-columns: repeat(3, minmax(0,1fr));
+            }
+
+            .gp-geo-side {
+                position: relative;
+                top: auto;
+            }
+        }
+
+        @@media(max-width: 768px) {
+            .gp-geo-hero {
+                border-radius: 30px;
+                padding: 26px 20px;
+                text-align: center;
+            }
+
+            .gp-geo-actions {
+                justify-content: center;
+            }
+
+            .gp-geo-stats,
+            .gp-geo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-geo-card,
+            .gp-geo-side-card {
+                border-radius: 28px;
+            }
+
+            .gp-geo-main {
+                padding: 18px;
+            }
+
+            .gp-geo-chip-list {
+                justify-content: center;
+            }
+
+            .gp-geo-list li {
+                padding: 14px 52px 14px 14px;
+                border-radius: 20px;
+            }
+
+                .gp-geo-list li::before {
+                    right: 14px;
+                    width: 26px;
+                    height: 26px;
+                    border-radius: 11px;
+                    font-size: 14px;
+                }
+
+            html.gp-lang-en .gp-geo-list li {
+                padding: 14px 14px 14px 52px;
+            }
+
+                html.gp-lang-en .gp-geo-list li::before {
+                    left: 14px;
+                }
+        }
+    </style>
+}
+
+<section class="gp-geo-page" aria-label="@Html.Raw(Entity(page.H1))">
+    <div class="container">
+        <section class="gp-geo-hero">
+            <div class="gp-geo-hero-grid">
+                <div>
+                    <span class="gp-geo-kicker">@page.Kicker</span>
+                    <h1>@H(page.H1)</h1>
+                    <p>@H(page.MetaDescription)</p>
+                    <div class="gp-geo-actions">
+                        <a href="tel:02122735588">&#9742; @page.CtaText</a>
+                        <a href="https://wa.me/+989393388985">@H(T("\u0645\u0634\u0627\u0648\u0631\u0647 \u062F\u0631 \u0648\u0627\u062A\u0633\u0627\u067E"))</a>
+                    </div>
+                </div>
+
+                <div class="gp-geo-stats">
+                    <div class="gp-geo-stat">
+                        <strong>@H(T("\u062A\u0647\u0631\u0627\u0646"))</strong>
+                        <span>@H(T("\u0645\u062D\u062F\u0648\u062F\u0647 \u062E\u062F\u0645\u0627\u062A"))</span>
+                    </div>
+                    <div class="gp-geo-stat">
+                        <strong>@H(T("\u062A\u062C\u0631\u06CC\u0634"))</strong>
+                        <span>@H(T("\u0645\u0648\u0642\u0639\u06CC\u062A \u06A9\u0644\u06CC\u0646\u06CC\u06A9"))</span>
+                    </div>
+                    <div class="gp-geo-stat">
+                        <strong>@H(T("\u062A\u062E\u0635\u0635\u06CC"))</strong>
+                        <span>@H(page.MainService)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="gp-geo-shell">
+            <main class="gp-geo-card gp-geo-main">
+                <section class="gp-geo-answer">
+                    <h2>@H(T("\u067E\u0627\u0633\u062E \u06A9\u0648\u062A\u0627\u0647"))</h2>
+                    <p>@page.ShortAnswer</p>
+                </section>
+
+                <section>
+                    <h2>@H(T("\u0686\u0631\u0627 \u0634\u06A9\u0648\u0647 \u062A\u062C\u0631\u06CC\u0634 \u0628\u0631\u0627\u06CC "))@H(page.MainService)@H(T("\u061F"))</h2>
+                    <div class="gp-geo-grid">
+                        @foreach (var benefit in page.Benefits)
+                        {
+                            <div class="gp-geo-mini">
+                                <strong>@H(T("\u0645\u0632\u06CC\u062A \u06A9\u0644\u06CC\u0646\u06CC\u06A9"))</strong>
+                                <span>@H(benefit)</span>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <section>
+                    <h2>@H(T("\u0645\u0631\u0627\u062D\u0644 \u0645\u0631\u0627\u062C\u0639\u0647"))</h2>
+                    <ul class="gp-geo-list">
+                        @foreach (var step in page.Steps)
+                        {
+                            <li>@H(step)</li>
+                        }
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>@H(T("\u0686\u0647 \u06A9\u0633\u0627\u0646\u06CC \u0628\u0647\u062A\u0631 \u0627\u0633\u062A \u0627\u0642\u062F\u0627\u0645 \u06A9\u0646\u0646\u062F\u061F"))</h2>
+                    <ul class="gp-geo-list">
+                        @foreach (var item in page.WhoNeeds)
+                        {
+                            <li>@H(item)</li>
+                        }
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>@H(page.RelatedTitle)</h2>
+                    <p>@H(page.RelatedDescription)</p>
+                </section>
+
+                <section>
+                    <h2>@H(T("\u0633\u0648\u0627\u0644\u0627\u062A \u067E\u0631\u062A\u06A9\u0631\u0627\u0631"))</h2>
+                    <div class="gp-geo-faq">
+                        @foreach (var faq in page.Faqs)
+                        {
+                            <details>
+                                <summary>@H(faq.Question)</summary>
+                                <p>@H(faq.Answer)</p>
+                            </details>
+                        }
+                    </div>
+                </section>
+            </main>
+
+            <aside class="gp-geo-side">
+                <section class="gp-geo-side-card">
+                    <h3>@H(T("\u062A\u0645\u0627\u0633 \u0628\u0627 \u06A9\u0644\u06CC\u0646\u06CC\u06A9"))</h3>
+                    <p>@H(T("\u0628\u0631\u0627\u06CC \u0647\u0645\u0627\u0647\u0646\u06AF\u06CC \u0645\u0631\u0627\u062C\u0639\u0647 \u06CC\u0627 \u062F\u0631\u06CC\u0627\u0641\u062A \u0645\u0634\u0627\u0648\u0631\u0647 \u0627\u0648\u0644\u06CC\u0647\u060C \u0628\u0627 \u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0634\u0646\u0648\u0627\u06CC\u06CC \u0648 \u0633\u0645\u0639\u06A9 \u0634\u06A9\u0648\u0647 \u062A\u062C\u0631\u06CC\u0634 \u062A\u0645\u0627\u0633 \u0628\u06AF\u06CC\u0631\u06CC\u062F."))</p>
+                    <a class="gp-geo-side-cta" href="tel:02122735588">@H(T("\u062A\u0645\u0627\u0633"))</a>
+                </section>
+
+                <section class="gp-geo-side-card">
+                    <h3>@H(T("\u06A9\u0644\u0645\u0627\u062A \u0645\u0631\u062A\u0628\u0637"))</h3>
+                    <div class="gp-geo-chip-list">
+                        @foreach (var keyword in page.Keywords)
+                        {
+                            <span>@H(keyword)</span>
+                        }
+                    </div>
+                </section>
+
+                <section class="gp-geo-side-card">
+                    <h3>@H(T("\u0645\u0646\u0627\u0637\u0642 \u062A\u062D\u062A \u067E\u0648\u0634\u0634"))</h3>
+                    <div class="gp-geo-chip-list">
+                        @foreach (var area in page.Areas)
+                        {
+                            <span>@H(area)</span>
+                        }
+                    </div>
+                </section>
+
+                <section class="gp-geo-side-card">
+                    <h3>@H(T("\u0644\u06CC\u0646\u06A9\u200C\u0647\u0627\u06CC \u0645\u0647\u0645"))</h3>
+                    <div class="gp-geo-chip-list">
+                        <a href="/Service/All">@H(T("\u062E\u062F\u0645\u0627\u062A"))</a>
+                        <a href="/Product/All">@H(T("\u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0633\u0645\u0639\u06A9"))</a>
+                        <a href="/Blog/All">@H(T("\u0645\u062C\u0644\u0647 \u06A9\u0644\u06CC\u0646\u06CC\u06A9"))</a>
+                        <a href="/contactus">@H(T("\u062A\u0645\u0627\u0633 \u0628\u0627 \u0645\u0627"))</a>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </div>
+</section>

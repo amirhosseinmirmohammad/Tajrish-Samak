@@ -6,34 +6,55 @@
 @using DataLayer.Models;
 @model DataLayer.Models.Blog
 @{
-    GladcherryShopping.Models.ApplicationDbContext db = new GladcherryShopping.Models.ApplicationDbContext();
+    if (Model == null)
+    {
+        Response.StatusCode = 404;
+        Response.TrySkipIisCustomErrors = true;
+        return;
+    }
 
-    var gpCacheVersion = "20260603-tajrish-v44-blog-detail-newsletter-msg-spacing";
+    var gpCacheVersion = "20260604-tajrish-v71-blog-detail-final-seo-geo";
     var gpBaseUrl = "https://tajrish-samak.ir";
-    var gpCanonicalUrl = gpBaseUrl + Request.Path;
+    var gpCanonicalPath = Url.Action("Index", "Blog", new { id = Model.Id, sefUrl = Model.SefUrl });
+    var gpCanonicalUrl = gpBaseUrl + (!string.IsNullOrWhiteSpace(gpCanonicalPath) ? gpCanonicalPath : Request.Path);
 
-    var gpTitle = Model != null && !string.IsNullOrWhiteSpace(Model.Title)
-        ? Model.Title
+    var gpTitle = !string.IsNullOrWhiteSpace(Model.Title)
+        ? Model.Title.Trim()
         : "مقاله مجله کلینیک";
 
-    var gpMetaDesc = Model != null && !string.IsNullOrWhiteSpace(Model.MetaDesc)
-        ? Model.MetaDesc
+    var gpMetaDesc = !string.IsNullOrWhiteSpace(Model.MetaDesc)
+        ? Model.MetaDesc.Trim()
         : "مقاله آموزشی کلینیک شنوایی و سمعک شکوه تجریش درباره سلامت شنوایی، سمعک، تست شنوایی و مراقبت از گوش.";
 
-    var gpMetaKey = Model != null && !string.IsNullOrWhiteSpace(Model.MetaKey)
-        ? Model.MetaKey
+    var gpMetaKey = !string.IsNullOrWhiteSpace(Model.MetaKey)
+        ? Model.MetaKey.Trim()
         : "مقاله شنوایی، سلامت گوش، سمعک، تست شنوایی، کلینیک شنوایی تجریش";
+
+    var gpBodyPlain = !string.IsNullOrWhiteSpace(Model.Body)
+        ? System.Text.RegularExpressions.Regex.Replace(Model.Body, "<.*?>", " ")
+        : "";
+
+    gpBodyPlain = System.Web.HttpUtility.HtmlDecode(gpBodyPlain);
+    gpBodyPlain = System.Text.RegularExpressions.Regex.Replace(gpBodyPlain, @"\s+", " ").Trim();
+
+    var gpWordCount = !string.IsNullOrWhiteSpace(gpBodyPlain)
+        ? gpBodyPlain.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length
+        : 0;
+
+    var gpReadingMinutes = Math.Max(1, (int)Math.Ceiling(gpWordCount / 180.0));
+
+    var gpLocalEntityText = "کلینیک شنوایی و سمعک شکوه تجریش در تهران، محدوده تجریش، خدمات تست شنوایی، آزمایش شنوایی، مشاوره خرید سمعک، تجویز و تنظیم سمعک و پیگیری کم‌شنوایی را ارائه می‌دهد.";
 
     var gpImageItem = Model.Images != null
         ? Model.Images
             .Where(current =>
                 current.Extension != null &&
                 (
-                    current.Extension.Contains("jpeg") ||
-                    current.Extension.Contains("gif") ||
-                    current.Extension.Contains("png") ||
-                    current.Extension.Contains("jpg") ||
-                    current.Extension.Contains("webp")
+                    current.Extension.ToLower().Contains("jpeg") ||
+                    current.Extension.ToLower().Contains("gif") ||
+                    current.Extension.ToLower().Contains("png") ||
+                    current.Extension.ToLower().Contains("jpg") ||
+                    current.Extension.ToLower().Contains("webp")
                 ))
             .FirstOrDefault()
         : null;
@@ -43,14 +64,14 @@
             .Where(current =>
                 current.Extension != null &&
                 (
-                    current.Extension.Contains("mp4") ||
-                    current.Extension.Contains("mpeg") ||
-                    current.Extension.Contains("wmv")
+                    current.Extension.ToLower().Contains("mp4") ||
+                    current.Extension.ToLower().Contains("mpeg") ||
+                    current.Extension.ToLower().Contains("wmv")
                 ))
             .FirstOrDefault()
         : null;
 
-    var gpImageUrl = gpImageItem != null
+    var gpImageUrl = gpImageItem != null && !string.IsNullOrWhiteSpace(gpImageItem.FullPath)
         ? gpBaseUrl + gpImageItem.FullPath
         : gpBaseUrl + "/images/logo_purple.webp";
 
@@ -58,19 +79,27 @@
         ? Model.BlogComments.Where(current => current.IsApprove == true).ToList()
         : new List<BlogComment>();
 
-    var gpRelatedBlogs = db.Blogs
-        .AsNoTracking()
-        .Include(current => current.Images)
-        .Where(current =>
-            current.IsVisible == true &&
-            current.CategoryId == Model.CategoryId &&
-            current.Id != Model.Id &&
-            current.Images.Count() > 0)
-        .OrderByDescending(current => current.Survey)
-        .Take(4)
-        .ToList();
+    var gpRelatedBlogs = new List<Blog>();
+
+    using (var gpDb = new GladcherryShopping.Models.ApplicationDbContext())
+    {
+        gpRelatedBlogs = gpDb.Blogs
+            .AsNoTracking()
+            .Include(current => current.Images)
+            .Where(current =>
+                current.IsVisible == true &&
+                current.CategoryId == Model.CategoryId &&
+                current.Id != Model.Id &&
+                current.Images.Count() > 0)
+            .OrderByDescending(current => current.Survey)
+            .Take(4)
+            .ToList();
+    }
 
     ViewBag.Title = gpTitle + " | کلینیک شنوایی و سمعک شکوه تجریش";
+    ViewBag.CanonicalUrl = gpCanonicalUrl;
+    ViewBag.MetaDescription = gpMetaDesc;
+    ViewBag.MetaKeywords = gpMetaKey;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -121,12 +150,22 @@
     {
         return HttpUtility.JavaScriptStringEncode(value ?? "");
     }
+
+    public bool HasGeoIntent(string text, string keyword)
+    {
+        return !string.IsNullOrWhiteSpace(text) &&
+               !string.IsNullOrWhiteSpace(keyword) &&
+               text.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0;
+    }
 }
 
 @section Metas {
     <meta name="description" content="@gpMetaDesc" />
     <link rel="canonical" href="@gpCanonicalUrl" />
     <meta name="Keywords" content="@gpMetaKey" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta name="publisher" content="کلینیک شنوایی و سمعک شکوه تجریش" />
 
     <meta property="og:title" content="@ViewBag.Title" />
     <meta property="og:image" content="@gpImageUrl" />
@@ -136,11 +175,12 @@
     <meta property="og:site_name" content="کلینیک شنوایی و سمعک شکوه تجریش" />
     <meta property="og:locale" content="fa_IR" />
 
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="@ViewBag.Title" />
     <meta name="twitter:image" content="@gpImageUrl" />
     <meta name="twitter:description" content="@gpMetaDesc" />
     <meta name="twitter:label1" content="زمان خواندن" />
-    <meta name="twitter:data1" content="۵ دقیقه" />
+    <meta name="twitter:data1" content="@gpReadingMinutes دقیقه" />
 
     <meta property="article:tag" content="@gpTitle" />
     @if (Model.CreateDate != null)
@@ -185,36 +225,65 @@
     <script type="application/ld+json">
         {
           "@@context": "https://schema.org",
-          "@@type": "BlogPosting",
+          "@@type": ["BlogPosting", "Article"],
+          "@@id": "@gpCanonicalUrl#article",
           "mainEntityOfPage": {
             "@@type": "WebPage",
             "@@id": "@gpCanonicalUrl"
           },
+          "url": "@gpCanonicalUrl",
           "headline": "@Html.Raw(StripForJson(gpTitle))",
           "description": "@Html.Raw(StripForJson(gpMetaDesc))",
-          "image": "@gpImageUrl",
+          "image": {
+            "@@type": "ImageObject",
+            "url": "@gpImageUrl"
+          },
+          "thumbnailUrl": "@gpImageUrl",
           "keywords": "@Html.Raw(StripForJson(gpMetaKey))",
           "inLanguage": "fa-IR",
+          "isAccessibleForFree": true,
+          "wordCount": @gpWordCount,
+          "articleBody": "@Html.Raw(StripForJson(gpBodyPlain.Length > 1200 ? gpBodyPlain.Substring(0, 1200) : gpBodyPlain))",
           "author": {
             "@@type": "Organization",
+            "@@id": "https://tajrish-samak.ir/#tajrish-samak",
             "name": "کلینیک شنوایی و سمعک شکوه تجریش",
             "url": "https://tajrish-samak.ir/"
           },
           "publisher": {
             "@@type": "Organization",
+            "@@id": "https://tajrish-samak.ir/#tajrish-samak",
             "name": "کلینیک شنوایی و سمعک شکوه تجریش",
             "logo": {
               "@@type": "ImageObject",
               "url": "https://tajrish-samak.ir/images/logo_purple.webp"
             }
           },
-          "articleSection": "@Html.Raw(StripForJson(Model.Category != null ? Model.Category.PersianName : "مجله کلینیک"))",
-          "wordCount": "@(Model.Body != null ? Model.Body.Length : 0)"
+          "about": [
+            {
+              "@@type": "MedicalBusiness",
+              "@@id": "https://tajrish-samak.ir/#tajrish-samak",
+              "name": "کلینیک شنوایی و سمعک شکوه تجریش"
+            },
+            {
+              "@@type": "MedicalSpecialty",
+              "name": "Audiology"
+            }
+          ],
+          "mentions": [
+            { "@@type": "Thing", "name": "تست شنوایی" },
+            { "@@type": "Thing", "name": "آزمایش شنوایی" },
+            { "@@type": "Thing", "name": "سمعک" },
+            { "@@type": "Thing", "name": "تنظیم سمعک" },
+            { "@@type": "Place", "name": "تهران" },
+            { "@@type": "Place", "name": "تجریش" }
+          ],
+          "articleSection": "@Html.Raw(StripForJson(Model.Category != null ? Model.Category.PersianName : "مجله کلینیک"))"
           @if (Model.CreateDate != null)
           {
               <text>,
-              "datePublished": "@Model.CreateDate.Value.ToString("yyyy-MM-dd")",
-              "dateModified": "@Model.CreateDate.Value.ToString("yyyy-MM-dd")"</text>
+              "datePublished": "@Model.CreateDate.Value.ToString("yyyy-MM-ddTHH:mm:sszzz")",
+              "dateModified": "@Model.CreateDate.Value.ToString("yyyy-MM-ddTHH:mm:sszzz")"</text>
           }
         }
     </script>
@@ -241,6 +310,42 @@
               }
             }
           ]
+        }
+    </script>
+
+
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": ["LocalBusiness", "MedicalBusiness", "MedicalClinic"],
+          "@@id": "https://tajrish-samak.ir/#tajrish-samak",
+          "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+          "url": "https://tajrish-samak.ir/",
+          "description": "@Html.Raw(StripForJson(gpLocalEntityText))",
+          "telephone": ["+982122735588", "+982122735599", "+989393388985"],
+          "priceRange": "$$",
+          "sameAs": [
+            "https://tajrish-samak.ir/"
+          ],
+          "address": {
+            "@@type": "PostalAddress",
+            "addressCountry": "IR",
+            "addressRegion": "تهران",
+            "addressLocality": "تهران",
+            "streetAddress": "میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰"
+          },
+          "areaServed": [
+            { "@@type": "City", "name": "تهران" },
+            { "@@type": "Place", "name": "تجریش" },
+            { "@@type": "Place", "name": "شمیرانات" },
+            { "@@type": "Place", "name": "نیاوران" },
+            { "@@type": "Place", "name": "قیطریه" },
+            { "@@type": "Place", "name": "زعفرانیه" },
+            { "@@type": "Place", "name": "الهیه" },
+            { "@@type": "Place", "name": "فرمانیه" }
+          ],
+          "medicalSpecialty": ["Audiology", "Hearing Aid Fitting", "Hearing Test"]
         }
     </script>
 
@@ -595,6 +700,89 @@
                     background: rgba(216,245,18,.13) !important;
                 }
 
+
+
+
+        /* V68: SEO/GEO internal links and entity trust box */
+        .gp-geo-internal-links {
+            max-width: 860px;
+            margin: 26px auto 6px;
+            padding: 18px;
+            border-radius: 28px;
+            background: radial-gradient(circle at 10% 10%, rgba(216,245,18,.16), transparent 28%), linear-gradient(135deg, rgba(146,10,182,.075), rgba(225,11,121,.045));
+            border: 1px solid rgba(75,22,132,.09);
+        }
+
+            .gp-geo-internal-links strong {
+                display: block;
+                color: var(--gp-v41-ink) !important;
+                font-size: 17px;
+                font-weight: 1000;
+                line-height: 1.9;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+        .gp-geo-link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 9px;
+        }
+
+            .gp-geo-link-grid a {
+                min-height: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 13px;
+                border-radius: 999px;
+                background: rgba(255,255,255,.78);
+                border: 1px solid rgba(75,22,132,.08);
+                color: #6420a0 !important;
+                font-size: 12px;
+                font-weight: 1000;
+                text-decoration: none !important;
+                text-align: center;
+                line-height: 1.8;
+                transition: transform .18s ease, background .18s ease;
+            }
+
+                .gp-geo-link-grid a:hover {
+                    transform: translateY(-2px);
+                    background: #fff;
+                }
+
+        .gp-article-reviewed-box {
+            max-width: 860px;
+            margin: 20px auto 0;
+            padding: 14px 16px;
+            border-radius: 24px;
+            background: rgba(255,255,255,.70);
+            border: 1px solid rgba(75,22,132,.08);
+            color: var(--gp-v41-muted) !important;
+            font-size: 13px;
+            font-weight: 900;
+            line-height: 2;
+            text-align: center;
+        }
+
+        html.gp-dark-mode .gp-geo-internal-links,
+        html.gp-dark-mode .gp-article-reviewed-box {
+            background: rgba(255,255,255,.055) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+        html.gp-dark-mode .gp-geo-link-grid a {
+            background: rgba(255,255,255,.075) !important;
+            border-color: rgba(255,255,255,.10) !important;
+            color: #fff !important;
+        }
+
+        @@media(max-width: 768px) {
+            .gp-geo-link-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
 
         /* V43: Compact long article UX */
@@ -1673,7 +1861,7 @@
                         <span>دیدگاه تأییدشده</span>
                     </div>
                     <div class="gp-blog-hero-stat">
-                        <strong>۵</strong>
+                        <strong>@gpReadingMinutes</strong>
                         <span>دقیقه زمان خواندن</span>
                     </div>
                 </div>
@@ -1726,6 +1914,30 @@
                         <span>در ادامه</span>
                         <button type="button" class="gp-article-read-more-btn" id="gpReadMoreBtn">ادامه مطالعه</button>
                     </div>
+
+                    <div class="gp-geo-internal-links" aria-label="مسیرهای مرتبط شنوایی و سمعک">
+                        <strong>مسیرهای مرتبط برای ادامه مطالعه و مراجعه</strong>
+                        <div class="gp-geo-link-grid">
+                            <a href="/tehran/hearing-test">تست شنوایی در تهران</a>
+                            <a href="/tajrish/hearing-test">تست شنوایی در تجریش</a>
+                            <a href="/tehran/hearing-clinic">کلینیک شنوایی در تهران</a>
+                            <a href="/tajrish/audiology-clinic">کلینیک شنوایی در تجریش</a>
+                            <a href="/tehran/hearing-aid">خرید سمعک در تهران</a>
+                            <a href="/tajrish/hearing-aid">خرید سمعک در تجریش</a>
+                            <a href="/tehran/hearing-aid-adjustment">تنظیم سمعک در تهران</a>
+                            <a href="/tajrish/hearing-aid-adjustment">تنظیم سمعک در تجریش</a>
+                            <a href="/niavaran/hearing-test">تست شنوایی نیاوران</a>
+                            <a href="/qeytarieh/hearing-test">تست شنوایی قیطریه</a>
+                            <a href="/zaferanieh/hearing-test">تست شنوایی زعفرانیه</a>
+                            <a href="/elahiyeh/hearing-test">تست شنوایی الهیه</a>
+                            <a href="/farmanieh/hearing-test">تست شنوایی فرمانیه</a>
+                        </div>
+                    </div>
+
+                    <div class="gp-article-reviewed-box">
+                        این مطلب توسط تیم کلینیک شنوایی و سمعک شکوه تجریش برای افزایش آگاهی عمومی درباره شنوایی، سمعک و مراقبت از گوش تهیه و بازبینی شده است. این محتوا جایگزین ارزیابی حضوری یا تشخیص تخصصی نیست.
+                    </div>
+
                 </div>
             </main>
 
@@ -1736,6 +1948,62 @@
                     <a class="gp-side-cta" href="tel:02122735588">تماس</a>
                 </section>
 
+
+
+                <section class="gp-blog-side-card">
+                    <h3>خدمات مرتبط</h3>
+                    <div class="gp-side-posts">
+                        <a class="gp-side-post" href="/tehran/hearing-test" title="تست شنوایی در تهران">
+                            <img src="@Url.Content("~/images/logo_purple.webp")" alt="تست شنوایی در تهران" title="تست شنوایی در تهران" loading="lazy" decoding="async" />
+                            <span>
+                                <strong>تست شنوایی در تهران</strong>
+                                <span>ارزیابی تخصصی شنوایی</span>
+                            </span>
+                        </a>
+                        <a class="gp-side-post" href="/tehran/hearing-aid" title="خرید سمعک در تهران">
+                            <img src="@Url.Content("~/images/logo_purple.webp")" alt="خرید سمعک در تهران" title="خرید سمعک در تهران" loading="lazy" decoding="async" />
+                            <span>
+                                <strong>خرید سمعک در تهران</strong>
+                                <span>مشاوره، تجویز و تنظیم</span>
+                            </span>
+                        </a>
+                        <a class="gp-side-post" href="/tehran/hearing-aid-adjustment" title="تنظیم سمعک در تهران">
+                            <img src="@Url.Content("~/images/logo_purple.webp")" alt="تنظیم سمعک در تهران" title="تنظیم سمعک در تهران" loading="lazy" decoding="async" />
+                            <span>
+                                <strong>تنظیم سمعک در تهران</strong>
+                                <span>پیگیری و تنظیم تخصصی</span>
+                            </span>
+                        </a>
+                    </div>
+                </section>
+
+
+                <section class="gp-blog-side-card">
+                    <h3>دسترسی محلی</h3>
+                    <div class="gp-side-posts">
+                        <a class="gp-side-post" href="/niavaran/hearing-test" title="تست شنوایی نیاوران">
+                            <img src="@Url.Content("~/images/logo_purple.webp")" alt="تست شنوایی نیاوران" title="تست شنوایی نیاوران" loading="lazy" decoding="async" />
+                            <span>
+                                <strong>تست شنوایی نیاوران</strong>
+                                <span>نزدیک تجریش و شمیرانات</span>
+                            </span>
+                        </a>
+                        <a class="gp-side-post" href="/qeytarieh/hearing-test" title="تست شنوایی قیطریه">
+                            <img src="@Url.Content("~/images/logo_purple.webp")" alt="تست شنوایی قیطریه" title="تست شنوایی قیطریه" loading="lazy" decoding="async" />
+                            <span>
+                                <strong>تست شنوایی قیطریه</strong>
+                                <span>ارزیابی شنوایی شمال تهران</span>
+                            </span>
+                        </a>
+                        <a class="gp-side-post" href="/zaferanieh/hearing-test" title="تست شنوایی زعفرانیه">
+                            <img src="@Url.Content("~/images/logo_purple.webp")" alt="تست شنوایی زعفرانیه" title="تست شنوایی زعفرانیه" loading="lazy" decoding="async" />
+                            <span>
+                                <strong>تست شنوایی زعفرانیه</strong>
+                                <span>مشاوره و پیگیری شنوایی</span>
+                            </span>
+                        </a>
+                    </div>
+                </section>
 
                 <section class="gp-blog-side-card gp-blog-toc-card" id="gpBlogTocCard">
                     <h3>فهرست سریع مقاله</h3>

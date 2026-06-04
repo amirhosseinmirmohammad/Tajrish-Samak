@@ -2,9 +2,11 @@
 @{
     GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();
 
-    var gpCacheVersion = "20260603-tajrish-v53-mobile-toggles-inline";
+    var gpCacheVersion = "20260604-tajrish-v87-ear-only-loader";
     var gpBaseUrl = "https://tajrish-samak.ir";
     var gpLogoUrl = gpBaseUrl + Url.Content("~/images/logo_purple.webp");
+    var gpCurrentUrl = gpBaseUrl + Request.Path;
+    var gpGeoEntityDescription = "کلینیک شنوایی و سمعک شکوه تجریش یک مرکز تخصصی شنوایی‌شناسی در تهران، محدوده تجریش است که خدمات ارزیابی و تست شنوایی، آزمایش شنوایی، مشاوره خرید سمعک، تجویز سمعک، تنظیم سمعک، پیگیری پس از تجویز، بررسی کم‌شنوایی و مشاوره مرتبط با وزوز گوش را ارائه می‌دهد. این کلینیک به مراجعان تهران، شمیرانات، تجریش، قیطریه، نیاوران، زعفرانیه، الهیه، فرمانیه و مناطق اطراف خدمات شنوایی ارائه می‌کند.";
 
     // برای سرعت بیشتر، داده‌های منو و فوتر فقط یک بار خوانده می‌شوند.
     var gpProductCategories = content.Categories
@@ -56,6 +58,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="alternate" href="https://tajrish-samak.ir" hreflang="fa-ir" />
     @RenderSection("Metas", false)
+
+    <!-- V54 GEO/AEO Foundation -->
+    <link rel="canonical" href="@gpCurrentUrl" />
+    <link rel="alternate" href="@gpCurrentUrl" hreflang="fa-IR" />
+    <link rel="alternate" href="@gpCurrentUrl" hreflang="x-default" />
+    <meta name="geo.placename" content="Tehran, Tajrish" />
+    <meta name="geo.position" content="35.806270;51.430387" />
+    <meta name="ICBM" content="35.806270, 51.430387" />
+    <meta name="coverage" content="Tehran, Tajrish, Shemiranat, Niavaran, Qeytarieh, Zafaraniyeh, Elahiyeh, Farmanieh" />
+    <meta name="subject" content="کلینیک شنوایی، تست شنوایی، آزمایش شنوایی، خرید سمعک، تجویز سمعک، تنظیم سمعک در تهران و تجریش" />
+    <meta name="audience" content="افراد دارای کم‌شنوایی، سالمندان، کودکان، خانواده‌ها، متقاضیان تست شنوایی و مشاوره سمعک در تهران" />
+    <meta name="AI-content-declaration" content="Human-reviewed local medical service information for hearing test, audiology clinic and hearing aid consultation in Tehran." />
+
     <meta name="author" content="کلینیک شنوایی و سمعک شکوه تجریش">
     <meta name="Designer" content="کلینیک شنوایی و سمعک شکوه تجریش">
     <meta name="DC.Subject" content="کلینیک شنوایی و سمعک شکوه تجریش" />
@@ -130,11 +145,13 @@
     </script>
 
 
-    <link rel="manifest" href="@Url.Content("~/manifest.json?v=" + gpCacheVersion)" />
+    <link rel="manifest" href="@Url.Content("~/manifest.webmanifest")" />
+    <link rel="apple-touch-icon" sizes="180x180" href="@Url.Content("~/content/images/pwa/apple-touch-icon-180x180.png")" />
+    <link rel="icon" type="image/png" sizes="32x32" href="@Url.Content("~/content/images/pwa/favicon-32x32.png")" />
+    <link rel="icon" type="image/png" sizes="16x16" href="@Url.Content("~/content/images/pwa/favicon-16x16.png")" />
     <meta name="application-name" content="کلینیک شنوایی و سمعک شکوه تجریش" />
     <meta name="apple-mobile-web-app-title" content="تجریش سمعک" />
     <meta name="msapplication-TileColor" content="#920ab6" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js" defer></script>
     <link href="@Url.Content("~/css/gp-tajrish-modern.css?v=" + gpCacheVersion)" rel="stylesheet" />
     <script type="application/ld+json">
         {
@@ -152,6 +169,216 @@
             "target": "https://tajrish-samak.ir/Product/Filter?Title={search_term_string}",
             "query-input": "required name=search_term_string"
           }
+        }
+    </script>
+
+
+
+    <script type="application/ld+json" id="gp-v54-geo-schema">
+        {
+          "@@context": "https://schema.org",
+          "@@graph": [
+            {
+              "@@type": ["Organization", "LocalBusiness", "MedicalBusiness", "MedicalClinic"],
+              "@@id": "https://tajrish-samak.ir/#tajrish-samak",
+              "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+              "alternateName": [
+                "تجریش سمعک",
+                "سمعک تجریش",
+                "Tajrish Samak",
+                "Shokouh Tajrish Hearing Aid Clinic"
+              ],
+              "url": "https://tajrish-samak.ir/",
+              "logo": {
+                "@@type": "ImageObject",
+                "url": "https://tajrish-samak.ir/images/logo_purple.webp"
+              },
+              "image": "https://tajrish-samak.ir/images/logo_purple.webp",
+              "description": "@gpGeoEntityDescription",
+              "telephone": ["+982122735588", "+982122735599", "+989393388985"],
+              "email": "tajrishsamak@gmail.com",
+              "priceRange": "$$",
+              "currenciesAccepted": "IRR",
+              "paymentAccepted": "Cash, Card",
+              "address": {
+                "@@type": "PostalAddress",
+                "addressCountry": "IR",
+                "addressRegion": "تهران",
+                "addressLocality": "تهران",
+                "streetAddress": "میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰"
+              },
+              "geo": {
+                "@@type": "GeoCoordinates",
+                "latitude": 35.806270,
+                "longitude": 51.430387
+              },
+              "areaServed": [
+                { "@@type": "City", "name": "تهران" },
+                { "@@type": "AdministrativeArea", "name": "شمیرانات" },
+                { "@@type": "Place", "name": "تجریش" },
+                { "@@type": "Place", "name": "نیاوران" },
+                { "@@type": "Place", "name": "قیطریه" },
+                { "@@type": "Place", "name": "زعفرانیه" },
+                { "@@type": "Place", "name": "الهیه" },
+                { "@@type": "Place", "name": "فرمانیه" }
+              ],
+              "medicalSpecialty": [
+                "Audiology",
+                "Hearing Aid Fitting",
+                "Hearing Test",
+                "Hearing Care"
+              ],
+              "knowsAbout": [
+                "تست شنوایی",
+                "آزمایش شنوایی",
+                "ادیومتری",
+                "تمپانومتری",
+                "کلینیک شنوایی",
+                "خرید سمعک",
+                "تجویز سمعک",
+                "تنظیم سمعک",
+                "سمعک نامرئی",
+                "سمعک پشت گوشی",
+                "سمعک داخل گوشی",
+                "وزوز گوش",
+                "کم شنوایی سالمندان",
+                "شنوایی کودکان"
+              ],
+              "sameAs": [
+                "https://www.instagram.com/tajrishsamak/",
+                "https://www.telegram.me/sthc/",
+                "https://wa.me/+989393388985"
+              ],
+              "contactPoint": [
+                {
+                  "@@type": "ContactPoint",
+                  "telephone": "+982122735588",
+                  "contactType": "customer service",
+                  "areaServed": "IR",
+                  "availableLanguage": ["fa", "en"]
+                },
+                {
+                  "@@type": "ContactPoint",
+                  "telephone": "+989393388985",
+                  "contactType": "WhatsApp consultation",
+                  "areaServed": "IR",
+                  "availableLanguage": ["fa", "en"]
+                }
+              ],
+              "hasOfferCatalog": {
+                "@@type": "OfferCatalog",
+                "name": "خدمات تخصصی شنوایی و سمعک شکوه تجریش",
+                "itemListElement": [
+                  {
+                    "@@type": "Offer",
+                    "itemOffered": {
+                      "@@type": "MedicalProcedure",
+                      "name": "تست شنوایی و ارزیابی شنوایی در تهران",
+                      "procedureType": "Audiology assessment",
+                      "bodyLocation": "Ear"
+                    }
+                  },
+                  {
+                    "@@type": "Offer",
+                    "itemOffered": {
+                      "@@type": "Service",
+                      "name": "مشاوره خرید سمعک در تهران",
+                      "serviceType": "Hearing aid consultation"
+                    }
+                  },
+                  {
+                    "@@type": "Offer",
+                    "itemOffered": {
+                      "@@type": "Service",
+                      "name": "تجویز و تنظیم سمعک",
+                      "serviceType": "Hearing aid fitting and adjustment"
+                    }
+                  },
+                  {
+                    "@@type": "Offer",
+                    "itemOffered": {
+                      "@@type": "Service",
+                      "name": "مشاوره کم‌شنوایی و وزوز گوش",
+                      "serviceType": "Hearing care consultation"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "@@type": "WebSite",
+              "@@id": "https://tajrish-samak.ir/#website-v54",
+              "url": "https://tajrish-samak.ir/",
+              "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+              "alternateName": "تجریش سمعک",
+              "inLanguage": "fa-IR",
+              "publisher": {
+                "@@id": "https://tajrish-samak.ir/#tajrish-samak"
+              },
+              "potentialAction": [
+                {
+                  "@@type": "SearchAction",
+                  "target": "https://tajrish-samak.ir/Product/All?q={search_term_string}",
+                  "query-input": "required name=search_term_string"
+                }
+              ]
+            },
+            {
+              "@@type": "WebPage",
+              "@@id": "@gpCurrentUrl#webpage",
+              "url": "@gpCurrentUrl",
+              "name": "@ViewBag.Title",
+              "isPartOf": {
+                "@@id": "https://tajrish-samak.ir/#website-v54"
+              },
+              "about": {
+                "@@id": "https://tajrish-samak.ir/#tajrish-samak"
+              },
+              "primaryImageOfPage": {
+                "@@type": "ImageObject",
+                "url": "https://tajrish-samak.ir/images/logo_purple.webp"
+              },
+              "inLanguage": "fa-IR"
+            },
+            {
+              "@@type": "FAQPage",
+              "@@id": "https://tajrish-samak.ir/#hearing-clinic-faq",
+              "mainEntity": [
+                {
+                  "@@type": "Question",
+                  "name": "کلینیک شنوایی و سمعک شکوه تجریش چه خدماتی ارائه می‌دهد؟",
+                  "acceptedAnswer": {
+                    "@@type": "Answer",
+                    "text": "این مرکز خدمات تست و ارزیابی شنوایی، مشاوره خرید سمعک، تجویز سمعک، تنظیم سمعک، پیگیری پس از تجویز و مشاوره کم‌شنوایی و وزوز گوش را در تهران و محدوده تجریش ارائه می‌دهد."
+                  }
+                },
+                {
+                  "@@type": "Question",
+                  "name": "برای تست شنوایی در تهران از کجا شروع کنم؟",
+                  "acceptedAnswer": {
+                    "@@type": "Answer",
+                    "text": "برای شروع، می‌توانید با کلینیک تماس بگیرید تا بر اساس سن، علائم، سابقه کم‌شنوایی و نیاز شما، زمان مناسب برای ارزیابی شنوایی و مشاوره تخصصی تعیین شود."
+                  }
+                },
+                {
+                  "@@type": "Question",
+                  "name": "آیا انتخاب سمعک بدون تست شنوایی درست است؟",
+                  "acceptedAnswer": {
+                    "@@type": "Answer",
+                    "text": "خیر. انتخاب و تنظیم سمعک باید پس از ارزیابی شنوایی، بررسی نوع و شدت کم‌شنوایی، نیازهای فردی و سبک زندگی انجام شود."
+                  }
+                },
+                {
+                  "@@type": "Question",
+                  "name": "کلینیک شنوایی شکوه تجریش به چه مناطقی خدمات می‌دهد؟",
+                  "acceptedAnswer": {
+                    "@@type": "Answer",
+                    "text": "این کلینیک به مراجعان تهران، تجریش، شمیرانات، قیطریه، نیاوران، زعفرانیه، الهیه، فرمانیه و مناطق اطراف خدمات شنوایی و سمعک ارائه می‌کند."
+                  }
+                }
+              ]
+            }
+          ]
         }
     </script>
 
@@ -232,17 +459,14 @@
 
 
 
-        /* V35: Lottie page loader */
+        /* V87: Ear-only CSS page loader - no logo, no external Lottie */
         .gp-page-loader {
             position: fixed;
             inset: 0;
             z-index: 2147483000;
             display: grid;
             place-items: center;
-            background:
-                radial-gradient(circle at 50% 42%, rgba(216, 245, 18, .10), transparent 26%),
-                radial-gradient(circle at 48% 55%, rgba(146, 10, 182, .14), transparent 32%),
-                rgba(255, 255, 255, .88);
+            background: radial-gradient(circle at 50% 42%, rgba(216, 245, 18, .10), transparent 26%), radial-gradient(circle at 48% 55%, rgba(146, 10, 182, .14), transparent 32%), rgba(255, 255, 255, .88);
             backdrop-filter: blur(16px) saturate(145%);
             opacity: 0;
             visibility: hidden;
@@ -274,7 +498,94 @@
         #gpLottieLoader {
             width: 174px;
             height: 174px;
+            position: relative;
+            display: grid;
+            place-items: center;
             filter: drop-shadow(0 18px 30px rgba(146, 10, 182, .16));
+        }
+
+        #gpLottieLoader::before {
+            content: "";
+            width: 126px;
+            height: 126px;
+            display: block;
+            border-radius: 36px;
+            background:
+                radial-gradient(circle at 72% 22%, rgba(216,245,18,.95) 0 7%, transparent 8%),
+                linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.70));
+            box-shadow: 0 22px 44px rgba(146,10,182,.20), inset 0 0 0 1px rgba(146,10,182,.10);
+            animation: gpEarCardFloat 1.55s ease-in-out infinite;
+        }
+
+        #gpLottieLoader::after {
+            content: "";
+            position: absolute;
+            width: 76px;
+            height: 76px;
+            border-radius: 999px;
+            border: 10px solid #920ab6;
+            border-left-color: transparent;
+            transform: rotate(-24deg);
+            animation: gpEarPulse 1.55s ease-in-out infinite;
+        }
+
+        .gp-loader-ear-core {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            border: 7px solid #920ab6;
+            border-left-color: transparent;
+            transform: rotate(-24deg);
+            z-index: 2;
+            animation: gpEarInnerPulse 1.55s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .gp-loader-ear-core::after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            right: -15px;
+            bottom: -7px;
+            border-radius: 999px;
+            background: #920ab6;
+            box-shadow: 0 0 0 7px rgba(146,10,182,.10);
+        }
+
+        .gp-loader-sound-wave {
+            position: absolute;
+            width: 112px;
+            height: 112px;
+            border-radius: 999px;
+            border: 2px solid rgba(146,10,182,.22);
+            animation: gpEarWave 1.55s ease-out infinite;
+            pointer-events: none;
+        }
+
+        .gp-loader-sound-wave:nth-child(2) {
+            animation-delay: .42s;
+        }
+
+        @@keyframes gpEarCardFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-6px) scale(1.025); }
+        }
+
+        @@keyframes gpEarPulse {
+            0%, 100% { opacity: .88; transform: rotate(-24deg) scale(.96); }
+            50% { opacity: 1; transform: rotate(-24deg) scale(1.04); }
+        }
+
+        @@keyframes gpEarInnerPulse {
+            0%, 100% { transform: rotate(-24deg) scale(.96); }
+            50% { transform: rotate(-24deg) scale(1.05); }
+        }
+
+        @@keyframes gpEarWave {
+            0% { opacity: .42; transform: scale(.70); }
+            100% { opacity: 0; transform: scale(1.22); }
         }
 
         .gp-loader-card strong {
@@ -300,33 +611,37 @@
             margin-top: 2px;
         }
 
-        .gp-loader-dots i {
-            width: 6px;
-            height: 6px;
-            display: block;
-            border-radius: 999px;
-            background: #920ab6;
-            animation: gpLoaderDot 1s ease-in-out infinite;
-        }
+            .gp-loader-dots i {
+                width: 6px;
+                height: 6px;
+                display: block;
+                border-radius: 999px;
+                background: #920ab6;
+                animation: gpLoaderDot 1s ease-in-out infinite;
+            }
 
-        .gp-loader-dots i:nth-child(2) {
-            animation-delay: .16s;
-        }
+                .gp-loader-dots i:nth-child(2) {
+                    animation-delay: .16s;
+                }
 
-        .gp-loader-dots i:nth-child(3) {
-            animation-delay: .32s;
-        }
+                .gp-loader-dots i:nth-child(3) {
+                    animation-delay: .32s;
+                }
 
         @@keyframes gpLoaderDot {
-            0%, 100% { transform: translateY(0); opacity: .45; }
-            50% { transform: translateY(-5px); opacity: 1; }
+            0%, 100% {
+                transform: translateY(0);
+                opacity: .45;
+            }
+
+            50% {
+                transform: translateY(-5px);
+                opacity: 1;
+            }
         }
 
         html.gp-dark-mode .gp-page-loader {
-            background:
-                radial-gradient(circle at 50% 42%, rgba(216, 245, 18, .08), transparent 26%),
-                radial-gradient(circle at 48% 55%, rgba(146, 10, 182, .18), transparent 32%),
-                rgba(12, 15, 28, .88);
+            background: radial-gradient(circle at 50% 42%, rgba(216, 245, 18, .08), transparent 26%), radial-gradient(circle at 48% 55%, rgba(146, 10, 182, .18), transparent 32%), rgba(12, 15, 28, .88);
         }
 
         html.gp-dark-mode .gp-loader-card {
@@ -335,13 +650,13 @@
             box-shadow: 0 28px 75px rgba(0, 0, 0, .30);
         }
 
-        html.gp-dark-mode .gp-loader-card strong {
-            color: #fff !important;
-        }
+            html.gp-dark-mode .gp-loader-card strong {
+                color: #fff !important;
+            }
 
-        html.gp-dark-mode .gp-loader-card span {
-            color: rgba(246, 247, 251, .70) !important;
-        }
+            html.gp-dark-mode .gp-loader-card span {
+                color: rgba(246, 247, 251, .70) !important;
+            }
 
         html.gp-dark-mode .gp-loader-dots i {
             background: #d8f512;
@@ -375,9 +690,7 @@
             padding: 4px;
             border: 1px solid rgba(146, 10, 182, .16);
             border-radius: 999px;
-            background:
-                linear-gradient(135deg, rgba(255,255,255,.86), rgba(255,255,255,.58)),
-                radial-gradient(circle at 18% 18%, rgba(216,245,18,.20), transparent 36%);
+            background: linear-gradient(135deg, rgba(255,255,255,.86), rgba(255,255,255,.58)), radial-gradient(circle at 18% 18%, rgba(216,245,18,.20), transparent 36%);
             color: #4b1684 !important;
             box-shadow: 0 14px 34px rgba(74, 18, 107, .10);
             overflow: hidden;
@@ -388,42 +701,42 @@
             transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
         }
 
-        .gp-language-toggle:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 18px 42px rgba(74, 18, 107, .15);
-            border-color: rgba(146, 10, 182, .26);
-        }
+            .gp-language-toggle:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 18px 42px rgba(74, 18, 107, .15);
+                border-color: rgba(146, 10, 182, .26);
+            }
 
-        .gp-language-toggle .gp-lang-option {
-            position: relative;
-            z-index: 2;
-            width: 42px;
-            height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 1000;
-            line-height: 1;
-            letter-spacing: .02em;
-            color: rgba(75, 22, 132, .72);
-            transition: color .22s ease;
-        }
+            .gp-language-toggle .gp-lang-option {
+                position: relative;
+                z-index: 2;
+                width: 42px;
+                height: 32px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: 1000;
+                line-height: 1;
+                letter-spacing: .02em;
+                color: rgba(75, 22, 132, .72);
+                transition: color .22s ease;
+            }
 
-        .gp-language-toggle::before {
-            content: "";
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            width: 42px;
-            height: 32px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #4b1684, #920ab6, #e10b79);
-            box-shadow: 0 10px 24px rgba(146, 10, 182, .28);
-            transition: transform .25s cubic-bezier(.2,.9,.2,1);
-            z-index: 1;
-        }
+            .gp-language-toggle::before {
+                content: "";
+                position: absolute;
+                top: 4px;
+                left: 4px;
+                width: 42px;
+                height: 32px;
+                border-radius: 999px;
+                background: linear-gradient(135deg, #4b1684, #920ab6, #e10b79);
+                box-shadow: 0 10px 24px rgba(146, 10, 182, .28);
+                transition: transform .25s cubic-bezier(.2,.9,.2,1);
+                z-index: 1;
+            }
 
         html:not(.gp-lang-en) .gp-language-toggle::before {
             transform: translateX(46px);
@@ -456,9 +769,9 @@
             top: 0 !important;
         }
 
-        body > .skiptranslate {
-            display: none !important;
-        }
+            body > .skiptranslate {
+                display: none !important;
+            }
 
         html.gp-lang-en body,
         html.gp-lang-en .gp-tajrish-body {
@@ -580,17 +893,15 @@
         }
 
         html.gp-dark-mode .gp-language-toggle {
-            background:
-                linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.06)),
-                radial-gradient(circle at 18% 18%, rgba(216,245,18,.12), transparent 36%) !important;
+            background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.06)), radial-gradient(circle at 18% 18%, rgba(216,245,18,.12), transparent 36%) !important;
             border-color: rgba(255,255,255,.13) !important;
             color: #fff !important;
             box-shadow: 0 14px 34px rgba(0,0,0,.22);
         }
 
-        html.gp-dark-mode .gp-language-toggle .gp-lang-option {
-            color: rgba(255,255,255,.70);
-        }
+            html.gp-dark-mode .gp-language-toggle .gp-lang-option {
+                color: rgba(255,255,255,.70);
+            }
 
         @@media (max-width: 812px) {
             .gp-language-toggle {
@@ -598,16 +909,16 @@
                 height: 38px;
             }
 
-            .gp-language-toggle .gp-lang-option {
-                width: 38px;
-                height: 29px;
-                font-size: 11px;
-            }
+                .gp-language-toggle .gp-lang-option {
+                    width: 38px;
+                    height: 29px;
+                    font-size: 11px;
+                }
 
-            .gp-language-toggle::before {
-                width: 38px;
-                height: 29px;
-            }
+                .gp-language-toggle::before {
+                    width: 38px;
+                    height: 29px;
+                }
 
             html:not(.gp-lang-en) .gp-language-toggle::before {
                 transform: translateX(40px);
@@ -620,6 +931,96 @@
             }
         }
 
+
+
+
+        /* V54: GEO/AEO entity panel */
+        .gp-geo-entity-panel {
+            margin: 22px auto 0;
+            padding: 18px;
+            border-radius: 28px;
+            background: radial-gradient(circle at 12% 20%, rgba(216,245,18,.14), transparent 28%), linear-gradient(135deg, rgba(255,255,255,.86), rgba(255,255,255,.58));
+            border: 1px solid rgba(146,10,182,.10);
+            box-shadow: 0 18px 45px rgba(74,18,107,.08);
+            direction: rtl;
+            text-align: right;
+        }
+
+            .gp-geo-entity-panel h2 {
+                margin: 0 0 8px;
+                color: #4b1684 !important;
+                font-size: 18px;
+                font-weight: 1000;
+                line-height: 1.8;
+            }
+
+            .gp-geo-entity-panel p {
+                margin: 0;
+                color: rgba(32,20,45,.72) !important;
+                font-size: 13px;
+                font-weight: 850;
+                line-height: 2.1;
+            }
+
+        .gp-geo-entity-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 12px;
+        }
+
+            .gp-geo-entity-keywords a,
+            .gp-geo-entity-keywords span {
+                min-height: 30px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 10px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.075);
+                color: #6420a0 !important;
+                font-size: 12px;
+                font-weight: 950;
+                text-decoration: none !important;
+            }
+
+        html.gp-dark-mode .gp-geo-entity-panel {
+            background: rgba(255,255,255,.065) !important;
+            border-color: rgba(255,255,255,.10) !important;
+            box-shadow: 0 18px 45px rgba(0,0,0,.22);
+        }
+
+            html.gp-dark-mode .gp-geo-entity-panel h2 {
+                color: #fff !important;
+            }
+
+            html.gp-dark-mode .gp-geo-entity-panel p {
+                color: rgba(246,247,251,.76) !important;
+            }
+
+        html.gp-dark-mode .gp-geo-entity-keywords a,
+        html.gp-dark-mode .gp-geo-entity-keywords span {
+            background: rgba(255,255,255,.075) !important;
+            color: rgba(246,247,251,.86) !important;
+        }
+
+        html.gp-lang-en .gp-geo-entity-panel {
+            direction: ltr !important;
+            text-align: left !important;
+        }
+
+        @@media(max-width: 812px) {
+            .gp-geo-entity-panel {
+                margin-top: 16px;
+                padding: 15px;
+                border-radius: 24px;
+                text-align: center;
+            }
+
+            .gp-geo-entity-keywords {
+                justify-content: center;
+            }
+        }
 
 
         /* V53: mobile EN/FA + dark/light toggles stay inline */
@@ -641,25 +1042,25 @@
                 box-sizing: border-box !important;
             }
 
-            .header-bot .gp-header-tools .gp-language-toggle-top {
-                flex: 0 0 82px !important;
-                width: 82px !important;
-                min-width: 82px !important;
-                max-width: 82px !important;
-                height: 36px !important;
-                margin: 0 !important;
-            }
+                .header-bot .gp-header-tools .gp-language-toggle-top {
+                    flex: 0 0 82px !important;
+                    width: 82px !important;
+                    min-width: 82px !important;
+                    max-width: 82px !important;
+                    height: 36px !important;
+                    margin: 0 !important;
+                }
 
-            .header-bot .gp-header-tools .gp-language-toggle-top .gp-lang-option {
-                width: 36px !important;
-                height: 27px !important;
-                font-size: 10.5px !important;
-            }
+                    .header-bot .gp-header-tools .gp-language-toggle-top .gp-lang-option {
+                        width: 36px !important;
+                        height: 27px !important;
+                        font-size: 10.5px !important;
+                    }
 
-            .header-bot .gp-header-tools .gp-language-toggle-top::before {
-                width: 36px !important;
-                height: 27px !important;
-            }
+                    .header-bot .gp-header-tools .gp-language-toggle-top::before {
+                        width: 36px !important;
+                        height: 27px !important;
+                    }
 
             html:not(.gp-lang-en) .header-bot .gp-header-tools .gp-language-toggle-top::before {
                 transform: translateX(38px) !important;
@@ -684,13 +1085,13 @@
                 box-sizing: border-box !important;
             }
 
-            .header-bot .gp-header-tools .gp-theme-toggle-top span,
-            .header-bot .gp-header-tools .gp-theme-toggle-top .gp-theme-toggle-text {
-                white-space: nowrap !important;
-                line-height: 1 !important;
-                font-size: 11px !important;
-                flex: 0 1 auto !important;
-            }
+                .header-bot .gp-header-tools .gp-theme-toggle-top span,
+                .header-bot .gp-header-tools .gp-theme-toggle-top .gp-theme-toggle-text {
+                    white-space: nowrap !important;
+                    line-height: 1 !important;
+                    font-size: 11px !important;
+                    flex: 0 1 auto !important;
+                }
         }
 
         @@media (max-width: 370px) {
@@ -699,21 +1100,21 @@
                 padding: 0 5px !important;
             }
 
-            .header-bot .gp-header-tools .gp-language-toggle-top {
-                flex-basis: 76px !important;
-                width: 76px !important;
-                min-width: 76px !important;
-                max-width: 76px !important;
-            }
+                .header-bot .gp-header-tools .gp-language-toggle-top {
+                    flex-basis: 76px !important;
+                    width: 76px !important;
+                    min-width: 76px !important;
+                    max-width: 76px !important;
+                }
 
-            .header-bot .gp-header-tools .gp-language-toggle-top .gp-lang-option {
-                width: 33px !important;
-                font-size: 10px !important;
-            }
+                    .header-bot .gp-header-tools .gp-language-toggle-top .gp-lang-option {
+                        width: 33px !important;
+                        font-size: 10px !important;
+                    }
 
-            .header-bot .gp-header-tools .gp-language-toggle-top::before {
-                width: 33px !important;
-            }
+                    .header-bot .gp-header-tools .gp-language-toggle-top::before {
+                        width: 33px !important;
+                    }
 
             html:not(.gp-lang-en) .header-bot .gp-header-tools .gp-language-toggle-top::before {
                 transform: translateX(35px) !important;
@@ -728,9 +1129,9 @@
                 gap: 4px !important;
             }
 
-            .header-bot .gp-header-tools .gp-theme-toggle-top .gp-theme-toggle-text {
-                font-size: 10px !important;
-            }
+                .header-bot .gp-header-tools .gp-theme-toggle-top .gp-theme-toggle-text {
+                    font-size: 10px !important;
+                }
         }
 
 
@@ -741,133 +1142,133 @@
                 padding-right: 6px !important;
             }
 
-            .header-bot .header ul {
-                width: 100% !important;
-                max-width: 100% !important;
-                display: flex !important;
-                flex-direction: row !important;
-                align-items: center !important;
-                justify-content: center !important;
-                flex-wrap: nowrap !important;
-                gap: 4px !important;
-                margin: 7px 0 8px !important;
-                padding: 0 4px !important;
-                direction: ltr !important;
-                overflow-x: auto !important;
-                overflow-y: hidden !important;
-                -webkit-overflow-scrolling: touch !important;
-                scrollbar-width: none !important;
-            }
+                .header-bot .header ul {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    display: flex !important;
+                    flex-direction: row !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    flex-wrap: nowrap !important;
+                    gap: 4px !important;
+                    margin: 7px 0 8px !important;
+                    padding: 0 4px !important;
+                    direction: ltr !important;
+                    overflow-x: auto !important;
+                    overflow-y: hidden !important;
+                    -webkit-overflow-scrolling: touch !important;
+                    scrollbar-width: none !important;
+                }
 
-            .header-bot .header ul::-webkit-scrollbar {
-                display: none !important;
-            }
+                    .header-bot .header ul::-webkit-scrollbar {
+                        display: none !important;
+                    }
 
-            .header-bot .header ul li {
-                width: auto !important;
-                min-width: max-content !important;
-                max-width: none !important;
-                height: 28px !important;
-                min-height: 28px !important;
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                flex: 0 0 auto !important;
-                gap: 3px !important;
-                margin: 0 !important;
-                padding: 0 5px !important;
-                float: none !important;
-                border-left: 1px solid rgba(146, 10, 182, .12) !important;
-                white-space: nowrap !important;
-                direction: ltr !important;
-                line-height: 1 !important;
-            }
+                    .header-bot .header ul li {
+                        width: auto !important;
+                        min-width: max-content !important;
+                        max-width: none !important;
+                        height: 28px !important;
+                        min-height: 28px !important;
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        flex: 0 0 auto !important;
+                        gap: 3px !important;
+                        margin: 0 !important;
+                        padding: 0 5px !important;
+                        float: none !important;
+                        border-left: 1px solid rgba(146, 10, 182, .12) !important;
+                        white-space: nowrap !important;
+                        direction: ltr !important;
+                        line-height: 1 !important;
+                    }
 
-            .header-bot .header ul li:first-child {
-                border-left: 0 !important;
-            }
+                        .header-bot .header ul li:first-child {
+                            border-left: 0 !important;
+                        }
 
-            .header-bot .header ul li.tell,
-            .header-bot .header ul li a,
-            .header-bot .header ul li.tell a,
-            .header-bot .header ul li .gp-header-mobile-phone,
-            .header-bot .header ul li .gp-header-mobile-phone span {
-                white-space: nowrap !important;
-                word-break: keep-all !important;
-                overflow-wrap: normal !important;
-                direction: ltr !important;
-                unicode-bidi: isolate !important;
-                line-height: 1 !important;
-            }
+                        .header-bot .header ul li.tell,
+                        .header-bot .header ul li a,
+                        .header-bot .header ul li.tell a,
+                        .header-bot .header ul li .gp-header-mobile-phone,
+                        .header-bot .header ul li .gp-header-mobile-phone span {
+                            white-space: nowrap !important;
+                            word-break: keep-all !important;
+                            overflow-wrap: normal !important;
+                            direction: ltr !important;
+                            unicode-bidi: isolate !important;
+                            line-height: 1 !important;
+                        }
 
-            .header-bot .header ul li a,
-            .header-bot .header ul li.tell a {
-                height: 24px !important;
-                min-height: 24px !important;
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                font-size: 11px !important;
-                font-weight: 900 !important;
-                letter-spacing: 0 !important;
-                color: #920ab6 !important;
-                text-align: center !important;
-            }
+                            .header-bot .header ul li a,
+                            .header-bot .header ul li.tell a {
+                                height: 24px !important;
+                                min-height: 24px !important;
+                                display: inline-flex !important;
+                                align-items: center !important;
+                                justify-content: center !important;
+                                padding: 0 !important;
+                                margin: 0 !important;
+                                font-size: 11px !important;
+                                font-weight: 900 !important;
+                                letter-spacing: 0 !important;
+                                color: #920ab6 !important;
+                                text-align: center !important;
+                            }
 
-            .header-bot .header ul li .gp-menu-glyph,
-            .header-bot .header ul li .gp-mobile-phone-glyph {
-                width: 20px !important;
-                height: 20px !important;
-                min-width: 20px !important;
-                max-width: 20px !important;
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                flex: 0 0 20px !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                border-radius: 8px !important;
-                font-size: 12px !important;
-                line-height: 1 !important;
-                transform: none !important;
-                position: static !important;
-                vertical-align: middle !important;
-            }
+                        .header-bot .header ul li .gp-menu-glyph,
+                        .header-bot .header ul li .gp-mobile-phone-glyph {
+                            width: 20px !important;
+                            height: 20px !important;
+                            min-width: 20px !important;
+                            max-width: 20px !important;
+                            display: inline-flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            flex: 0 0 20px !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            border-radius: 8px !important;
+                            font-size: 12px !important;
+                            line-height: 1 !important;
+                            transform: none !important;
+                            position: static !important;
+                            vertical-align: middle !important;
+                        }
 
-            .header-bot .header ul li .gp-header-mobile-phone {
-                width: auto !important;
-                min-width: max-content !important;
-                height: 24px !important;
-                min-height: 24px !important;
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                gap: 3px !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
+                        .header-bot .header ul li .gp-header-mobile-phone {
+                            width: auto !important;
+                            min-width: max-content !important;
+                            height: 24px !important;
+                            min-height: 24px !important;
+                            display: inline-flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            gap: 3px !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                        }
 
-            .header-bot .header ul li .gp-header-mobile-phone > span:last-child {
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                width: auto !important;
-                min-width: max-content !important;
-                max-width: none !important;
-                font-size: 11px !important;
-                font-weight: 900 !important;
-            }
+                            .header-bot .header ul li .gp-header-mobile-phone > span:last-child {
+                                display: inline-flex !important;
+                                align-items: center !important;
+                                justify-content: center !important;
+                                width: auto !important;
+                                min-width: max-content !important;
+                                max-width: none !important;
+                                font-size: 11px !important;
+                                font-weight: 900 !important;
+                            }
 
             html.gp-dark-mode .header-bot .header ul li {
                 border-left-color: rgba(255,255,255,.12) !important;
             }
 
-            html.gp-dark-mode .header-bot .header ul li a,
-            html.gp-dark-mode .header-bot .header ul li.tell a {
-                color: rgba(255,255,255,.88) !important;
-            }
+                html.gp-dark-mode .header-bot .header ul li a,
+                html.gp-dark-mode .header-bot .header ul li.tell a {
+                    color: rgba(255,255,255,.88) !important;
+                }
         }
 
         @@media (max-width: 370px) {
@@ -875,24 +1276,24 @@
                 justify-content: flex-start !important;
             }
 
-            .header-bot .header ul li {
-                padding: 0 4px !important;
-            }
+                .header-bot .header ul li {
+                    padding: 0 4px !important;
+                }
 
-            .header-bot .header ul li a,
-            .header-bot .header ul li.tell a,
-            .header-bot .header ul li .gp-header-mobile-phone > span:last-child {
-                font-size: 10.5px !important;
-            }
+                    .header-bot .header ul li a,
+                    .header-bot .header ul li.tell a,
+                    .header-bot .header ul li .gp-header-mobile-phone > span:last-child {
+                        font-size: 10.5px !important;
+                    }
 
-            .header-bot .header ul li .gp-menu-glyph,
-            .header-bot .header ul li .gp-mobile-phone-glyph {
-                width: 18px !important;
-                height: 18px !important;
-                min-width: 18px !important;
-                flex-basis: 18px !important;
-                font-size: 11px !important;
-            }
+                    .header-bot .header ul li .gp-menu-glyph,
+                    .header-bot .header ul li .gp-mobile-phone-glyph {
+                        width: 18px !important;
+                        height: 18px !important;
+                        min-width: 18px !important;
+                        flex-basis: 18px !important;
+                        font-size: 11px !important;
+                    }
         }
 
 
@@ -908,22 +1309,22 @@
                 overflow: hidden !important;
             }
 
-            .ban-top .navbar-header,
-            .ban-top .navbar-toggle,
-            .ban-top .top_nav_left,
-            .ban-top .navbar,
-            .ban-top .navbar-default,
-            .ban-top .navbar-collapse,
-            .ban-top .container,
-            .ban-top .container-fluid {
-                display: none !important;
-                height: 0 !important;
-                min-height: 0 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                border: 0 !important;
-                overflow: hidden !important;
-            }
+                .ban-top .navbar-header,
+                .ban-top .navbar-toggle,
+                .ban-top .top_nav_left,
+                .ban-top .navbar,
+                .ban-top .navbar-default,
+                .ban-top .navbar-collapse,
+                .ban-top .container,
+                .ban-top .container-fluid {
+                    display: none !important;
+                    height: 0 !important;
+                    min-height: 0 !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    border: 0 !important;
+                    overflow: hidden !important;
+                }
         }
 
 
@@ -984,6 +1385,653 @@
                 background: rgba(12, 15, 28, .96) !important;
             }
         }
+
+
+
+
+
+
+        /* V85: retry button animation without ugly focus/box jump */
+        .gp-offline-mini button,
+        .gp-offline-mini button:focus,
+        .gp-offline-mini button:active,
+        .gp-offline-mini button:hover {
+            outline: none !important;
+            box-shadow: none !important;
+            border: 0 !important;
+            transform: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        .gp-offline-mini button {
+            position: relative !important;
+            overflow: hidden !important;
+            transition: background .18s ease, color .18s ease, opacity .18s ease !important;
+        }
+
+        .gp-offline-mini button.is-checking {
+            pointer-events: none !important;
+            opacity: .88 !important;
+            padding-right: 36px !important;
+        }
+
+        .gp-offline-mini button.is-checking::before {
+            content: "";
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            width: 14px;
+            height: 14px;
+            margin-top: -7px;
+            border-radius: 999px;
+            border: 2px solid currentColor;
+            border-top-color: transparent;
+            animation: gpRetrySpin .72s linear infinite;
+        }
+
+        .gp-offline-mini button.is-checking::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.32), transparent);
+            transform: translateX(110%);
+            animation: gpRetryShine 1s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @@keyframes gpRetrySpin {
+            to { transform: rotate(360deg); }
+        }
+
+        @@keyframes gpRetryShine {
+            0% { transform: translateX(110%); }
+            100% { transform: translateX(-110%); }
+        }
+
+        /* V84: loader safety guard for offline/reconnect edge cases */
+        .gp-page-loader.gp-force-hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            display: none !important;
+        }
+
+        /* V83: desktop/tablet header search + phone row hard fix */
+        .header-bot {
+            overflow: visible !important;
+        }
+
+        .header-bot_inner_wthreeinfo_header_mid {
+            width: min(1180px, calc(100% - 28px)) !important;
+            margin: 0 auto !important;
+            display: grid !important;
+            grid-template-columns: minmax(250px, 330px) minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 18px !important;
+            position: relative !important;
+            overflow: visible !important;
+        }
+
+        .header-bot .logo_agile,
+        .header-bot .header {
+            float: none !important;
+            width: auto !important;
+            max-width: none !important;
+            min-width: 0 !important;
+            padding: 0 !important;
+            position: relative !important;
+        }
+
+        .header-bot .logo_agile {
+            z-index: 3 !important;
+        }
+
+        .header-bot .logo_agile h2,
+        .header-bot .logo_agile a {
+            width: 100% !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+        }
+
+        .header-bot .logo_agile img {
+            width: min(296px, 100%) !important;
+            max-width: 296px !important;
+            height: auto !important;
+            display: block !important;
+            object-fit: contain !important;
+        }
+
+        .header-bot .header {
+            z-index: 2 !important;
+            display: grid !important;
+            grid-template-columns: 1fr auto !important;
+            grid-template-areas:
+                "phones tools"
+                "search search" !important;
+            align-items: center !important;
+            gap: 10px 14px !important;
+            direction: rtl !important;
+        }
+
+        .header-bot .header > ul {
+            grid-area: phones !important;
+            width: auto !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            list-style: none !important;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 8px !important;
+            direction: ltr !important;
+            overflow: visible !important;
+            white-space: nowrap !important;
+        }
+
+        .header-bot .header > ul li {
+            float: none !important;
+            width: auto !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            height: 34px !important;
+            min-height: 34px !important;
+            margin: 0 !important;
+            padding: 0 9px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            white-space: nowrap !important;
+            direction: ltr !important;
+            border-left: 1px solid rgba(146,10,182,.14) !important;
+        }
+
+        .header-bot .header > ul li:first-child {
+            border-left: 0 !important;
+        }
+
+        .header-bot .header > ul li,
+        .header-bot .header > ul li a,
+        .header-bot .header > ul li.tell a,
+        .header-bot .header > ul li .gp-header-mobile-phone,
+        .header-bot .header > ul li .gp-header-mobile-phone span:last-child {
+            white-space: nowrap !important;
+            word-break: keep-all !important;
+            overflow-wrap: normal !important;
+            unicode-bidi: isolate !important;
+            line-height: 1 !important;
+            font-size: 13px !important;
+            font-weight: 950 !important;
+        }
+
+        .header-bot .header > ul li a,
+        .header-bot .header > ul li.tell a,
+        .header-bot .header > ul li .gp-header-mobile-phone {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 5px !important;
+            color: #920ab6 !important;
+            text-decoration: none !important;
+            direction: ltr !important;
+        }
+
+        .header-bot .header > ul li .gp-menu-glyph,
+        .header-bot .header > ul li .gp-mobile-phone-glyph {
+            width: 24px !important;
+            height: 24px !important;
+            min-width: 24px !important;
+            flex: 0 0 24px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 0 !important;
+            border-radius: 10px !important;
+            background: rgba(146,10,182,.10) !important;
+            color: #920ab6 !important;
+            font-size: 13px !important;
+            line-height: 1 !important;
+        }
+
+        .header-bot .gp-header-tools {
+            grid-area: tools !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 8px !important;
+            flex-wrap: nowrap !important;
+            direction: ltr !important;
+            min-width: max-content !important;
+        }
+
+        .header-bot .agileits_search,
+        .header-bot .gp-header-search-box {
+            grid-area: search !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            float: none !important;
+            position: relative !important;
+            z-index: 1 !important;
+            clear: both !important;
+        }
+
+        .header-bot .agileits_search form,
+        .header-bot .agileits_search .form-search,
+        .header-bot .gp-header-search-box form,
+        .header-bot .gp-header-search-box .form-search {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            margin: 0 !important;
+            display: flex !important;
+            flex-direction: row-reverse !important;
+            align-items: center !important;
+            direction: rtl !important;
+            border-radius: 999px !important;
+            overflow: hidden !important;
+        }
+
+        .header-bot .agileits_search input[type="search"],
+        .header-bot .gp-header-search-box input[type="search"] {
+            width: 100% !important;
+            min-width: 0 !important;
+            height: 52px !important;
+            line-height: 52px !important;
+            border-radius: 999px 0 0 999px !important;
+            box-sizing: border-box !important;
+            text-align: center !important;
+            direction: rtl !important;
+        }
+
+        .header-bot .agileits_search button,
+        .header-bot .gp-header-search-box button {
+            flex: 0 0 76px !important;
+            width: 76px !important;
+            min-width: 76px !important;
+            height: 52px !important;
+            border-radius: 0 999px 999px 0 !important;
+        }
+
+        .header-bot .clearfix {
+            display: none !important;
+        }
+
+        html.gp-dark-mode .header-bot .header > ul li {
+            border-left-color: rgba(255,255,255,.12) !important;
+        }
+
+        html.gp-dark-mode .header-bot .header > ul li a,
+        html.gp-dark-mode .header-bot .header > ul li.tell a,
+        html.gp-dark-mode .header-bot .header > ul li .gp-header-mobile-phone {
+            color: rgba(255,255,255,.88) !important;
+        }
+
+        html.gp-dark-mode .header-bot .header > ul li .gp-menu-glyph,
+        html.gp-dark-mode .header-bot .header > ul li .gp-mobile-phone-glyph {
+            background: rgba(255,255,255,.11) !important;
+            color: #fff !important;
+        }
+
+        @@media (max-width: 1024px) {
+            .header-bot_inner_wthreeinfo_header_mid {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+                text-align: center !important;
+            }
+
+            .header-bot .logo_agile h2,
+            .header-bot .logo_agile a {
+                justify-content: center !important;
+            }
+
+            .header-bot .header {
+                grid-template-columns: 1fr !important;
+                grid-template-areas:
+                    "phones"
+                    "search"
+                    "tools" !important;
+            }
+
+            .header-bot .header > ul {
+                justify-content: center !important;
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                padding-bottom: 2px !important;
+            }
+
+            .header-bot .header > ul::-webkit-scrollbar {
+                display: none !important;
+            }
+
+            .header-bot .gp-header-tools {
+                justify-content: center !important;
+            }
+        }
+
+        @@media (max-width: 812px) {
+            .header-bot_inner_wthreeinfo_header_mid {
+                width: calc(100% - 12px) !important;
+                gap: 8px !important;
+            }
+
+            .header-bot .logo_agile img {
+                max-width: 238px !important;
+            }
+
+            .header-bot .header > ul {
+                justify-content: flex-start !important;
+                padding: 0 4px 2px !important;
+                gap: 5px !important;
+            }
+
+            .header-bot .header > ul li {
+                height: 28px !important;
+                min-height: 28px !important;
+                padding: 0 5px !important;
+                gap: 3px !important;
+            }
+
+            .header-bot .header > ul li,
+            .header-bot .header > ul li a,
+            .header-bot .header > ul li.tell a,
+            .header-bot .header > ul li .gp-header-mobile-phone,
+            .header-bot .header > ul li .gp-header-mobile-phone span:last-child {
+                font-size: 11px !important;
+                white-space: nowrap !important;
+            }
+
+            .header-bot .header > ul li .gp-menu-glyph,
+            .header-bot .header > ul li .gp-mobile-phone-glyph {
+                width: 20px !important;
+                height: 20px !important;
+                min-width: 20px !important;
+                flex-basis: 20px !important;
+                border-radius: 8px !important;
+                font-size: 12px !important;
+            }
+
+            .header-bot .agileits_search input[type="search"],
+            .header-bot .gp-header-search-box input[type="search"] {
+                height: 46px !important;
+                line-height: 46px !important;
+                font-size: 12px !important;
+            }
+
+            .header-bot .agileits_search button,
+            .header-bot .gp-header-search-box button {
+                flex-basis: 62px !important;
+                width: 62px !important;
+                min-width: 62px !important;
+                height: 46px !important;
+            }
+        }
+
+        /* V82: online/offline status banner */
+        .gp-offline-mini {
+            position: fixed;
+            left: 50%;
+            bottom: 92px;
+            z-index: 2147482500;
+            width: min(520px, calc(100vw - 24px));
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, .88);
+            border: 1px solid rgba(146, 10, 182, .14);
+            box-shadow: 0 24px 60px rgba(74, 18, 107, .18);
+            backdrop-filter: blur(16px) saturate(145%);
+            transform: translateX(-50%) translateY(12px);
+            opacity: 0;
+            transition: opacity .22s ease, transform .22s ease;
+            direction: rtl;
+        }
+
+        .gp-offline-mini.is-visible {
+            display: flex;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .gp-offline-mini-copy {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .gp-offline-mini-icon {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            color: #fff;
+            background: linear-gradient(135deg, #4b1684, #920ab6, #e10b79);
+            box-shadow: 0 12px 24px rgba(146,10,182,.20);
+            font-weight: 1000;
+        }
+
+        .gp-offline-mini strong {
+            display: block;
+            margin: 0 0 2px;
+            color: #20142d !important;
+            font-size: 13px;
+            font-weight: 1000;
+            line-height: 1.7;
+        }
+
+        .gp-offline-mini span {
+            display: block;
+            color: rgba(32,20,45,.64) !important;
+            font-size: 11px;
+            font-weight: 850;
+            line-height: 1.7;
+        }
+
+        .gp-offline-mini button {
+            flex: 0 0 auto;
+            border: 0;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(146,10,182,.09);
+            color: #6420a0;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 1000;
+            cursor: pointer;
+        }
+
+        html.gp-dark-mode .gp-offline-mini {
+            background: rgba(24, 24, 40, .90) !important;
+            border-color: rgba(255,255,255,.10) !important;
+            box-shadow: 0 24px 60px rgba(0,0,0,.32);
+        }
+
+        html.gp-dark-mode .gp-offline-mini strong {
+            color: #fff !important;
+        }
+
+        html.gp-dark-mode .gp-offline-mini span {
+            color: rgba(246,247,251,.70) !important;
+        }
+
+        html.gp-dark-mode .gp-offline-mini button {
+            background: rgba(255,255,255,.09) !important;
+            color: #fff !important;
+        }
+
+        @@media(max-width: 640px) {
+            .gp-offline-mini {
+                bottom: 82px;
+                border-radius: 20px;
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .gp-offline-mini-icon {
+                width: 34px;
+                height: 34px;
+                flex-basis: 34px;
+                border-radius: 14px;
+            }
+
+            .gp-offline-mini button {
+                min-height: 34px;
+                padding: 0 10px;
+                font-size: 11px;
+            }
+        }
+
+
+        /* V80: clean balanced footer + fixed linked GEO chips */
+        .gp-footer-grid-v80 {
+            display: grid !important;
+            grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) minmax(180px, 1fr) minmax(260px, 1.25fr) !important;
+            gap: 22px !important;
+            align-items: start !important;
+            margin-top: 24px !important;
+        }
+
+            .gp-footer-grid-v80 .gp-footer-column {
+                min-width: 0 !important;
+                text-align: right !important;
+            }
+
+                .gp-footer-grid-v80 .gp-footer-column h3 {
+                    margin-bottom: 14px !important;
+                    white-space: nowrap !important;
+                }
+
+                .gp-footer-grid-v80 .gp-footer-column ul {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    list-style: none !important;
+                }
+
+                .gp-footer-grid-v80 .gp-footer-column li {
+                    margin: 0 0 9px !important;
+                    padding: 0 !important;
+                    line-height: 1.9 !important;
+                }
+
+                .gp-footer-grid-v80 .gp-footer-column a,
+                .gp-footer-grid-v80 .gp-footer-column b {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    gap: 7px !important;
+                    color: inherit !important;
+                    line-height: 1.9 !important;
+                    text-decoration: none !important;
+                    word-break: normal !important;
+                }
+
+                    .gp-footer-grid-v80 .gp-footer-column a:hover {
+                        color: #920ab6 !important;
+                    }
+
+            .gp-footer-grid-v80 .gp-footer-brand-column a::before {
+                content: "◈";
+                color: #920ab6;
+                font-size: 9px;
+                margin-left: 6px;
+            }
+
+            .gp-footer-grid-v80 .gp-footer-contact li {
+                display: flex !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+            }
+
+                .gp-footer-grid-v80 .gp-footer-contact li > span {
+                    margin-top: 3px !important;
+                    flex: 0 0 auto !important;
+                }
+
+            .gp-footer-grid-v80 .gp-footer-contact .gp-footer-phone-row {
+                justify-content: flex-start !important;
+                direction: ltr !important;
+                text-align: left !important;
+            }
+
+        .gp-geo-entity-keywords a {
+            text-decoration: none !important;
+        }
+
+        @@media (max-width: 1100px) {
+            .gp-footer-grid-v80 {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+        }
+
+        @@media (max-width: 680px) {
+            .gp-footer-grid-v80 {
+                grid-template-columns: 1fr !important;
+                text-align: center !important;
+            }
+
+                .gp-footer-grid-v80 .gp-footer-column,
+                .gp-footer-grid-v80 .gp-footer-contact li {
+                    text-align: center !important;
+                    justify-content: center !important;
+                }
+
+                .gp-footer-grid-v80 .gp-footer-contact .gp-footer-phone-row {
+                    justify-content: center !important;
+                }
+        }
+
+
+        /* V79: visible brand links in menu/footer/mobile for SEO/GEO discovery */
+        .gp-brand-dropdown-menu {
+            max-height: min(72vh, 520px);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+
+            .gp-brand-dropdown-menu li:first-child a {
+                font-weight: 1000 !important;
+                color: #4b1684 !important;
+                background: rgba(216,245,18,.20) !important;
+            }
+
+        .gp-footer-brand-column ul {
+            max-height: none !important;
+        }
+
+        .gp-footer-brand-column a {
+            position: relative;
+        }
+
+            .gp-footer-brand-column a::before {
+                content: "◈";
+                margin-left: 6px;
+                color: #920ab6;
+                font-size: 10px;
+            }
+
+        @@media(max-width: 812px) {
+            .gp-brand-dropdown-menu {
+                max-height: 340px;
+                overflow-y: auto;
+            }
+        }
     </style>
 
     @RenderSection("Styles", required: false)
@@ -993,7 +2041,11 @@
 
     <div class="gp-page-loader" id="gpPageLoader" aria-hidden="true">
         <div class="gp-loader-card" role="status" aria-live="polite">
-            <div id="gpLottieLoader"></div>
+            <div id="gpLottieLoader" aria-hidden="true">
+                <span class="gp-loader-sound-wave"></span>
+                <span class="gp-loader-sound-wave"></span>
+                <span class="gp-loader-ear-core"></span>
+            </div>
             <strong>در حال آماده‌سازی صفحه</strong>
             <span>چند لحظه تا شنیدن بهتر...</span>
             <div class="gp-loader-dots" aria-hidden="true">
@@ -1042,7 +2094,18 @@
         <strong id="gpIslandText">آماده شنیدن بهتر</strong>
     </div>
 
-    <div class="footer-call"> <a id="alo-phoneIcon" href="tel:02122735588" class="alo-phone alo-green alo-show"> <div class="alo-ph-circle"></div> <div class="alo-ph-circle-fill"></div> <div class="alo-ph-img-circle"><i class="phone-icon fa-fa-phone"></i></div><span class="alo-ph-text">021-22735588</span> <span class="label">مشاوره رایگان</span> </a> </div>
+    <div class="gp-offline-mini" id="gpOfflineMini" role="status" aria-live="polite" aria-hidden="true">
+        <div class="gp-offline-mini-copy">
+            <span class="gp-offline-mini-icon" aria-hidden="true">!</span>
+            <div>
+                <strong id="gpOfflineMiniTitle">اینترنت قطع شده</strong>
+                <span id="gpOfflineMiniText">اگر صفحه‌ای باز نشد، نسخه آفلاین نمایش داده می‌شود.</span>
+            </div>
+        </div>
+        <button type="button" id="gpOfflineMiniRetry">بررسی مجدد</button>
+    </div>
+
+    <div class="footer-call"> <a id="alo-phoneIcon" href="tel:02122735588" class="alo-phone alo-green alo-show"> <div class="alo-ph-circle"></div> <div class="alo-ph-circle-fill"></div> <div class="alo-ph-img-circle"><i class="phone-icon fa-fa-phone"></i></div><span class="alo-ph-text">021-22735588</span></a></div>
     <div class="header-most-top">
         @*<p></p>*@
     </div>
@@ -1116,7 +2179,7 @@
                 </ul>
                 <!-- //header lists -->
                 <!-- search -->
-                <div class="agileits_search">
+                <div class="agileits_search gp-header-search-box">
                     <form action="/Product/Filter" class="form-search" method="get">
                         <button type="submit" class="btn btn-default">
                             <span class="gp-search-glyph" aria-hidden="true">⌕</span>
@@ -1260,7 +2323,7 @@
                                     <ul class="dropdown-menu agile_short_dropdown">
                                         @foreach (var category in gpProductCategories)
                                         {
-                                            <li><a title="@category.PersianName" href="/Home/Products/@category.Id">@category.PersianName</a></li>
+                                            <li><a title="@category.PersianName" href="/Product/All/@category.Id">@category.PersianName</a></li>
                                         }
                                     </ul>
                                 </li>
@@ -1269,11 +2332,23 @@
                                         <i class="fa fa-solid fa-bars"></i>
                                         برندهای سمعک
                                     </a>
-                                    <ul class="dropdown-menu agile_short_dropdown">
-                                        @foreach (var category in gpBrands)
-                                        {
-                                            <li><a title="@category.PersianName" href="/Home/Brands/@category.Id">@category.PersianName</a></li>
-                                        }
+                                    <ul class="dropdown-menu agile_short_dropdown gp-brand-dropdown-menu">
+                                        <li><a title="همه برندهای سمعک" href="/hearing-aid-brands">همه برندهای سمعک</a></li>
+                                        <li><a title="سمعک ویدکس | Widex" href="/hearing-aid-brands/widex">سمعک ویدکس</a></li>
+                                        <li><a title="سمعک سیگنیا | Signia" href="/hearing-aid-brands/signia">سمعک سیگنیا</a></li>
+                                        <li><a title="سمعک اتیکن | Oticon" href="/hearing-aid-brands/oticon">سمعک اتیکن</a></li>
+                                        <li><a title="سمعک فوناک | Phonak" href="/hearing-aid-brands/phonak">سمعک فوناک</a></li>
+                                        <li><a title="سمعک ریساند | ReSound" href="/hearing-aid-brands/resound">سمعک ریساند</a></li>
+                                        <li><a title="سمعک استارکی | Starkey" href="/hearing-aid-brands/starkey">سمعک استارکی</a></li>
+                                        <li><a title="سمعک برنافن | Bernafon" href="/hearing-aid-brands/bernafon">سمعک برنافن</a></li>
+                                        <li><a title="سمعک یونیترون | Unitron" href="/hearing-aid-brands/unitron">سمعک یونیترون</a></li>
+                                        <li><a title="سمعک هنساتون | Hansaton" href="/hearing-aid-brands/hansaton">سمعک هنساتون</a></li>
+                                        <li><a title="سمعک بلتون | Beltone" href="/hearing-aid-brands/beltone">سمعک بلتون</a></li>
+                                        <li><a title="سمعک ادیفون | Audifon" href="/hearing-aid-brands/audifon">سمعک ادیفون</a></li>
+                                        <li><a title="سمعک سونیک | Sonic" href="/hearing-aid-brands/sonic">سمعک سونیک</a></li>
+                                        <li><a title="سمعک اینترتون | Interton" href="/hearing-aid-brands/interton">سمعک اینترتون</a></li>
+                                        <li><a title="سمعک ریون | Rion" href="/hearing-aid-brands/rion">سمعک ریون</a></li>
+                                        <li><a title="سمعک کوسلجی | Coselgi" href="/hearing-aid-brands/coselgi">سمعک کوسلجی</a></li>
                                     </ul>
                                 </li>
                                 <li class="dropdown">
@@ -1359,35 +2434,38 @@
                     </div>
                 </div>
 
-                <div class="gp-footer-grid">
+                <div class="gp-footer-grid gp-footer-grid-v80">
                     <div class="gp-footer-column">
                         <h3>خدمات شنوایی</h3>
                         <ul>
-                            @foreach (var service in gpServiceCategories.Take(6))
-                            {
-                                <li><a title="@service.PersianName" href="/Home/Services/@service.Id">@service.PersianName</a></li>
-                            }
+                            <li><a href="/tehran/hearing-test" title="تست شنوایی در تهران">تست شنوایی در تهران</a></li>
+                            <li><a href="/tajrish/hearing-test" title="آزمایش شنوایی در تجریش">آزمایش شنوایی در تجریش</a></li>
+                            <li><a href="/tehran/hearing-clinic" title="کلینیک شنوایی در تهران">کلینیک شنوایی در تهران</a></li>
+                            <li><a href="/tehran/hearing-aid-adjustment" title="تنظیم سمعک در تهران">تنظیم سمعک</a></li>
+                            <li><a href="/tehran/hearing-aid" title="تجویز و خرید سمعک در تهران">تجویز سمعک</a></li>
                         </ul>
                     </div>
 
                     <div class="gp-footer-column">
                         <h3>انواع سمعک</h3>
                         <ul>
-                            @foreach (var category in gpFooterProductCategories)
+                            @foreach (var category in gpFooterProductCategories.Take(5))
                             {
-                                <li><a title="@category.PersianName" href="/Home/Products/@category.Id">@category.PersianName</a></li>
+                                <li><a title="@category.PersianName" href="/Product/All/@category.Id">@category.PersianName</a></li>
                             }
+                            <li><a href="/Product/All" title="مشاهده همه سمعک‌ها">همه سمعک‌ها</a></li>
                         </ul>
                     </div>
 
-                    <div class="gp-footer-column">
-                        <h3>دسترسی سریع</h3>
+                    <div class="gp-footer-column gp-footer-brand-column">
+                        <h3>برندهای سمعک</h3>
                         <ul>
-                            <li><a href="/">صفحه اصلی</a></li>
-                            <li><a href="/aboutus">درباره ما</a></li>
-                            <li><a href="/blog/all">مقالات شنوایی</a></li>
-                            <li><a href="/contactus">تماس با ما</a></li>
-                            <li><a href="/terms">قوانین و مقررات</a></li>
+                            <li><a href="/hearing-aid-brands" title="همه برندهای سمعک">همه برندهای سمعک</a></li>
+                            <li><a href="/hearing-aid-brands/widex" title="سمعک ویدکس">سمعک ویدکس</a></li>
+                            <li><a href="/hearing-aid-brands/signia" title="سمعک سیگنیا">سمعک سیگنیا</a></li>
+                            <li><a href="/hearing-aid-brands/oticon" title="سمعک اتیکن">سمعک اتیکن</a></li>
+                            <li><a href="/hearing-aid-brands/phonak" title="سمعک فوناک">سمعک فوناک</a></li>
+                            <li><a href="/hearing-aid-brands/resound" title="سمعک ریساند">سمعک ریساند</a></li>
                         </ul>
                     </div>
 
@@ -1423,6 +2501,27 @@
                     </div>
                 </div>
             </div>
+
+
+            <section class="gp-geo-entity-panel" aria-label="معرفی تخصصی کلینیک برای جستجوی محلی و هوش مصنوعی" itemscope itemtype="https://schema.org/MedicalBusiness">
+                <h2 itemprop="name">کلینیک شنوایی و سمعک شکوه تجریش؛ مرکز تخصصی تست شنوایی و سمعک در تهران</h2>
+                <p itemprop="description">
+                    @gpGeoEntityDescription
+                </p>
+                <div class="gp-geo-entity-keywords" aria-label="موضوعات تخصصی کلینیک">
+                    <a href="/tehran/hearing-test" title="تست شنوایی در تهران">تست شنوایی در تهران</a>
+                    <a href="/tajrish/hearing-test" title="آزمایش شنوایی در تجریش">آزمایش شنوایی در تجریش</a>
+                    <a href="/tehran/hearing-aid" title="خرید سمعک در تهران">خرید سمعک در تهران</a>
+                    <a href="/Product/All" title="سمعک نامرئی و دیجیتال">سمعک نامرئی و دیجیتال</a>
+                    <a href="/tehran/hearing-aid-adjustment" title="تنظیم سمعک در تهران">تنظیم سمعک</a>
+                    <a href="/tehran/hearing-aid" title="تجویز سمعک در تهران">تجویز سمعک</a>
+                    <a href="/Blog/All?q=وزوز گوش" title="مطالب وزوز گوش">وزوز گوش</a>
+                    <a href="/Blog/All?q=کم‌شنوایی سالمندان" title="مطالب کم‌شنوایی سالمندان">کم‌شنوایی سالمندان</a>
+                </div>
+                <meta itemprop="telephone" content="+982122735588" />
+                <meta itemprop="email" content="tajrishsamak@gmail.com" />
+                <meta itemprop="address" content="تهران، میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰" />
+            </section>
 
             <div class="gp-footer-legal-line">
                 <span>تمامی حقوق برای کلینیک شنوایی و سمعک شکوه تجریش محفوظ است.</span>
@@ -1560,53 +2659,79 @@
 
 
     <script>
+        /* V84: safe loader - never gets stuck after offline/online */
         (function () {
             var loader = document.getElementById("gpPageLoader");
             var lottieBox = document.getElementById("gpLottieLoader");
-            var minVisibleTime = 450;
+            var minVisibleTime = 350;
             var showAt = 0;
+            var hardHideTimer = null;
 
-            function showLoader() {
+            function hardHideLoader() {
                 if (!loader) return;
-                showAt = Date.now();
-                loader.classList.add("is-visible");
-                loader.setAttribute("aria-hidden", "false");
+                loader.classList.remove("is-visible");
+                loader.classList.add("gp-force-hidden");
+                loader.setAttribute("aria-hidden", "true");
+                if (hardHideTimer) {
+                    window.clearTimeout(hardHideTimer);
+                    hardHideTimer = null;
+                }
             }
 
-            function hideLoader() {
+            function softHideLoader() {
                 if (!loader) return;
                 var elapsed = Date.now() - showAt;
                 var delay = Math.max(0, minVisibleTime - elapsed);
 
                 window.setTimeout(function () {
+                    if (!loader) return;
                     loader.classList.remove("is-visible");
+                    loader.classList.add("gp-force-hidden");
                     loader.setAttribute("aria-hidden", "true");
                 }, delay);
             }
 
-            window.gpShowPageLoader = showLoader;
-            window.gpHidePageLoader = hideLoader;
+            function showLoader() {
+                if (!loader) return;
 
-            window.addEventListener("load", function () {
-                if (window.lottie && lottieBox) {
-                    window.lottie.loadAnimation({
-                        container: lottieBox,
-                        renderer: "svg",
-                        loop: true,
-                        autoplay: true,
-                        path: "@Url.Content("~/content/lottie/tajrish-loader.lottie.json?v=" + gpCacheVersion)"
-                    });
+                if (!navigator.onLine) {
+                    hardHideLoader();
+                    return;
                 }
 
-                window.setTimeout(hideLoader, 350);
+                showAt = Date.now();
+                loader.classList.remove("gp-force-hidden");
+                loader.classList.add("is-visible");
+                loader.setAttribute("aria-hidden", "false");
+
+                if (hardHideTimer) {
+                    window.clearTimeout(hardHideTimer);
+                }
+
+                hardHideTimer = window.setTimeout(function () {
+                    hardHideLoader();
+                }, 4500);
+            }
+
+            window.gpShowPageLoader = showLoader;
+            window.gpHidePageLoader = hardHideLoader;
+
+            window.addEventListener("load", function () {
+                window.setTimeout(hardHideLoader, 250);
             });
 
             document.addEventListener("DOMContentLoaded", function () {
-                showLoader();
+                if (navigator.onLine) {
+                    showLoader();
+                } else {
+                    hardHideLoader();
+                }
+
+                window.setTimeout(hardHideLoader, 2500);
 
                 var links = document.querySelectorAll("a[href]");
                 for (var i = 0; i < links.length; i++) {
-                    links[i].addEventListener("click", function (event) {
+                    links[i].addEventListener("click", function () {
                         var href = this.getAttribute("href");
 
                         if (!href ||
@@ -1626,11 +2751,27 @@
                         showLoader();
                     });
                 }
-
-                window.addEventListener("pageshow", function () {
-                    hideLoader();
-                });
             });
+
+            window.addEventListener("pageshow", function () {
+                hardHideLoader();
+            });
+
+            window.addEventListener("online", function () {
+                hardHideLoader();
+            });
+
+            window.addEventListener("offline", function () {
+                hardHideLoader();
+            });
+
+            document.addEventListener("visibilitychange", function () {
+                if (!document.hidden) {
+                    window.setTimeout(hardHideLoader, 250);
+                }
+            });
+
+            window.setTimeout(hardHideLoader, 6000);
         })();
     </script>
 
@@ -1763,6 +2904,108 @@
         })();
     </script>
     <script src="//translate.google.com/translate_a/element.js?cb=gpGoogleTranslateInit" defer></script>
+
+
+    <script>
+        /* V82: service worker + live offline notice */
+        (function () {
+            var offlineMini = document.getElementById("gpOfflineMini");
+            var offlineTitle = document.getElementById("gpOfflineMiniTitle");
+            var offlineText = document.getElementById("gpOfflineMiniText");
+            var retryBtn = document.getElementById("gpOfflineMiniRetry");
+            var hideTimer = null;
+
+            function showMini(title, text, autoHide) {
+                if (!offlineMini) return;
+
+                if (offlineTitle) offlineTitle.textContent = title;
+                if (offlineText) offlineText.textContent = text;
+
+                offlineMini.classList.add("is-visible");
+                offlineMini.setAttribute("aria-hidden", "false");
+
+                if (hideTimer) window.clearTimeout(hideTimer);
+                if (autoHide) {
+                    hideTimer = window.setTimeout(function () {
+                        offlineMini.classList.remove("is-visible");
+                        offlineMini.setAttribute("aria-hidden", "true");
+                    }, 3500);
+                }
+            }
+
+            function hideMini() {
+                if (!offlineMini) return;
+                offlineMini.classList.remove("is-visible");
+                offlineMini.setAttribute("aria-hidden", "true");
+            }
+
+            function setRetryChecking(isChecking) {
+                if (!retryBtn) return;
+
+                if (isChecking) {
+                    retryBtn.classList.add("is-checking");
+                    retryBtn.setAttribute("aria-busy", "true");
+                    retryBtn.textContent = "در حال بررسی";
+                } else {
+                    retryBtn.classList.remove("is-checking");
+                    retryBtn.removeAttribute("aria-busy");
+                    retryBtn.textContent = "بررسی مجدد";
+                }
+            }
+
+            function checkConnection() {
+                setRetryChecking(true);
+
+                if (!navigator.onLine) {
+                    window.setTimeout(function () {
+                        showMini("هنوز اینترنت قطع است", " اتصال را بررسی کنید .", false);
+                        setRetryChecking(false);
+                        if (window.gpHidePageLoader) window.gpHidePageLoader();
+                    }, 650);
+                    return;
+                }
+
+                fetch("/", { method: "HEAD", cache: "no-store" })
+                    .then(function () {
+                        window.setTimeout(function () {
+                            showMini("اتصال برگشت", "همه‌چیز دوباره آماده است.", true);
+                            setRetryChecking(false);
+                            if (window.gpHidePageLoader) window.gpHidePageLoader();
+                        }, 650);
+                    })
+                    .catch(function () {
+                        window.setTimeout(function () {
+                            showMini("اتصال ناپایدار است", "دوباره بررسی کنید؛ شاید شبکه هنوز کامل وصل نشده.", false);
+                            setRetryChecking(false);
+                            if (window.gpHidePageLoader) window.gpHidePageLoader();
+                        }, 650);
+                    });
+            }
+
+            window.addEventListener("offline", function () {
+                showMini("اینترنت قطع شده", "اگر صفحه‌ای باز نشد، نسخه آفلاین نمایش داده می‌شود.", false);
+            });
+
+            window.addEventListener("online", function () {
+                checkConnection();
+            });
+
+            if (retryBtn) {
+                retryBtn.addEventListener("click", checkConnection);
+            }
+
+            if (!navigator.onLine) {
+                showMini("اینترنت قطع شده", "اگر صفحه‌ای باز نشد، نسخه آفلاین نمایش داده می‌شود.", false);
+            }
+
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", function () {
+                    navigator.serviceWorker.register("/sw.js")
+                        .catch(function () { });
+                });
+            }
+        })();
+    </script>
 
     <script src="@Url.Content("~/js/gp-tajrish-modern.js?v=" + gpCacheVersion)" defer></script>
 </body>

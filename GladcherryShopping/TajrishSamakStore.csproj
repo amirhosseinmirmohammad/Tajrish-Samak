@@ -229,9 +229,11 @@
     <Compile Include="Controllers\AboutUsController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BlogController.cs" />
+    <Compile Include="Controllers\BrandController.cs" />
     <Compile Include="Controllers\ContactUsController.cs" />
     <Compile Include="Controllers\FaqController.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
+    <Compile Include="Controllers\GeoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\invoiceController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -462,8 +464,22 @@
     <Content Include="Content\css\owl.carousel.css" />
     <Content Include="Content\css\responsive.css" />
     <Content Include="Content\Gallery\style.css" />
+    <Content Include="Content\images\app-icon-original-1024.png" />
     <Content Include="Content\images\clinic-slider-piano-lite.mp4" />
     <Content Include="Content\images\clinic-slider-piano-mobile.mp4" />
+    <Content Include="Content\images\icon-144x144.png" />
+    <Content Include="Content\images\icon-152x152.png" />
+    <Content Include="Content\images\icon-16x16.png" />
+    <Content Include="Content\images\icon-180x180.png" />
+    <Content Include="Content\images\icon-192x192.png" />
+    <Content Include="Content\images\icon-256x256.png" />
+    <Content Include="Content\images\icon-32x32.png" />
+    <Content Include="Content\images\icon-384x384.png" />
+    <Content Include="Content\images\icon-48x48.png" />
+    <Content Include="Content\images\icon-512x512.png" />
+    <Content Include="Content\images\icon-72x72.png" />
+    <Content Include="Content\images\icon-96x96.png" />
+    <Content Include="Content\images\icon-maskable-512x512.png" />
     <Content Include="Content\images\slider\0cutyu2y.f4k.jpg" />
     <Content Include="Content\images\slider\apgh5z4i.hxg.jpeg" />
     <Content Include="Content\images\slider\cv04favl.azq.png" />
@@ -841,7 +857,9 @@
     <Content Include="js\move-top.js" />
     <Content Include="js\SmoothScroll.min.js" />
     <Content Include="js\wow.min.js" />
+    <Content Include="llms.txt" />
     <Content Include="offline.html" />
+    <Content Include="robots.txt" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Administrator\Views\web.config" />
@@ -1072,7 +1090,12 @@
     <Content Include="Content\lottie\tajrish-loader.lottie.json" />
     <Content Include="Content\images\clinic-slider-piano-poster.webp" />
     <Content Include="Content\images\logo_purple.webp" />
+    <Content Include="Content\images\icon-192x192.webp" />
+    <Content Include="Content\images\icon-512x512.webp" />
+    <Content Include="Content\images\icon-maskable-512x512.webp" />
+    <Content Include="checks.json" />
     <None Include="manifest.json" />
+    <Content Include="manifest.webmanifest" />
     <None Include="Properties\PublishProfiles\GladCherry Co.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\calendar-fa.js" />
@@ -1171,6 +1194,8 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <Content Include="service-worker.js" />
+    <Content Include="sw.js" />
+    <Content Include="Views\Brand\Index.cshtml.txt" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1245,6 +1270,8 @@
     <Content Include="Views\Home\Blogs.cshtml" />
     <Content Include="Views\Home\Services.cshtml" />
     <Content Include="Views\Service\Index.cshtml" />
+    <Content Include="Views\Geo\GeoLanding.cshtml" />
+    <Content Include="Views\Brand\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
