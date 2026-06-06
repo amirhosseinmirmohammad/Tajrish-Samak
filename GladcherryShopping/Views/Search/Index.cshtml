@@ -1,0 +1,467 @@
+﻿@using System.Web
+@model DataLayer.ViewModels.SiteSearchViewModel
+@{
+    var gpQuery = Model != null && Model.Query != null ? Model.Query : "";
+    var gpActiveType = Model != null && Model.ActiveType != null ? Model.ActiveType : "all";
+    var gpTitle = string.IsNullOrWhiteSpace(gpQuery)
+        ? "جستجوی سایت | کلینیک شنوایی و سمعک شکوه تجریش"
+        : "جستجو برای " + gpQuery + " | کلینیک شنوایی و سمعک شکوه تجریش";
+
+    ViewBag.Title = gpTitle;
+    ViewBag.CanonicalUrl = "https://tajrish-samak.ir/search";
+    ViewBag.MetaDescription = "جستجو در سمعک‌ها، خدمات، مقالات، برندها و صفحات محله‌ای کلینیک شنوایی و سمعک شکوه تجریش.";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+    <meta name="description" content="@ViewBag.MetaDescription" />
+    <link rel="canonical" href="https://tajrish-samak.ir/search" />
+    <meta name="robots" content="noindex, follow, max-image-preview:large, max-snippet:-1" />
+    <meta property="og:title" content="@gpTitle" />
+    <meta property="og:description" content="@ViewBag.MetaDescription" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tajrish-samak.ir/search" />
+    <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+}
+
+@section Styles{
+    <style id="gp-v86-global-search">
+        .gp-search-v86 {
+            direction: rtl;
+            padding: 26px 0 46px;
+        }
+
+        .gp-search-v86-hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 36px;
+            padding: clamp(24px, 4vw, 48px);
+            background: radial-gradient(circle at 12% 14%, rgba(216,245,18,.22), transparent 26%), radial-gradient(circle at 92% 86%, rgba(11,166,184,.20), transparent 28%), linear-gradient(135deg, #4b1684, #920ab6 54%, #e10b79);
+            color: #fff;
+            box-shadow: 0 28px 78px rgba(74,18,107,.18);
+            isolation: isolate;
+        }
+
+            .gp-search-v86-hero::before {
+                content: "";
+                position: absolute;
+                width: 320px;
+                height: 320px;
+                right: -130px;
+                top: -150px;
+                border-radius: 999px;
+                background: rgba(255,255,255,.13);
+                animation: gpSearchBlobV86 10s ease-in-out infinite alternate;
+                z-index: -1;
+            }
+
+        .gp-search-v86-kicker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 36px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.22);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 1000;
+        }
+
+        .gp-search-v86-hero h1 {
+            margin: 14px 0 10px !important;
+            color: #fff !important;
+            font-size: clamp(30px, 4.6vw, 58px) !important;
+            font-weight: 1000 !important;
+            line-height: 1.45 !important;
+        }
+
+        .gp-search-v86-hero p {
+            max-width: 780px;
+            margin: 0 !important;
+            color: rgba(255,255,255,.88) !important;
+            font-size: 15px !important;
+            font-weight: 850 !important;
+            line-height: 2.1 !important;
+        }
+
+        .gp-search-v86-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            max-width: 850px;
+            margin-top: 22px;
+            padding: 8px;
+            border-radius: 24px;
+            background: rgba(255,255,255,.18);
+            border: 1px solid rgba(255,255,255,.20);
+            backdrop-filter: blur(14px);
+        }
+
+            .gp-search-v86-form input {
+                min-height: 52px;
+                border: 0;
+                outline: 0;
+                border-radius: 18px;
+                background: #fff;
+                color: #20142d;
+                padding: 0 16px;
+                font-size: 14px;
+                font-weight: 900;
+                text-align: right;
+            }
+
+            .gp-search-v86-form button {
+                min-height: 52px;
+                border: 0;
+                border-radius: 18px;
+                padding: 0 24px;
+                background: #d8f512;
+                color: #20142d;
+                font-size: 13px;
+                font-weight: 1000;
+                cursor: pointer;
+                box-shadow: 0 16px 30px rgba(0,0,0,.12);
+            }
+
+        .gp-search-v86-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 18px 0 20px;
+        }
+
+            .gp-search-v86-tabs a {
+                min-height: 40px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                padding: 0 14px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.075);
+                border: 1px solid rgba(75,22,132,.08);
+                color: #6420a0 !important;
+                text-decoration: none !important;
+                font-size: 12px;
+                font-weight: 1000;
+            }
+
+                .gp-search-v86-tabs a.is-active {
+                    background: linear-gradient(135deg, #4b1684, #920ab6);
+                    color: #fff !important;
+                    box-shadow: 0 14px 32px rgba(146,10,182,.15);
+                }
+
+        .gp-search-v86-body {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 285px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .gp-search-v86-results,
+        .gp-search-v86-side {
+            border-radius: 30px;
+            background: rgba(255,255,255,.94);
+            border: 1px solid rgba(75,22,132,.09);
+            box-shadow: 0 22px 58px rgba(74,18,107,.08);
+            padding: clamp(16px, 2.2vw, 24px);
+        }
+
+        .gp-search-v86-summary {
+            margin-bottom: 16px;
+            color: rgba(32,20,45,.70);
+            font-weight: 900;
+            line-height: 2;
+        }
+
+        .gp-search-v86-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .gp-search-v86-item {
+            display: grid;
+            grid-template-columns: 74px minmax(0, 1fr);
+            gap: 12px;
+            align-items: center;
+            padding: 12px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #fff, #fbf7ff);
+            border: 1px solid rgba(75,22,132,.08);
+            text-decoration: none !important;
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+            .gp-search-v86-item:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 18px 42px rgba(74,18,107,.10);
+            }
+
+        .gp-search-v86-thumb {
+            width: 74px;
+            height: 74px;
+            display: grid;
+            place-items: center;
+            border-radius: 20px;
+            background: radial-gradient(circle at 15% 10%, rgba(216,245,18,.18), transparent 30%), linear-gradient(135deg, #4b1684, #920ab6);
+            color: #fff;
+            font-size: 22px;
+            font-weight: 1000;
+            overflow: hidden;
+        }
+
+            .gp-search-v86-thumb img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                background: #fff;
+            }
+
+        .gp-search-v86-content {
+            min-width: 0;
+        }
+
+        .gp-search-v86-type {
+            display: inline-flex;
+            min-height: 28px;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: rgba(146,10,182,.08);
+            color: #6420a0;
+            font-size: 11px;
+            font-weight: 1000;
+        }
+
+        .gp-search-v86-content h2 {
+            margin: 6px 0 4px !important;
+            color: #20142d !important;
+            font-size: 17px !important;
+            font-weight: 1000 !important;
+            line-height: 1.8 !important;
+        }
+
+        .gp-search-v86-content p {
+            margin: 0 !important;
+            color: rgba(32,20,45,.66) !important;
+            font-size: 13px !important;
+            font-weight: 850 !important;
+            line-height: 2 !important;
+        }
+
+        .gp-search-v86-url {
+            display: block;
+            margin-top: 7px;
+            color: rgba(75,22,132,.72);
+            direction: ltr;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 900;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .gp-search-v86-empty {
+            padding: 30px;
+            border-radius: 24px;
+            background: rgba(146,10,182,.06);
+            color: #20142d;
+            font-weight: 950;
+            line-height: 2;
+            text-align: center;
+        }
+
+        .gp-search-v86-side h3 {
+            margin: 0 0 12px !important;
+            color: #20142d !important;
+            font-size: 17px !important;
+            font-weight: 1000 !important;
+            line-height: 1.8 !important;
+        }
+
+        .gp-search-v86-quick {
+            display: grid;
+            gap: 8px;
+        }
+
+            .gp-search-v86-quick a {
+                min-height: 42px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 12px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.075);
+                color: #6420a0 !important;
+                text-decoration: none !important;
+                font-size: 12px;
+                font-weight: 1000;
+                text-align: center;
+            }
+
+        @@keyframes gpSearchBlobV86 {
+            to {
+                transform: translate3d(-24px, 20px, 0) scale(1.08);
+            }
+        }
+
+        @@media(max-width: 992px) {
+            .gp-search-v86-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media(max-width: 640px) {
+            .gp-search-v86-form {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-search-v86-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .gp-search-v86-thumb {
+                margin: 0 auto;
+            }
+
+            .gp-search-v86-url {
+                text-align: center;
+            }
+        }
+
+        html.gp-dark-mode .gp-search-v86-results,
+        html.gp-dark-mode .gp-search-v86-side {
+            background: rgba(25,14,38,.94);
+            border-color: rgba(255,255,255,.10);
+        }
+
+            html.gp-dark-mode .gp-search-v86-summary,
+            html.gp-dark-mode .gp-search-v86-content h2,
+            html.gp-dark-mode .gp-search-v86-side h3,
+            html.gp-dark-mode .gp-search-v86-empty {
+                color: #fff !important;
+            }
+
+        html.gp-dark-mode .gp-search-v86-content p {
+            color: rgba(255,255,255,.70) !important;
+        }
+
+        html.gp-dark-mode .gp-search-v86-item,
+        html.gp-dark-mode .gp-search-v86-empty {
+            background: rgba(255,255,255,.075);
+            border-color: rgba(255,255,255,.10);
+        }
+
+        html.gp-dark-mode .gp-search-v86-tabs a,
+        html.gp-dark-mode .gp-search-v86-quick a,
+        html.gp-dark-mode .gp-search-v86-type {
+            background: rgba(255,255,255,.075);
+            border-color: rgba(255,255,255,.10);
+            color: #fff !important;
+        }
+    </style>
+}
+
+<section class="gp-search-v86" aria-label="جستجوی سایت">
+    <div class="container">
+        <section class="gp-search-v86-hero">
+            <span class="gp-search-v86-kicker">جستجوی کامل سایت</span>
+            <h1>دنبال چه چیزی هستید؟</h1>
+            <p>
+                اینجا فقط محصول‌ها را نمی‌گردد؛ محصولات، مقالات، خدمات، برندهای سمعک، صفحات محله‌ای و صفحات مهم سایت را با هم بررسی می‌کند.
+            </p>
+
+            <form class="gp-search-v86-form" action="/search" method="get">
+                <input type="search" name="q" value="@gpQuery" placeholder="مثلاً بهترین کلینیک شنوایی شمال تهران، قیمت سمعک سال ۱۴۰۵، باتری سمعک تجریش..." />
+                <button type="submit">جستجو در کل سایت</button>
+            </form>
+        </section>
+
+        @{
+            string allClass = gpActiveType == "all" ? "is-active" : "";
+            string productClass = gpActiveType == "product" ? "is-active" : "";
+            string geoClass = gpActiveType == "geo" ? "is-active" : "";
+            string serviceClass = gpActiveType == "service" ? "is-active" : "";
+            string blogClass = gpActiveType == "blog" ? "is-active" : "";
+            string brandClass = gpActiveType == "brand" ? "is-active" : "";
+            string pageClass = gpActiveType == "page" ? "is-active" : "";
+        }
+
+        <nav class="gp-search-v86-tabs" aria-label="فیلتر نوع نتیجه">
+            <a class="@allClass" href="/search?q=@HttpUtility.UrlEncode(gpQuery)">همه <span>@Model.TotalCount</span></a>
+            <a class="@geoClass" href="/search?q=@HttpUtility.UrlEncode(gpQuery)&type=geo">محله‌ای <span>@Model.GeoCount</span></a>
+            <a class="@productClass" href="/search?q=@HttpUtility.UrlEncode(gpQuery)&type=product">محصول <span>@Model.ProductCount</span></a>
+            <a class="@serviceClass" href="/search?q=@HttpUtility.UrlEncode(gpQuery)&type=service">خدمت <span>@Model.ServiceCount</span></a>
+            <a class="@blogClass" href="/search?q=@HttpUtility.UrlEncode(gpQuery)&type=blog">مقاله <span>@Model.BlogCount</span></a>
+            <a class="@brandClass" href="/search?q=@HttpUtility.UrlEncode(gpQuery)&type=brand">برند <span>@Model.BrandCount</span></a>
+            <a class="@pageClass" href="/search?q=@HttpUtility.UrlEncode(gpQuery)&type=page">صفحه <span>@Model.PageCount</span></a>
+        </nav>
+
+        <div class="gp-search-v86-body">
+            <main class="gp-search-v86-results">
+                <div class="gp-search-v86-summary">
+                    @if (string.IsNullOrWhiteSpace(gpQuery))
+                    {
+                        <span>چند مسیر مهم و پرجستجو برای شروع نمایش داده شده است.</span>
+                    }
+                    else
+                    {
+                        <span>برای «@gpQuery» تعداد @Model.TotalCount نتیجه مرتبط پیدا شد.</span>
+                    }
+                </div>
+
+                @if (Model.Results != null && Model.Results.Count > 0)
+                {
+                    <div class="gp-search-v86-list">
+                        @foreach (var item in Model.Results)
+                        {
+                            <a class="gp-search-v86-item" href="@item.Url" title="@item.Title">
+                                <span class="gp-search-v86-thumb">
+                                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" decoding="async" />
+                                    }
+                                    else
+                                    {
+                                        @item.TypeName.Substring(0, 1)
+                                    }
+                                </span>
+                                <span class="gp-search-v86-content">
+                                    <span class="gp-search-v86-type">@item.TypeName</span>
+                                    <h2>@item.Title</h2>
+                                    <p>@item.Description</p>
+                                    <span class="gp-search-v86-url">@item.Url</span>
+                                </span>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="gp-search-v86-empty">
+                        نتیجه‌ای پیدا نشد. عبارت کوتاه‌تر یا عمومی‌تر بزنید؛ مثلاً «سمعک»، «تست شنوایی»، «تجریش» یا «قیمت سمعک».
+                    </div>
+                }
+            </main>
+
+            <aside class="gp-search-v86-side">
+                <h3>جستجوهای سریع</h3>
+                <div class="gp-search-v86-quick">
+                    <a href="/search?q=بهترین کلینیک شنوایی شمال تهران">بهترین کلینیک شنوایی شمال تهران</a>
+                    <a href="/search?q=قیمت سمعک سال ۱۴۰۵">قیمت سمعک سال ۱۴۰۵</a>
+                    <a href="/search?q=باتری سمعک تجریش">باتری سمعک تجریش</a>
+                    <a href="/search?q=سمعک دولتی تهران">سمعک دولتی تهران</a>
+                    <a href="/search?q=تعمیر سمعک پاسداران">تعمیر سمعک پاسداران</a>
+                    <a href="/search?q=قیمت سمعک فوناک">قیمت سمعک فوناک</a>
+                    <a href="/search?q=سمعک با بیمه">سمعک با بیمه</a>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>

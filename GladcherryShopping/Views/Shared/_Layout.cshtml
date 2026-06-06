@@ -2,11 +2,11 @@
 @{
     GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();
 
-    var gpCacheVersion = "20260604-tajrish-v87-ear-only-loader";
+    var gpCacheVersion = "20260606-tajrish-global-search-v86";
     var gpBaseUrl = "https://tajrish-samak.ir";
     var gpLogoUrl = gpBaseUrl + Url.Content("~/images/logo_purple.webp");
     var gpCurrentUrl = gpBaseUrl + Request.Path;
-    var gpGeoEntityDescription = "کلینیک شنوایی و سمعک شکوه تجریش یک مرکز تخصصی شنوایی‌شناسی در تهران، محدوده تجریش است که خدمات ارزیابی و تست شنوایی، آزمایش شنوایی، مشاوره خرید سمعک، تجویز سمعک، تنظیم سمعک، پیگیری پس از تجویز، بررسی کم‌شنوایی و مشاوره مرتبط با وزوز گوش را ارائه می‌دهد. این کلینیک به مراجعان تهران، شمیرانات، تجریش، قیطریه، نیاوران، زعفرانیه، الهیه، فرمانیه و مناطق اطراف خدمات شنوایی ارائه می‌کند.";
+    var gpGeoEntityDescription = "کلینیک شنوایی و سمعک شکوه تجریش یک مرکز تخصصی شنوایی‌شناسی در تهران، محدوده تجریش و شمال تهران است که خدمات تست شنوایی، آزمایش شنوایی، مشاوره خرید سمعک، تجویز و تنظیم سمعک، تعمیر سمعک، باتری سمعک، قالب سمعک، سمعک دولتی، سمعک رایگان بهزیستی، خدمات حمایتی، پیگیری پس از تجویز و مشاوره مرتبط با وزوز گوش را ارائه می‌دهد. این کلینیک برای مراجعان تهران، شمیرانات، تجریش، نیاوران، قیطریه، زعفرانیه، الهیه، فرمانیه و محله‌های شمال تهران قابل دسترسی است.";
 
     // برای سرعت بیشتر، داده‌های منو و فوتر فقط یک بار خوانده می‌شوند.
     var gpProductCategories = content.Categories
@@ -66,8 +66,8 @@
     <meta name="geo.placename" content="Tehran, Tajrish" />
     <meta name="geo.position" content="35.806270;51.430387" />
     <meta name="ICBM" content="35.806270, 51.430387" />
-    <meta name="coverage" content="Tehran, Tajrish, Shemiranat, Niavaran, Qeytarieh, Zafaraniyeh, Elahiyeh, Farmanieh" />
-    <meta name="subject" content="کلینیک شنوایی، تست شنوایی، آزمایش شنوایی، خرید سمعک، تجویز سمعک، تنظیم سمعک در تهران و تجریش" />
+    <meta name="coverage" content="Tehran, North Tehran, Tajrish, Shemiranat, Niavaran, Qeytarieh, Zafaraniyeh, Elahiyeh, Farmanieh, Pasdaran, Aghdasiyeh" />
+    <meta name="subject" content="بهترین کلینیک شنوایی تهران، بهترین کلینیک شنوایی شمال تهران، تست شنوایی، آزمایش شنوایی، خرید سمعک، تجویز سمعک، تنظیم سمعک در تهران و تجریش" />
     <meta name="audience" content="افراد دارای کم‌شنوایی، سالمندان، کودکان، خانواده‌ها، متقاضیان تست شنوایی و مشاوره سمعک در تهران" />
     <meta name="AI-content-declaration" content="Human-reviewed local medical service information for hearing test, audiology clinic and hearing aid consultation in Tehran." />
 
@@ -166,7 +166,7 @@
           },
           "potentialAction": {
             "@@type": "SearchAction",
-            "target": "https://tajrish-samak.ir/Product/Filter?Title={search_term_string}",
+            "target": "https://tajrish-samak.ir/search?q={search_term_string}",
             "query-input": "required name=search_term_string"
           }
         }
@@ -220,7 +220,11 @@
                 { "@@type": "Place", "name": "قیطریه" },
                 { "@@type": "Place", "name": "زعفرانیه" },
                 { "@@type": "Place", "name": "الهیه" },
-                { "@@type": "Place", "name": "فرمانیه" }
+                { "@@type": "Place", "name": "فرمانیه" },
+                { "@@type": "Place", "name": "پاسداران" },
+                { "@@type": "Place", "name": "اقدسیه" },
+                { "@@type": "Place", "name": "ولنجک" },
+                { "@@type": "Place", "name": "شمال تهران" }
               ],
               "medicalSpecialty": [
                 "Audiology",
@@ -242,7 +246,12 @@
                 "سمعک داخل گوشی",
                 "وزوز گوش",
                 "کم شنوایی سالمندان",
-                "شنوایی کودکان"
+                "شنوایی کودکان",
+                "بهترین کلینیک شنوایی تهران",
+                "بهترین کلینیک شنوایی شمال تهران",
+                "بهترین مرکز سمعک تهران",
+                "خدمات سمعک در شمال تهران",
+                "قیمت سمعک سال ۱۴۰۵"
               ],
               "sameAs": [
                 "https://www.instagram.com/tajrishsamak/",
@@ -269,39 +278,21 @@
                 "@@type": "OfferCatalog",
                 "name": "خدمات تخصصی شنوایی و سمعک شکوه تجریش",
                 "itemListElement": [
-                  {
-                    "@@type": "Offer",
-                    "itemOffered": {
-                      "@@type": "MedicalProcedure",
-                      "name": "تست شنوایی و ارزیابی شنوایی در تهران",
-                      "procedureType": "Audiology assessment",
-                      "bodyLocation": "Ear"
-                    }
-                  },
-                  {
-                    "@@type": "Offer",
-                    "itemOffered": {
-                      "@@type": "Service",
-                      "name": "مشاوره خرید سمعک در تهران",
-                      "serviceType": "Hearing aid consultation"
-                    }
-                  },
-                  {
-                    "@@type": "Offer",
-                    "itemOffered": {
-                      "@@type": "Service",
-                      "name": "تجویز و تنظیم سمعک",
-                      "serviceType": "Hearing aid fitting and adjustment"
-                    }
-                  },
-                  {
-                    "@@type": "Offer",
-                    "itemOffered": {
-                      "@@type": "Service",
-                      "name": "مشاوره کم‌شنوایی و وزوز گوش",
-                      "serviceType": "Hearing care consultation"
-                    }
-                  }
+                  { "@@type": "Offer", "itemOffered": { "@@type": "MedicalProcedure", "name": "تست شنوایی و ارزیابی شنوایی در تهران", "procedureType": "Audiology assessment", "bodyLocation": "Ear", "url": "https://tajrish-samak.ir/tehran/hearing-test" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "MedicalProcedure", "name": "آزمایش شنوایی و ادیومتری در شمال تهران", "procedureType": "Audiometry", "bodyLocation": "Ear", "url": "https://tajrish-samak.ir/north-tehran/hearing-test" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "مشاوره خرید سمعک در تهران", "serviceType": "Hearing aid consultation", "url": "https://tajrish-samak.ir/tehran/hearing-aid" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "تجویز و تنظیم تخصصی سمعک", "serviceType": "Hearing aid fitting and adjustment", "url": "https://tajrish-samak.ir/tehran/hearing-aid-adjustment" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "ویزیت و مشاوره سمعک در منزل", "serviceType": "In-home hearing aid consultation", "url": "https://tajrish-samak.ir/north-tehran/home-visit-hearing-aid" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "تعمیر و سرویس سمعک", "serviceType": "Hearing aid repair", "url": "https://tajrish-samak.ir/tehran/hearing-aid-repair" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "باتری، فیلتر، شلنگ، تیوب و هوک سمعک", "serviceType": "Hearing aid accessories", "url": "https://tajrish-samak.ir/tehran/hearing-aid-battery" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "قالب سمعک، قالب سیلیکونی و تعویض قالب", "serviceType": "Ear mold service", "url": "https://tajrish-samak.ir/tehran/earmold" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "راهنمای قیمت سمعک سال ۱۴۰۵", "serviceType": "Hearing aid price consultation", "url": "https://tajrish-samak.ir/tehran/hearing-aid-price-1405" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "سمعک با بیمه، تعرفه بیمه و شرایط پرداخت", "serviceType": "Insurance and payment consultation", "url": "https://tajrish-samak.ir/tehran/insurance-hearing-aid" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "راهنمای سمعک دولتی و مسیرهای حمایتی", "serviceType": "Government hearing aid support guidance", "url": "https://tajrish-samak.ir/tehran/government-hearing-aid" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "راهنمای سمعک رایگان بهزیستی", "serviceType": "Behzisti hearing aid support guidance", "url": "https://tajrish-samak.ir/tehran/free-behzisti-hearing-aid" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "حمایت ناشنوایان و کم‌شنوایان", "serviceType": "Deaf and hard-of-hearing support consultation", "url": "https://tajrish-samak.ir/tehran/deaf-support" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "مشاوره وزوز گوش و کم‌شنوایی", "serviceType": "Tinnitus and hearing care consultation", "url": "https://tajrish-samak.ir/tehran/tinnitus-hearing-aid" } },
+                  { "@@type": "Offer", "itemOffered": { "@@type": "Service", "name": "راهنمای انتخاب بهترین کلینیک شنوایی در تهران و شمال تهران", "serviceType": "Audiology clinic consultation", "url": "https://tajrish-samak.ir/north-tehran/best-audiology-clinic" } }
                 ]
               }
             },
@@ -318,7 +309,7 @@
               "potentialAction": [
                 {
                   "@@type": "SearchAction",
-                  "target": "https://tajrish-samak.ir/Product/All?q={search_term_string}",
+                  "target": "https://tajrish-samak.ir/search?q={search_term_string}",
                   "query-input": "required name=search_term_string"
                 }
               ]
@@ -474,11 +465,11 @@
             transition: opacity .24s ease, visibility .24s ease;
         }
 
-        .gp-page-loader.is-visible {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
+            .gp-page-loader.is-visible {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
 
         .gp-loader-card {
             width: min(270px, 76vw);
@@ -504,30 +495,28 @@
             filter: drop-shadow(0 18px 30px rgba(146, 10, 182, .16));
         }
 
-        #gpLottieLoader::before {
-            content: "";
-            width: 126px;
-            height: 126px;
-            display: block;
-            border-radius: 36px;
-            background:
-                radial-gradient(circle at 72% 22%, rgba(216,245,18,.95) 0 7%, transparent 8%),
-                linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.70));
-            box-shadow: 0 22px 44px rgba(146,10,182,.20), inset 0 0 0 1px rgba(146,10,182,.10);
-            animation: gpEarCardFloat 1.55s ease-in-out infinite;
-        }
+            #gpLottieLoader::before {
+                content: "";
+                width: 126px;
+                height: 126px;
+                display: block;
+                border-radius: 36px;
+                background: radial-gradient(circle at 72% 22%, rgba(216,245,18,.95) 0 7%, transparent 8%), linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.70));
+                box-shadow: 0 22px 44px rgba(146,10,182,.20), inset 0 0 0 1px rgba(146,10,182,.10);
+                animation: gpEarCardFloat 1.55s ease-in-out infinite;
+            }
 
-        #gpLottieLoader::after {
-            content: "";
-            position: absolute;
-            width: 76px;
-            height: 76px;
-            border-radius: 999px;
-            border: 10px solid #920ab6;
-            border-left-color: transparent;
-            transform: rotate(-24deg);
-            animation: gpEarPulse 1.55s ease-in-out infinite;
-        }
+            #gpLottieLoader::after {
+                content: "";
+                position: absolute;
+                width: 76px;
+                height: 76px;
+                border-radius: 999px;
+                border: 10px solid #920ab6;
+                border-left-color: transparent;
+                transform: rotate(-24deg);
+                animation: gpEarPulse 1.55s ease-in-out infinite;
+            }
 
         .gp-loader-ear-core {
             position: absolute;
@@ -542,17 +531,17 @@
             pointer-events: none;
         }
 
-        .gp-loader-ear-core::after {
-            content: "";
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            right: -15px;
-            bottom: -7px;
-            border-radius: 999px;
-            background: #920ab6;
-            box-shadow: 0 0 0 7px rgba(146,10,182,.10);
-        }
+            .gp-loader-ear-core::after {
+                content: "";
+                position: absolute;
+                width: 12px;
+                height: 12px;
+                right: -15px;
+                bottom: -7px;
+                border-radius: 999px;
+                background: #920ab6;
+                box-shadow: 0 0 0 7px rgba(146,10,182,.10);
+            }
 
         .gp-loader-sound-wave {
             position: absolute;
@@ -564,28 +553,52 @@
             pointer-events: none;
         }
 
-        .gp-loader-sound-wave:nth-child(2) {
-            animation-delay: .42s;
-        }
+            .gp-loader-sound-wave:nth-child(2) {
+                animation-delay: .42s;
+            }
 
         @@keyframes gpEarCardFloat {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-6px) scale(1.025); }
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-6px) scale(1.025);
+            }
         }
 
         @@keyframes gpEarPulse {
-            0%, 100% { opacity: .88; transform: rotate(-24deg) scale(.96); }
-            50% { opacity: 1; transform: rotate(-24deg) scale(1.04); }
+            0%, 100% {
+                opacity: .88;
+                transform: rotate(-24deg) scale(.96);
+            }
+
+            50% {
+                opacity: 1;
+                transform: rotate(-24deg) scale(1.04);
+            }
         }
 
         @@keyframes gpEarInnerPulse {
-            0%, 100% { transform: rotate(-24deg) scale(.96); }
-            50% { transform: rotate(-24deg) scale(1.05); }
+            0%, 100% {
+                transform: rotate(-24deg) scale(.96);
+            }
+
+            50% {
+                transform: rotate(-24deg) scale(1.05);
+            }
         }
 
         @@keyframes gpEarWave {
-            0% { opacity: .42; transform: scale(.70); }
-            100% { opacity: 0; transform: scale(1.22); }
+            0% {
+                opacity: .42;
+                transform: scale(.70);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.22);
+            }
         }
 
         .gp-loader-card strong {
@@ -1409,43 +1422,50 @@
             transition: background .18s ease, color .18s ease, opacity .18s ease !important;
         }
 
-        .gp-offline-mini button.is-checking {
-            pointer-events: none !important;
-            opacity: .88 !important;
-            padding-right: 36px !important;
-        }
+            .gp-offline-mini button.is-checking {
+                pointer-events: none !important;
+                opacity: .88 !important;
+                padding-right: 36px !important;
+            }
 
-        .gp-offline-mini button.is-checking::before {
-            content: "";
-            position: absolute;
-            right: 13px;
-            top: 50%;
-            width: 14px;
-            height: 14px;
-            margin-top: -7px;
-            border-radius: 999px;
-            border: 2px solid currentColor;
-            border-top-color: transparent;
-            animation: gpRetrySpin .72s linear infinite;
-        }
+                .gp-offline-mini button.is-checking::before {
+                    content: "";
+                    position: absolute;
+                    right: 13px;
+                    top: 50%;
+                    width: 14px;
+                    height: 14px;
+                    margin-top: -7px;
+                    border-radius: 999px;
+                    border: 2px solid currentColor;
+                    border-top-color: transparent;
+                    animation: gpRetrySpin .72s linear infinite;
+                }
 
-        .gp-offline-mini button.is-checking::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,.32), transparent);
-            transform: translateX(110%);
-            animation: gpRetryShine 1s ease-in-out infinite;
-            pointer-events: none;
-        }
+                .gp-offline-mini button.is-checking::after {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,.32), transparent);
+                    transform: translateX(110%);
+                    animation: gpRetryShine 1s ease-in-out infinite;
+                    pointer-events: none;
+                }
 
         @@keyframes gpRetrySpin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @@keyframes gpRetryShine {
-            0% { transform: translateX(110%); }
-            100% { transform: translateX(-110%); }
+            0% {
+                transform: translateX(110%);
+            }
+
+            100% {
+                transform: translateX(-110%);
+            }
         }
 
         /* V84: loader safety guard for offline/reconnect edge cases */
@@ -1486,22 +1506,22 @@
             z-index: 3 !important;
         }
 
-        .header-bot .logo_agile h2,
-        .header-bot .logo_agile a {
-            width: 100% !important;
-            margin: 0 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: flex-start !important;
-        }
+            .header-bot .logo_agile h2,
+            .header-bot .logo_agile a {
+                width: 100% !important;
+                margin: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+            }
 
-        .header-bot .logo_agile img {
-            width: min(296px, 100%) !important;
-            max-width: 296px !important;
-            height: auto !important;
-            display: block !important;
-            object-fit: contain !important;
-        }
+            .header-bot .logo_agile img {
+                width: min(296px, 100%) !important;
+                max-width: 296px !important;
+                height: auto !important;
+                display: block !important;
+                object-fit: contain !important;
+            }
 
         .header-bot .header {
             z-index: 2 !important;
@@ -1515,88 +1535,88 @@
             direction: rtl !important;
         }
 
-        .header-bot .header > ul {
-            grid-area: phones !important;
-            width: auto !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            list-style: none !important;
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            justify-content: flex-end !important;
-            gap: 8px !important;
-            direction: ltr !important;
-            overflow: visible !important;
-            white-space: nowrap !important;
-        }
+            .header-bot .header > ul {
+                grid-area: phones !important;
+                width: auto !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                list-style: none !important;
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+                justify-content: flex-end !important;
+                gap: 8px !important;
+                direction: ltr !important;
+                overflow: visible !important;
+                white-space: nowrap !important;
+            }
 
-        .header-bot .header > ul li {
-            float: none !important;
-            width: auto !important;
-            min-width: 0 !important;
-            max-width: none !important;
-            height: 34px !important;
-            min-height: 34px !important;
-            margin: 0 !important;
-            padding: 0 9px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 6px !important;
-            white-space: nowrap !important;
-            direction: ltr !important;
-            border-left: 1px solid rgba(146,10,182,.14) !important;
-        }
+                .header-bot .header > ul li {
+                    float: none !important;
+                    width: auto !important;
+                    min-width: 0 !important;
+                    max-width: none !important;
+                    height: 34px !important;
+                    min-height: 34px !important;
+                    margin: 0 !important;
+                    padding: 0 9px !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    gap: 6px !important;
+                    white-space: nowrap !important;
+                    direction: ltr !important;
+                    border-left: 1px solid rgba(146,10,182,.14) !important;
+                }
 
-        .header-bot .header > ul li:first-child {
-            border-left: 0 !important;
-        }
+                    .header-bot .header > ul li:first-child {
+                        border-left: 0 !important;
+                    }
 
-        .header-bot .header > ul li,
-        .header-bot .header > ul li a,
-        .header-bot .header > ul li.tell a,
-        .header-bot .header > ul li .gp-header-mobile-phone,
-        .header-bot .header > ul li .gp-header-mobile-phone span:last-child {
-            white-space: nowrap !important;
-            word-break: keep-all !important;
-            overflow-wrap: normal !important;
-            unicode-bidi: isolate !important;
-            line-height: 1 !important;
-            font-size: 13px !important;
-            font-weight: 950 !important;
-        }
+                    .header-bot .header > ul li,
+                    .header-bot .header > ul li a,
+                    .header-bot .header > ul li.tell a,
+                    .header-bot .header > ul li .gp-header-mobile-phone,
+                    .header-bot .header > ul li .gp-header-mobile-phone span:last-child {
+                        white-space: nowrap !important;
+                        word-break: keep-all !important;
+                        overflow-wrap: normal !important;
+                        unicode-bidi: isolate !important;
+                        line-height: 1 !important;
+                        font-size: 13px !important;
+                        font-weight: 950 !important;
+                    }
 
-        .header-bot .header > ul li a,
-        .header-bot .header > ul li.tell a,
-        .header-bot .header > ul li .gp-header-mobile-phone {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 5px !important;
-            color: #920ab6 !important;
-            text-decoration: none !important;
-            direction: ltr !important;
-        }
+                        .header-bot .header > ul li a,
+                        .header-bot .header > ul li.tell a,
+                        .header-bot .header > ul li .gp-header-mobile-phone {
+                            display: inline-flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            gap: 5px !important;
+                            color: #920ab6 !important;
+                            text-decoration: none !important;
+                            direction: ltr !important;
+                        }
 
-        .header-bot .header > ul li .gp-menu-glyph,
-        .header-bot .header > ul li .gp-mobile-phone-glyph {
-            width: 24px !important;
-            height: 24px !important;
-            min-width: 24px !important;
-            flex: 0 0 24px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            margin: 0 !important;
-            border-radius: 10px !important;
-            background: rgba(146,10,182,.10) !important;
-            color: #920ab6 !important;
-            font-size: 13px !important;
-            line-height: 1 !important;
-        }
+                        .header-bot .header > ul li .gp-menu-glyph,
+                        .header-bot .header > ul li .gp-mobile-phone-glyph {
+                            width: 24px !important;
+                            height: 24px !important;
+                            min-width: 24px !important;
+                            flex: 0 0 24px !important;
+                            display: inline-flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            margin: 0 !important;
+                            border-radius: 10px !important;
+                            background: rgba(146,10,182,.10) !important;
+                            color: #920ab6 !important;
+                            font-size: 13px !important;
+                            line-height: 1 !important;
+                        }
 
         .header-bot .gp-header-tools {
             grid-area: tools !important;
@@ -1625,42 +1645,42 @@
             clear: both !important;
         }
 
-        .header-bot .agileits_search form,
-        .header-bot .agileits_search .form-search,
-        .header-bot .gp-header-search-box form,
-        .header-bot .gp-header-search-box .form-search {
-            width: 100% !important;
-            max-width: 100% !important;
-            min-width: 0 !important;
-            margin: 0 !important;
-            display: flex !important;
-            flex-direction: row-reverse !important;
-            align-items: center !important;
-            direction: rtl !important;
-            border-radius: 999px !important;
-            overflow: hidden !important;
-        }
+            .header-bot .agileits_search form,
+            .header-bot .agileits_search .form-search,
+            .header-bot .gp-header-search-box form,
+            .header-bot .gp-header-search-box .form-search {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                margin: 0 !important;
+                display: flex !important;
+                flex-direction: row-reverse !important;
+                align-items: center !important;
+                direction: rtl !important;
+                border-radius: 999px !important;
+                overflow: hidden !important;
+            }
 
-        .header-bot .agileits_search input[type="search"],
-        .header-bot .gp-header-search-box input[type="search"] {
-            width: 100% !important;
-            min-width: 0 !important;
-            height: 52px !important;
-            line-height: 52px !important;
-            border-radius: 999px 0 0 999px !important;
-            box-sizing: border-box !important;
-            text-align: center !important;
-            direction: rtl !important;
-        }
+            .header-bot .agileits_search input[type="search"],
+            .header-bot .gp-header-search-box input[type="search"] {
+                width: 100% !important;
+                min-width: 0 !important;
+                height: 52px !important;
+                line-height: 52px !important;
+                border-radius: 999px 0 0 999px !important;
+                box-sizing: border-box !important;
+                text-align: center !important;
+                direction: rtl !important;
+            }
 
-        .header-bot .agileits_search button,
-        .header-bot .gp-header-search-box button {
-            flex: 0 0 76px !important;
-            width: 76px !important;
-            min-width: 76px !important;
-            height: 52px !important;
-            border-radius: 0 999px 999px 0 !important;
-        }
+            .header-bot .agileits_search button,
+            .header-bot .gp-header-search-box button {
+                flex: 0 0 76px !important;
+                width: 76px !important;
+                min-width: 76px !important;
+                height: 52px !important;
+                border-radius: 0 999px 999px 0 !important;
+            }
 
         .header-bot .clearfix {
             display: none !important;
@@ -1670,17 +1690,17 @@
             border-left-color: rgba(255,255,255,.12) !important;
         }
 
-        html.gp-dark-mode .header-bot .header > ul li a,
-        html.gp-dark-mode .header-bot .header > ul li.tell a,
-        html.gp-dark-mode .header-bot .header > ul li .gp-header-mobile-phone {
-            color: rgba(255,255,255,.88) !important;
-        }
+            html.gp-dark-mode .header-bot .header > ul li a,
+            html.gp-dark-mode .header-bot .header > ul li.tell a,
+            html.gp-dark-mode .header-bot .header > ul li .gp-header-mobile-phone {
+                color: rgba(255,255,255,.88) !important;
+            }
 
-        html.gp-dark-mode .header-bot .header > ul li .gp-menu-glyph,
-        html.gp-dark-mode .header-bot .header > ul li .gp-mobile-phone-glyph {
-            background: rgba(255,255,255,.11) !important;
-            color: #fff !important;
-        }
+            html.gp-dark-mode .header-bot .header > ul li .gp-menu-glyph,
+            html.gp-dark-mode .header-bot .header > ul li .gp-mobile-phone-glyph {
+                background: rgba(255,255,255,.11) !important;
+                color: #fff !important;
+            }
 
         @@media (max-width: 1024px) {
             .header-bot_inner_wthreeinfo_header_mid {
@@ -1702,18 +1722,18 @@
                     "tools" !important;
             }
 
-            .header-bot .header > ul {
-                justify-content: center !important;
-                overflow-x: auto !important;
-                overflow-y: hidden !important;
-                -webkit-overflow-scrolling: touch !important;
-                scrollbar-width: none !important;
-                padding-bottom: 2px !important;
-            }
+                .header-bot .header > ul {
+                    justify-content: center !important;
+                    overflow-x: auto !important;
+                    overflow-y: hidden !important;
+                    -webkit-overflow-scrolling: touch !important;
+                    scrollbar-width: none !important;
+                    padding-bottom: 2px !important;
+                }
 
-            .header-bot .header > ul::-webkit-scrollbar {
-                display: none !important;
-            }
+                    .header-bot .header > ul::-webkit-scrollbar {
+                        display: none !important;
+                    }
 
             .header-bot .gp-header-tools {
                 justify-content: center !important;
@@ -1736,31 +1756,31 @@
                 gap: 5px !important;
             }
 
-            .header-bot .header > ul li {
-                height: 28px !important;
-                min-height: 28px !important;
-                padding: 0 5px !important;
-                gap: 3px !important;
-            }
+                .header-bot .header > ul li {
+                    height: 28px !important;
+                    min-height: 28px !important;
+                    padding: 0 5px !important;
+                    gap: 3px !important;
+                }
 
-            .header-bot .header > ul li,
-            .header-bot .header > ul li a,
-            .header-bot .header > ul li.tell a,
-            .header-bot .header > ul li .gp-header-mobile-phone,
-            .header-bot .header > ul li .gp-header-mobile-phone span:last-child {
-                font-size: 11px !important;
-                white-space: nowrap !important;
-            }
+                    .header-bot .header > ul li,
+                    .header-bot .header > ul li a,
+                    .header-bot .header > ul li.tell a,
+                    .header-bot .header > ul li .gp-header-mobile-phone,
+                    .header-bot .header > ul li .gp-header-mobile-phone span:last-child {
+                        font-size: 11px !important;
+                        white-space: nowrap !important;
+                    }
 
-            .header-bot .header > ul li .gp-menu-glyph,
-            .header-bot .header > ul li .gp-mobile-phone-glyph {
-                width: 20px !important;
-                height: 20px !important;
-                min-width: 20px !important;
-                flex-basis: 20px !important;
-                border-radius: 8px !important;
-                font-size: 12px !important;
-            }
+                        .header-bot .header > ul li .gp-menu-glyph,
+                        .header-bot .header > ul li .gp-mobile-phone-glyph {
+                            width: 20px !important;
+                            height: 20px !important;
+                            min-width: 20px !important;
+                            flex-basis: 20px !important;
+                            border-radius: 8px !important;
+                            font-size: 12px !important;
+                        }
 
             .header-bot .agileits_search input[type="search"],
             .header-bot .gp-header-search-box input[type="search"] {
@@ -1801,11 +1821,11 @@
             direction: rtl;
         }
 
-        .gp-offline-mini.is-visible {
-            display: flex;
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+            .gp-offline-mini.is-visible {
+                display: flex;
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
 
         .gp-offline-mini-copy {
             display: flex;
@@ -1864,18 +1884,18 @@
             box-shadow: 0 24px 60px rgba(0,0,0,.32);
         }
 
-        html.gp-dark-mode .gp-offline-mini strong {
-            color: #fff !important;
-        }
+            html.gp-dark-mode .gp-offline-mini strong {
+                color: #fff !important;
+            }
 
-        html.gp-dark-mode .gp-offline-mini span {
-            color: rgba(246,247,251,.70) !important;
-        }
+            html.gp-dark-mode .gp-offline-mini span {
+                color: rgba(246,247,251,.70) !important;
+            }
 
-        html.gp-dark-mode .gp-offline-mini button {
-            background: rgba(255,255,255,.09) !important;
-            color: #fff !important;
-        }
+            html.gp-dark-mode .gp-offline-mini button {
+                background: rgba(255,255,255,.09) !important;
+                color: #fff !important;
+            }
 
         @@media(max-width: 640px) {
             .gp-offline-mini {
@@ -2180,11 +2200,11 @@
                 <!-- //header lists -->
                 <!-- search -->
                 <div class="agileits_search gp-header-search-box">
-                    <form action="/Product/Filter" class="form-search" method="get">
+                    <form action="/search" class="form-search" method="get">
                         <button type="submit" class="btn btn-default">
                             <span class="gp-search-glyph" aria-hidden="true">⌕</span>
                         </button>
-                        <input name="Title" type="search" placeholder="به دنبال چه چیزی هستید ؟" required="">
+                        <input name="q" type="search" placeholder="جستجو در سمعک‌ها، خدمات، مقالات و برندها..." required="">
                     </form>
                 </div>
                 <div class="gp-header-tools">

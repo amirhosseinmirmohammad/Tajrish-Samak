@@ -1,10 +1,10 @@
 ﻿@using System.Data.Entity;
 @{
     GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();
-    var gpCacheVersion = "20260606-tajrish-home-finder-v83";
+    var gpCacheVersion = "20260606-tajrish-global-search-v86";
 }
 @{
-    ViewBag.Title = "کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک";
+    ViewBag.Title = "بهترین کلینیک شنوایی تهران و شمال تهران | سمعک شکوه تجریش";
     Layout = "~/Views/Shared/_Layout.cshtml";
     //string twitter = "@TajrishSamak";
     //string facebook = "https://facebook.com/TajrishSamak";
@@ -47,14 +47,14 @@
 
 @section Metas{
     <link rel="canonical" href="https://tajrish-samak.ir/">
-    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
-    <meta name="Keywords" content="تجویز سمعک">
-    <meta property="og:title" content="تجویز سمعک" />
+    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش در تجریش و شمال تهران؛ تست شنوایی، آزمایش شنوایی، مشاوره خرید سمعک، تجویز و تنظیم سمعک، تعمیر، باتری، قالب و خدمات تخصصی شنوایی.">
+    <meta name="Keywords" content="بهترین کلینیک شنوایی تهران، بهترین کلینیک شنوایی شمال تهران، تست شنوایی تجریش، خرید سمعک، تنظیم سمعک، قیمت سمعک، سمعک در شمال تهران">
+    <meta property="og:title" content="بهترین کلینیک شنوایی تهران و شمال تهران | شکوه تجریش" />
     <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
     <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp">
-    <meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <meta name="twitter:description" content="شکوه تجریش؛ کلینیک شنوایی و سمعک در تجریش و شمال تهران برای تست شنوایی، مشاوره، تجویز و تنظیم سمعک.">
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+    <meta property="og:description" content="شکوه تجریش؛ کلینیک شنوایی و سمعک در تجریش و شمال تهران برای تست شنوایی، مشاوره، تجویز و تنظیم سمعک.">
 }
 
 @section Styles{
@@ -174,14 +174,127 @@
         }
 
 
-        /* Home Finder v83 - service/brand/area search box */
-        .gp-home-finder-v83 {
-            width: 100%;
-            margin: 28px auto 34px;
+
+        /* V85 AI Overview target + complete services */
+        .gp-ai-answer-v85,
+        .gp-home-finder-v85,
+        .gp-services-v85 {
             direction: rtl;
         }
 
-        .gp-finder-v83-shell {
+        .gp-ai-answer-v85 {
+            margin: 26px auto 32px;
+        }
+
+        .gp-ai-answer-v85-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+            gap: clamp(16px, 3vw, 30px);
+            align-items: stretch;
+            padding: clamp(20px, 3vw, 34px);
+            border-radius: 34px;
+            background: radial-gradient(circle at 10% 14%, rgba(216,245,18,.18), transparent 26%), linear-gradient(135deg, rgba(255,255,255,.95), rgba(251,247,255,.92));
+            border: 1px solid rgba(146,10,182,.10);
+            box-shadow: 0 24px 70px rgba(74,18,107,.10);
+        }
+
+        .gp-ai-answer-v85-kicker,
+        .gp-services-v85-head span,
+        .gp-finder-v85-kicker {
+            display: inline-flex;
+            min-height: 34px;
+            align-items: center;
+            justify-content: center;
+            padding: 0 13px;
+            border-radius: 999px;
+            background: rgba(146,10,182,.09);
+            color: #6420a0;
+            font-size: 12px;
+            font-weight: 1000;
+        }
+
+        .gp-ai-answer-v85-main h2,
+        .gp-services-v85-head h2,
+        .gp-finder-v85-copy h2 {
+            margin: 12px 0 10px !important;
+            color: #20142d !important;
+            font-size: clamp(24px, 3.1vw, 42px) !important;
+            font-weight: 1000 !important;
+            line-height: 1.55 !important;
+        }
+
+        .gp-ai-answer-v85-main p,
+        .gp-services-v85-head p,
+        .gp-finder-v85-copy p {
+            margin: 0 !important;
+            color: rgba(32,20,45,.72) !important;
+            font-size: 14px !important;
+            font-weight: 850 !important;
+            line-height: 2.15 !important;
+        }
+
+        .gp-ai-answer-v85-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 18px;
+        }
+
+            .gp-ai-answer-v85-actions a,
+            .gp-services-v85-areas a,
+            .gp-finder-v85-secondary {
+                min-height: 42px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 14px;
+                border-radius: 999px;
+                background: rgba(146,10,182,.075);
+                border: 1px solid rgba(75,22,132,.08);
+                color: #6420a0 !important;
+                font-size: 12px;
+                font-weight: 1000;
+                text-decoration: none !important;
+            }
+
+        .gp-ai-answer-v85-facts {
+            display: grid;
+            gap: 10px;
+        }
+
+            .gp-ai-answer-v85-facts div {
+                padding: 16px;
+                border-radius: 22px;
+                background: #fff;
+                border: 1px solid rgba(75,22,132,.08);
+                box-shadow: 0 14px 34px rgba(74,18,107,.06);
+            }
+
+            .gp-ai-answer-v85-facts b,
+            .gp-ai-answer-v85-facts span {
+                display: block;
+            }
+
+            .gp-ai-answer-v85-facts b {
+                color: #4b1684;
+                font-size: 14px;
+                font-weight: 1000;
+                line-height: 1.8;
+            }
+
+            .gp-ai-answer-v85-facts span {
+                color: rgba(32,20,45,.68);
+                font-size: 12px;
+                font-weight: 850;
+                line-height: 2;
+            }
+
+        .gp-home-finder-v85 {
+            width: 100%;
+            margin: 28px auto 34px;
+        }
+
+        .gp-finder-v85-shell {
             position: relative;
             display: grid;
             grid-template-columns: minmax(260px, .82fr) minmax(420px, 1.18fr);
@@ -195,8 +308,8 @@
             isolation: isolate;
         }
 
-            .gp-finder-v83-shell::before,
-            .gp-finder-v83-shell::after {
+            .gp-finder-v85-shell::before,
+            .gp-finder-v85-shell::after {
                 content: "";
                 position: absolute;
                 border-radius: 999px;
@@ -204,67 +317,47 @@
                 z-index: -1;
             }
 
-            .gp-finder-v83-shell::before {
+            .gp-finder-v85-shell::before {
                 width: 280px;
                 height: 280px;
                 right: -110px;
                 top: -120px;
                 background: rgba(255,255,255,.13);
-                animation: gpFinderBlobV83 10s ease-in-out infinite alternate;
+                animation: gpFinderBlobV85 10s ease-in-out infinite alternate;
             }
 
-            .gp-finder-v83-shell::after {
+            .gp-finder-v85-shell::after {
                 width: 230px;
                 height: 230px;
                 left: -70px;
                 bottom: -100px;
                 background: rgba(216,245,18,.14);
-                animation: gpFinderBlobV83 12s ease-in-out infinite alternate-reverse;
+                animation: gpFinderBlobV85 12s ease-in-out infinite alternate-reverse;
             }
 
-        .gp-finder-v83-copy {
+        .gp-finder-v85-copy {
             color: #fff;
         }
 
-        .gp-finder-v83-kicker {
-            display: inline-flex;
-            min-height: 34px;
-            align-items: center;
-            justify-content: center;
-            padding: 0 13px;
-            border-radius: 999px;
+            .gp-finder-v85-copy h2,
+            .gp-finder-v85-copy p {
+                color: #fff !important;
+            }
+
+        .gp-finder-v85-kicker {
             background: rgba(255,255,255,.15);
             border: 1px solid rgba(255,255,255,.20);
             color: rgba(255,255,255,.92);
-            font-size: 12px;
-            font-weight: 950;
         }
 
-        .gp-finder-v83-copy h2 {
-            margin: 14px 0 10px !important;
-            color: #fff !important;
-            font-size: clamp(25px, 3.2vw, 42px) !important;
-            font-weight: 1000 !important;
-            line-height: 1.55 !important;
-        }
-
-        .gp-finder-v83-copy p {
-            max-width: 420px;
-            margin: 0 !important;
-            color: rgba(255,255,255,.84) !important;
-            font-size: 14px !important;
-            font-weight: 850 !important;
-            line-height: 2.1 !important;
-        }
-
-        .gp-finder-v83-mini {
+        .gp-finder-v85-mini {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-top: 18px;
         }
 
-            .gp-finder-v83-mini span {
+            .gp-finder-v85-mini span {
                 min-height: 34px;
                 display: inline-flex;
                 align-items: center;
@@ -277,7 +370,7 @@
                 font-weight: 950;
             }
 
-        .gp-finder-v83-card {
+        .gp-finder-v85-card {
             position: relative;
             padding: clamp(16px, 2.2vw, 24px);
             border-radius: 28px;
@@ -287,8 +380,8 @@
             backdrop-filter: blur(14px);
         }
 
-        .gp-finder-v83-searchline label,
-        .gp-finder-v83-field label {
+        .gp-finder-v85-searchline label,
+        .gp-finder-v85-field label {
             display: block;
             margin-bottom: 7px;
             color: #20142d;
@@ -296,7 +389,7 @@
             font-weight: 1000;
         }
 
-        .gp-finder-v83-inputwrap {
+        .gp-finder-v85-inputwrap {
             display: flex;
             gap: 8px;
             padding: 7px;
@@ -305,7 +398,7 @@
             border: 1px solid rgba(75,22,132,.10);
         }
 
-            .gp-finder-v83-inputwrap input {
+            .gp-finder-v85-inputwrap input {
                 flex: 1 1 auto;
                 min-width: 0;
                 height: 46px;
@@ -320,8 +413,8 @@
                 text-align: right;
             }
 
-            .gp-finder-v83-inputwrap button,
-            .gp-finder-v83-primary {
+            .gp-finder-v85-inputwrap button,
+            .gp-finder-v85-primary {
                 min-height: 46px;
                 border: 0;
                 border-radius: 17px;
@@ -334,37 +427,14 @@
                 box-shadow: 0 14px 30px rgba(146,10,182,.18);
             }
 
-        .gp-finder-v83-suggestions {
-            display: none;
-            gap: 7px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-            .gp-finder-v83-suggestions.is-visible {
-                display: flex;
-            }
-
-            .gp-finder-v83-suggestions button {
-                min-height: 32px;
-                border: 0;
-                border-radius: 999px;
-                padding: 0 11px;
-                background: rgba(146,10,182,.08);
-                color: #6420a0;
-                font-size: 11px;
-                font-weight: 950;
-                cursor: pointer;
-            }
-
-        .gp-finder-v83-grid {
+        .gp-finder-v85-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 10px;
             margin-top: 14px;
         }
 
-        .gp-finder-v83-field select {
+        .gp-finder-v85-field select {
             width: 100%;
             height: 46px;
             border-radius: 17px;
@@ -377,62 +447,25 @@
             font-weight: 900;
         }
 
-        .gp-finder-v83-actions {
+        .gp-finder-v85-actions,
+        .gp-finder-v85-chips,
+        .gp-finder-v85-suggestions {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 14px;
-        }
-
-        .gp-finder-v83-secondary {
-            min-height: 46px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 17px;
-            padding: 0 14px;
-            background: rgba(146,10,182,.075);
-            border: 1px solid rgba(75,22,132,.08);
-            color: #6420a0 !important;
-            font-size: 12px;
-            font-weight: 1000;
-            text-decoration: none !important;
-        }
-
-        .gp-finder-v83-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-            margin-top: 12px;
-            padding: 11px 13px;
-            border-radius: 18px;
-            background: rgba(216,245,18,.16);
-            border: 1px solid rgba(75,22,132,.07);
-        }
-
-            .gp-finder-v83-preview span {
-                color: rgba(32,20,45,.62);
-                font-size: 12px;
-                font-weight: 900;
-            }
-
-            .gp-finder-v83-preview a {
-                color: #4b1684 !important;
-                font-size: 12px;
-                font-weight: 1000;
-                text-decoration: none !important;
-                direction: ltr;
-            }
-
-        .gp-finder-v83-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 7px;
             margin-top: 12px;
         }
 
-            .gp-finder-v83-chips button {
+        .gp-finder-v85-suggestions {
+            display: none;
+        }
+
+            .gp-finder-v85-suggestions.is-visible {
+                display: flex;
+            }
+
+            .gp-finder-v85-suggestions button,
+            .gp-finder-v85-chips button {
                 min-height: 35px;
                 border: 0;
                 border-radius: 999px;
@@ -447,12 +480,122 @@
                 transition: transform .18s ease, box-shadow .18s ease;
             }
 
-                .gp-finder-v83-chips button:hover {
+                .gp-finder-v85-chips button:hover,
+                .gp-finder-v85-suggestions button:hover {
                     transform: translateY(-2px);
                     box-shadow: 0 16px 30px rgba(74,18,107,.10);
                 }
 
-        /* Animated clinic strip upgrade */
+        .gp-finder-v85-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-top: 12px;
+            padding: 11px 13px;
+            border-radius: 18px;
+            background: rgba(216,245,18,.16);
+            border: 1px solid rgba(75,22,132,.07);
+        }
+
+            .gp-finder-v85-preview span {
+                color: rgba(32,20,45,.62);
+                font-size: 12px;
+                font-weight: 900;
+            }
+
+            .gp-finder-v85-preview a {
+                color: #4b1684 !important;
+                font-size: 12px;
+                font-weight: 1000;
+                text-decoration: none !important;
+                direction: ltr;
+            }
+
+        .gp-services-v85 {
+            margin: 42px auto;
+        }
+
+        .gp-services-v85-head {
+            max-width: 880px;
+            margin: 0 auto 22px;
+            text-align: center;
+        }
+
+        .gp-services-v85-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .gp-service-v85-card {
+            position: relative;
+            min-height: 186px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 10px;
+            padding: 18px;
+            border-radius: 26px;
+            background: radial-gradient(circle at 16% 12%, rgba(216,245,18,.14), transparent 28%), linear-gradient(135deg, #fff, #fbf7ff);
+            border: 1px solid rgba(75,22,132,.09);
+            box-shadow: 0 18px 42px rgba(74,18,107,.07);
+            text-decoration: none !important;
+            overflow: hidden;
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+            .gp-service-v85-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 26px 58px rgba(74,18,107,.13);
+            }
+
+        .gp-service-v85-icon {
+            width: 46px;
+            height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 17px;
+            background: linear-gradient(135deg, #4b1684, #920ab6, #e10b79);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 1000;
+            box-shadow: 0 14px 28px rgba(146,10,182,.18);
+        }
+
+        .gp-service-v85-card b {
+            color: #20142d;
+            font-size: 15px;
+            font-weight: 1000;
+            line-height: 1.8;
+        }
+
+        .gp-service-v85-card small {
+            color: rgba(32,20,45,.66);
+            font-size: 12px;
+            font-weight: 850;
+            line-height: 2;
+        }
+
+        .gp-services-v85-areas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 24px;
+            background: rgba(146,10,182,.055);
+        }
+
+            .gp-services-v85-areas span {
+                color: rgba(32,20,45,.70);
+                font-size: 12px;
+                font-weight: 1000;
+            }
+
         .gp-clinic-strip {
             position: relative !important;
             overflow: hidden !important;
@@ -466,7 +609,7 @@
                 width: 30%;
                 background: linear-gradient(105deg, transparent, rgba(255,255,255,.52), transparent);
                 transform: skewX(-18deg);
-                animation: gpClinicShineV83 4.6s ease-in-out infinite;
+                animation: gpClinicShineV85 4.6s ease-in-out infinite;
                 z-index: 0;
                 pointer-events: none;
             }
@@ -480,7 +623,7 @@
                 top: -70px;
                 border-radius: 55% 45% 62% 38%;
                 background: radial-gradient(circle, rgba(216,245,18,.18), rgba(146,10,182,.08), transparent 68%);
-                animation: gpClinicBlobV83 7s ease-in-out infinite alternate;
+                animation: gpClinicBlobV85 7s ease-in-out infinite alternate;
                 z-index: 0;
                 pointer-events: none;
             }
@@ -492,28 +635,28 @@
             }
 
                 .gp-clinic-strip .effect-bg h3 {
-                    animation: gpClinicTextInV83 .72s cubic-bezier(.2,.8,.2,1) both;
+                    animation: gpClinicTextInV85 .72s cubic-bezier(.2,.8,.2,1) both;
                 }
 
                 .gp-clinic-strip .effect-bg h6 {
-                    animation: gpClinicTextInV83 .72s cubic-bezier(.2,.8,.2,1) .12s both, gpClinicPulseV83 2.4s ease-in-out infinite;
+                    animation: gpClinicTextInV85 .72s cubic-bezier(.2,.8,.2,1) .12s both, gpClinicPulseV85 2.4s ease-in-out infinite;
                 }
 
                 .gp-clinic-strip .effect-bg p {
-                    animation: gpClinicTextInV83 .72s cubic-bezier(.2,.8,.2,1) .22s both;
+                    animation: gpClinicTextInV85 .72s cubic-bezier(.2,.8,.2,1) .22s both;
                 }
 
                 .gp-clinic-strip .bg-right-nut img {
-                    animation: gpClinicLogoFloatV83 3.2s ease-in-out infinite;
+                    animation: gpClinicLogoFloatV85 3.2s ease-in-out infinite;
                 }
 
-        @@keyframes gpFinderBlobV83 {
+        @@keyframes gpFinderBlobV85 {
             to {
                 transform: translate3d(-22px, 18px, 0) scale(1.07);
             }
         }
 
-        @@keyframes gpClinicShineV83 {
+        @@keyframes gpClinicShineV85 {
             0%, 55% {
                 transform: translateX(0) skewX(-18deg);
                 opacity: 0;
@@ -529,13 +672,13 @@
             }
         }
 
-        @@keyframes gpClinicBlobV83 {
+        @@keyframes gpClinicBlobV85 {
             to {
                 transform: translate3d(24px, 18px, 0) rotate(12deg) scale(1.07);
             }
         }
 
-        @@keyframes gpClinicTextInV83 {
+        @@keyframes gpClinicTextInV85 {
             from {
                 opacity: 0;
                 transform: translateY(12px);
@@ -547,7 +690,7 @@
             }
         }
 
-        @@keyframes gpClinicPulseV83 {
+        @@keyframes gpClinicPulseV85 {
             0%, 100% {
                 transform: scale(1);
                 box-shadow: 0 10px 22px rgba(146,10,182,.18);
@@ -559,7 +702,7 @@
             }
         }
 
-        @@keyframes gpClinicLogoFloatV83 {
+        @@keyframes gpClinicLogoFloatV85 {
             0%, 100% {
                 transform: translateY(0) rotate(0deg);
             }
@@ -569,88 +712,125 @@
             }
         }
 
+        @@media(max-width: 1100px) {
+            .gp-services-v85-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
         @@media(max-width: 992px) {
-            .gp-finder-v83-shell {
+            .gp-ai-answer-v85-shell,
+            .gp-finder-v85-shell {
                 grid-template-columns: 1fr;
                 text-align: center;
             }
 
-            .gp-finder-v83-copy p,
-            .gp-finder-v83-mini {
+            .gp-ai-answer-v85-actions,
+            .gp-finder-v85-copy p,
+            .gp-finder-v85-mini {
                 margin-left: auto;
                 margin-right: auto;
                 justify-content: center;
             }
 
-            .gp-finder-v83-grid {
+            .gp-finder-v85-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .gp-services-v85-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
         @@media(max-width: 560px) {
-            .gp-home-finder-v83 {
+            .gp-home-finder-v85 {
                 margin-top: 18px;
             }
 
-            .gp-finder-v83-shell {
+            .gp-finder-v85-shell,
+            .gp-ai-answer-v85-shell {
                 border-radius: 26px;
                 padding: 15px;
             }
 
-            .gp-finder-v83-card {
+            .gp-finder-v85-card {
                 border-radius: 22px;
                 padding: 13px;
             }
 
-            .gp-finder-v83-inputwrap {
+            .gp-finder-v85-inputwrap {
                 display: grid;
             }
 
-                .gp-finder-v83-inputwrap button,
-                .gp-finder-v83-primary,
-                .gp-finder-v83-secondary {
+                .gp-finder-v85-inputwrap button,
+                .gp-finder-v85-primary,
+                .gp-finder-v85-secondary {
                     width: 100%;
                 }
 
-            .gp-finder-v83-actions {
+            .gp-finder-v85-actions {
                 display: grid;
             }
 
-            .gp-finder-v83-chips {
+            .gp-finder-v85-chips {
                 justify-content: center;
+            }
+
+            .gp-services-v85-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-service-v85-card {
+                min-height: auto;
             }
         }
 
-        html.gp-dark-mode .gp-finder-v83-card {
-            background: rgba(25,14,38,.94);
-            border-color: rgba(255,255,255,.10);
+        html.gp-dark-mode .gp-ai-answer-v85-shell,
+        html.gp-dark-mode .gp-finder-v85-card,
+        html.gp-dark-mode .gp-service-v85-card {
+            background: rgba(25,14,38,.94) !important;
+            border-color: rgba(255,255,255,.10) !important;
         }
 
-        html.gp-dark-mode .gp-finder-v83-searchline label,
-        html.gp-dark-mode .gp-finder-v83-field label,
-        html.gp-dark-mode .gp-finder-v83-preview span {
-            color: rgba(255,255,255,.78);
-        }
+            html.gp-dark-mode .gp-ai-answer-v85-main h2,
+            html.gp-dark-mode .gp-ai-answer-v85-main p,
+            html.gp-dark-mode .gp-services-v85-head h2,
+            html.gp-dark-mode .gp-services-v85-head p,
+            html.gp-dark-mode .gp-service-v85-card b,
+            html.gp-dark-mode .gp-service-v85-card small,
+            html.gp-dark-mode .gp-services-v85-areas span {
+                color: rgba(255,255,255,.86) !important;
+            }
 
-        html.gp-dark-mode .gp-finder-v83-inputwrap,
-        html.gp-dark-mode .gp-finder-v83-preview,
-        html.gp-dark-mode .gp-finder-v83-secondary,
-        html.gp-dark-mode .gp-finder-v83-suggestions button,
-        html.gp-dark-mode .gp-finder-v83-chips button {
-            background: rgba(255,255,255,.075);
-            border-color: rgba(255,255,255,.10);
+        html.gp-dark-mode .gp-ai-answer-v85-facts div,
+        html.gp-dark-mode .gp-services-v85-areas,
+        html.gp-dark-mode .gp-finder-v85-inputwrap,
+        html.gp-dark-mode .gp-finder-v85-preview,
+        html.gp-dark-mode .gp-finder-v85-secondary,
+        html.gp-dark-mode .gp-finder-v85-suggestions button,
+        html.gp-dark-mode .gp-finder-v85-chips button {
+            background: rgba(255,255,255,.075) !important;
+            border-color: rgba(255,255,255,.10) !important;
             color: #fff !important;
         }
 
-            html.gp-dark-mode .gp-finder-v83-inputwrap input,
-            html.gp-dark-mode .gp-finder-v83-field select {
+            html.gp-dark-mode .gp-ai-answer-v85-facts b,
+            html.gp-dark-mode .gp-ai-answer-v85-facts span,
+            html.gp-dark-mode .gp-finder-v85-searchline label,
+            html.gp-dark-mode .gp-finder-v85-field label,
+            html.gp-dark-mode .gp-finder-v85-preview span {
+                color: rgba(255,255,255,.78) !important;
+            }
+
+            html.gp-dark-mode .gp-finder-v85-inputwrap input,
+            html.gp-dark-mode .gp-finder-v85-field select {
                 background: rgba(255,255,255,.92);
                 color: #20142d;
             }
 
         @@media (prefers-reduced-motion: reduce) {
-            .gp-finder-v83-shell::before,
-            .gp-finder-v83-shell::after,
+            .gp-finder-v85-shell::before,
+            .gp-finder-v85-shell::after,
             .gp-clinic-strip::before,
             .gp-clinic-strip::after,
             .gp-clinic-strip .effect-bg h3,
@@ -677,9 +857,9 @@
                 </div>
             </div>
             <div class="gp-v10-hero-services" aria-label="دسته‌بندی خدمات">
-                <a href="/Home/Services" class="gp-v10-service-card gp-v10-service-a"><span>〰</span><b>تست شنوایی</b><small>ارزیابی دقیق</small></a>
-                <a href="/Home/Products" class="gp-v10-service-card gp-v10-service-b"><span>◖</span><b>انواع سمعک</b><small>انتخاب متناسب</small></a>
-                <a href="/contactus" class="gp-v10-service-card gp-v10-service-c"><span>✦</span><b>مشاوره تخصصی</b><small>تعیین وقت</small></a>
+                <a href="/tajrish/hearing-test" class="gp-v10-service-card gp-v10-service-a"><span>〰</span><b>تست شنوایی</b><small>ارزیابی دقیق</small></a>
+                <a href="/tajrish/hearing-aid" class="gp-v10-service-card gp-v10-service-b"><span>◖</span><b>انواع سمعک</b><small>انتخاب متناسب</small></a>
+                <a href="/tajrish/hearing-aid-consultation" class="gp-v10-service-card gp-v10-service-c"><span>✦</span><b>مشاوره تخصصی</b><small>تعیین وقت</small></a>
             </div>
         </div>
     </div>
@@ -694,41 +874,85 @@
     <p>خیر، نوع سمعک باید بر اساس نتیجه شنوایی‌سنجی، سبک زندگی و نیاز شنیداری هر فرد انتخاب شود.</p>
     <h3>چرا تنظیم سمعک مهم است؟</h3>
     <p>تنظیم دقیق باعث افزایش کیفیت شنیدن، کاهش آزار صوتی و سازگاری بهتر با سمعک می‌شود.</p>
+    <h3>بهترین کلینیک شنوایی در شمال تهران چه ویژگی‌هایی دارد؟</h3>
+    <p>کلینیک مناسب باید تست شنوایی دقیق، مشاوره انتخاب سمعک، تنظیم و پیگیری پس از تجویز، خدمات تعمیر، باتری، قالب و دسترسی مناسب از محله‌های شمال تهران داشته باشد.</p>
+    <h3>شکوه تجریش برای کدام مناطق تهران خدمات شنوایی ارائه می‌کند؟</h3>
+    <p>شکوه تجریش در محدوده تجریش و شمیرانات قرار دارد و برای تهران، شمال تهران، نیاوران، قیطریه، زعفرانیه، الهیه، فرمانیه و محله‌های اطراف خدمات شنوایی و سمعک ارائه می‌کند.</p>
 </section>
 
-@* Home GEO Finder v83 - service / brand / area smart box *@
-<section class="gp-home-finder-v83 gp-home-section" aria-label="جستجوی سریع خدمت، برند و محله">
+@* V85 AI Overview / local authority answer panel *@
+<section class="gp-ai-answer-v85 gp-home-section" aria-label="معرفی قابل استناد کلینیک شنوایی در تهران و شمال تهران">
     <div class="container">
-        <div class="gp-finder-v83-shell">
-            <div class="gp-finder-v83-copy">
-                <span class="gp-finder-v83-kicker">جستجوی سریع شکوه تجریش</span>
-                <h2>خدمت، برند یا محله را سریع پیدا کنید</h2>
+        <div class="gp-ai-answer-v85-shell">
+            <div class="gp-ai-answer-v85-main">
+                <span class="gp-ai-answer-v85-kicker">راهنمای سریع انتخاب کلینیک شنوایی</span>
+                <h2>کلینیک شنوایی و سمعک شکوه تجریش در تهران و شمال تهران</h2>
                 <p>
-                    نام خدمت، برند یا محله را انتخاب کنید؛ یا عبارتی مثل «قیمت سمعک سال ۱۴۰۵» و «باتری سمعک تجریش» را مستقیم جستجو کنید.
+                    کلینیک شنوایی و سمعک شکوه تجریش در محدوده میدان تجریش و شمیرانات فعالیت می‌کند و برای مراجعان تهران، شمال تهران، نیاوران، قیطریه، زعفرانیه، الهیه، فرمانیه و محله‌های اطراف، خدمات تست شنوایی، مشاوره انتخاب سمعک، تجویز و تنظیم سمعک، تعمیر سمعک، باتری، قالب سمعک و پیگیری پس از تجویز را ارائه می‌دهد.
                 </p>
 
-                <div class="gp-finder-v83-mini">
+                <div class="gp-ai-answer-v85-actions">
+                    <a href="/tehran/best-audiology-clinic">بهترین کلینیک شنوایی تهران</a>
+                    <a href="/north-tehran/best-audiology-clinic">بهترین کلینیک شنوایی شمال تهران</a>
+                    <a href="/tajrish/hearing-test">شروع با تست شنوایی تجریش</a>
+                </div>
+            </div>
+
+            <div class="gp-ai-answer-v85-facts">
+                <div>
+                    <b>محدوده اصلی</b>
+                    <span>تجریش، شمیرانات و شمال تهران</span>
+                </div>
+                <div>
+                    <b>خدمات کلیدی</b>
+                    <span>تست شنوایی، تجویز، تنظیم، تعمیر و مشاوره سمعک</span>
+                </div>
+                <div>
+                    <b>مسیر مراجعه</b>
+                    <span>تماس، رزرو وقت، ارزیابی شنوایی و انتخاب راهکار مناسب</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@* Home GEO Finder v85 - service / brand / area smart box *@
+<section class="gp-home-finder-v85 gp-home-section" aria-label="جستجوی سریع خدمت، برند و محله">
+    <div class="container">
+        <div class="gp-finder-v85-shell">
+            <div class="gp-finder-v85-copy">
+                <span class="gp-finder-v85-kicker">جستجوی سریع شکوه تجریش</span>
+                <h2>خدمت، برند یا محله را سریع پیدا کنید</h2>
+                <p>
+                    نام خدمت، برند یا محله را انتخاب کنید؛ یا عبارتی مثل «بهترین کلینیک شنوایی شمال تهران»، «قیمت سمعک سال ۱۴۰۵» و «باتری سمعک تجریش» را مستقیم جستجو کنید.
+                </p>
+
+                <div class="gp-finder-v85-mini">
                     <span>۱۰۶+ محدوده</span>
-                    <span>۴۸+ خدمت</span>
+                    <span>۵۱+ خدمت</span>
                     <span>برندهای سمعک</span>
                 </div>
             </div>
 
-            <div class="gp-finder-v83-card">
-                <div class="gp-finder-v83-searchline">
-                    <label for="gpFinderSearchV83">جستجوی سریع</label>
-                    <div class="gp-finder-v83-inputwrap">
-                        <input id="gpFinderSearchV83" type="search" autocomplete="off" placeholder="مثلاً قیمت سمعک سال ۱۴۰۵، باتری سمعک تجریش، سمعک فوناک..." />
-                        <button type="button" id="gpFinderGoV83">مشاهده</button>
+            <div class="gp-finder-v85-card">
+                <div class="gp-finder-v85-searchline">
+                    <label for="gpFinderSearchV85">جستجوی سریع</label>
+                    <div class="gp-finder-v85-inputwrap">
+                        <input id="gpFinderSearchV85" type="search" autocomplete="off" placeholder="مثلاً بهترین کلینیک شنوایی شمال تهران، قیمت سمعک سال ۱۴۰۵..." />
+                        <button type="button" id="gpFinderGoV85">مشاهده</button>
                     </div>
-                    <div class="gp-finder-v83-suggestions" id="gpFinderSuggestionsV83" aria-label="پیشنهادهای جستجو"></div>
+                    <div class="gp-finder-v85-suggestions" id="gpFinderSuggestionsV85" aria-label="پیشنهادهای جستجو"></div>
                 </div>
 
-                <div class="gp-finder-v83-grid">
-                    <div class="gp-finder-v83-field">
-                        <label for="gpFinderServiceV83">خدمت</label>
-                        <select id="gpFinderServiceV83">
+                <div class="gp-finder-v85-grid">
+                    <div class="gp-finder-v85-field">
+                        <label for="gpFinderServiceV85">خدمت</label>
+                        <select id="gpFinderServiceV85">
                             <option value="">انتخاب خدمت</option>
+                            <option value="best-audiology-clinic">بهترین کلینیک شنوایی</option>
+                            <option value="best-hearing-clinic">بهترین مرکز شنوایی</option>
+                            <option value="best-hearing-aid-clinic">بهترین مرکز سمعک</option>
                             <option value="hearing-test">تست شنوایی</option>
                             <option value="audiology-clinic">کلینیک شنوایی</option>
                             <option value="hearing-aid">خرید سمعک</option>
@@ -741,6 +965,9 @@
                             <option value="installment-hearing-aid">سمعک قسطی</option>
                             <option value="insurance-hearing-aid">سمعک با بیمه</option>
                             <option value="hearing-aid-insurance-tariff">تعرفه سمعک با بیمه</option>
+                            <option value="government-hearing-aid">سمعک دولتی</option>
+                            <option value="free-behzisti-hearing-aid">سمعک رایگان بهزیستی</option>
+                            <option value="deaf-support">حمایت ناشنوایان و کم‌شنوایان</option>
                             <option value="hearing-aid-battery">باتری سمعک</option>
                             <option value="hearing-aid-filter">فیلتر سمعک</option>
                             <option value="hearing-aid-repair">تعمیر سمعک</option>
@@ -770,9 +997,9 @@
                         </select>
                     </div>
 
-                    <div class="gp-finder-v83-field">
-                        <label for="gpFinderAreaV83">محله</label>
-                        <select id="gpFinderAreaV83">
+                    <div class="gp-finder-v85-field">
+                        <label for="gpFinderAreaV85">محله</label>
+                        <select id="gpFinderAreaV85">
                             <option value="tajrish">تجریش</option>
                             <option value="tehran">تهران</option>
                             <option value="north-tehran">شمال تهران</option>
@@ -811,9 +1038,9 @@
                         </select>
                     </div>
 
-                    <div class="gp-finder-v83-field">
-                        <label for="gpFinderBrandV83">برند</label>
-                        <select id="gpFinderBrandV83">
+                    <div class="gp-finder-v85-field">
+                        <label for="gpFinderBrandV85">برند</label>
+                        <select id="gpFinderBrandV85">
                             <option value="">انتخاب برند</option>
                             <option value="signia">سیگنیا / زیمنس</option>
                             <option value="widex">ویدکس</option>
@@ -823,24 +1050,24 @@
                     </div>
                 </div>
 
-                <div class="gp-finder-v83-actions">
-                    <button type="button" class="gp-finder-v83-primary" id="gpFinderBuildV83">ساخت مسیر پیشنهادی</button>
-                    <a class="gp-finder-v83-secondary" href="/hearing-aid-brands">مشاهده برندها</a>
-                    <a class="gp-finder-v83-secondary" href="/tajrish/hearing-test">شروع با تست شنوایی</a>
+                <div class="gp-finder-v85-actions">
+                    <button type="button" class="gp-finder-v85-primary" id="gpFinderBuildV85">ساخت مسیر پیشنهادی</button>
+                    <a class="gp-finder-v85-secondary" href="/tehran/best-audiology-clinic">بهترین کلینیک تهران</a>
+                    <a class="gp-finder-v85-secondary" href="/north-tehran/best-audiology-clinic">بهترین کلینیک شمال تهران</a>
                 </div>
 
-                <div class="gp-finder-v83-preview" id="gpFinderPreviewV83">
+                <div class="gp-finder-v85-preview" id="gpFinderPreviewV85">
                     <span>مسیر پیشنهادی:</span>
                     <a href="/tajrish/hearing-test">/tajrish/hearing-test</a>
                 </div>
 
-                <div class="gp-finder-v83-chips" aria-label="جستجوهای محبوب">
+                <div class="gp-finder-v85-chips" aria-label="جستجوهای محبوب">
+                    <button type="button" data-area="north-tehran" data-service="best-audiology-clinic">بهترین کلینیک شنوایی شمال تهران</button>
+                    <button type="button" data-area="tehran" data-service="best-audiology-clinic">بهترین کلینیک شنوایی تهران</button>
                     <button type="button" data-area="tajrish" data-service="hearing-aid-price-1405">قیمت سمعک سال ۱۴۰۵ تجریش</button>
                     <button type="button" data-area="shemiran" data-service="hearing-aid-battery">باتری سمعک شمیران</button>
                     <button type="button" data-area="north-tehran" data-service="home-visit-hearing-aid">ویزیت منزل شمال تهران</button>
                     <button type="button" data-area="farmanieh" data-service="signia-hearing-aid-price">قیمت سمعک سیگنیا فرمانیه</button>
-                    <button type="button" data-area="pasdaran" data-service="hearing-aid-repair">تعمیر سمعک پاسداران</button>
-                    <button type="button" data-area="near-me" data-service="hearing-test">تست شنوایی نزدیک من</button>
                 </div>
             </div>
         </div>
@@ -857,7 +1084,7 @@
                 <h2>متناسب با میزان شنوایی شما</h2>
                 <p>برندهای معتبر</p>
                 <div class="gp-v10-category-row">
-                    <a href="/Home/Products">سمعک</a>
+                    <a href="/tajrish/hearing-aid">سمعک</a>
                     <a href="/blog/all">مجله کلینیک</a>
                     <a href="/contactus">مشاوره</a>
                 </div>
@@ -1021,81 +1248,125 @@
     </div>
 </div>
 <!-- //top products -->
-<!-- Services -->
-<div class="why-choose-agile gp-home-section">
+<!-- Services v85 -->
+<section class="gp-services-v85 gp-home-section" aria-label="خدمات کامل کلینیک شنوایی و سمعک شکوه تجریش">
     <div class="container">
-        <div class="text-center">
-            <h3 class="w3l_head">ویژگی های کلینیک شنوایی و سمعک شکوه تجریش</h3>
+        <div class="gp-services-v85-head">
+            <span>خدمات تخصصی شکوه تجریش</span>
+            <h2>از تست شنوایی تا انتخاب، تنظیم و نگهداری سمعک</h2>
+            <p>
+                این بخش برای اینکه کاربر و موتورهای جستجو دقیق‌تر بفهمند شکوه تجریش چه خدماتی ارائه می‌دهد، کامل‌تر شده است.
+            </p>
         </div>
-        <div class="why-choose-agile-grids-top">
-            <div class="col-md-4 agileits-w3layouts-grid">
-                <div class="wthree_agile_us gp-feature-card gp-feature-support">
-                    <div class="col-xs-9 agile-why-text">
-                        <span class="gp-feature-kicker">همراهی مطمئن</span>
-                        <h4>پشتیبانی معتبر</h4>
-                        <p>پیگیری وضعیت، پاسخ‌گویی منظم و همراهی بعد از انتخاب سمعک، بخشی از خدماتی است که با دقت ارائه می‌کنیم.</p>
-                    </div>
-                    <div class="col-xs-3 agile-why-text">
-                        <div class="wthree_features_grid gp-feature-icon hvr-rectangle-out">
-                            <i class="fa fa-shield" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="clearfix"> </div>
-                </div>
-                <div class="wthree_agile_us gp-feature-card gp-feature-brand">
-                    <div class="col-xs-9 agile-why-text">
-                        <span class="gp-feature-kicker">انتخاب از برندهای خوب</span>
-                        <h4>تضمین بهترین سمعک</h4>
-                        <p>مدل مناسب شما از میان برندهای معتبر و گزینه‌های به‌روز انتخاب می‌شود تا نتیجه نهایی دقیق‌تر و مطمئن‌تر باشد.</p>
-                    </div>
-                    <div class="col-xs-3 agile-why-text">
-                        <div class="wthree_features_grid gp-feature-icon hvr-rectangle-out">
-                            <i class="fa fa-headphones" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="clearfix"> </div>
-                </div>
-            </div>
-            <div class="col-md-4 agileits-w3layouts-grid img moc-main">
-                <img src="@Url.Content("~/images/tajrish-mockup.webp")" width="282" height="513" loading="lazy" decoding="async" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" class="img-responsive" />
-            </div>
-            <div class="col-md-4 agileits-w3layouts-grid">
-                <div class="wthree_agile_us gp-feature-card gp-feature-choice">
-                    <div class="col-xs-3 agile-why-text">
-                        <div class="wthree_features_grid gp-feature-icon hvr-rectangle-out">
-                            <i class="fa fa-sliders" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="col-xs-9 agile-why-text two">
-                        <span class="gp-feature-kicker">ارزیابی و مقایسه</span>
-                        <h4>انتخاب مناسب</h4>
-                        <p>با انجام آزمایش شنوایی و مقایسه گزینه‌ها، انتخاب سمعک مناسب ساده‌تر، سریع‌تر و دقیق‌تر انجام می‌شود.</p>
-                    </div>
 
-                    <div class="clearfix"> </div>
-                </div>
-                <div class="wthree_agile_us gp-feature-card gp-feature-consult">
-                    <div class="col-xs-3 agile-why-text">
-                        <div class="wthree_features_grid gp-feature-icon hvr-rectangle-out">
-                            <i class="fa fa-comments" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="col-xs-9 agile-why-text two">
-                        <span class="gp-feature-kicker">شروع بدون دغدغه</span>
-                        <h4>مشاوره رایگان</h4>
-                        <p>برای بررسی شنوایی، پرسش‌های اولیه و آشنایی با مسیر تجویز سمعک، می‌توانید از مشاوره رایگان استفاده کنید.</p>
-                    </div>
+        <div class="gp-services-v85-grid">
+            <a href="/tehran/hearing-test" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">〰</span>
+                <b>تست شنوایی و آزمایش گوش</b>
+                <small>ادیومتری، بررسی افت شنوایی و شروع مسیر انتخاب سمعک</small>
+            </a>
 
-                    <div class="clearfix"> </div>
-                </div>
+            <a href="/tehran/audiology-clinic" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">◉</span>
+                <b>کلینیک شنوایی</b>
+                <small>ارزیابی تخصصی، مشاوره شنوایی و بررسی نیاز فردی</small>
+            </a>
 
-                <div class="clearfix"> </div>
-            </div>
+            <a href="/tehran/hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">◖</span>
+                <b>خرید و انتخاب سمعک</b>
+                <small>انتخاب مدل مناسب بر اساس تست شنوایی، بودجه و سبک زندگی</small>
+            </a>
+
+            <a href="/tehran/hearing-aid-adjustment" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">⚙</span>
+                <b>تنظیم تخصصی سمعک</b>
+                <small>بهبود وضوح گفتار، کاهش آزار صوتی و پیگیری پس از تجویز</small>
+            </a>
+
+            <a href="/north-tehran/home-visit-hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">⌂</span>
+                <b>ویزیت و مشاوره در منزل</b>
+                <small>مناسب سالمندان و افرادی که رفت‌وآمد برایشان سخت است</small>
+            </a>
+
+            <a href="/tehran/hearing-aid-repair" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">✚</span>
+                <b>تعمیر و سرویس سمعک</b>
+                <small>بررسی قطع صدا، خرابی قطعه، فیلتر، تیوب، هوک و مصرف باتری</small>
+            </a>
+
+            <a href="/tehran/hearing-aid-battery" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">▰</span>
+                <b>باتری، فیلتر و قطعات مصرفی</b>
+                <small>باتری سمعک، فیلتر، شلنگ، تیوب، هوک و راهنمای نگهداری</small>
+            </a>
+
+            <a href="/tehran/earmold" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">◌</span>
+                <b>قالب سمعک</b>
+                <small>قالب سیلیکونی، قالب ضدآب، تعویض قالب و رفع سوت سمعک</small>
+            </a>
+
+            <a href="/tehran/hearing-aid-price-1405" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">۱۴۰۵</span>
+                <b>قیمت سمعک سال ۱۴۰۵</b>
+                <small>راهنمای هزینه، بیمه، گارانتی، برند و مدل مناسب</small>
+            </a>
+
+            <a href="/tehran/insurance-hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">☑</span>
+                <b>سمعک با بیمه و شرایط پرداخت</b>
+                <small>راهنمای بیمه، تعرفه، مدارک و امکان بررسی خرید قسطی</small>
+            </a>
+
+
+            <a href="/tehran/government-hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">دولتی</span>
+                <b>سمعک دولتی</b>
+                <small>راهنمای مسیر دریافت، مدارک، شرایط حمایتی و انتخاب مدل مناسب</small>
+            </a>
+
+            <a href="/tehran/free-behzisti-hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">بهزیستی</span>
+                <b>سمعک رایگان بهزیستی</b>
+                <small>راهنمای بررسی حمایت، مدارک احتمالی و مسیر پیگیری برای افراد واجد شرایط</small>
+            </a>
+
+            <a href="/tehran/deaf-support" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">حمایت</span>
+                <b>حمایت ناشنوایان و کم‌شنوایان</b>
+                <small>مشاوره درباره مسیر ارزیابی، سمعک، خدمات حمایتی و پیگیری شنوایی</small>
+            </a>
+
+            <a href="/tehran/tinnitus-hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">≈</span>
+                <b>وزوز گوش و کم‌شنوایی</b>
+                <small>بررسی وزوز، افت شنوایی همراه و مسیر مناسب پیگیری</small>
+            </a>
+
+            <a href="/hearing-aid-brands" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">★</span>
+                <b>برندهای سمعک</b>
+                <small>سیگنیا، ویدکس، فوناک، ریساند و مقایسه اولیه برندها</small>
+            </a>
         </div>
-        <div class="clearfix"> </div>
+
+        <div class="gp-services-v85-areas">
+            <span>صفحات مهم برای ورودی محلی:</span>
+            <a href="/tehran/best-audiology-clinic">بهترین کلینیک شنوایی تهران</a>
+            <a href="/north-tehran/best-audiology-clinic">بهترین کلینیک شنوایی شمال تهران</a>
+            <a href="/tajrish/hearing-test">تست شنوایی تجریش</a>
+            <a href="/qeytarieh/hearing-aid">سمعک قیطریه</a>
+            <a href="/niavaran/hearing-aid-adjustment">تنظیم سمعک نیاوران</a>
+            <a href="/farmanieh/hearing-aid-price">قیمت سمعک فرمانیه</a>
+            <a href="/tehran/government-hearing-aid">سمعک دولتی تهران</a>
+            <a href="/north-tehran/free-behzisti-hearing-aid">سمعک رایگان بهزیستی شمال تهران</a>
+        </div>
     </div>
-</div>
-<!-- //services -->
+</section>
+<!-- //services v85 -->
+
 
 @if (blogs.Count() > 0)
 {
@@ -1333,24 +1604,27 @@
 
 
 
-        /* Home Finder v83 - service / brand / area smart router */
+
+        /* Home Finder v85 - service / brand / area smart router */
         (function () {
             "use strict";
 
-            var serviceSelect = document.getElementById("gpFinderServiceV83");
-            var areaSelect = document.getElementById("gpFinderAreaV83");
-            var brandSelect = document.getElementById("gpFinderBrandV83");
-            var searchInput = document.getElementById("gpFinderSearchV83");
-            var goBtn = document.getElementById("gpFinderGoV83");
-            var buildBtn = document.getElementById("gpFinderBuildV83");
-            var preview = document.getElementById("gpFinderPreviewV83");
-            var suggestions = document.getElementById("gpFinderSuggestionsV83");
+            var serviceSelect = document.getElementById("gpFinderServiceV85");
+            var areaSelect = document.getElementById("gpFinderAreaV85");
+            var brandSelect = document.getElementById("gpFinderBrandV85");
+            var searchInput = document.getElementById("gpFinderSearchV85");
+            var goBtn = document.getElementById("gpFinderGoV85");
+            var buildBtn = document.getElementById("gpFinderBuildV85");
+            var preview = document.getElementById("gpFinderPreviewV85");
+            var suggestions = document.getElementById("gpFinderSuggestionsV85");
 
             if (!serviceSelect || !areaSelect || !brandSelect || !searchInput || !preview) {
                 return;
             }
 
             var searchMap = [
+                { keys: ["بهترین کلینیک شنوایی", "بهترین کلینیک", "بهترین مرکز شنوایی", "کلینیک معتبر شنوایی"], service: "best-audiology-clinic" },
+                { keys: ["بهترین مرکز سمعک", "بهترین کلینیک سمعک"], service: "best-hearing-aid-clinic" },
                 { keys: ["قیمت سمعک سال ۱۴۰۵", "قیمت سمعک 1405", "قیمت سمعک ۱۴۰۵"], service: "hearing-aid-price-1405" },
                 { keys: ["قیمت سمعک", "سمعک چنده"], service: "hearing-aid-price" },
                 { keys: ["سمعک قسطی", "اقساط"], service: "installment-hearing-aid" },
@@ -1360,6 +1634,9 @@
                 { keys: ["گارانتی سمعک", "ضمانت سمعک"], service: "hearing-aid-warranty" },
                 { keys: ["سمعک با بیمه"], service: "insurance-hearing-aid" },
                 { keys: ["تعرفه سمعک با بیمه"], service: "hearing-aid-insurance-tariff" },
+                { keys: ["سمعک دولتی", "سمعک دولتی تهران", "سمعک دولتی شمال تهران"], service: "government-hearing-aid" },
+                { keys: ["سمعک رایگان بهزیستی", "سمعک رایگان", "سمعک بهزیستی"], service: "free-behzisti-hearing-aid" },
+                { keys: ["حمایت ناشنوایان", "حمایت کم شنوایان", "حمایت کم‌شنوایان"], service: "deaf-support" },
                 { keys: ["قالب سمعک"], service: "earmold" },
                 { keys: ["قالب ضد آب"], service: "waterproof-earmold" },
                 { keys: ["قالب سیلیکونی"], service: "silicone-earmold" },
@@ -1384,6 +1661,7 @@
 
             var areaMap = [
                 { keys: ["تجریش", "بازار تجریش", "پل تجریش"], area: "tajrish" },
+                { keys: ["تهران"], area: "tehran" },
                 { keys: ["شمیران"], area: "shemiran" },
                 { keys: ["شمیرانات"], area: "shemiranat" },
                 { keys: ["شمال تهران"], area: "north-tehran" },
@@ -1424,7 +1702,7 @@
                         }
                     }
                 }
-                return serviceSelect.value || "hearing-test";
+                return serviceSelect.value || "best-audiology-clinic";
             }
 
             function findArea(text) {
@@ -1460,7 +1738,7 @@
                 }
 
                 if (!service) {
-                    service = "hearing-test";
+                    service = "best-audiology-clinic";
                 }
 
                 return "/" + area + "/" + service;
@@ -1542,11 +1820,11 @@
                 buildBtn.addEventListener("click", go);
             }
 
-            var chips = document.querySelectorAll(".gp-finder-v83-chips button");
+            var chips = document.querySelectorAll(".gp-finder-v85-chips button");
             for (var i = 0; i < chips.length; i++) {
                 chips[i].addEventListener("click", function () {
                     var area = this.getAttribute("data-area") || "tajrish";
-                    var service = this.getAttribute("data-service") || "hearing-test";
+                    var service = this.getAttribute("data-service") || "best-audiology-clinic";
                     areaSelect.value = area;
                     serviceSelect.value = service;
                     brandSelect.value = "";

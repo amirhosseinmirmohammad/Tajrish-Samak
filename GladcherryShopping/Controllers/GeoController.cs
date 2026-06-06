@@ -66,7 +66,7 @@ namespace GladcherryShopping.Controllers
 
     public class GeoController : Controller
     {
-        // GEO full v81: all requested areas + expanded service intents including قیمت سمعک سال ۱۴۰۵
+        // GEO full v84: all requested areas + expanded service intents including بهترین کلینیک شنوایی تهران و قیمت سمعک سال ۱۴۰۵
         private const string BaseUrl = "https://tajrish-samak.ir";
 
         private static readonly GeoLocation[] LocationList = new[]
@@ -181,6 +181,30 @@ namespace GladcherryShopping.Controllers
 
         private static readonly GeoServiceIntent[] ServiceList = new[]
         {
+            new GeoServiceIntent {
+                Slug = "best-audiology-clinic",
+                Name = "بهترین کلینیک شنوایی",
+                H1Template = "بهترین کلینیک شنوایی در {area}",
+                TitleTemplate = "بهترین کلینیک شنوایی در {area} | راهنمای انتخاب شکوه تجریش",
+                MetaTemplate = "راهنمای انتخاب بهترین کلینیک شنوایی در {area}؛ معیارهای مهم مثل تست شنوایی دقیق، مشاوره سمعک، تنظیم، پیگیری، خدمات پس از خرید و دسترسی از محله‌های تهران.",
+                ShortTemplate = "برای انتخاب بهترین کلینیک شنوایی در {area} باید به دقت تست، تجربه مشاوره، امکان تنظیم سمعک، پیگیری پس از تجویز، خدمات تعمیر و دسترسی مناسب توجه شود."
+            },
+            new GeoServiceIntent {
+                Slug = "best-hearing-clinic",
+                Name = "بهترین مرکز شنوایی",
+                H1Template = "بهترین مرکز شنوایی در {area}",
+                TitleTemplate = "بهترین مرکز شنوایی در {area} | تست شنوایی و مشاوره سمعک",
+                MetaTemplate = "راهنمای انتخاب بهترین مرکز شنوایی در {area} برای تست شنوایی، آزمایش گوش، بررسی کم‌شنوایی، مشاوره خرید سمعک و تنظیم تخصصی.",
+                ShortTemplate = "مرکز شنوایی مناسب باید ارزیابی دقیق، توضیح روشن نتیجه تست، مشاوره قابل فهم و مسیر پیگیری بعد از انتخاب سمعک داشته باشد."
+            },
+            new GeoServiceIntent {
+                Slug = "best-hearing-aid-clinic",
+                Name = "بهترین مرکز سمعک",
+                H1Template = "بهترین مرکز سمعک در {area}",
+                TitleTemplate = "بهترین مرکز سمعک در {area} | خرید، تجویز و تنظیم سمعک",
+                MetaTemplate = "راهنمای انتخاب بهترین مرکز سمعک در {area} برای خرید سمعک، تجویز، تنظیم، گارانتی، تعمیر، باتری، قالب و پیگیری تخصصی.",
+                ShortTemplate = "برای انتخاب مرکز سمعک مناسب در {area} فقط قیمت مهم نیست؛ تست شنوایی، مدل مناسب، تنظیم دقیق، گارانتی و خدمات پس از خرید هم باید بررسی شود."
+            },
             new GeoServiceIntent {
                 Slug = "hearing-test",
                 Name = "تست شنوایی",

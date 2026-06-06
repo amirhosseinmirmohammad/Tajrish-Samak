@@ -172,6 +172,7 @@
     <Compile Include="ViewModels\ManageViewModels.cs" />
     <Compile Include="ViewModels\PagerViewModel\PagerViewModels.cs" />
     <Compile Include="ViewModels\ProductDetailViewModel.cs" />
+    <Compile Include="ViewModels\SiteSearchViewModel.cs" />
     <Compile Include="ViewModels\SubmitOrderViewModel.cs" />
     <Compile Include="ViewModels\UserServiceViewModel\MethodResponseViewModels.cs" />
     <Compile Include="ViewModels\UserServiceViewModel\NearOrderViewModels.cs" />
