@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace GladcherryShopping.Controllers
@@ -18,14 +19,25 @@ namespace GladcherryShopping.Controllers
         public string District { get; set; }
         public string MainService { get; set; }
         public string CtaText { get; set; }
+        public string RouteNote { get; set; }
+        public string CompetitorAngle { get; set; }
+        public string SearchIntentText { get; set; }
         public string[] Keywords { get; set; }
         public string[] Areas { get; set; }
         public string[] Benefits { get; set; }
         public string[] Steps { get; set; }
         public string[] WhoNeeds { get; set; }
+        public string[] LocalProofs { get; set; }
+        public GeoRelatedLink[] RelatedLinks { get; set; }
         public GeoFaqItem[] Faqs { get; set; }
         public string RelatedTitle { get; set; }
         public string RelatedDescription { get; set; }
+    }
+
+    public class GeoRelatedLink
+    {
+        public string Text { get; set; }
+        public string Url { get; set; }
     }
 
     public class GeoFaqItem
@@ -34,534 +46,716 @@ namespace GladcherryShopping.Controllers
         public string Answer { get; set; }
     }
 
+    internal class GeoLocation
+    {
+        public string Slug { get; set; }
+        public string Name { get; set; }
+        public string Cluster { get; set; }
+        public string Hint { get; set; }
+    }
+
+    internal class GeoServiceIntent
+    {
+        public string Slug { get; set; }
+        public string Name { get; set; }
+        public string H1Template { get; set; }
+        public string TitleTemplate { get; set; }
+        public string MetaTemplate { get; set; }
+        public string ShortTemplate { get; set; }
+    }
+
     public class GeoController : Controller
     {
+        // GEO full v81: all requested areas + expanded service intents including قیمت سمعک سال ۱۴۰۵
         private const string BaseUrl = "https://tajrish-samak.ir";
 
-        [HttpGet]
-        public ActionResult HearingTestTehran()
+        private static readonly GeoLocation[] LocationList = new[]
         {
-            return Landing(new GeoLandingPage
+            new GeoLocation { Slug = "tehran", Name = "تهران", Cluster = "تهران", Hint = "صفحه عمومی برای جستجوهای شهر تهران و دسترسی به خدمات شنوایی." },
+            new GeoLocation { Slug = "tajrish", Name = "تجریش", Cluster = "شمیرانات", Hint = "نزدیک میدان تجریش، بازار تجریش، امامزاده صالح و خیابان شهرداری." },
+            new GeoLocation { Slug = "shemiran", Name = "شمیران", Cluster = "شمیرانات", Hint = "برای جستجوهای قدیمی و محلی محدوده شمیران." },
+            new GeoLocation { Slug = "shemiranat", Name = "شمیرانات", Cluster = "شمیرانات", Hint = "برای کاربران شمال تهران و محدوده شمیرانات." },
+            new GeoLocation { Slug = "mantaghe-1", Name = "منطقه ۱ تهران", Cluster = "شمال تهران", Hint = "برای کاربران منطقه یک تهران و محله‌های اطراف تجریش." },
+            new GeoLocation { Slug = "north-tehran", Name = "شمال تهران", Cluster = "شمال تهران", Hint = "برای جستجوهای عمومی شمال تهران، از ونک و پارک‌وی تا تجریش و نیاوران." },
+            new GeoLocation { Slug = "northeast-tehran", Name = "شمال شرق تهران", Cluster = "شمال شرق تهران", Hint = "برای محدوده‌های هروی، پاسداران، اقدسیه، نوبنیاد، ارتش و سوهانک." },
+            new GeoLocation { Slug = "near-me", Name = "نزدیک من", Cluster = "جستجوی نزدیک من", Hint = "برای کاربرانی که عبارت نزدیک من را جستجو می‌کنند." },
+            new GeoLocation { Slug = "mahale-ma", Name = "محله ما", Cluster = "جستجوی محلی", Hint = "برای جستجوهای محلی و عبارت محله ما." },
+            new GeoLocation { Slug = "darabad", Name = "دارآباد", Cluster = "شمیرانات", Hint = "دسترسی مناسب از نیاوران، آجودانیه و اقدسیه." },
+            new GeoLocation { Slug = "kashanak", Name = "کاشانک", Cluster = "شمیرانات", Hint = "نزدیک نیاوران، دارآباد و صاحبقرانیه." },
+            new GeoLocation { Slug = "jamaran", Name = "جماران", Cluster = "شمیرانات", Hint = "نزدیک نیاوران، دزاشیب و تجریش." },
+            new GeoLocation { Slug = "dezashib", Name = "دزاشیب", Cluster = "شمیرانات", Hint = "بین تجریش، جماران و نیاوران." },
+            new GeoLocation { Slug = "yaser", Name = "یاسر", Cluster = "نیاوران", Hint = "در محور نیاوران و نزدیک فرمانیه و دزاشیب." },
+            new GeoLocation { Slug = "farmanieh", Name = "فرمانیه", Cluster = "شمال تهران", Hint = "نزدیک نیاوران، کامرانیه و قیطریه." },
+            new GeoLocation { Slug = "jamalabad", Name = "جمال‌آباد", Cluster = "شمیرانات", Hint = "در محدوده شمال شرق تهران و نزدیک مسیرهای دارآباد و سوهانک." },
+            new GeoLocation { Slug = "azgol", Name = "ازگل", Cluster = "شمال شرق تهران", Hint = "نزدیک اراج، نوبنیاد، سوهانک و ارتش." },
+            new GeoLocation { Slug = "sohanak", Name = "سوهانک", Cluster = "شمال شرق تهران", Hint = "دسترسی از ارتش، اقدسیه و مینی‌سیتی." },
+            new GeoLocation { Slug = "artesh", Name = "ارتش", Cluster = "شمال شرق تهران", Hint = "برای محدوده بلوار ارتش، مینی‌سیتی، سوهانک و ازگل." },
+            new GeoLocation { Slug = "aghdasiyeh", Name = "اقدسیه", Cluster = "شمال تهران", Hint = "نزدیک فرمانیه، آجودانیه، نیاوران و ارتش." },
+            new GeoLocation { Slug = "heravi", Name = "هروی", Cluster = "شمال شرق تهران", Hint = "نزدیک پاسداران، موسوی، گلستان و سیدخندان." },
+            new GeoLocation { Slug = "ghaem", Name = "قائم", Cluster = "شمال شرق تهران", Hint = "برای محدوده قائم، هروی و پاسداران." },
+            new GeoLocation { Slug = "shahrak-naft", Name = "شهرک نفت", Cluster = "شمال تهران", Hint = "نزدیک مینی‌سیتی، ارتش و سوهانک." },
+            new GeoLocation { Slug = "shariati", Name = "شریعتی", Cluster = "تهران", Hint = "برای مسیر خیابان شریعتی تا تجریش و قلهک." },
+            new GeoLocation { Slug = "hekmat", Name = "حکمت", Cluster = "شمال تهران", Hint = "نزدیک فرمانیه، قیطریه و دزاشیب." },
+            new GeoLocation { Slug = "gholhak", Name = "قلهک", Cluster = "شمال تهران", Hint = "دسترسی از شریعتی، دولت و قیطریه." },
+            new GeoLocation { Slug = "dowlat", Name = "دولت", Cluster = "شمال تهران", Hint = "نزدیک قلهک، دیباجی و پاسداران." },
+            new GeoLocation { Slug = "yakhchal", Name = "یخچال", Cluster = "شمال تهران", Hint = "در محور قلهک، شریعتی و دولت." },
+            new GeoLocation { Slug = "valiasr", Name = "ولیعصر", Cluster = "تهران", Hint = "برای مسیر خیابان ولیعصر تا تجریش و پارک‌وی." },
+            new GeoLocation { Slug = "asef", Name = "آصف", Cluster = "زعفرانیه", Hint = "نزدیک زعفرانیه، مقدس اردبیلی و ولنجک." },
+            new GeoLocation { Slug = "pessian", Name = "پسیان", Cluster = "شمال تهران", Hint = "نزدیک زعفرانیه، ولیعصر و باغ فردوس." },
+            new GeoLocation { Slug = "moghadas-ardabili", Name = "مقدس اردبیلی", Cluster = "زعفرانیه", Hint = "در محدوده زعفرانیه، آصف، ولنجک و الهیه." },
+            new GeoLocation { Slug = "maghsoudbeik", Name = "مقصودبیک", Cluster = "تجریش", Hint = "نزدیک تجریش، دربند، باغ فردوس و دزاشیب." },
+            new GeoLocation { Slug = "darband", Name = "دربند", Cluster = "شمیرانات", Hint = "نزدیک تجریش، امامزاده صالح و سعدآباد." },
+            new GeoLocation { Slug = "elahiyeh", Name = "الهیه", Cluster = "شمال تهران", Hint = "نزدیک فرشته، تجریش، پارک‌وی و ولیعصر." },
+            new GeoLocation { Slug = "fereshteh", Name = "فرشته", Cluster = "الهیه", Hint = "در محدوده الهیه، چناران، بوسنی و پل رومی." },
+            new GeoLocation { Slug = "amanieh", Name = "امانیه", Cluster = "شمال تهران", Hint = "نزدیک الهیه، پارک‌وی و ولیعصر." },
+            new GeoLocation { Slug = "chamran", Name = "چمران", Cluster = "شمال تهران", Hint = "برای دسترسی از بزرگراه چمران، پارک‌وی و ولنجک." },
+            new GeoLocation { Slug = "parkway", Name = "پارک‌وی", Cluster = "شمال تهران", Hint = "نقطه اتصال ولیعصر، چمران، ولنجک و الهیه." },
+            new GeoLocation { Slug = "velenjak", Name = "ولنجک", Cluster = "شمال تهران", Hint = "نزدیک بام تهران، زعفرانیه، مقدس اردبیلی و دانشگاه شهید بهشتی." },
+            new GeoLocation { Slug = "vanak", Name = "ونک", Cluster = "شمال تهران", Hint = "برای دسترسی از ونک، ملاصدرا و ولیعصر به تجریش." },
+            new GeoLocation { Slug = "seoul", Name = "سئول", Cluster = "شمال تهران", Hint = "نزدیک ولنجک، نمایشگاه، اوین و چمران." },
+            new GeoLocation { Slug = "jafarabad", Name = "جعفرآباد", Cluster = "شمیرانات", Hint = "نزدیک تجریش، سعدآباد و دربند." },
+            new GeoLocation { Slug = "sadabad", Name = "سعدآباد", Cluster = "شمیرانات", Hint = "نزدیک دربند، تجریش و زعفرانیه." },
+            new GeoLocation { Slug = "chaharrah-hesabi", Name = "چهارراه حسابی", Cluster = "شمال تهران", Hint = "در مسیر ولنجک، زعفرانیه و مقدس اردبیلی." },
+            new GeoLocation { Slug = "ajodanieh", Name = "آجودانیه", Cluster = "شمال شرق تهران", Hint = "نزدیک اقدسیه، دارآباد، نیاوران و ارتش." },
+            new GeoLocation { Slug = "oshan", Name = "اوشان", Cluster = "لواسانات", Hint = "برای مسیر اوشان، فشم و شمال شرق تهران." },
+            new GeoLocation { Slug = "mahak", Name = "محک", Cluster = "شمال شرق تهران", Hint = "نزدیک دارآباد، آجودانیه و نیاوران." },
+            new GeoLocation { Slug = "mahalati", Name = "محلاتی", Cluster = "شمال شرق تهران", Hint = "نزدیک مینی‌سیتی، ارتش و اقدسیه." },
+            new GeoLocation { Slug = "sadr", Name = "صدر", Cluster = "شمال تهران", Hint = "برای مسیر بزرگراه صدر، قیطریه، دیباجی و فرمانیه." },
+            new GeoLocation { Slug = "bouali", Name = "بوعلی", Cluster = "شمال تهران", Hint = "نزدیک فرمانیه، قیطریه و کامرانیه." },
+            new GeoLocation { Slug = "qanat-kosar", Name = "قنات کوثر", Cluster = "شمال شرق تهران", Hint = "نزدیک هروی، پاسداران و حکیمیه." },
+            new GeoLocation { Slug = "emamzadeh-ghasem", Name = "امامزاده قاسم", Cluster = "شمیرانات", Hint = "نزدیک تجریش، دزاشیب و دربند." },
+            new GeoLocation { Slug = "abk", Name = "آبک", Cluster = "شمیرانات", Hint = "در محدوده تجریش، دزاشیب و امامزاده قاسم." },
+            new GeoLocation { Slug = "meydan-ghods", Name = "میدان قدس", Cluster = "تجریش", Hint = "نزدیک مترو تجریش، بازار تجریش و خیابان شهرداری." },
+            new GeoLocation { Slug = "sahebqaranieh", Name = "صاحبقرانیه", Cluster = "نیاوران", Hint = "نزدیک نیاوران، کاشانک و جماران." },
+            new GeoLocation { Slug = "falahi", Name = "فلاحی", Cluster = "زعفرانیه", Hint = "نزدیک زعفرانیه، ولنجک و مقدس اردبیلی." },
+            new GeoLocation { Slug = "zaferanieh", Name = "زعفرانیه", Cluster = "شمال تهران", Hint = "نزدیک تجریش، ولنجک، آصف و مقدس اردبیلی." },
+            new GeoLocation { Slug = "bagh-shater", Name = "باغ شاطر", Cluster = "شمیرانات", Hint = "نزدیک تجریش، سعدآباد و دربند." },
+            new GeoLocation { Slug = "ghoba", Name = "قبا", Cluster = "شمال تهران", Hint = "نزدیک پاسداران، دولت و شریعتی." },
+            new GeoLocation { Slug = "jolfa", Name = "جلفا", Cluster = "شمال تهران", Hint = "نزدیک شریعتی، قلهک و میرداماد." },
+            new GeoLocation { Slug = "dibaji", Name = "دیباجی", Cluster = "شمال تهران", Hint = "نزدیک قیطریه، فرمانیه، پاسداران و دولت." },
+            new GeoLocation { Slug = "hosseinabad", Name = "حسین‌آباد", Cluster = "شمال شرق تهران", Hint = "نزدیک هروی، پاسداران و مجیدیه شمالی." },
+            new GeoLocation { Slug = "langari", Name = "لنگری", Cluster = "شمال شرق تهران", Hint = "نزدیک پاسداران، هروی و ضرابخانه." },
+            new GeoLocation { Slug = "saghdoush", Name = "ساقدوش", Cluster = "شمال شرق تهران", Hint = "در محدوده پاسداران، هروی و دولت." },
+            new GeoLocation { Slug = "nobonyad", Name = "نوبنیاد", Cluster = "شمال شرق تهران", Hint = "نزدیک پاسداران، اقدسیه، ارتش و مینی‌سیتی." },
+            new GeoLocation { Slug = "saeedi", Name = "سعیدی", Cluster = "شمال تهران", Hint = "برای محدوده‌های محلی اطراف شمیران و تجریش." },
+            new GeoLocation { Slug = "araj", Name = "اراج", Cluster = "شمال شرق تهران", Hint = "نزدیک نوبنیاد، ازگل، اقدسیه و ارتش." },
+            new GeoLocation { Slug = "mahmoodieh", Name = "محمودیه", Cluster = "شمال تهران", Hint = "نزدیک ولنجک، پارک‌وی، زعفرانیه و ولیعصر." },
+            new GeoLocation { Slug = "tandis", Name = "تندیس", Cluster = "تجریش", Hint = "نزدیک مرکز خرید تندیس، میدان تجریش و خیابان شهرداری." },
+            new GeoLocation { Slug = "palladium", Name = "پالادیوم", Cluster = "زعفرانیه", Hint = "نزدیک مرکز خرید پالادیوم، مقدس اردبیلی و زعفرانیه." },
+            new GeoLocation { Slug = "kamranieh", Name = "کامرانیه", Cluster = "شمال تهران", Hint = "نزدیک فرمانیه، قیطریه و نیاوران." },
+            new GeoLocation { Slug = "andarzgoo", Name = "اندرزگو", Cluster = "شمال تهران", Hint = "نزدیک قیطریه، فرمانیه و کامرانیه." },
+            new GeoLocation { Slug = "manzarieh", Name = "منظریه", Cluster = "شمال تهران", Hint = "در محدوده شمال تهران و مسیرهای نزدیک تجریش." },
+            new GeoLocation { Slug = "nakhjavan", Name = "نخجوان", Cluster = "شمال تهران", Hint = "نزدیک فرمانیه، قیطریه و پاسداران." },
+            new GeoLocation { Slug = "bookan", Name = "بوکان", Cluster = "شمال تهران", Hint = "نزدیک الهیه، فرشته و جردن شمالی." },
+            new GeoLocation { Slug = "shahrak-omid", Name = "شهرک امید", Cluster = "شمال شرق تهران", Hint = "نزدیک مینی‌سیتی، ارتش، سوهانک و ازگل." },
+            new GeoLocation { Slug = "mini-city", Name = "مینی‌سیتی", Cluster = "شمال شرق تهران", Hint = "نزدیک ارتش، اقدسیه، سوهانک و شهرک نفت." },
+            new GeoLocation { Slug = "kolahdooz", Name = "کلاهدوز", Cluster = "شمال شرق تهران", Hint = "نزدیک پاسداران، دولت و اختیاریه." },
+            new GeoLocation { Slug = "chizar", Name = "چیذر", Cluster = "شمیرانات", Hint = "نزدیک قیطریه، نیاوران و فرمانیه." },
+            new GeoLocation { Slug = "qeytarieh", Name = "قیطریه", Cluster = "شمال تهران", Hint = "نزدیک شریعتی، فرمانیه، کامرانیه و چیذر." },
+            new GeoLocation { Slug = "lavasani", Name = "لواسانی", Cluster = "شمال تهران", Hint = "نزدیک فرمانیه، نیاوران و پاسداران." },
+            new GeoLocation { Slug = "moosivand", Name = "موسیوند", Cluster = "شمال تهران", Hint = "در محدوده‌های محلی شمال تهران و مسیرهای نزدیک تجریش." },
+            new GeoLocation { Slug = "pol-roumi", Name = "پل رومی", Cluster = "الهیه", Hint = "نزدیک الهیه، فرشته، دزاشیب و تجریش." },
+            new GeoLocation { Slug = "valiasr-sadr", Name = "ولیعصر صدر", Cluster = "شمال تهران", Hint = "برای محدوده اتصال ولیعصر، صدر، پارک‌وی و تجریش." },
+            new GeoLocation { Slug = "takhti", Name = "تختی", Cluster = "شمال تهران", Hint = "برای محدوده‌های محلی شمیران و شمال تهران." },
+            new GeoLocation { Slug = "zahir-dowleh", Name = "ظهیرالدوله", Cluster = "شمیرانات", Hint = "نزدیک تجریش، دزاشیب و امامزاده قاسم." },
+            new GeoLocation { Slug = "pol-tajrish", Name = "پل تجریش", Cluster = "تجریش", Hint = "نزدیک میدان قدس، بازار تجریش و خیابان شهرداری." },
+            new GeoLocation { Slug = "bagh-ferdos", Name = "باغ فردوس", Cluster = "تجریش", Hint = "نزدیک ولیعصر، تجریش، موزه سینما و زعفرانیه." },
+            new GeoLocation { Slug = "emamzadeh-saleh", Name = "امامزاده صالح", Cluster = "تجریش", Hint = "نزدیک بازار تجریش، میدان تجریش و مترو تجریش." },
+            new GeoLocation { Slug = "bazar-tajrish", Name = "بازار تجریش", Cluster = "تجریش", Hint = "نزدیک میدان تجریش، امامزاده صالح و خیابان شهرداری." },
+            new GeoLocation { Slug = "zarabkhaneh", Name = "سه‌راه ضرابخانه", Cluster = "شمال شرق تهران", Hint = "نزدیک پاسداران، شریعتی، هروی و سیدخندان." },
+            new GeoLocation { Slug = "yekta", Name = "یکتا", Cluster = "شمال تهران", Hint = "برای محدوده‌های محلی شمال تهران و شمیرانات." },
+            new GeoLocation { Slug = "kashanchi", Name = "کاشانچی", Cluster = "شمال تهران", Hint = "برای مسیرهای محلی شمال تهران و تجریش." },
+            new GeoLocation { Slug = "golsang", Name = "گل‌سنگ", Cluster = "شمال تهران", Hint = "در محدوده‌های محلی شمال تهران و شمیرانات." },
+            new GeoLocation { Slug = "afshar", Name = "افشار", Cluster = "شمال تهران", Hint = "نزدیک زعفرانیه، ولنجک و محمودیه." },
+            new GeoLocation { Slug = "mojdeh", Name = "مژده", Cluster = "شمال تهران", Hint = "برای محدوده‌های محلی شمال تهران و دسترسی به تجریش." },
+            new GeoLocation { Slug = "moghaddasi", Name = "مقدسی", Cluster = "شمال تهران", Hint = "نزدیک خیابان‌های محلی شمال تهران و شمیران." },
+            new GeoLocation { Slug = "lavasan", Name = "لواسان", Cluster = "لواسانات", Hint = "برای کاربران لواسان و مسیرهای شرق و شمال شرق تهران." },
+            new GeoLocation { Slug = "roudehen", Name = "رودهن", Cluster = "شرق تهران", Hint = "برای کاربران رودهن و مسیرهای شرق تهران که به خدمات شنوایی نیاز دارند." },
+            new GeoLocation { Slug = "boomehen", Name = "بومهن", Cluster = "شرق تهران", Hint = "برای کاربران بومهن و محدوده شرق تهران." },
+            new GeoLocation { Slug = "feshm", Name = "فشم", Cluster = "لواسانات", Hint = "برای مسیر فشم، اوشان، رودبارقصران و شمال شرق تهران." },
+            new GeoLocation { Slug = "niavaran", Name = "نیاوران", Cluster = "شمیرانات", Hint = "نزدیک دزاشیب، جماران، کاشانک، فرمانیه و تجریش." },
+            new GeoLocation { Slug = "pasdaran", Name = "پاسداران", Cluster = "شمال شرق تهران", Hint = "نزدیک هروی، دولت، ضرابخانه، نوبنیاد و قیطریه." },
+            new GeoLocation { Slug = "ekhtiyariyeh", Name = "اختیاریه", Cluster = "شمال تهران", Hint = "نزدیک پاسداران، دولت و دیباجی." },
+            new GeoLocation { Slug = "darrous", Name = "دروس", Cluster = "شمال تهران", Hint = "نزدیک قلهک، پاسداران و شریعتی." }
+        };
+
+        private static readonly GeoServiceIntent[] ServiceList = new[]
+        {
+            new GeoServiceIntent {
+                Slug = "hearing-test",
+                Name = "تست شنوایی",
+                H1Template = "تست شنوایی {area}",
+                TitleTemplate = "تست شنوایی در {area} | کلینیک شنوایی شکوه تجریش",
+                MetaTemplate = "تست شنوایی، ادیومتری و بررسی کم‌شنوایی برای محدوده {area} در کلینیک شنوایی و سمعک شکوه تجریش؛ مناسب برای وزوز، افت شنوایی، سالمندان و انتخاب سمعک.",
+                ShortTemplate = "برای افرادی که در {area} زندگی یا کار می‌کنند و در شنیدن گفت‌وگو، صدای تلویزیون یا مکالمه در محیط شلوغ مشکل دارند، تست شنوایی اولین قدم دقیق برای تصمیم‌گیری است."
+            },
+            new GeoServiceIntent {
+                Slug = "audiology-clinic",
+                Name = "کلینیک شنوایی",
+                H1Template = "کلینیک شنوایی در {area}",
+                TitleTemplate = "کلینیک شنوایی در {area} | ارزیابی شنوایی و مشاوره سمعک",
+                MetaTemplate = "کلینیک شنوایی نزدیک {area} برای ارزیابی شنوایی، بررسی کم‌شنوایی، مشاوره خرید سمعک، تنظیم و پیگیری شنوایی در شکوه تجریش.",
+                ShortTemplate = "اگر به دنبال کلینیک شنوایی در {area} هستید، صفحه حاضر مسیر خدمات، مراحل مراجعه و گزینه‌های مرتبط با تست و سمعک را واضح توضیح می‌دهد."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid",
+                Name = "خرید سمعک",
+                H1Template = "خرید سمعک در {area}",
+                TitleTemplate = "خرید سمعک در {area} | مشاوره انتخاب سمعک شکوه تجریش",
+                MetaTemplate = "خرید و انتخاب سمعک نزدیک {area} با مشاوره تخصصی، بررسی نتیجه تست شنوایی، مقایسه برندها و راهنمایی درباره مدل مناسب، قیمت و گارانتی.",
+                ShortTemplate = "برای خرید سمعک در {area} بهتر است قبل از تصمیم، نتیجه تست شنوایی، سبک زندگی، نیاز شنیداری و بودجه بررسی شود تا انتخاب فقط بر اساس نام برند یا قیمت نباشد."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-adjustment",
+                Name = "تنظیم سمعک",
+                H1Template = "تنظیم سمعک در {area}",
+                TitleTemplate = "تنظیم سمعک در {area} | تنظیم تخصصی و پیگیری شنوایی",
+                MetaTemplate = "تنظیم سمعک نزدیک {area} برای بهبود وضوح گفتار، کاهش آزار صوتی، بررسی فیدبک، تنظیم برنامه‌های شنیداری و پیگیری بعد از تجویز.",
+                ShortTemplate = "اگر سمعک دارید اما صدا واضح نیست، در محیط شلوغ اذیت می‌شوید یا صدای سمعک طبیعی نیست، تنظیم مجدد سمعک می‌تواند کیفیت استفاده روزانه را بهتر کند."
+            },
+            new GeoServiceIntent {
+                Slug = "home-visit-hearing-aid",
+                Name = "ویزیت سمعک در منزل",
+                H1Template = "ویزیت سمعک در منزل {area}",
+                TitleTemplate = "ویزیت در منزل سمعک در {area} | مشاوره و پیگیری شنوایی",
+                MetaTemplate = "ویزیت در منزل برای سمعک و شنوایی نزدیک {area}؛ مناسب سالمندان، افراد کم‌توان، بررسی اولیه، مشاوره و هماهنگی پیگیری تخصصی.",
+                ShortTemplate = "برای سالمندان یا افرادی که رفت‌وآمد سخت دارند، هماهنگی ویزیت یا مشاوره اولیه در منزل می‌تواند شروع مسیر ارزیابی و انتخاب سمعک را ساده‌تر کند."
+            },
+            new GeoServiceIntent {
+                Slug = "in-home-hearing-aid-prescription",
+                Name = "تجویز سمعک در منزل",
+                H1Template = "تجویز سمعک در منزل {area}",
+                TitleTemplate = "تجویز سمعک در منزل {area} | راهنمای ارزیابی و انتخاب",
+                MetaTemplate = "تجویز سمعک در منزل نزدیک {area} برای افرادی که نیاز به شروع مسیر انتخاب سمعک، بررسی شرایط و هماهنگی ارزیابی تخصصی دارند.",
+                ShortTemplate = "تجویز دقیق سمعک به نتیجه تست شنوایی، بررسی سبک زندگی و امکان تنظیم وابسته است؛ در منزل می‌توان مسیر اولیه را ساده‌تر کرد."
+            },
+            new GeoServiceIntent {
+                Slug = "in-home-hearing-aid-adjustment",
+                Name = "تنظیم سمعک در منزل",
+                H1Template = "تنظیم سمعک در منزل {area}",
+                TitleTemplate = "تنظیم سمعک در منزل {area} | پیگیری و اصلاح صدا",
+                MetaTemplate = "تنظیم سمعک در منزل نزدیک {area} برای بررسی وضوح گفتار، سوت کشیدن، آزار صوتی و هماهنگی پیگیری تخصصی در کلینیک.",
+                ShortTemplate = "اگر کاربر سالمند است یا رفت‌وآمد دشوار دارد، تنظیم و پیگیری سمعک در منزل می‌تواند مشکلات اولیه استفاده از سمعک را کمتر کند."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-repair",
+                Name = "تعمیر سمعک",
+                H1Template = "تعمیر سمعک در {area}",
+                TitleTemplate = "تعمیر سمعک در {area} | بررسی خرابی و سرویس سمعک",
+                MetaTemplate = "تعمیر و بررسی سمعک نزدیک {area} برای مشکلاتی مثل قطع و وصل صدا، افت کیفیت، خرابی تیوب، هوک، فیلتر، میکروفن یا باتری.",
+                ShortTemplate = "اگر سمعک روشن نمی‌شود، سوت می‌کشد، صدا ضعیف شده یا مصرف باتری غیرعادی است، بهتر است قبل از خرید جدید، وضعیت دستگاه بررسی شود."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-battery",
+                Name = "باتری سمعک",
+                H1Template = "باتری سمعک در {area}",
+                TitleTemplate = "باتری سمعک در {area} | راهنمای خرید و مصرف باتری",
+                MetaTemplate = "باتری سمعک نزدیک {area} همراه با راهنمای انتخاب سایز باتری، مصرف باتری، نگهداری، تعویض و بررسی علت خالی شدن سریع باتری.",
+                ShortTemplate = "مصرف باتری سمعک به نوع دستگاه، میزان استفاده، رطوبت، تنظیمات و سلامت قطعات وابسته است؛ انتخاب باتری مناسب جلوی خاموشی‌های مکرر را می‌گیرد."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-filter",
+                Name = "فیلتر سمعک",
+                H1Template = "فیلتر سمعک در {area}",
+                TitleTemplate = "فیلتر سمعک در {area} | تعویض فیلتر و نظافت سمعک",
+                MetaTemplate = "فیلتر سمعک نزدیک {area} برای جلوگیری از گرفتگی صدا، کاهش خرابی و حفظ کیفیت شنیدن؛ همراه با راهنمای تعویض و نظافت.",
+                ShortTemplate = "گرفتگی فیلتر می‌تواند باعث ضعیف شدن یا قطع شدن صدا شود و خیلی وقت‌ها قبل از تعمیر جدی، با بررسی فیلتر مشکل مشخص می‌شود."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-price",
+                Name = "قیمت سمعک",
+                H1Template = "قیمت سمعک در {area}",
+                TitleTemplate = "قیمت سمعک در {area} | مشاوره هزینه، برند و مدل مناسب",
+                MetaTemplate = "راهنمای قیمت سمعک نزدیک {area}؛ بررسی عوامل موثر بر هزینه سمعک، برند، نوع تکنولوژی، گارانتی، بیمه و نیاز واقعی فرد.",
+                ShortTemplate = "قیمت سمعک فقط با نام برند مشخص نمی‌شود؛ نتیجه تست شنوایی، سطح تکنولوژی، نوع قالب، شارژی بودن، خدمات تنظیم و گارانتی هم مهم هستند."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-price-1405",
+                Name = "قیمت سمعک سال ۱۴۰۵",
+                H1Template = "قیمت سمعک سال ۱۴۰۵ در {area}",
+                TitleTemplate = "قیمت سمعک سال ۱۴۰۵ در {area} | راهنمای هزینه و انتخاب",
+                MetaTemplate = "راهنمای قیمت سمعک سال ۱۴۰۵ نزدیک {area}؛ توضیح عوامل اثرگذار بر هزینه، بیمه، گارانتی، برند و سطح تکنولوژی بدون اعلام قیمت قطعی غیرمستند.",
+                ShortTemplate = "برای قیمت سمعک سال ۱۴۰۵ باید نوع کم‌شنوایی، تکنولوژی دستگاه، برند، گارانتی، خدمات تنظیم و پوشش بیمه کنار هم بررسی شوند."
+            },
+            new GeoServiceIntent {
+                Slug = "installment-hearing-aid",
+                Name = "سمعک قسطی",
+                H1Template = "سمعک قسطی در {area}",
+                TitleTemplate = "سمعک قسطی در {area} | شرایط پرداخت و مشاوره خرید",
+                MetaTemplate = "راهنمای خرید سمعک قسطی نزدیک {area}، بررسی شرایط پرداخت، انتخاب مدل مناسب و هماهنگی مشاوره قبل از خرید.",
+                ShortTemplate = "اگر پرداخت یکجای هزینه سخت است، بهتر است اول مدل مناسب از نظر شنوایی انتخاب شود و بعد درباره شرایط پرداخت و پوشش بیمه تصمیم گرفته شود."
+            },
+            new GeoServiceIntent {
+                Slug = "insurance-hearing-aid",
+                Name = "سمعک با بیمه",
+                H1Template = "سمعک با بیمه در {area}",
+                TitleTemplate = "سمعک با بیمه در {area} | راهنمای تعرفه، مدارک و مشاوره",
+                MetaTemplate = "راهنمای سمعک با بیمه نزدیک {area}؛ بررسی مدارک، تعرفه، امکان استفاده از پوشش بیمه و مشاوره قبل از خرید سمعک.",
+                ShortTemplate = "برای استفاده از بیمه در خرید سمعک، بهتر است قبل از خرید درباره مدارک، نوع پوشش و شرایط پرداخت اطلاعات دقیق بگیرید."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-insurance-tariff",
+                Name = "تعرفه سمعک با بیمه",
+                H1Template = "تعرفه سمعک با بیمه در {area}",
+                TitleTemplate = "تعرفه سمعک با بیمه در {area} | راهنمای پوشش بیمه",
+                MetaTemplate = "توضیح تعرفه سمعک با بیمه نزدیک {area}، مدارک لازم، مسیر استعلام و نکات مهم قبل از خرید سمعک.",
+                ShortTemplate = "تعرفه و سهم بیمه ممکن است با نوع بیمه و شرایط پرونده فرق کند؛ بهتر است پیش از خرید، مدارک و پوشش دقیق بررسی شود."
+            },
+            new GeoServiceIntent {
+                Slug = "earmold",
+                Name = "قالب سمعک",
+                H1Template = "قالب سمعک در {area}",
+                TitleTemplate = "قالب سمعک در {area} | قالب سیلیکونی، ضدآب و تعویض قالب",
+                MetaTemplate = "قالب سمعک نزدیک {area} شامل قالب سیلیکونی، قالب ضدآب، تعویض قالب، بررسی نشتی صدا، راحتی گوش و فیت دقیق سمعک.",
+                ShortTemplate = "قالب نامناسب می‌تواند باعث سوت کشیدن، درد، افت کیفیت صدا یا عدم ثبات سمعک شود؛ قالب‌گیری دقیق برای استفاده راحت ضروری است."
+            },
+            new GeoServiceIntent {
+                Slug = "waterproof-earmold",
+                Name = "قالب ضد آب سمعک",
+                H1Template = "قالب ضد آب سمعک در {area}",
+                TitleTemplate = "قالب ضد آب سمعک در {area} | مشاوره قالب مناسب",
+                MetaTemplate = "قالب ضد آب سمعک نزدیک {area} برای شرایط خاص استفاده، محافظت بهتر و بررسی نیاز واقعی کاربر.",
+                ShortTemplate = "قالب ضد آب برای همه کاربران ضروری نیست؛ نوع استفاده، رطوبت، سبک زندگی و وضعیت گوش باید بررسی شود."
+            },
+            new GeoServiceIntent {
+                Slug = "silicone-earmold",
+                Name = "قالب سیلیکونی سمعک",
+                H1Template = "قالب سیلیکونی سمعک در {area}",
+                TitleTemplate = "قالب سیلیکونی سمعک در {area} | قالب‌گیری و فیت بهتر",
+                MetaTemplate = "قالب سیلیکونی سمعک نزدیک {area} برای راحتی بیشتر، فیت بهتر، کاهش سوت و بهبود کیفیت استفاده روزانه.",
+                ShortTemplate = "قالب سیلیکونی می‌تواند برای بعضی کاربران راحت‌تر باشد، اما انتخاب جنس قالب باید بر اساس شرایط گوش و نوع سمعک انجام شود."
+            },
+            new GeoServiceIntent {
+                Slug = "earmold-replacement",
+                Name = "تعویض قالب سمعک",
+                H1Template = "تعویض قالب سمعک در {area}",
+                TitleTemplate = "تعویض قالب سمعک در {area} | رفع نشتی و سوت سمعک",
+                MetaTemplate = "تعویض قالب سمعک نزدیک {area} برای قالب فرسوده، تغییر فرم گوش، سوت کشیدن یا کاهش کیفیت صدا.",
+                ShortTemplate = "با تغییر فرم گوش یا فرسوده شدن قالب، سمعک ممکن است سوت بکشد یا خوب در گوش ننشیند؛ در این حالت تعویض قالب کمک‌کننده است."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-test-price",
+                Name = "هزینه تست شنوایی",
+                H1Template = "هزینه تست شنوایی در {area}",
+                TitleTemplate = "هزینه تست شنوایی در {area} | راهنمای آزمایش شنوایی",
+                MetaTemplate = "راهنمای هزینه تست شنوایی نزدیک {area}، نوع ارزیابی، مراحل انجام و زمان مناسب مراجعه.",
+                ShortTemplate = "هزینه تست شنوایی به نوع ارزیابی و نیاز فرد بستگی دارد؛ برای تصمیم دقیق بهتر است ابتدا نوع مشکل شنیداری مشخص شود."
+            },
+            new GeoServiceIntent {
+                Slug = "audiometry-price",
+                Name = "آزمایش شنوایی چنده",
+                H1Template = "آزمایش شنوایی چنده در {area}",
+                TitleTemplate = "آزمایش شنوایی چنده در {area} | پاسخ سریع و مسیر مراجعه",
+                MetaTemplate = "پاسخ به جستجوی آزمایش شنوایی چنده نزدیک {area} همراه با توضیح نوع تست، مراحل مراجعه و نقش نتیجه در انتخاب سمعک.",
+                ShortTemplate = "عبارت آزمایش شنوایی چنده معمولاً یعنی کاربر می‌خواهد قبل از مراجعه بداند چه تستی لازم است و هزینه به چه عواملی وابسته است."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-cost",
+                Name = "سمعک چنده",
+                H1Template = "سمعک چنده در {area}",
+                TitleTemplate = "سمعک چنده در {area} | راهنمای قیمت و انتخاب سمعک",
+                MetaTemplate = "راهنمای پاسخ به سوال سمعک چنده نزدیک {area} با توضیح عوامل قیمت، برند، تکنولوژی، بیمه و خدمات پس از خرید.",
+                ShortTemplate = "برای اینکه بدانیم سمعک چنده، اول باید بدانیم چه نوع کم‌شنوایی و چه سطح تکنولوژی لازم است؛ قیمت تنها معیار انتخاب نیست."
+            },
+            new GeoServiceIntent {
+                Slug = "rechargeable-hearing-aid",
+                Name = "سمعک شارژی",
+                H1Template = "سمعک شارژی در {area}",
+                TitleTemplate = "سمعک شارژی در {area} | مشاوره انتخاب سمعک بدون باتری",
+                MetaTemplate = "مشاوره سمعک شارژی نزدیک {area} برای انتخاب سمعک بدون باتری، بررسی شارژدهی، دوام، گارانتی و سبک زندگی مناسب.",
+                ShortTemplate = "سمعک شارژی برای بسیاری از کاربران راحت‌تر است، اما انتخاب آن باید با توجه به شدت کم‌شنوایی، زمان استفاده روزانه و نیاز شنیداری انجام شود."
+            },
+            new GeoServiceIntent {
+                Slug = "battery-free-hearing-aid",
+                Name = "سمعک بدون باتری",
+                H1Template = "سمعک بدون باتری در {area}",
+                TitleTemplate = "سمعک بدون باتری در {area} | راهنمای سمعک شارژی",
+                MetaTemplate = "راهنمای سمعک بدون باتری نزدیک {area}، تفاوت مدل شارژی با باتری‌خور، دوام شارژ و نکات نگهداری.",
+                ShortTemplate = "منظور بیشتر کاربران از سمعک بدون باتری، سمعک شارژی است؛ قبل از انتخاب باید شارژدهی و شرایط استفاده روزانه بررسی شود."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-battery-consumption",
+                Name = "مصرف باتری سمعک",
+                H1Template = "مصرف باتری سمعک در {area}",
+                TitleTemplate = "مصرف باتری سمعک در {area} | علت خالی شدن سریع باتری",
+                MetaTemplate = "بررسی مصرف باتری سمعک نزدیک {area}، علت خالی شدن سریع، نقش تنظیمات، رطوبت، نوع باتری و سلامت دستگاه.",
+                ShortTemplate = "مصرف زیاد باتری همیشه به معنی خرابی دستگاه نیست؛ تنظیمات، نوع استفاده، قدرت خروجی و حتی رطوبت هم اثر دارند."
+            },
+            new GeoServiceIntent {
+                Slug = "invisible-hearing-aid",
+                Name = "سمعک نامرئی",
+                H1Template = "سمعک نامرئی در {area}",
+                TitleTemplate = "سمعک نامرئی در {area} | مشاوره انتخاب سمعک داخل گوشی",
+                MetaTemplate = "مشاوره سمعک نامرئی نزدیک {area} برای بررسی امکان استفاده از سمعک داخل گوشی، شرایط کانال گوش، شدت کم‌شنوایی و نیاز روزانه.",
+                ShortTemplate = "سمعک نامرئی برای همه افراد مناسب نیست؛ فرم گوش، میزان کم‌شنوایی، توانایی نگهداری و نوع نیاز شنیداری باید بررسی شود."
+            },
+            new GeoServiceIntent {
+                Slug = "tinnitus-hearing-aid",
+                Name = "وزوز گوش و سمعک",
+                H1Template = "وزوز گوش و سمعک در {area}",
+                TitleTemplate = "وزوز گوش و سمعک در {area} | بررسی شنوایی و مشاوره تخصصی",
+                MetaTemplate = "بررسی وزوز گوش نزدیک {area} همراه با تست شنوایی، مشاوره سمعک، بررسی کم‌شنوایی همراه و راهنمایی برای پیگیری تخصصی.",
+                ShortTemplate = "وزوز گوش ممکن است با افت شنوایی همراه باشد؛ ارزیابی شنوایی کمک می‌کند مسیر پیگیری، درمان یا استفاده از سمعک دقیق‌تر انتخاب شود."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-warranty",
+                Name = "گارانتی و ضمانت سمعک",
+                H1Template = "گارانتی سمعک در {area}",
+                TitleTemplate = "گارانتی و ضمانت سمعک در {area} | خدمات پس از خرید",
+                MetaTemplate = "راهنمای گارانتی سمعک، ضمانت، خدمات پس از خرید و پیگیری مشکلات دستگاه نزدیک {area}.",
+                ShortTemplate = "گارانتی فقط یک برگه نیست؛ دسترسی به تنظیم، سرویس، پیگیری و توضیح شرایط ضمانت در تجربه استفاده از سمعک بسیار مهم است."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-cleaning",
+                Name = "نظافت سمعک",
+                H1Template = "نظافت سمعک در {area}",
+                TitleTemplate = "نظافت سمعک در {area} | مراقبت و افزایش عمر دستگاه",
+                MetaTemplate = "آموزش و بررسی نظافت سمعک نزدیک {area} برای کاهش خرابی، گرفتگی فیلتر، رطوبت و افت کیفیت صدا.",
+                ShortTemplate = "نظافت درست سمعک و قالب می‌تواند عمر دستگاه را بیشتر کند و جلوی گرفتگی صدا یا خرابی زودرس را بگیرد."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-durability",
+                Name = "دوام سمعک",
+                H1Template = "دوام سمعک در {area}",
+                TitleTemplate = "دوام سمعک در {area} | نگهداری، گارانتی و مراقبت",
+                MetaTemplate = "راهنمای دوام سمعک نزدیک {area}، عوامل اثرگذار بر عمر دستگاه، رطوبت، سرویس دوره‌ای، گارانتی و نگهداری.",
+                ShortTemplate = "دوام سمعک به کیفیت دستگاه، شرایط نگهداری، رطوبت، سرویس و نحوه استفاده روزانه وابسته است."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-tube",
+                Name = "شلنگ و تیوب سمعک",
+                H1Template = "شلنگ و تیوب سمعک در {area}",
+                TitleTemplate = "شلنگ و تیوب سمعک در {area} | تعویض و بررسی صدا",
+                MetaTemplate = "تعویض شلنگ سمعک، تیوب سمعک و بررسی گرفتگی یا پارگی نزدیک {area}.",
+                ShortTemplate = "شلنگ یا تیوب فرسوده می‌تواند باعث افت صدا، سوت کشیدن یا انتقال بد صدا شود و گاهی با تعویض ساده مشکل حل می‌شود."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-hook",
+                Name = "هوک سمعک",
+                H1Template = "هوک سمعک در {area}",
+                TitleTemplate = "هوک سمعک در {area} | بررسی و تعویض قطعه",
+                MetaTemplate = "بررسی و تعویض هوک سمعک نزدیک {area} برای مدل‌های پشت گوشی و رفع مشکلات اتصال یا انتقال صدا.",
+                ShortTemplate = "هوک سمعک اگر آسیب ببیند یا درست فیت نشود، کیفیت شنیدن و راحتی استفاده از دستگاه کاهش پیدا می‌کند."
+            },
+            new GeoServiceIntent {
+                Slug = "waterproof-hearing-aid",
+                Name = "سمعک ضد آب",
+                H1Template = "سمعک ضد آب در {area}",
+                TitleTemplate = "سمعک ضد آب در {area} | مشاوره انتخاب و مراقبت",
+                MetaTemplate = "مشاوره سمعک ضد آب نزدیک {area}، توضیح مقاومت در برابر رطوبت، محدودیت‌ها، نگهداری و انتخاب مناسب.",
+                ShortTemplate = "ضد آب بودن سمعک درجات مختلف دارد و نباید با امکان استفاده دائمی زیر آب اشتباه گرفته شود؛ شرایط واقعی استفاده باید بررسی شود."
+            },
+            new GeoServiceIntent {
+                Slug = "sweatproof-hearing-aid",
+                Name = "سمعک ضد عرق",
+                H1Template = "سمعک ضد عرق در {area}",
+                TitleTemplate = "سمعک ضد عرق در {area} | انتخاب مناسب برای رطوبت و فعالیت",
+                MetaTemplate = "مشاوره سمعک ضد عرق نزدیک {area} برای کاربرانی که فعالیت زیاد، تعریق یا رطوبت محیطی دارند.",
+                ShortTemplate = "اگر تعریق زیاد دارید، انتخاب مدل مناسب، خشک‌کن، نگهداری و سرویس دوره‌ای اهمیت زیادی دارد."
+            },
+            new GeoServiceIntent {
+                Slug = "german-hearing-aid",
+                Name = "سمعک آلمانی",
+                H1Template = "سمعک آلمانی در {area}",
+                TitleTemplate = "سمعک آلمانی در {area} | مشاوره برند و مدل",
+                MetaTemplate = "مشاوره سمعک آلمانی نزدیک {area} و بررسی برند، تکنولوژی، نیاز شنیداری، قیمت و خدمات تنظیم.",
+                ShortTemplate = "کشور سازنده فقط یکی از معیارهاست؛ مدل مناسب باید با نتیجه تست شنوایی و نیاز روزانه انتخاب شود."
+            },
+            new GeoServiceIntent {
+                Slug = "american-hearing-aid",
+                Name = "سمعک آمریکایی",
+                H1Template = "سمعک آمریکایی در {area}",
+                TitleTemplate = "سمعک آمریکایی در {area} | مشاوره انتخاب برند",
+                MetaTemplate = "مشاوره سمعک آمریکایی نزدیک {area} برای مقایسه برند، مدل، خدمات، گارانتی و نیاز شنیداری.",
+                ShortTemplate = "برای انتخاب سمعک آمریکایی باید قابلیت‌ها، تنظیم‌پذیری و تناسب با کم‌شنوایی فرد بررسی شود."
+            },
+            new GeoServiceIntent {
+                Slug = "danish-hearing-aid",
+                Name = "سمعک دانمارکی",
+                H1Template = "سمعک دانمارکی در {area}",
+                TitleTemplate = "سمعک دانمارکی در {area} | مشاوره برندهای دانمارکی",
+                MetaTemplate = "مشاوره سمعک دانمارکی نزدیک {area} و بررسی گزینه‌هایی مثل ویدکس و دیگر برندهای مرتبط بر اساس نیاز فرد.",
+                ShortTemplate = "برندهای دانمارکی شناخته‌شده‌اند، اما انتخاب نهایی باید بر اساس شنوایی‌سنجی و تنظیم تخصصی انجام شود."
+            },
+            new GeoServiceIntent {
+                Slug = "swiss-hearing-aid",
+                Name = "سمعک سوئیسی",
+                H1Template = "سمعک سوئیسی در {area}",
+                TitleTemplate = "سمعک سوئیسی در {area} | مشاوره برند و تکنولوژی",
+                MetaTemplate = "مشاوره سمعک سوئیسی نزدیک {area} و بررسی گزینه‌هایی مثل فوناک، سطح تکنولوژی، گارانتی و نیاز شنیداری.",
+                ShortTemplate = "سمعک سوئیسی هم باید بر اساس نتیجه تست، نوع کم‌شنوایی و سبک زندگی انتخاب شود."
+            },
+            new GeoServiceIntent {
+                Slug = "iranian-hearing-aid",
+                Name = "سمعک ایرانی",
+                H1Template = "سمعک ایرانی در {area}",
+                TitleTemplate = "سمعک ایرانی در {area} | مشاوره گزینه‌های اقتصادی",
+                MetaTemplate = "راهنمای سمعک ایرانی نزدیک {area} برای بررسی گزینه‌های اقتصادی، خدمات، گارانتی و تناسب با نیاز فرد.",
+                ShortTemplate = "انتخاب سمعک ایرانی یا خارجی باید بر اساس نیاز شنیداری، بودجه، خدمات و امکان تنظیم انجام شود."
+            },
+            new GeoServiceIntent {
+                Slug = "government-hearing-aid",
+                Name = "سمعک دولتی",
+                H1Template = "سمعک دولتی در {area}",
+                TitleTemplate = "سمعک دولتی در {area} | راهنمای مسیر دریافت و مشاوره",
+                MetaTemplate = "راهنمای سمعک دولتی نزدیک {area}، مسیرهای حمایتی، مدارک و نکات مهم قبل از انتخاب دستگاه.",
+                ShortTemplate = "برای سمعک دولتی یا حمایتی بهتر است مدارک، شرایط پوشش و مدل‌های قابل ارائه بررسی شود."
+            },
+            new GeoServiceIntent {
+                Slug = "free-behzisti-hearing-aid",
+                Name = "سمعک رایگان بهزیستی",
+                H1Template = "سمعک رایگان بهزیستی در {area}",
+                TitleTemplate = "سمعک رایگان بهزیستی در {area} | راهنمای حمایت و مدارک",
+                MetaTemplate = "راهنمای سمعک رایگان بهزیستی نزدیک {area}، شرایط حمایتی، مدارک احتمالی و مسیر پیگیری.",
+                ShortTemplate = "دریافت سمعک حمایتی به شرایط پرونده و ضوابط سازمانی وابسته است؛ صفحه راهنما مسیر بررسی را روشن می‌کند."
+            },
+            new GeoServiceIntent {
+                Slug = "deaf-support",
+                Name = "حمایت ناشنوایان",
+                H1Template = "حمایت ناشنوایان در {area}",
+                TitleTemplate = "حمایت ناشنوایان در {area} | راهنمای خدمات شنوایی و سمعک",
+                MetaTemplate = "راهنمای حمایت ناشنوایان و کم‌شنوایان نزدیک {area}، مسیر ارزیابی، مشاوره و گزینه‌های کمک‌شنوایی.",
+                ShortTemplate = "حمایت از افراد کم‌شنوا فقط خرید سمعک نیست؛ ارزیابی، آموزش، پیگیری و تنظیم هم در کیفیت زندگی اثر دارد."
+            },
+            new GeoServiceIntent {
+                Slug = "hearing-aid-consultation",
+                Name = "مشاوره سمعک",
+                H1Template = "مشاوره سمعک در {area}",
+                TitleTemplate = "مشاوره سمعک در {area} | انتخاب مطمئن‌تر بر اساس تست شنوایی",
+                MetaTemplate = "مشاوره سمعک نزدیک {area} برای انتخاب برند، مدل، قیمت، گارانتی، بیمه و بررسی نیاز واقعی فرد.",
+                ShortTemplate = "مشاوره قبل از خرید کمک می‌کند بین برند، قیمت، ظاهر دستگاه و نیاز واقعی شنیداری انتخاب منطقی‌تری انجام شود."
+            },
+            new GeoServiceIntent {
+                Slug = "quality-hearing-aid",
+                Name = "سمعک عیار",
+                H1Template = "سمعک عیار در {area}",
+                TitleTemplate = "سمعک عیار در {area} | بررسی کیفیت و انتخاب سمعک",
+                MetaTemplate = "راهنمای انتخاب سمعک با کیفیت نزدیک {area}، بررسی عیار واقعی دستگاه، تکنولوژی، تنظیم، گارانتی و خدمات.",
+                ShortTemplate = "عیار سمعک فقط به برند نیست؛ کیفیت تنظیم، خدمات بعد از خرید و تناسب با کم‌شنوایی هم تعیین‌کننده است."
+            },
+            new GeoServiceIntent {
+                Slug = "signia-hearing-aid-price",
+                Name = "قیمت سمعک سیگنیا",
+                H1Template = "قیمت سمعک سیگنیا در {area}",
+                TitleTemplate = "قیمت سمعک سیگنیا در {area} | مشاوره مدل و هزینه",
+                MetaTemplate = "راهنمای قیمت سمعک سیگنیا نزدیک {area}، بررسی مدل، سطح تکنولوژی، گارانتی، بیمه و تناسب با نیاز فرد.",
+                ShortTemplate = "قیمت مدل‌های سیگنیا بسته به تکنولوژی، امکانات و خدمات تنظیم متفاوت است و باید با نتیجه تست شنوایی سنجیده شود."
+            },
+            new GeoServiceIntent {
+                Slug = "siemens-hearing-aid-price",
+                Name = "قیمت سمعک زیمنس",
+                H1Template = "قیمت سمعک زیمنس در {area}",
+                TitleTemplate = "قیمت سمعک زیمنس در {area} | راهنمای مدل‌های سیگنیا/زیمنس",
+                MetaTemplate = "راهنمای قیمت سمعک زیمنس و سیگنیا نزدیک {area} با توضیح مدل‌ها، تکنولوژی و خدمات تنظیم.",
+                ShortTemplate = "خیلی از کاربران هنوز عبارت زیمنس را جستجو می‌کنند؛ در مشاوره باید ارتباط مدل‌های جدید سیگنیا و نیاز شنیداری فرد توضیح داده شود."
+            },
+            new GeoServiceIntent {
+                Slug = "widex-hearing-aid-price",
+                Name = "قیمت سمعک ویدکس",
+                H1Template = "قیمت سمعک ویدکس در {area}",
+                TitleTemplate = "قیمت سمعک ویدکس در {area} | مشاوره مدل و هزینه",
+                MetaTemplate = "راهنمای قیمت سمعک ویدکس نزدیک {area}، بررسی مدل، کیفیت صدا، گارانتی و تناسب با کم‌شنوایی.",
+                ShortTemplate = "برای انتخاب ویدکس، کیفیت صدا، برنامه‌های شنیداری، خدمات تنظیم و نیاز واقعی فرد مهم‌تر از نگاه صرفاً قیمتی است."
+            },
+            new GeoServiceIntent {
+                Slug = "phonak-hearing-aid-price",
+                Name = "قیمت سمعک فوناک",
+                H1Template = "قیمت سمعک فوناک در {area}",
+                TitleTemplate = "قیمت سمعک فوناک در {area} | مشاوره برند و مدل",
+                MetaTemplate = "راهنمای قیمت سمعک فوناک نزدیک {area}، بررسی مدل، سطح تکنولوژی، گارانتی و نیاز شنیداری.",
+                ShortTemplate = "فوناک گزینه‌های متنوعی دارد و انتخاب درست باید بر اساس تست شنوایی، بودجه، سبک زندگی و خدمات تنظیم انجام شود."
+            }
+        };
+
+        private static readonly Dictionary<string, GeoLocation> Locations =
+            LocationList.ToDictionary(x => x.Slug, StringComparer.OrdinalIgnoreCase);
+
+        private static readonly Dictionary<string, GeoServiceIntent> Services =
+            ServiceList.ToDictionary(x => x.Slug, StringComparer.OrdinalIgnoreCase);
+
+        [HttpGet]
+        public ActionResult ByAreaService(string areaSlug, string serviceSlug)
+        {
+            GeoLocation location;
+            GeoServiceIntent service;
+
+            if (!Locations.TryGetValue((areaSlug ?? "").Trim(), out location) ||
+                !Services.TryGetValue((serviceSlug ?? "").Trim(), out service))
             {
-                Slug = "tehran/hearing-test",
-                Canonical = BaseUrl + "/tehran/hearing-test",
-                Title = "تست شنوایی در تهران | کلینیک شنوایی و سمعک شکوه تجریش",
-                H1 = "تست شنوایی در تهران",
-                Kicker = "ارزیابی تخصصی شنوایی در شمال تهران",
-                MainService = "تست شنوایی",
-                City = "تهران",
-                District = "تجریش و شمیرانات",
-                PrimaryIntent = "Local hearing test service",
-                CtaText = "رزرو مشاوره تست شنوایی",
-                MetaDescription = "تست شنوایی در تهران و محدوده تجریش در کلینیک شنوایی و سمعک شکوه تجریش؛ ارزیابی شنوایی، مشاوره تخصصی، بررسی کم‌شنوایی و راهنمایی انتخاب سمعک.",
-                ShortAnswer = "اگر احساس کم‌شنوایی، وزوز گوش، گرفتگی گوش، دشواری در شنیدن مکالمه یا نیاز به بررسی شنوایی دارید، تست شنوایی در کلینیک شکوه تجریش می‌تواند نقطه شروع دقیق و مطمئن باشد. نتیجه ارزیابی به تصمیم‌گیری درباره درمان، پیگیری یا انتخاب سمعک کمک می‌کند.",
-                Keywords = new[] { "تست شنوایی در تهران", "آزمایش شنوایی تهران", "ادیومتری تهران", "کلینیک شنوایی تهران", "تست گوش تهران" },
-                Areas = new[] { "تجریش", "شمیرانات", "نیاوران", "قیطریه", "زعفرانیه", "الهیه", "فرمانیه", "دربند", "ولنجک", "پاسداران" },
-                Benefits = new[] {
-                    "ارزیابی دقیق شنوایی بر اساس علائم و نیاز مراجعه‌کننده",
-                    "مشاوره قابل فهم درباره نتیجه تست و مرحله بعدی",
-                    "امکان بررسی نیاز به سمعک یا پیگیری تخصصی",
-                    "دسترسی مناسب برای مراجعان شمال تهران و محدوده تجریش"
-                },
-                Steps = new[] {
-                    "ثبت درخواست تماس یا تماس مستقیم با کلینیک",
-                    "شرح علائم مانند کم‌شنوایی، وزوز، گرفتگی گوش یا مشکل در مکالمه",
-                    "انجام ارزیابی شنوایی متناسب با سن و وضعیت مراجعه‌کننده",
-                    "توضیح نتیجه تست و پیشنهاد مسیر بعدی، از پیگیری تا مشاوره سمعک"
-                },
-                WhoNeeds = new[] {
-                    "افرادی که در شنیدن مکالمه مخصوصاً در محیط شلوغ مشکل دارند",
-                    "سالمندانی که خانواده متوجه افت شنوایی آن‌ها شده‌اند",
-                    "افرادی که وزوز گوش یا احساس گرفتگی گوش دارند",
-                    "افرادی که قبل از انتخاب یا تنظیم سمعک نیاز به ارزیابی دارند"
-                },
-                RelatedTitle = "بعد از تست شنوایی چه می‌شود؟",
-                RelatedDescription = "بعد از مشخص شدن نوع و شدت کم‌شنوایی، متخصص شنوایی‌شناسی می‌تواند درباره نیاز به پیگیری، مشاوره سمعک یا تنظیم سمعک راهنمایی دقیق‌تری ارائه کند.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "تست شنوایی در تهران چقدر زمان می‌برد؟", Answer = "زمان دقیق به نوع ارزیابی و شرایط فرد بستگی دارد، اما معمولاً ارزیابی اولیه شنوایی در یک جلسه قابل انجام است." },
-                    new GeoFaqItem { Question = "آیا قبل از خرید سمعک باید تست شنوایی انجام شود؟", Answer = "بله. انتخاب سمعک بدون تست شنوایی دقیق، انتخاب مطمئنی نیست و ممکن است تنظیم سمعک با نیاز واقعی فرد هماهنگ نباشد." },
-                    new GeoFaqItem { Question = "آیا تست شنوایی درد دارد؟", Answer = "خیر. تست‌های رایج شنوایی معمولاً غیرتهاجمی و بدون درد هستند و برای بررسی وضعیت شنوایی انجام می‌شوند." },
-                    new GeoFaqItem { Question = "کلینیک شکوه تجریش به کدام مناطق تهران خدمات می‌دهد؟", Answer = "این کلینیک به مراجعان تهران، تجریش، شمیرانات، نیاوران، قیطریه، زعفرانیه، الهیه، فرمانیه و مناطق اطراف خدمات شنوایی ارائه می‌کند." }
-                }
-            });
+                Response.StatusCode = 404;
+                Response.TrySkipIisCustomErrors = true;
+                return HttpNotFound();
+            }
+
+            return Landing(BuildPage(location, service));
         }
 
-        [HttpGet]
-        public ActionResult HearingTestTajrish()
+        // Backward-compatible actions for existing RouteConfig mappings.
+        [HttpGet] public ActionResult HearingTestTehran() { return ByAreaService("tehran", "hearing-test"); }
+        [HttpGet] public ActionResult HearingTestTajrish() { return ByAreaService("tajrish", "hearing-test"); }
+        [HttpGet] public ActionResult HearingClinicTehran() { return ByAreaService("tehran", "audiology-clinic"); }
+        [HttpGet] public ActionResult HearingClinicTajrish() { return ByAreaService("tajrish", "audiology-clinic"); }
+        [HttpGet] public ActionResult HearingAidTehran() { return ByAreaService("tehran", "hearing-aid"); }
+        [HttpGet] public ActionResult HearingAidTajrish() { return ByAreaService("tajrish", "hearing-aid"); }
+        [HttpGet] public ActionResult HearingAidAdjustmentTehran() { return ByAreaService("tehran", "hearing-aid-adjustment"); }
+        [HttpGet] public ActionResult HearingAidAdjustmentTajrish() { return ByAreaService("tajrish", "hearing-aid-adjustment"); }
+        [HttpGet] public ActionResult HearingTestNiavaran() { return ByAreaService("niavaran", "hearing-test"); }
+        [HttpGet] public ActionResult HearingTestQeytarieh() { return ByAreaService("qeytarieh", "hearing-test"); }
+        [HttpGet] public ActionResult HearingTestZaferanieh() { return ByAreaService("zaferanieh", "hearing-test"); }
+        [HttpGet] public ActionResult HearingTestElahiyeh() { return ByAreaService("elahiyeh", "hearing-test"); }
+        [HttpGet] public ActionResult HearingTestFarmanieh() { return ByAreaService("farmanieh", "hearing-test"); }
+
+        private GeoLandingPage BuildPage(GeoLocation location, GeoServiceIntent service)
         {
-            return Landing(new GeoLandingPage
+            var area = location.Name;
+            var serviceName = service.Name;
+            var slug = location.Slug + "/" + service.Slug;
+
+            var related = BuildRelatedLinks(location, service);
+
+            return new GeoLandingPage
             {
-                Slug = "tajrish/hearing-test",
-                Canonical = BaseUrl + "/tajrish/hearing-test",
-                Title = "تست شنوایی در تجریش | آزمایش شنوایی در کلینیک شکوه تجریش",
-                H1 = "تست شنوایی در تجریش",
-                Kicker = "آزمایش شنوایی نزدیک میدان تجریش",
-                MainService = "آزمایش شنوایی",
+                Slug = slug,
+                Canonical = BaseUrl + "/" + slug,
+                Title = Apply(service.TitleTemplate, area, serviceName),
+                H1 = Apply(service.H1Template, area, serviceName),
+                Kicker = serviceName + " برای " + area + " و محدوده " + location.Cluster,
+                MainService = serviceName,
                 City = "تهران",
-                District = "تجریش",
-                PrimaryIntent = "Local hearing test in Tajrish",
-                CtaText = "تماس برای تست شنوایی در تجریش",
-                MetaDescription = "آزمایش و تست شنوایی در تجریش در کلینیک شنوایی و سمعک شکوه تجریش؛ ارزیابی کم‌شنوایی، وزوز گوش، مشاوره سمعک و پیگیری تخصصی.",
-                ShortAnswer = "برای افرادی که در محدوده تجریش، شمیرانات و شمال تهران به دنبال تست شنوایی هستند، کلینیک شکوه تجریش یک گزینه محلی و تخصصی برای ارزیابی شنوایی، بررسی کم‌شنوایی و مشاوره سمعک است.",
-                Keywords = new[] { "تست شنوایی در تجریش", "آزمایش شنوایی تجریش", "کلینیک شنوایی تجریش", "سمعک تجریش", "ادیومتری تجریش" },
-                Areas = new[] { "میدان تجریش", "خیابان شهرداری", "دربند", "زعفرانیه", "الهیه", "نیاوران", "قیطریه", "فرمانیه" },
-                Benefits = new[] {
-                    "موقعیت محلی مناسب برای مراجعان تجریش و شمیرانات",
-                    "تمرکز روی ارزیابی شنوایی و مشاوره سمعک",
-                    "توضیح ساده نتیجه تست برای تصمیم‌گیری بهتر",
-                    "امکان پیگیری تنظیم و انتخاب سمعک در همان مسیر درمانی"
+                District = area,
+                PrimaryIntent = "Local SEO landing / " + service.Slug,
+                CtaText = "تماس و مشاوره",
+                MetaDescription = Apply(service.MetaTemplate, area, serviceName),
+                ShortAnswer = Apply(service.ShortTemplate, area, serviceName),
+                SearchIntentText = "این صفحه برای جستجوهای محلی مثل «" + serviceName + " " + area + "»، «" + serviceName + " نزدیک من»، «" + serviceName + " شمال تهران» و ترکیب‌های مرتبط با سمعک، تست شنوایی، قیمت، بیمه، گارانتی و خدمات در منزل طراحی شده است؛ اما متن صفحه برای کاربر واقعی نوشته شده و فقط جایگزینی اسم محله نیست.",
+                RouteNote = location.Hint,
+                CompetitorAngle = "برخلاف صفحات فهرست‌محور که فقط نام چند مرکز یا شماره تماس را نمایش می‌دهند، این صفحه مسیر تصمیم‌گیری را هم توضیح می‌دهد: چه زمانی مراجعه لازم است، چه مواردی قبل از خرید یا تنظیم سمعک بررسی می‌شود و کدام خدمات بعدی ممکن است برای کاربر مهم باشد.",
+                Keywords = BuildKeywords(location, service),
+                Areas = BuildAreas(location),
+                Benefits = BuildBenefits(area, serviceName),
+                Steps = BuildSteps(area, serviceName),
+                WhoNeeds = BuildWhoNeeds(area, serviceName),
+                LocalProofs = new[] {
+                    "آدرس کلینیک در محدوده میدان تجریش و خیابان شهرداری، برای بسیاری از محله‌های شمال تهران دسترسی محلی ایجاد می‌کند.",
+                    "امکان پیگیری خدمات مرتبط مثل تست شنوایی، مشاوره انتخاب سمعک، تنظیم، باتری، قالب و تعمیرات در یک مسیر واحد وجود دارد.",
+                    "برای تصمیم‌گیری بهتر، نتیجه ارزیابی شنوایی، نیاز روزمره، بودجه، برند، گارانتی و امکان استفاده از بیمه باید هم‌زمان بررسی شود."
                 },
-                Steps = new[] {
-                    "تماس با کلینیک و توضیح علت مراجعه",
-                    "بررسی علائم و سابقه شنوایی",
-                    "انجام تست شنوایی متناسب با نیاز فرد",
-                    "دریافت توضیح نتیجه و پیشنهاد قدم بعدی"
-                },
-                WhoNeeds = new[] {
-                    "ساکنان یا شاغلان محدوده تجریش که نیاز به تست شنوایی دارند",
-                    "افرادی که در شنیدن صداهای آرام یا گفت‌وگو دچار مشکل شده‌اند",
-                    "افرادی که سمعک دارند و نیاز به بررسی یا تنظیم مجدد دارند",
-                    "افرادی که به دلیل وزوز گوش یا افت شنوایی نیاز به ارزیابی دارند"
-                },
-                RelatedTitle = "چرا تست شنوایی محلی مهم است؟",
-                RelatedDescription = "وقتی کلینیک به محل زندگی یا کار نزدیک باشد، پیگیری‌های بعدی، تنظیم سمعک و مراجعه‌های تکمیلی ساده‌تر و منظم‌تر انجام می‌شود.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "کلینیک شکوه تجریش کجاست؟", Answer = "کلینیک در تهران، محدوده میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰ قرار دارد." },
-                    new GeoFaqItem { Question = "آیا برای تست شنوایی باید نوبت گرفت؟", Answer = "بهتر است قبل از مراجعه با کلینیک تماس بگیرید تا زمان مناسب برای ارزیابی و مشاوره هماهنگ شود." },
-                    new GeoFaqItem { Question = "آیا تست شنوایی فقط برای سالمندان است؟", Answer = "خیر. هر فردی در هر سن که دچار افت شنوایی، وزوز گوش یا دشواری شنیدن مکالمه است می‌تواند نیاز به ارزیابی شنوایی داشته باشد." },
-                    new GeoFaqItem { Question = "بعد از تست شنوایی در تجریش می‌توان درباره سمعک هم مشاوره گرفت؟", Answer = "بله. پس از ارزیابی شنوایی، در صورت نیاز درباره انتخاب، تجویز و تنظیم سمعک راهنمایی تخصصی ارائه می‌شود." }
-                }
-            });
+                RelatedTitle = "صفحات مرتبط با " + serviceName + " در شمال تهران",
+                RelatedDescription = "برای جلوگیری از محتوای تکراری، هر صفحه فقط روی یک نیت اصلی تمرکز دارد و لینک‌های مرتبط، مسیر بعدی کاربر را مشخص می‌کنند.",
+                RelatedLinks = related,
+                Faqs = BuildFaqs(location, service)
+            };
         }
 
-        [HttpGet]
-        public ActionResult HearingClinicTehran()
+        private static string Apply(string template, string area, string service)
         {
-            return Landing(new GeoLandingPage
-            {
-                Slug = "tehran/hearing-clinic",
-                Canonical = BaseUrl + "/tehran/hearing-clinic",
-                Title = "کلینیک شنوایی در تهران | شکوه تجریش",
-                H1 = "کلینیک شنوایی در تهران",
-                Kicker = "مرکز تخصصی شنوایی‌شناسی و سمعک",
-                MainService = "کلینیک شنوایی",
-                City = "تهران",
-                District = "تجریش",
-                PrimaryIntent = "Audiology clinic Tehran",
-                CtaText = "تماس با کلینیک شنوایی",
-                MetaDescription = "کلینیک شنوایی در تهران برای تست شنوایی، مشاوره کم‌شنوایی، تجویز و تنظیم سمعک؛ کلینیک شنوایی و سمعک شکوه تجریش در محدوده تجریش.",
-                ShortAnswer = "کلینیک شنوایی و سمعک شکوه تجریش در تهران خدمات ارزیابی شنوایی، تست شنوایی، مشاوره خرید سمعک، تجویز و تنظیم سمعک و پیگیری پس از تجویز را برای مراجعان تهران و شمال تهران ارائه می‌دهد.",
-                Keywords = new[] { "کلینیک شنوایی تهران", "مرکز شنوایی تهران", "کلینیک سمعک تهران", "شنوایی سنجی تهران", "تجویز سمعک تهران" },
-                Areas = new[] { "تهران", "تجریش", "شمیرانات", "شمال تهران", "نیاوران", "قیطریه", "زعفرانیه", "فرمانیه" },
-                Benefits = new[] {
-                    "تمرکز تخصصی روی شنوایی، کم‌شنوایی و سمعک",
-                    "مسیر مشخص از ارزیابی تا مشاوره و پیگیری",
-                    "مناسب برای مراجعان بزرگسال، سالمند و خانواده‌ها",
-                    "دسترسی محلی برای ساکنان شمال تهران"
-                },
-                Steps = new[] {
-                    "تماس اولیه و توضیح مشکل یا نیاز",
-                    "ارزیابی شنوایی و بررسی نتیجه",
-                    "مشاوره درباره گزینه‌های درمانی یا سمعک",
-                    "پیگیری تنظیم، آموزش استفاده و مراقبت بعدی"
-                },
-                WhoNeeds = new[] {
-                    "افرادی که به دنبال مرکز شنوایی در تهران هستند",
-                    "افرادی که افت شنوایی یا وزوز گوش را تجربه می‌کنند",
-                    "خانواده‌هایی که برای سالمندان خود به مشاوره شنوایی نیاز دارند",
-                    "افرادی که قصد بررسی یا تنظیم سمعک دارند"
-                },
-                RelatedTitle = "کلینیک شنوایی خوب چه ویژگی‌هایی دارد؟",
-                RelatedDescription = "یک کلینیک شنوایی مناسب باید فقط فروشنده سمعک نباشد؛ باید ارزیابی، توضیح نتیجه، انتخاب مناسب، تنظیم و پیگیری بعدی را جدی بگیرد.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "کلینیک شنوایی چه تفاوتی با فروشگاه سمعک دارد؟", Answer = "کلینیک شنوایی بر ارزیابی تخصصی، تشخیص نیاز، تجویز، تنظیم و پیگیری تمرکز دارد و انتخاب سمعک باید بر اساس نتیجه تست شنوایی انجام شود." },
-                    new GeoFaqItem { Question = "چه زمانی باید به کلینیک شنوایی مراجعه کرد؟", Answer = "وقتی در شنیدن مکالمه، تلویزیون، تلفن یا صداهای محیطی مشکل دارید یا وزوز گوش و افت شنوایی احساس می‌کنید، مراجعه به کلینیک شنوایی منطقی است." },
-                    new GeoFaqItem { Question = "آیا کلینیک شکوه تجریش خدمات تنظیم سمعک دارد؟", Answer = "بله. خدمات مربوط به مشاوره، تجویز، تنظیم و پیگیری سمعک در مسیر تخصصی کلینیک ارائه می‌شود." },
-                    new GeoFaqItem { Question = "آیا این مرکز برای مراجعان شمال تهران مناسب است؟", Answer = "بله. موقعیت کلینیک در تجریش برای مراجعان شمیرانات، نیاوران، قیطریه، زعفرانیه، الهیه و فرمانیه دسترسی مناسبی دارد." }
-                }
-            });
+            return (template ?? "").Replace("{area}", area).Replace("{service}", service);
         }
 
-        [HttpGet]
-        public ActionResult HearingClinicTajrish()
+        private static string[] BuildKeywords(GeoLocation location, GeoServiceIntent service)
         {
-            return Landing(new GeoLandingPage
+            var a = location.Name;
+            var s = service.Name;
+            return new[]
             {
-                Slug = "tajrish/audiology-clinic",
-                Canonical = BaseUrl + "/tajrish/audiology-clinic",
-                Title = "کلینیک شنوایی در تجریش | مرکز تست شنوایی و سمعک شکوه تجریش",
-                H1 = "کلینیک شنوایی در تجریش",
-                Kicker = "شنوایی‌شناسی، تست شنوایی و سمعک در تجریش",
-                MainService = "کلینیک شنوایی تجریش",
-                City = "تهران",
-                District = "تجریش",
-                PrimaryIntent = "Audiology clinic Tajrish",
-                CtaText = "تماس با کلینیک تجریش",
-                MetaDescription = "کلینیک شنوایی در تجریش برای تست شنوایی، آزمایش شنوایی، مشاوره و تنظیم سمعک؛ کلینیک شنوایی و سمعک شکوه تجریش نزدیک میدان تجریش.",
-                ShortAnswer = "اگر در محدوده تجریش به دنبال کلینیک شنوایی، تست شنوایی یا مشاوره سمعک هستید، شکوه تجریش خدمات ارزیابی شنوایی، بررسی کم‌شنوایی، تجویز و تنظیم سمعک را در مسیر تخصصی ارائه می‌دهد.",
-                Keywords = new[] { "کلینیک شنوایی تجریش", "شنوایی سنجی تجریش", "سمعک تجریش", "آزمایش شنوایی تجریش", "مرکز شنوایی تجریش" },
-                Areas = new[] { "تجریش", "میدان تجریش", "خیابان شهرداری", "دربند", "نیاوران", "زعفرانیه", "الهیه", "قیطریه" },
-                Benefits = new[] {
-                    "تمرکز محلی روی مراجعان تجریش و شمیرانات",
-                    "ارزیابی شنوایی و مشاوره سمعک در یک مسیر منظم",
-                    "امکان پیگیری بعدی برای تنظیم و آموزش استفاده از سمعک",
-                    "مناسب برای افرادی که دسترسی نزدیک و پیگیری راحت می‌خواهند"
-                },
-                Steps = new[] {
-                    "تماس و هماهنگی زمان مراجعه",
-                    "ثبت علائم و نیاز شنوایی",
-                    "ارزیابی یا مشاوره متناسب با شرایط فرد",
-                    "پیشنهاد مسیر بعدی و پیگیری در صورت نیاز"
-                },
-                WhoNeeds = new[] {
-                    "ساکنان تجریش و اطراف که نیاز به شنوایی‌سنجی دارند",
-                    "افرادی که سمعک دارند و نیاز به تنظیم یا بررسی دارند",
-                    "افرادی که برای انتخاب سمعک دچار تردید هستند",
-                    "خانواده‌هایی که برای سالمندان خود به مشاوره نیاز دارند"
-                },
-                RelatedTitle = "تجریش؛ دسترسی بهتر برای پیگیری شنوایی",
-                RelatedDescription = "بسیاری از خدمات شنوایی فقط یک مراجعه نیستند. نزدیکی کلینیک به محل زندگی یا کار، پیگیری تنظیم سمعک و مشاوره‌های بعدی را ساده‌تر می‌کند.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "آیا کلینیک شکوه تجریش نزدیک میدان تجریش است؟", Answer = "بله. آدرس کلینیک در محدوده میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰ است." },
-                    new GeoFaqItem { Question = "آیا خدمات کلینیک فقط مربوط به خرید سمعک است؟", Answer = "خیر. خدمات شامل ارزیابی شنوایی، تست شنوایی، مشاوره کم‌شنوایی، تجویز و تنظیم سمعک و پیگیری پس از تجویز است." },
-                    new GeoFaqItem { Question = "برای مراجعه به کلینیک شنوایی در تجریش چه اطلاعاتی آماده کنم؟", Answer = "بهتر است علائم، سابقه افت شنوایی، سابقه استفاده از سمعک و داروها یا بیماری‌های مرتبط را به متخصص توضیح دهید." },
-                    new GeoFaqItem { Question = "آیا برای وزوز گوش هم می‌توان مراجعه کرد؟", Answer = "بله. در صورت وجود وزوز گوش، ارزیابی شنوایی و بررسی شرایط فرد می‌تواند در تصمیم‌گیری برای پیگیری تخصصی کمک کند." }
-                }
-            });
+                s + " " + a,
+                s + " در " + a,
+                s + " نزدیک " + a,
+                s + " شمال تهران",
+                s + " تجریش",
+                "کلینیک شنوایی " + a,
+                "سمعک " + a,
+                "مشاوره سمعک " + a,
+                "قیمت سمعک " + a,
+                "تنظیم سمعک " + a,
+                "تعمیر سمعک " + a,
+                "باتری سمعک " + a
+            }.Distinct().ToArray();
         }
 
-        [HttpGet]
-        public ActionResult HearingAidTehran()
+        private static string[] BuildAreas(GeoLocation location)
         {
-            return Landing(new GeoLandingPage
+            var core = new[] { location.Name, location.Cluster, "تجریش", "شمیرانات", "شمال تهران", "منطقه ۱ تهران" };
+            return core.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct().ToArray();
+        }
+
+        private static string[] BuildBenefits(string area, string service)
+        {
+            return new[]
             {
-                Slug = "tehran/hearing-aid",
-                Canonical = BaseUrl + "/tehran/hearing-aid",
-                Title = "خرید سمعک در تهران | مشاوره، تجویز و تنظیم سمعک",
-                H1 = "خرید سمعک در تهران",
-                Kicker = "انتخاب سمعک با تست شنوایی و مشاوره تخصصی",
-                MainService = "مشاوره خرید سمعک",
-                City = "تهران",
-                District = "تجریش",
-                PrimaryIntent = "Hearing aid consultation Tehran",
-                CtaText = "مشاوره انتخاب سمعک",
-                MetaDescription = "خرید سمعک در تهران با مشاوره تخصصی، تست شنوایی، تجویز و تنظیم سمعک در کلینیک شنوایی و سمعک شکوه تجریش.",
-                ShortAnswer = "خرید سمعک بدون تست شنوایی و تنظیم تخصصی تصمیم درستی نیست. در کلینیک شکوه تجریش، انتخاب سمعک بر اساس نوع و شدت کم‌شنوایی، سبک زندگی، نیاز ارتباطی و امکان پیگیری تنظیم انجام می‌شود.",
-                Keywords = new[] { "خرید سمعک در تهران", "مشاوره سمعک تهران", "تجویز سمعک تهران", "سمعک نامرئی تهران", "سمعک دیجیتال تهران" },
-                Areas = new[] { "تهران", "تجریش", "شمیرانات", "نیاوران", "قیطریه", "زعفرانیه", "الهیه", "فرمانیه" },
-                Benefits = new[] {
-                    "انتخاب سمعک بر اساس نتیجه تست شنوایی",
-                    "بررسی نیاز فردی، سبک زندگی و بودجه",
-                    "توضیح تفاوت مدل‌های سمعک به زبان ساده",
-                    "امکان تنظیم و پیگیری پس از انتخاب سمعک"
+                "دسترسی مناسب برای ساکنان و شاغلان " + area + " و محله‌های اطراف.",
+                "توضیح ساده و قابل فهم درباره " + service + "، هزینه‌ها، مراحل و گزینه‌های بعدی.",
+                "امکان پیگیری تست شنوایی، انتخاب سمعک، تنظیم، قالب، باتری یا تعمیرات در یک مسیر واحد.",
+                "تمرکز روی نیاز واقعی فرد، نه فقط فروش دستگاه یا معرفی یک برند خاص."
+            };
+        }
+
+        private static string[] BuildSteps(string area, string service)
+        {
+            return new[]
+            {
+                "تماس با کلینیک و توضیح کوتاه نیاز یا مشکل شنوایی در محدوده " + area + ".",
+                "هماهنگی زمان مراجعه یا مشاوره اولیه بر اساس شرایط فرد.",
+                "بررسی علائم، سابقه استفاده از سمعک، بودجه، بیمه و سبک زندگی.",
+                "ارائه مسیر بعدی؛ از تست شنوایی تا انتخاب، تنظیم، تعمیر یا پیگیری سمعک."
+            };
+        }
+
+        private static string[] BuildWhoNeeds(string area, string service)
+        {
+            return new[]
+            {
+                "افرادی در " + area + " که در مکالمه روزمره یا محیط شلوغ شنیدن برایشان سخت شده است.",
+                "سالمندان یا خانواده‌هایی که متوجه افت شنوایی، وزوز یا نیاز به تکرار جملات شده‌اند.",
+                "کاربرانی که سمعک دارند اما از وضوح صدا، سوت کشیدن، مصرف باتری یا قالب ناراضی‌اند.",
+                "افرادی که قبل از خرید سمعک به مشاوره قیمت، برند، بیمه، گارانتی یا مدل مناسب نیاز دارند."
+            };
+        }
+
+        private static GeoRelatedLink[] BuildRelatedLinks(GeoLocation location, GeoServiceIntent service)
+        {
+            var area = location.Slug;
+            var list = new List<GeoRelatedLink>
+            {
+                new GeoRelatedLink { Text = "تست شنوایی در " + location.Name, Url = "/" + area + "/hearing-test" },
+                new GeoRelatedLink { Text = "خرید سمعک در " + location.Name, Url = "/" + area + "/hearing-aid" },
+                new GeoRelatedLink { Text = "تنظیم سمعک در " + location.Name, Url = "/" + area + "/hearing-aid-adjustment" },
+                new GeoRelatedLink { Text = "قیمت سمعک در " + location.Name, Url = "/" + area + "/hearing-aid-price" },
+                new GeoRelatedLink { Text = "باتری سمعک در " + location.Name, Url = "/" + area + "/hearing-aid-battery" },
+                new GeoRelatedLink { Text = "تعمیر سمعک در " + location.Name, Url = "/" + area + "/hearing-aid-repair" },
+                new GeoRelatedLink { Text = "برندهای سمعک", Url = "/hearing-aid-brands" },
+                new GeoRelatedLink { Text = "تماس با کلینیک", Url = "/contactus" }
+            };
+
+            return list
+                .Where(x => !String.Equals(x.Url, "/" + area + "/" + service.Slug, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+        }
+
+        private static GeoFaqItem[] BuildFaqs(GeoLocation location, GeoServiceIntent service)
+        {
+            var area = location.Name;
+            var s = service.Name;
+
+            return new[]
+            {
+                new GeoFaqItem {
+                    Question = "آیا " + s + " برای محدوده " + area + " انجام می‌شود؟",
+                    Answer = "بله. کلینیک شکوه تجریش برای مراجعان " + area + " و محله‌های اطراف شمال تهران خدمات شنوایی، مشاوره و پیگیری سمعک ارائه می‌دهد."
                 },
-                Steps = new[] {
-                    "انجام یا بررسی تست شنوایی",
-                    "مشخص کردن نوع و شدت کم‌شنوایی",
-                    "مشاوره درباره مدل‌های مناسب سمعک",
-                    "تجویز، تنظیم و آموزش استفاده از سمعک"
+                new GeoFaqItem {
+                    Question = "برای " + s + " از کجا شروع کنم؟",
+                    Answer = "بهتر است ابتدا تماس بگیرید و مشکل یا نیاز اصلی را توضیح دهید تا زمان مراجعه، نوع ارزیابی و مرحله مناسب بعدی مشخص شود."
                 },
-                WhoNeeds = new[] {
-                    "افرادی که برای اولین بار قصد تهیه سمعک دارند",
-                    "افرادی که از سمعک قبلی رضایت ندارند",
-                    "سالمندانی که خانواده متوجه مشکل شنوایی آن‌ها شده‌اند",
-                    "افرادی که در محیط شلوغ یا مکالمه تلفنی مشکل دارند"
+                new GeoFaqItem {
+                    Question = "آیا قبل از خرید یا تنظیم سمعک باید تست شنوایی انجام شود؟",
+                    Answer = "در بیشتر موارد بله. نتیجه تست شنوایی کمک می‌کند انتخاب یا تنظیم سمعک بر اساس نیاز واقعی گوش انجام شود، نه صرفاً بر اساس مدل یا قیمت."
                 },
-                RelatedTitle = "چرا قیمت تنها معیار انتخاب سمعک نیست؟",
-                RelatedDescription = "سمعک باید با الگوی کم‌شنوایی، نیاز روزمره، مهارت استفاده، امکانات تنظیم و پیگیری کلینیکی هماهنگ باشد؛ فقط ارزان یا گران بودن کافی نیست.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "برای خرید سمعک در تهران از کجا شروع کنم؟", Answer = "بهترین شروع، انجام تست شنوایی و مشاوره تخصصی است تا نوع و شدت کم‌شنوایی مشخص شود و مدل مناسب پیشنهاد گردد." },
-                    new GeoFaqItem { Question = "آیا سمعک نامرئی برای همه مناسب است؟", Answer = "خیر. مناسب بودن سمعک نامرئی به نوع و شدت کم‌شنوایی، وضعیت گوش، نیاز فرد و امکان تنظیم دقیق بستگی دارد." },
-                    new GeoFaqItem { Question = "آیا بعد از خرید سمعک نیاز به تنظیم وجود دارد؟", Answer = "بله. تنظیم سمعک و پیگیری پس از تجویز بخش مهمی از موفقیت استفاده از سمعک است." },
-                    new GeoFaqItem { Question = "آیا می‌توان قبل از انتخاب سمعک مشاوره گرفت؟", Answer = "بله. در کلینیک شکوه تجریش می‌توانید قبل از انتخاب نهایی، درباره گزینه‌های مناسب، تفاوت مدل‌ها و مسیر تنظیم مشاوره بگیرید." }
+                new GeoFaqItem {
+                    Question = "آیا درباره قیمت، بیمه و گارانتی سمعک هم مشاوره داده می‌شود؟",
+                    Answer = "بله. در زمان مشاوره می‌توانید درباره قیمت سمعک، شرایط گارانتی، امکان استفاده از بیمه، نوع برند، باتری، قالب و خدمات بعد از خرید سؤال کنید."
                 }
-            });
-        }
-
-        [HttpGet]
-        public ActionResult HearingAidAdjustmentTehran()
-        {
-            return Landing(new GeoLandingPage
-            {
-                Slug = "tehran/hearing-aid-adjustment",
-                Canonical = BaseUrl + "/tehran/hearing-aid-adjustment",
-                Title = "تنظیم سمعک در تهران | کلینیک شنوایی شکوه تجریش",
-                H1 = "تنظیم سمعک در تهران",
-                Kicker = "پیگیری، تنظیم و بهبود تجربه شنیدن",
-                MainService = "تنظیم سمعک",
-                City = "تهران",
-                District = "تجریش",
-                PrimaryIntent = "Hearing aid adjustment Tehran",
-                CtaText = "تماس برای تنظیم سمعک",
-                MetaDescription = "تنظیم سمعک در تهران و تجریش در کلینیک شنوایی و سمعک شکوه تجریش؛ بررسی کیفیت شنیدن، تنظیم مجدد، مشاوره استفاده و پیگیری سمعک.",
-                ShortAnswer = "اگر با سمعک خود صدای طبیعی نمی‌شنوید، در محیط شلوغ مشکل دارید، صداها تیز یا آزاردهنده‌اند یا پس از مدتی استفاده رضایت ندارید، احتمالاً به تنظیم سمعک و بررسی تخصصی نیاز دارید.",
-                Keywords = new[] { "تنظیم سمعک در تهران", "تنظیم سمعک تجریش", "تنظیم مجدد سمعک", "مشکل صدای سمعک", "پیگیری سمعک" },
-                Areas = new[] { "تهران", "تجریش", "شمیرانات", "نیاوران", "قیطریه", "زعفرانیه", "الهیه", "فرمانیه" },
-                Benefits = new[] {
-                    "بررسی مشکل شنیدن در شرایط واقعی روزمره",
-                    "تنظیم متناسب با نتیجه تست شنوایی و تجربه کاربر",
-                    "آموزش بهتر استفاده، نگهداری و عادت‌پذیری",
-                    "کمک به افزایش رضایت از سمعک و کاهش آزار صوتی"
-                },
-                Steps = new[] {
-                    "شرح مشکل فعلی با سمعک",
-                    "بررسی وضعیت گوش، سمعک و نتیجه تست شنوایی",
-                    "تنظیم یا اصلاح تنظیمات متناسب با نیاز فرد",
-                    "پیگیری نتیجه و آموزش نکات استفاده روزمره"
-                },
-                WhoNeeds = new[] {
-                    "افرادی که از صدای سمعک ناراضی هستند",
-                    "افرادی که در محیط شلوغ هنوز مشکل شنیدن دارند",
-                    "کاربرانی که سمعک جدید گرفته‌اند و نیاز به عادت‌پذیری دارند",
-                    "افرادی که مدت‌هاست سمعک خود را تنظیم نکرده‌اند"
-                },
-                RelatedTitle = "تنظیم سمعک یک بار برای همیشه نیست",
-                RelatedDescription = "شنیدن با سمعک به تنظیم دقیق، عادت‌پذیری و پیگیری نیاز دارد. گاهی چند جلسه تنظیم باعث می‌شود تجربه شنیدن طبیعی‌تر و قابل تحمل‌تر شود.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "چه زمانی باید برای تنظیم سمعک مراجعه کنم؟", Answer = "اگر صداها آزاردهنده‌اند، گفت‌وگو را واضح نمی‌شنوید، در محیط شلوغ مشکل دارید یا از سمعک رضایت ندارید، بهتر است برای بررسی و تنظیم مراجعه کنید." },
-                    new GeoFaqItem { Question = "آیا تنظیم سمعک بعد از خرید لازم است؟", Answer = "بله. بسیاری از کاربران برای رسیدن به بهترین نتیجه به تنظیم، آموزش استفاده و پیگیری بعدی نیاز دارند." },
-                    new GeoFaqItem { Question = "آیا تنظیم سمعک بدون تست شنوایی ممکن است؟", Answer = "برای تنظیم دقیق، داشتن تست شنوایی به‌روز بسیار کمک‌کننده است و در بسیاری موارد لازم است." },
-                    new GeoFaqItem { Question = "آیا کلینیک شکوه تجریش تنظیم سمعک در تهران انجام می‌دهد؟", Answer = "بله. خدمات مشاوره، بررسی و تنظیم سمعک در مسیر تخصصی کلینیک ارائه می‌شود." }
-                }
-            });
-        }
-
-
-        [HttpGet]
-        public ActionResult HearingAidTajrish()
-        {
-            return Landing(new GeoLandingPage
-            {
-                Slug = "tajrish/hearing-aid",
-                Canonical = BaseUrl + "/tajrish/hearing-aid",
-                Title = "خرید سمعک در تجریش | مشاوره تخصصی سمعک شکوه تجریش",
-                H1 = "خرید سمعک در تجریش",
-                Kicker = "مشاوره انتخاب، تجویز و تنظیم سمعک نزدیک میدان تجریش",
-                MainService = "خرید سمعک",
-                City = "تهران",
-                District = "تجریش",
-                PrimaryIntent = "Neighborhood GEO landing page",
-                CtaText = "تماس با کلینیک",
-                MetaDescription = "خرید سمعک در تجریش با مشاوره تخصصی، تست شنوایی، تجویز و تنظیم سمعک در کلینیک شنوایی و سمعک شکوه تجریش.",
-                ShortAnswer = "اگر در محدوده تجریش به دنبال خرید سمعک هستید، بهتر است انتخاب سمعک را با تست شنوایی و مشاوره تخصصی شروع کنید. در شکوه تجریش، نوع و شدت کم‌شنوایی، نیاز روزمره و امکان تنظیم و پیگیری در انتخاب سمعک بررسی می‌شود.",
-                Keywords = new[] { "خرید سمعک در تجریش", "سمعک تجریش", "مشاوره سمعک تجریش", "تجویز سمعک تجریش", "تنظیم سمعک تجریش" },
-                Areas = new[] { "تجریش", "میدان تجریش", "دربند", "زعفرانیه", "نیاوران", "قیطریه", "الهیه", "فرمانیه" },
-                Benefits = new[] { "انتخاب سمعک بر اساس تست شنوایی و نیاز واقعی فرد", "امکان مشاوره درباره مدل‌های مختلف سمعک", "دسترسی محلی مناسب برای ساکنان تجریش و شمیرانات", "پیگیری تنظیم و آموزش استفاده پس از انتخاب سمعک" },
-                Steps = new[] { "تماس با کلینیک و توضیح کوتاه مشکل یا نیاز شنوایی", "هماهنگی زمان مراجعه و بررسی علائم اصلی", "انجام ارزیابی یا مشاوره تخصصی متناسب با شرایط فرد", "دریافت توضیح نتیجه و پیشنهاد مسیر بعدی برای پیگیری، سمعک یا تنظیم" },
-                WhoNeeds = new[] { "افرادی که برای اولین بار قصد تهیه سمعک دارند", "افرادی که از سمعک قبلی رضایت ندارند", "سالمندانی که خانواده متوجه افت شنوایی آن‌ها شده‌اند", "افرادی که در محیط شلوغ یا مکالمه تلفنی مشکل دارند" },
-                RelatedTitle = "خرید سمعک یعنی انتخاب تخصصی، نه فقط انتخاب مدل",
-                RelatedDescription = "سمعک باید با نتیجه تست شنوایی، وضعیت گوش، سبک زندگی و نیاز ارتباطی فرد هماهنگ باشد. به همین دلیل مشاوره و تنظیم بعدی بخش مهمی از مسیر انتخاب است.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "آیا برای خرید سمعک در تجریش باید تست شنوایی انجام شود؟", Answer = "بله. تست شنوایی پایه انتخاب و تنظیم سمعک است و بدون آن انتخاب دقیق دشوار می‌شود." },
-                    new GeoFaqItem { Question = "آیا سمعک نامرئی برای همه مناسب است؟", Answer = "خیر. مناسب بودن آن به وضعیت گوش، نوع و شدت کم‌شنوایی و نیاز فرد بستگی دارد." },
-                    new GeoFaqItem { Question = "آیا بعد از خرید سمعک باید برای تنظیم مراجعه کرد؟", Answer = "بله. تنظیم و پیگیری پس از تجویز برای رسیدن به کیفیت شنیدن بهتر ضروری است." },
-                    new GeoFaqItem { Question = "کلینیک شکوه تجریش کجاست؟", Answer = "کلینیک در محدوده میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا قرار دارد." }
-                }
-            });
-        }
-
-
-        [HttpGet]
-        public ActionResult HearingAidAdjustmentTajrish()
-        {
-            return Landing(new GeoLandingPage
-            {
-                Slug = "tajrish/hearing-aid-adjustment",
-                Canonical = BaseUrl + "/tajrish/hearing-aid-adjustment",
-                Title = "تنظیم سمعک در تجریش | کلینیک شنوایی شکوه تجریش",
-                H1 = "تنظیم سمعک در تجریش",
-                Kicker = "بررسی مشکل صدا، اصلاح تنظیم و پیگیری تخصصی سمعک",
-                MainService = "تنظیم سمعک",
-                City = "تهران",
-                District = "تجریش",
-                PrimaryIntent = "Neighborhood GEO landing page",
-                CtaText = "تماس با کلینیک",
-                MetaDescription = "تنظیم سمعک در تجریش برای بهبود کیفیت شنیدن، کاهش آزار صدا و پیگیری تخصصی سمعک در کلینیک شنوایی و سمعک شکوه تجریش.",
-                ShortAnswer = "اگر سمعک دارید اما صداها تیز، مبهم یا آزاردهنده‌اند، یا در محیط شلوغ هنوز مکالمه را خوب نمی‌شنوید، احتمالاً به بررسی و تنظیم مجدد سمعک نیاز دارید.",
-                Keywords = new[] { "تنظیم سمعک در تجریش", "تنظیم مجدد سمعک", "مشکل صدای سمعک", "پیگیری سمعک", "سمعک تجریش" },
-                Areas = new[] { "تجریش", "شمیرانات", "نیاوران", "قیطریه", "زعفرانیه", "الهیه", "فرمانیه" },
-                Benefits = new[] { "بررسی تجربه واقعی فرد با سمعک", "اصلاح تنظیمات متناسب با نتیجه تست شنوایی", "کمک به عادت‌پذیری بهتر و کاهش آزار صوتی", "دسترسی محلی مناسب برای پیگیری‌های بعدی" },
-                Steps = new[] { "تماس با کلینیک و توضیح کوتاه مشکل یا نیاز شنوایی", "هماهنگی زمان مراجعه و بررسی علائم اصلی", "انجام ارزیابی یا مشاوره تخصصی متناسب با شرایط فرد", "دریافت توضیح نتیجه و پیشنهاد مسیر بعدی برای پیگیری، سمعک یا تنظیم" },
-                WhoNeeds = new[] { "کاربرانی که از صدای سمعک ناراضی هستند", "افرادی که در محیط شلوغ هنوز مشکل شنیدن دارند", "افرادی که مدت‌هاست سمعک خود را تنظیم نکرده‌اند", "کاربران جدید سمعک که نیاز به عادت‌پذیری و آموزش دارند" },
-                RelatedTitle = "تنظیم سمعک یک مرحله یک‌باره نیست",
-                RelatedDescription = "کیفیت شنیدن با سمعک معمولاً با تنظیم تخصصی، زمان عادت‌پذیری و چند مرحله پیگیری بهتر می‌شود.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "چه زمانی برای تنظیم سمعک مراجعه کنم؟", Answer = "وقتی صداها آزاردهنده، مبهم یا غیرطبیعی‌اند یا از سمعک رضایت ندارید." },
-                    new GeoFaqItem { Question = "آیا تنظیم سمعک بدون تست شنوایی ممکن است؟", Answer = "برای تنظیم دقیق بهتر است تست شنوایی به‌روز وجود داشته باشد." },
-                    new GeoFaqItem { Question = "آیا تنظیم سمعک چند جلسه زمان می‌برد؟", Answer = "در بسیاری از افراد بله، چون عادت‌پذیری و تجربه واقعی کاربر در تنظیمات بعدی اثر دارد." },
-                    new GeoFaqItem { Question = "آیا شکوه تجریش تنظیم سمعک انجام می‌دهد؟", Answer = "بله، خدمات بررسی، تنظیم و پیگیری سمعک در مسیر تخصصی کلینیک ارائه می‌شود." }
-                }
-            });
-        }
-
-
-        [HttpGet]
-        public ActionResult HearingTestNiavaran()
-        {
-            return Landing(new GeoLandingPage
-            {
-                Slug = "niavaran/hearing-test",
-                Canonical = BaseUrl + "/niavaran/hearing-test",
-                Title = "تست شنوایی نیاوران | آزمایش شنوایی نزدیک نیاوران و تجریش",
-                H1 = "تست شنوایی نیاوران",
-                Kicker = "ارزیابی شنوایی برای ساکنان نیاوران و شمال تهران",
-                MainService = "تست شنوایی",
-                City = "تهران",
-                District = "نیاوران",
-                PrimaryIntent = "Neighborhood GEO landing page",
-                CtaText = "تماس با کلینیک",
-                MetaDescription = "تست شنوایی نزدیک نیاوران در کلینیک شکوه تجریش؛ ارزیابی کم‌شنوایی، وزوز گوش، مشاوره سمعک و پیگیری تخصصی.",
-                ShortAnswer = "برای ساکنان نیاوران که نیاز به تست شنوایی، بررسی کم‌شنوایی یا مشاوره سمعک دارند، کلینیک شکوه تجریش یک مسیر نزدیک و تخصصی برای ارزیابی و پیگیری شنوایی است.",
-                Keywords = new[] { "تست شنوایی نیاوران", "آزمایش شنوایی نیاوران", "کلینیک شنوایی نیاوران", "شنوایی سنجی نیاوران", "سمعک نیاوران" },
-                Areas = new[] { "نیاوران", "تجریش", "جمaran", "اقدسیه", "فرمانیه", "قیطریه", "شمیرانات" },
-                Benefits = new[] { "دسترسی نزدیک به محدوده نیاوران و تجریش", "ارزیابی تخصصی علائم کم‌شنوایی و وزوز", "مشاوره برای انتخاب یا تنظیم سمعک در صورت نیاز", "پیگیری آسان‌تر برای مراجعات بعدی" },
-                Steps = new[] { "تماس با کلینیک و توضیح کوتاه مشکل یا نیاز شنوایی", "هماهنگی زمان مراجعه و بررسی علائم اصلی", "انجام ارزیابی یا مشاوره تخصصی متناسب با شرایط فرد", "دریافت توضیح نتیجه و پیشنهاد مسیر بعدی برای پیگیری، سمعک یا تنظیم" },
-                WhoNeeds = new[] { "ساکنان نیاوران که مشکل شنیدن دارند", "افرادی با وزوز یا احساس کاهش وضوح صدا", "سالمندانی که خانواده متوجه افت شنوایی آن‌ها شده‌اند", "افرادی که قبل از خرید سمعک نیاز به تست دارند" },
-                RelatedTitle = "چرا نزدیکی کلینیک برای تست شنوایی مهم است؟",
-                RelatedDescription = "در خدمات شنوایی، گاهی فقط یک مراجعه کافی نیست و پیگیری، تنظیم یا مشاوره بعدی لازم می‌شود. نزدیکی مسیر مراجعه را ساده‌تر می‌کند.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "آیا برای تست شنوایی از نیاوران باید وقت گرفت؟", Answer = "بهتر است قبل از مراجعه تماس بگیرید تا زمان مناسب هماهنگ شود." },
-                    new GeoFaqItem { Question = "آیا تست شنوایی برای وزوز گوش لازم است؟", Answer = "در بسیاری موارد تست شنوایی می‌تواند برای بررسی همراهی وزوز با کم‌شنوایی کمک‌کننده باشد." },
-                    new GeoFaqItem { Question = "آیا بعد از تست می‌توان درباره سمعک مشاوره گرفت؟", Answer = "بله، در صورت نیاز درباره انتخاب، تجویز و تنظیم سمعک راهنمایی می‌شود." },
-                    new GeoFaqItem { Question = "مسیر مراجعه از نیاوران به کلینیک چگونه است؟", Answer = "کلینیک در محدوده تجریش قرار دارد و برای ساکنان نیاوران دسترسی محلی مناسبی دارد." }
-                }
-            });
-        }
-
-
-        [HttpGet]
-        public ActionResult HearingTestQeytarieh()
-        {
-            return Landing(new GeoLandingPage
-            {
-                Slug = "qeytarieh/hearing-test",
-                Canonical = BaseUrl + "/qeytarieh/hearing-test",
-                Title = "تست شنوایی قیطریه | کلینیک شنوایی نزدیک قیطریه",
-                H1 = "تست شنوایی قیطریه",
-                Kicker = "آزمایش شنوایی و مشاوره سمعک برای محدوده قیطریه",
-                MainService = "تست شنوایی",
-                City = "تهران",
-                District = "قیطریه",
-                PrimaryIntent = "Neighborhood GEO landing page",
-                CtaText = "تماس با کلینیک",
-                MetaDescription = "تست شنوایی نزدیک قیطریه در کلینیک شنوایی و سمعک شکوه تجریش؛ ارزیابی شنوایی، مشاوره کم‌شنوایی و راهنمایی انتخاب سمعک.",
-                ShortAnswer = "اگر در قیطریه زندگی یا کار می‌کنید و نشانه‌هایی مثل کم‌شنوایی، وزوز گوش یا دشواری در مکالمه دارید، تست شنوایی در مسیر نزدیک تجریش می‌تواند قدم اول مطمئن باشد.",
-                Keywords = new[] { "تست شنوایی قیطریه", "آزمایش شنوایی قیطریه", "کلینیک شنوایی قیطریه", "سمعک قیطریه", "شنوایی سنجی قیطریه" },
-                Areas = new[] { "قیطریه", "تجریش", "الهیه", "نیاوران", "فرمانیه", "شمیرانات" },
-                Benefits = new[] { "مناسب برای مراجعان قیطریه و اطراف", "بررسی دقیق علائم شنوایی و کم‌شنوایی", "امکان مشاوره سمعک در ادامه تست", "دسترسی مناسب برای پیگیری‌های بعدی" },
-                Steps = new[] { "تماس با کلینیک و توضیح کوتاه مشکل یا نیاز شنوایی", "هماهنگی زمان مراجعه و بررسی علائم اصلی", "انجام ارزیابی یا مشاوره تخصصی متناسب با شرایط فرد", "دریافت توضیح نتیجه و پیشنهاد مسیر بعدی برای پیگیری، سمعک یا تنظیم" },
-                WhoNeeds = new[] { "افرادی که مکالمه را در محیط شلوغ سخت می‌شنوند", "افرادی که به صدای تلویزیون یا تلفن حساسیت بیشتری پیدا کرده‌اند", "سالمندان دارای افت تدریجی شنوایی", "افرادی که برای انتخاب سمعک نیاز به تست دارند" },
-                RelatedTitle = "تست شنوایی؛ شروع تصمیم درست",
-                RelatedDescription = "نتیجه تست شنوایی مشخص می‌کند مشکل در کدام محدوده فرکانسی و با چه شدتی وجود دارد و مسیر پیگیری را روشن‌تر می‌کند.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "آیا تست شنوایی قیطریه داخل خود قیطریه انجام می‌شود؟", Answer = "این صفحه برای مراجعان قیطریه است و خدمات در کلینیک شکوه تجریش نزدیک این محدوده ارائه می‌شود." },
-                    new GeoFaqItem { Question = "آیا تست شنوایی دردناک است؟", Answer = "خیر، تست‌های رایج شنوایی معمولاً غیرتهاجمی و بدون درد هستند." },
-                    new GeoFaqItem { Question = "آیا برای خرید سمعک تست لازم است؟", Answer = "بله، انتخاب سمعک باید بر اساس نتیجه تست شنوایی باشد." },
-                    new GeoFaqItem { Question = "آیا برای سالمندان هم این ارزیابی مناسب است؟", Answer = "بله، کم‌شنوایی سالمندان یکی از موارد رایج مراجعه برای ارزیابی شنوایی است." }
-                }
-            });
-        }
-
-
-        [HttpGet]
-        public ActionResult HearingTestZaferanieh()
-        {
-            return Landing(new GeoLandingPage
-            {
-                Slug = "zaferanieh/hearing-test",
-                Canonical = BaseUrl + "/zaferanieh/hearing-test",
-                Title = "تست شنوایی زعفرانیه | آزمایش شنوایی نزدیک زعفرانیه",
-                H1 = "تست شنوایی زعفرانیه",
-                Kicker = "ارزیابی شنوایی برای زعفرانیه، تجریش و شمیرانات",
-                MainService = "تست شنوایی",
-                City = "تهران",
-                District = "زعفرانیه",
-                PrimaryIntent = "Neighborhood GEO landing page",
-                CtaText = "تماس با کلینیک",
-                MetaDescription = "تست شنوایی نزدیک زعفرانیه در کلینیک شکوه تجریش؛ بررسی کم‌شنوایی، وزوز گوش، مشاوره سمعک و ارزیابی تخصصی.",
-                ShortAnswer = "برای مراجعان زعفرانیه که دنبال ارزیابی شنوایی یا مشاوره سمعک هستند، کلینیک شکوه تجریش مسیر نزدیک و تخصصی برای شروع بررسی شنوایی و پیگیری بعدی است.",
-                Keywords = new[] { "تست شنوایی زعفرانیه", "آزمایش شنوایی زعفرانیه", "کلینیک شنوایی زعفرانیه", "سمعک زعفرانیه", "شنوایی سنجی زعفرانیه" },
-                Areas = new[] { "زعفرانیه", "تجریش", "ولنجک", "الهیه", "نیاوران", "شمیرانات" },
-                Benefits = new[] { "دسترسی مناسب برای ساکنان زعفرانیه و ولنجک", "بررسی علائم کم‌شنوایی و وزوز گوش", "مشاوره تخصصی در صورت نیاز به سمعک", "پیگیری ساده‌تر برای تنظیم یا مراجعات بعدی" },
-                Steps = new[] { "تماس با کلینیک و توضیح کوتاه مشکل یا نیاز شنوایی", "هماهنگی زمان مراجعه و بررسی علائم اصلی", "انجام ارزیابی یا مشاوره تخصصی متناسب با شرایط فرد", "دریافت توضیح نتیجه و پیشنهاد مسیر بعدی برای پیگیری، سمعک یا تنظیم" },
-                WhoNeeds = new[] { "افرادی که کاهش وضوح صدا را تجربه می‌کنند", "افرادی با وزوز یا احساس گرفتگی گوش", "سالمندان یا خانواده‌هایی که افت شنوایی را مشاهده کرده‌اند", "افرادی که قبل از تهیه سمعک به ارزیابی نیاز دارند" },
-                RelatedTitle = "پیگیری شنوایی را عقب نیندازید",
-                RelatedDescription = "افت شنوایی اگر به‌موقع بررسی شود، تصمیم‌گیری درباره پیگیری، مشاوره یا سمعک دقیق‌تر و ساده‌تر انجام می‌شود.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "آیا برای تست شنوایی از زعفرانیه می‌توان به شکوه تجریش مراجعه کرد؟", Answer = "بله، کلینیک در محدوده تجریش قرار دارد و برای مراجعان زعفرانیه دسترسی مناسبی دارد." },
-                    new GeoFaqItem { Question = "آیا تست شنوایی برای انتخاب سمعک ضروری است؟", Answer = "بله، انتخاب و تنظیم سمعک بدون تست شنوایی دقیق توصیه نمی‌شود." },
-                    new GeoFaqItem { Question = "آیا وزوز گوش هم بررسی می‌شود؟", Answer = "در صورت وجود وزوز، ارزیابی شنوایی می‌تواند به بررسی وضعیت کمک کند." },
-                    new GeoFaqItem { Question = "آیا نتیجه تست توضیح داده می‌شود؟", Answer = "بله، نتیجه تست به زبان قابل فهم برای تصمیم‌گیری بهتر توضیح داده می‌شود." }
-                }
-            });
-        }
-
-
-        [HttpGet]
-        public ActionResult HearingTestElahiyeh()
-        {
-            return Landing(new GeoLandingPage
-            {
-                Slug = "elahiyeh/hearing-test",
-                Canonical = BaseUrl + "/elahiyeh/hearing-test",
-                Title = "تست شنوایی الهیه | کلینیک شنوایی نزدیک الهیه و تجریش",
-                H1 = "تست شنوایی الهیه",
-                Kicker = "آزمایش شنوایی و مشاوره سمعک برای محدوده الهیه",
-                MainService = "تست شنوایی",
-                City = "تهران",
-                District = "الهیه",
-                PrimaryIntent = "Neighborhood GEO landing page",
-                CtaText = "تماس با کلینیک",
-                MetaDescription = "تست شنوایی نزدیک الهیه در کلینیک شنوایی شکوه تجریش؛ ارزیابی کم‌شنوایی، وزوز گوش، مشاوره و پیگیری سمعک.",
-                ShortAnswer = "اگر در الهیه به دنبال تست شنوایی، بررسی کم‌شنوایی یا مشاوره سمعک هستید، مراجعه به کلینیک شکوه تجریش می‌تواند گزینه نزدیک و تخصصی برای شروع باشد.",
-                Keywords = new[] { "تست شنوایی الهیه", "آزمایش شنوایی الهیه", "کلینیک شنوایی الهیه", "سمعک الهیه", "شنوایی سنجی الهیه" },
-                Areas = new[] { "الهیه", "تجریش", "قیطریه", "فرمانیه", "زعفرانیه", "شمیرانات" },
-                Benefits = new[] { "دسترسی نزدیک از الهیه به تجریش", "بررسی دقیق وضعیت شنیدن و علائم همراه", "مشاوره برای سمعک و تنظیم در صورت نیاز", "مناسب برای پیگیری‌های بعدی و مراجعات تکمیلی" },
-                Steps = new[] { "تماس با کلینیک و توضیح کوتاه مشکل یا نیاز شنوایی", "هماهنگی زمان مراجعه و بررسی علائم اصلی", "انجام ارزیابی یا مشاوره تخصصی متناسب با شرایط فرد", "دریافت توضیح نتیجه و پیشنهاد مسیر بعدی برای پیگیری، سمعک یا تنظیم" },
-                WhoNeeds = new[] { "افرادی که در مکالمه‌های روزمره مشکل دارند", "افرادی که صدای تلویزیون یا موبایل را زیاد می‌کنند", "افراد دارای وزوز یا احساس کاهش وضوح صدا", "افرادی که قصد بررسی یا انتخاب سمعک دارند" },
-                RelatedTitle = "مراجعه نزدیک، پیگیری بهتر",
-                RelatedDescription = "در خدمات شنوایی، پیگیری و تنظیم می‌تواند به اندازه تست اولیه مهم باشد؛ برای همین دسترسی محلی اهمیت دارد.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "آیا از الهیه به کلینیک دسترسی مناسب وجود دارد؟", Answer = "بله، کلینیک در محدوده تجریش قرار دارد و برای مراجعان الهیه دسترسی محلی مناسبی دارد." },
-                    new GeoFaqItem { Question = "آیا تست شنوایی فقط برای سالمندان است؟", Answer = "خیر، هر فردی با علائم کم‌شنوایی یا وزوز ممکن است به ارزیابی نیاز داشته باشد." },
-                    new GeoFaqItem { Question = "آیا تست شنوایی قبل از سمعک لازم است؟", Answer = "بله، تست شنوایی پایه اصلی انتخاب و تنظیم سمعک است." },
-                    new GeoFaqItem { Question = "آیا امکان مشاوره تلفنی اولیه وجود دارد؟", Answer = "برای هماهنگی و راهنمایی اولیه می‌توانید با کلینیک تماس بگیرید." }
-                }
-            });
-        }
-
-
-        [HttpGet]
-        public ActionResult HearingTestFarmanieh()
-        {
-            return Landing(new GeoLandingPage
-            {
-                Slug = "farmanieh/hearing-test",
-                Canonical = BaseUrl + "/farmanieh/hearing-test",
-                Title = "تست شنوایی فرمانیه | آزمایش شنوایی نزدیک فرمانیه",
-                H1 = "تست شنوایی فرمانیه",
-                Kicker = "ارزیابی شنوایی برای فرمانیه، تجریش و شمال تهران",
-                MainService = "تست شنوایی",
-                City = "تهران",
-                District = "فرمانیه",
-                PrimaryIntent = "Neighborhood GEO landing page",
-                CtaText = "تماس با کلینیک",
-                MetaDescription = "تست شنوایی نزدیک فرمانیه در کلینیک شکوه تجریش؛ بررسی کم‌شنوایی، وزوز گوش، مشاوره سمعک و پیگیری تخصصی.",
-                ShortAnswer = "برای ساکنان فرمانیه که با کم‌شنوایی، وزوز یا دشواری در مکالمه روبه‌رو هستند، تست شنوایی در کلینیک شکوه تجریش می‌تواند شروع مسیر ارزیابی و تصمیم‌گیری دقیق باشد.",
-                Keywords = new[] { "تست شنوایی فرمانیه", "آزمایش شنوایی فرمانیه", "کلینیک شنوایی فرمانیه", "سمعک فرمانیه", "شنوایی سنجی فرمانیه" },
-                Areas = new[] { "فرمانیه", "تجریش", "نیاوران", "قیطریه", "الهیه", "شمیرانات" },
-                Benefits = new[] { "دسترسی مناسب برای ساکنان فرمانیه", "ارزیابی تخصصی کم‌شنوایی و وزوز گوش", "مشاوره درباره انتخاب و تنظیم سمعک در صورت نیاز", "پیگیری راحت‌تر برای مراجعات بعدی" },
-                Steps = new[] { "تماس با کلینیک و توضیح کوتاه مشکل یا نیاز شنوایی", "هماهنگی زمان مراجعه و بررسی علائم اصلی", "انجام ارزیابی یا مشاوره تخصصی متناسب با شرایط فرد", "دریافت توضیح نتیجه و پیشنهاد مسیر بعدی برای پیگیری، سمعک یا تنظیم" },
-                WhoNeeds = new[] { "افرادی که در محیط شلوغ شنیدن برایشان سخت است", "افرادی با افت تدریجی شنوایی", "سالمندان یا خانواده‌هایی که به بررسی شنوایی نیاز دارند", "افرادی که از سمعک قبلی رضایت ندارند" },
-                RelatedTitle = "تست شنوایی، قبل از تصمیم درباره سمعک",
-                RelatedDescription = "برای انتخاب سمعک یا پیگیری کم‌شنوایی، ابتدا باید وضعیت شنوایی با ارزیابی تخصصی مشخص شود.",
-                Faqs = new[] {
-                    new GeoFaqItem { Question = "آیا تست شنوایی برای مراجعان فرمانیه انجام می‌شود؟", Answer = "بله، کلینیک شکوه تجریش برای مراجعان فرمانیه و محدوده‌های اطراف خدمات شنوایی ارائه می‌دهد." },
-                    new GeoFaqItem { Question = "آیا تست شنوایی درد دارد؟", Answer = "خیر، تست‌های رایج شنوایی معمولاً بدون درد هستند." },
-                    new GeoFaqItem { Question = "آیا برای تنظیم سمعک هم می‌توان مراجعه کرد؟", Answer = "بله، خدمات بررسی و تنظیم سمعک نیز ارائه می‌شود." },
-                    new GeoFaqItem { Question = "آیا کودکان هم می‌توانند تست شنوایی بدهند؟", Answer = "در صورت وجود علائم یا نگرانی خانواده، ارزیابی شنوایی کودک اهمیت دارد." }
-                }
-            });
+            };
         }
 
         private ActionResult Landing(GeoLandingPage page)

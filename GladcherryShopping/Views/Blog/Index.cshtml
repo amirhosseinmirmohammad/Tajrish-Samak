@@ -13,7 +13,7 @@
         return;
     }
 
-    var gpCacheVersion = "20260604-tajrish-v71-blog-detail-final-seo-geo";
+    var gpCacheVersion = "20260606-tajrish-v80-blog-detail-new-geo-links";
     var gpBaseUrl = "https://tajrish-samak.ir";
     var gpCanonicalPath = Url.Action("Index", "Blog", new { id = Model.Id, sefUrl = Model.SefUrl });
     var gpCanonicalUrl = gpBaseUrl + (!string.IsNullOrWhiteSpace(gpCanonicalPath) ? gpCanonicalPath : Request.Path);
@@ -339,17 +339,29 @@
             { "@@type": "City", "name": "تهران" },
             { "@@type": "Place", "name": "تجریش" },
             { "@@type": "Place", "name": "شمیرانات" },
+            { "@@type": "Place", "name": "شمال تهران" },
+            { "@@type": "Place", "name": "شمال شرق تهران" },
             { "@@type": "Place", "name": "نیاوران" },
             { "@@type": "Place", "name": "قیطریه" },
             { "@@type": "Place", "name": "زعفرانیه" },
             { "@@type": "Place", "name": "الهیه" },
-            { "@@type": "Place", "name": "فرمانیه" }
+            { "@@type": "Place", "name": "فرمانیه" },
+            { "@@type": "Place", "name": "ولنجک" },
+            { "@@type": "Place", "name": "دزاشیب" },
+            { "@@type": "Place", "name": "جماران" },
+            { "@@type": "Place", "name": "کاشانک" },
+            { "@@type": "Place", "name": "دارآباد" },
+            { "@@type": "Place", "name": "سوهانک" },
+            { "@@type": "Place", "name": "اقدسیه" },
+            { "@@type": "Place", "name": "پاسداران" },
+            { "@@type": "Place", "name": "هروی" },
+            { "@@type": "Place", "name": "قلهک" }
           ],
           "medicalSpecialty": ["Audiology", "Hearing Aid Fitting", "Hearing Test"]
         }
     </script>
 
-    <style id="gp-v41-blog-detail-modern-seo">
+    <style id="gp-v80-blog-detail-new-geo-links">
         :root {
             --gp-v41-purple: #4b1684;
             --gp-v41-violet: #920ab6;
@@ -1808,6 +1820,93 @@
                 bottom: 86px;
             }
         }
+
+
+        /* V80: new grouped GEO/brand link hub */
+        .gp-v80-link-hub {
+            max-width: 920px !important;
+            padding: clamp(16px, 2.2vw, 24px) !important;
+            border-radius: 32px !important;
+            background: radial-gradient(circle at 12% 10%, rgba(216,245,18,.18), transparent 30%), linear-gradient(135deg, rgba(146,10,182,.085), rgba(225,11,121,.055)) !important;
+            box-shadow: 0 22px 56px rgba(74,18,107,.10);
+        }
+
+            .gp-v80-link-hub > strong {
+                font-size: clamp(18px, 2vw, 26px) !important;
+                margin-bottom: 6px !important;
+            }
+
+        .gp-v80-link-hub-lead {
+            max-width: 780px;
+            margin: 0 auto 16px !important;
+            color: var(--gp-v41-muted) !important;
+            font-size: 13px !important;
+            font-weight: 850 !important;
+            line-height: 2 !important;
+            text-align: center !important;
+        }
+
+        .gp-v80-link-group {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 24px;
+            background: rgba(255,255,255,.62);
+            border: 1px solid rgba(75,22,132,.08);
+        }
+
+            .gp-v80-link-group h3 {
+                margin: 0 0 10px !important;
+                color: var(--gp-v41-ink) !important;
+                font-size: 15px !important;
+                font-weight: 1000 !important;
+                line-height: 1.8 !important;
+                text-align: right !important;
+            }
+
+        .gp-v80-link-grid {
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)) !important;
+        }
+
+            .gp-v80-link-grid a {
+                min-height: 48px !important;
+                border-radius: 18px !important;
+                background: #fff !important;
+                box-shadow: 0 10px 26px rgba(74,18,107,.06);
+                transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+            }
+
+                .gp-v80-link-grid a:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 16px 34px rgba(74,18,107,.12);
+                    background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(251,247,255,.98)) !important;
+                }
+
+        html.gp-dark-mode .gp-v80-link-hub-lead {
+            color: rgba(246,247,251,.72) !important;
+        }
+
+        html.gp-dark-mode .gp-v80-link-group {
+            background: rgba(255,255,255,.055) !important;
+            border-color: rgba(255,255,255,.10) !important;
+        }
+
+            html.gp-dark-mode .gp-v80-link-group h3 {
+                color: #fff !important;
+            }
+
+        html.gp-dark-mode .gp-v80-link-grid a {
+            background: rgba(255,255,255,.075) !important;
+        }
+
+        @@media(max-width: 768px) {
+            .gp-v80-link-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .gp-v80-link-group h3 {
+                text-align: center !important;
+            }
+        }
     </style>
 }
 
@@ -1915,22 +2014,66 @@
                         <button type="button" class="gp-article-read-more-btn" id="gpReadMoreBtn">ادامه مطالعه</button>
                     </div>
 
-                    <div class="gp-geo-internal-links" aria-label="مسیرهای مرتبط شنوایی و سمعک">
-                        <strong>مسیرهای مرتبط برای ادامه مطالعه و مراجعه</strong>
-                        <div class="gp-geo-link-grid">
-                            <a href="/tehran/hearing-test">تست شنوایی در تهران</a>
-                            <a href="/tajrish/hearing-test">تست شنوایی در تجریش</a>
-                            <a href="/tehran/hearing-clinic">کلینیک شنوایی در تهران</a>
-                            <a href="/tajrish/audiology-clinic">کلینیک شنوایی در تجریش</a>
-                            <a href="/tehran/hearing-aid">خرید سمعک در تهران</a>
-                            <a href="/tajrish/hearing-aid">خرید سمعک در تجریش</a>
-                            <a href="/tehran/hearing-aid-adjustment">تنظیم سمعک در تهران</a>
-                            <a href="/tajrish/hearing-aid-adjustment">تنظیم سمعک در تجریش</a>
-                            <a href="/niavaran/hearing-test">تست شنوایی نیاوران</a>
-                            <a href="/qeytarieh/hearing-test">تست شنوایی قیطریه</a>
-                            <a href="/zaferanieh/hearing-test">تست شنوایی زعفرانیه</a>
-                            <a href="/elahiyeh/hearing-test">تست شنوایی الهیه</a>
-                            <a href="/farmanieh/hearing-test">تست شنوایی فرمانیه</a>
+                    <div class="gp-geo-internal-links gp-v80-link-hub" aria-label="مسیرهای مرتبط شنوایی و سمعک">
+                        <strong>مسیرهای پیشنهادی برای ادامه مطالعه و مراجعه</strong>
+                        <p class="gp-v80-link-hub-lead">
+                            بر اساس مسیرهای جدید سایت، این لینک‌ها به صفحات محله‌ای، خدماتی و برندهای سمعک وصل شده‌اند تا کاربر سریع‌تر به صفحه مناسب برسد.
+                        </p>
+
+                        <div class="gp-v80-link-group">
+                            <h3>خدمات اصلی</h3>
+                            <div class="gp-geo-link-grid gp-v80-link-grid">
+                                <a href="/tehran/hearing-test">تست شنوایی در تهران</a>
+                                <a href="/tajrish/hearing-test">تست شنوایی در تجریش</a>
+                                <a href="/tehran/audiology-clinic">کلینیک شنوایی در تهران</a>
+                                <a href="/tajrish/audiology-clinic">کلینیک شنوایی در تجریش</a>
+                                <a href="/north-tehran/hearing-aid">خرید سمعک در شمال تهران</a>
+                                <a href="/tajrish/hearing-aid">خرید سمعک در تجریش</a>
+                                <a href="/tehran/hearing-aid-adjustment">تنظیم سمعک در تهران</a>
+                                <a href="/tajrish/hearing-aid-adjustment">تنظیم سمعک در تجریش</a>
+                            </div>
+                        </div>
+
+                        <div class="gp-v80-link-group">
+                            <h3>خدمات پرجستجو</h3>
+                            <div class="gp-geo-link-grid gp-v80-link-grid">
+                                <a href="/north-tehran/home-visit-hearing-aid">ویزیت سمعک در منزل شمال تهران</a>
+                                <a href="/tehran/hearing-aid-price">قیمت سمعک در تهران</a>
+                                <a href="/tehran/insurance-hearing-aid">سمعک با بیمه در تهران</a>
+                                <a href="/tehran/hearing-aid-battery">باتری سمعک در تهران</a>
+                                <a href="/tehran/hearing-aid-repair">تعمیر سمعک در تهران</a>
+                                <a href="/tehran/earmold">قالب سمعک در تهران</a>
+                                <a href="/tehran/rechargeable-hearing-aid">سمعک شارژی در تهران</a>
+                                <a href="/tehran/invisible-hearing-aid">سمعک نامرئی در تهران</a>
+                            </div>
+                        </div>
+
+                        <div class="gp-v80-link-group">
+                            <h3>محله‌های نزدیک و پرترافیک</h3>
+                            <div class="gp-geo-link-grid gp-v80-link-grid">
+                                <a href="/niavaran/hearing-test">تست شنوایی نیاوران</a>
+                                <a href="/qeytarieh/hearing-test">تست شنوایی قیطریه</a>
+                                <a href="/zaferanieh/hearing-test">تست شنوایی زعفرانیه</a>
+                                <a href="/elahiyeh/hearing-aid">سمعک الهیه</a>
+                                <a href="/farmanieh/hearing-aid">سمعک فرمانیه</a>
+                                <a href="/darabad/hearing-test">تست شنوایی دارآباد</a>
+                                <a href="/kashanak/hearing-test">تست شنوایی کاشانک</a>
+                                <a href="/pasdaran/hearing-aid-repair">تعمیر سمعک پاسداران</a>
+                                <a href="/aghdasiyeh/hearing-aid">سمعک اقدسیه</a>
+                                <a href="/velenjak/hearing-test">تست شنوایی ولنجک</a>
+                                <a href="/shemiranat/hearing-aid">سمعک شمیرانات</a>
+                                <a href="/near-me/hearing-test">تست شنوایی نزدیک من</a>
+                            </div>
+                        </div>
+
+                        <div class="gp-v80-link-group">
+                            <h3>برندهای سمعک</h3>
+                            <div class="gp-geo-link-grid gp-v80-link-grid">
+                                <a href="/hearing-aid-brands/signia">سمعک سیگنیا</a>
+                                <a href="/hearing-aid-brands/widex">سمعک ویدکس</a>
+                                <a href="/hearing-aid-brands/phonak">سمعک فوناک</a>
+                                <a href="/hearing-aid-brands/resound">سمعک ریساند</a>
+                            </div>
                         </div>
                     </div>
 

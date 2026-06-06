@@ -9,9 +9,9 @@ namespace GladcherryShopping
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            // GEO Landing Pages
-            // نکته مهم: همه Routeهای ثابت GEO باید قبل از Blog/Service/Default باشند.
-            // اگر بعد از Default باشند، هیچ‌وقت اجرا نمی‌شوند.
+            // GEO Landing Pages v81
+            // Routeهای ثابت قبلی حفظ شده‌اند؛ Route دینامیک v81 همه محله‌ها و خدمت‌های جدید را می‌گیرد.
+            // این Route حتماً باید قبل از Blog/Service/Brand/Default باشد.
 
             routes.MapRoute(
                 name: "GeoHearingTestTehran",
@@ -92,6 +92,17 @@ namespace GladcherryShopping
             );
 
             routes.MapRoute(
+                name: "GeoDynamicAreaServiceV81",
+                url: "{areaSlug}/{serviceSlug}",
+                defaults: new { controller = "Geo", action = "ByAreaService" },
+                constraints: new
+                {
+                    areaSlug = "tehran|tajrish|shemiran|shemiranat|mantaghe-1|north-tehran|northeast-tehran|near-me|mahale-ma|darabad|kashanak|jamaran|dezashib|yaser|farmanieh|jamalabad|azgol|sohanak|artesh|aghdasiyeh|heravi|ghaem|shahrak-naft|shariati|hekmat|gholhak|dowlat|yakhchal|valiasr|asef|pessian|moghadas-ardabili|maghsoudbeik|darband|elahiyeh|fereshteh|amanieh|chamran|parkway|velenjak|vanak|seoul|jafarabad|sadabad|chaharrah-hesabi|ajodanieh|oshan|mahak|mahalati|sadr|bouali|qanat-kosar|emamzadeh-ghasem|abk|meydan-ghods|sahebqaranieh|falahi|zaferanieh|bagh-shater|ghoba|jolfa|dibaji|hosseinabad|langari|saghdoush|nobonyad|saeedi|araj|mahmoodieh|tandis|palladium|kamranieh|andarzgoo|manzarieh|nakhjavan|bookan|shahrak-omid|mini-city|kolahdooz|chizar|qeytarieh|lavasani|moosivand|pol-roumi|valiasr-sadr|takhti|zahir-dowleh|pol-tajrish|bagh-ferdos|emamzadeh-saleh|bazar-tajrish|zarabkhaneh|yekta|kashanchi|golsang|afshar|mojdeh|moghaddasi|lavasan|roudehen|boomehen|feshm|niavaran|pasdaran|ekhtiyariyeh|darrous",
+                    serviceSlug = "hearing-test|audiology-clinic|hearing-aid|hearing-aid-adjustment|home-visit-hearing-aid|in-home-hearing-aid-prescription|in-home-hearing-aid-adjustment|hearing-aid-repair|hearing-aid-battery|hearing-aid-filter|hearing-aid-price|hearing-aid-price-1405|installment-hearing-aid|insurance-hearing-aid|hearing-aid-insurance-tariff|earmold|waterproof-earmold|silicone-earmold|earmold-replacement|hearing-test-price|audiometry-price|hearing-aid-cost|rechargeable-hearing-aid|battery-free-hearing-aid|hearing-aid-battery-consumption|invisible-hearing-aid|tinnitus-hearing-aid|hearing-aid-warranty|hearing-aid-cleaning|hearing-aid-durability|hearing-aid-tube|hearing-aid-hook|waterproof-hearing-aid|sweatproof-hearing-aid|german-hearing-aid|american-hearing-aid|danish-hearing-aid|swiss-hearing-aid|iranian-hearing-aid|government-hearing-aid|free-behzisti-hearing-aid|deaf-support|hearing-aid-consultation|quality-hearing-aid|signia-hearing-aid-price|siemens-hearing-aid-price|widex-hearing-aid-price|phonak-hearing-aid-price"
+                }
+            );
+
+            routes.MapRoute(
                 name: "BlogsList",
                 url: "Blog/All",
                 defaults: new { controller = "Blog", action = "All", id = UrlParameter.Optional }
@@ -116,10 +127,10 @@ namespace GladcherryShopping
             );
 
             routes.MapRoute(
-               name: "HearingAidBrandsIndex",
-               url: "hearing-aid-brands",
-               defaults: new { controller = "Brand", action = "Index" }
-           );
+                name: "HearingAidBrandsIndex",
+                url: "hearing-aid-brands",
+                defaults: new { controller = "Brand", action = "Index" }
+            );
 
             routes.MapRoute(
                 name: "HearingAidBrandLanding",
@@ -127,8 +138,6 @@ namespace GladcherryShopping
                 defaults: new { controller = "Brand", action = "Index", brand = UrlParameter.Optional }
             );
 
-
-            // Default route همیشه باید آخر باشد.
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

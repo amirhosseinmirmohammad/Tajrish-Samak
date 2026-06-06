@@ -1195,7 +1195,6 @@
     </None>
     <Content Include="service-worker.js" />
     <Content Include="sw.js" />
-    <Content Include="Views\Brand\Index.cshtml.txt" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

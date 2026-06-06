@@ -2,7 +2,7 @@
 @using MvcPager
 @using System.Collections.Generic;
 @{
-    var gpCacheVersion = "20260604-tajrish-v77-brand-geo-links";
+    var gpCacheVersion = "20260606-richresult-product-microdata-clean-v78";
     var gpBaseUrl = "https://tajrish-samak.ir";
     var gpCategoryName = ViewBag.CategoryName != null ? ViewBag.CategoryName.ToString() : "محصولات سمعک";
     bool gpHasSubCategories = ViewBag.ShowSubCategories != null && (bool)ViewBag.ShowSubCategories;
@@ -1233,17 +1233,17 @@
                         <div class="gp-category-products-grid">
                             @foreach (var item in gpCurrentProducts)
                             {
-                                <article class="gp-category-product-card" itemscope itemtype="https://schema.org/Product">
-                                    <a class="gp-category-product-media" title="@item.PersianName" href="/Product/Details/@item.Id" itemprop="url">
-                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName" loading="lazy" decoding="async" itemprop="image" />
+                                <article class="gp-category-product-card">
+                                    <a class="gp-category-product-media" title="@item.PersianName" href="/Product/Details/@item.Id">
+                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName" loading="lazy" decoding="async" />
                                         <span class="gp-product-new-badge">جدید</span>
                                     </a>
 
                                     <div class="gp-product-card-body">
-                                        <h2 itemprop="name">
+                                        <h2>
                                             <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
                                         </h2>
-                                        <p itemprop="description">
+                                        <p>
                                             مناسب برای بررسی اولیه، افزودن به علاقه‌مندی و دریافت مشاوره بر اساس تست شنوایی.
                                         </p>
 
