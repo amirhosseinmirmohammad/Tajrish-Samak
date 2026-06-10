@@ -334,35 +334,158 @@ namespace GladcherryShopping.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            PagerViewModels<Product> productViewModels = new PagerViewModels<Product>();
-            productViewModels.CurrentPage = page;
-            ViewBag.CategoryName = brand.PersianName;
+            string brandPersianName = string.IsNullOrWhiteSpace(brand.PersianName)
+                ? "سمعک"
+                : brand.PersianName.Trim();
 
-            if (brand.SubCategories.Any())
+            string brandEnglishName = GetBrandEnglishName(brand);
+
+            string brandSlug = MakeBrandSlug(brandEnglishName);
+
+            if (string.IsNullOrWhiteSpace(brandSlug))
             {
-                ViewBag.CategoryId = brand.Id;
-                productViewModels.data = new List<Product>();
-                productViewModels.TotalItemCount = 0;
-                return View(productViewModels);
+                brandSlug = MakeBrandSlug(brandPersianName);
+            }
+
+            ViewBag.IsBrandList = false;
+            ViewBag.BrandSlug = brandSlug;
+            ViewBag.BrandPersianName = brandPersianName;
+            ViewBag.BrandEnglishName = brandEnglishName;
+
+            ViewBag.CategoryId = brand.Id;
+            ViewBag.CategoryName = brandPersianName;
+
+            ViewBag.BrandLinks = db.Brands
+                .AsNoTracking()
+                .Where(current => current.PersianName != null && current.PersianName != "")
+                .OrderBy(current => current.PersianName)
+                .ToList()
+                .Select(current =>
+                {
+                    string fa = current.PersianName != null ? current.PersianName.Trim() : "";
+                    string en = GetBrandEnglishName(current);
+                    string slug = MakeBrandSlug(en);
+
+                    if (string.IsNullOrWhiteSpace(slug))
+                    {
+                        slug = MakeBrandSlug(fa);
+                    }
+
+                    return Tuple.Create(slug, fa, en);
+                })
+                .ToList();
+
+            List<int> brandIds = new List<int>
+    {
+        brand.Id
+    };
+
+            if (brand.SubCategories != null && brand.SubCategories.Any())
+            {
+                brandIds.AddRange(brand.SubCategories.Select(current => current.Id));
             }
 
             IQueryable<Product> query = db.Products
                 .AsNoTracking()
                 .Where(current =>
-                    current.BrandId == id.Value &&
+                    brandIds.Contains(current.BrandId) &&
                     current.SiteFirstImage != null);
 
-            productViewModels.TotalItemCount = query.Count();
-            productViewModels.data = query
-                .OrderByDescending(current => current.CreateDate)
-                .ThenByDescending(current => current.PersianName)
-                .Skip((page - 1) * ProductPageSize)
-                .Take(ProductPageSize)
-                .ToList();
+            PagerViewModels<Product> productViewModels = new PagerViewModels<Product>
+            {
+                CurrentPage = page,
+                TotalItemCount = query.Count(),
+                data = query
+                    .OrderByDescending(current => current.CreateDate)
+                    .ThenByDescending(current => current.PersianName)
+                    .Skip((page - 1) * ProductPageSize)
+                    .Take(ProductPageSize)
+                    .ToList()
+            };
 
             return View(productViewModels);
         }
 
+        private string MakeBrandSlug(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return "";
+            }
+
+            string slug = value.Trim().ToLowerInvariant();
+
+            slug = slug
+                .Replace(" ", "-")
+                .Replace("_", "-")
+                .Replace("/", "-")
+                .Replace("\\", "-")
+                .Replace(".", "")
+                .Replace(",", "")
+                .Replace("،", "")
+                .Replace("(", "")
+                .Replace(")", "")
+                .Replace("（", "")
+                .Replace("）", "")
+                .Replace("+", "-");
+
+            while (slug.Contains("--"))
+            {
+                slug = slug.Replace("--", "-");
+            }
+
+            return slug.Trim('-');
+        }
+
+        private string GetBrandEnglishName(Brand brand)
+        {
+            if (brand == null)
+            {
+                return "Hearing Aid";
+            }
+
+            var type = brand.GetType();
+
+            string[] possiblePropertyNames =
+            {
+        "EnglishName",
+        "LatinName",
+        "EnName",
+        "Name",
+        "Title"
+    };
+
+            foreach (string propertyName in possiblePropertyNames)
+            {
+                var property = type.GetProperty(propertyName);
+
+                if (property == null)
+                {
+                    continue;
+                }
+
+                object value = property.GetValue(brand, null);
+
+                if (value == null)
+                {
+                    continue;
+                }
+
+                string text = value.ToString();
+
+                if (!string.IsNullOrWhiteSpace(text))
+                {
+                    return text.Trim();
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(brand.PersianName))
+            {
+                return brand.PersianName.Trim();
+            }
+
+            return "Hearing Aid";
+        }
 
         public JsonResult AddToShoppingCart(int Id)
         {

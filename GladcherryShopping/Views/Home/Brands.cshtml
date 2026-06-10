@@ -3,12 +3,115 @@
 @using System;
 @using System.Linq;
 @using System.Web;
+@using System.Collections.Generic;
+
+@functions {
+    private string GpValue(object value)
+    {
+        return value == null ? "" : value.ToString().Trim();
+    }
+
+    private string GpNormalizeSlug(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "";
+        }
+
+        return HttpUtility.UrlDecode(value)
+            .Trim()
+            .Trim('/')
+            .ToLowerInvariant();
+    }
+
+    private string GpNameFromSlug(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "";
+        }
+
+        return HttpUtility.UrlDecode(value)
+            .Trim()
+            .Trim('/')
+            .Replace("-", " ")
+            .Replace("_", " ");
+    }
+
+    private string GpJson(string value)
+    {
+        return HttpUtility.JavaScriptStringEncode(value ?? "");
+    }
+}
+
 @{
     var gpBaseUrl = "https://tajrish-samak.ir";
+
+    /*
+        این خط مثل نسخه قبلی نگه داشته شده
+        چون نمایش محصولات به همین وضعیت صفحه وابسته است.
+    */
     var gpIsBrandList = ViewBag.IsBrandList != null && (bool)ViewBag.IsBrandList;
-    var gpBrandSlug = ViewBag.BrandSlug != null ? ViewBag.BrandSlug.ToString() : "";
-    var gpBrandFa = ViewBag.BrandPersianName != null ? ViewBag.BrandPersianName.ToString() : "برندهای سمعک";
-    var gpBrandEn = ViewBag.BrandEnglishName != null ? ViewBag.BrandEnglishName.ToString() : "Hearing Aid Brands";
+
+    var gpBrandSlug = GpNormalizeSlug(GpValue(ViewBag.BrandSlug));
+
+    if (string.IsNullOrWhiteSpace(gpBrandSlug))
+    {
+        gpBrandSlug = GpNormalizeSlug(GpValue(ViewContext.RouteData.Values["brandSlug"]));
+    }
+
+    if (string.IsNullOrWhiteSpace(gpBrandSlug))
+    {
+        gpBrandSlug = GpNormalizeSlug(GpValue(ViewContext.RouteData.Values["slug"]));
+    }
+
+    if (string.IsNullOrWhiteSpace(gpBrandSlug) && Request.Url != null)
+    {
+        var gpPathParts = Request.Url.AbsolutePath
+            .Trim('/')
+            .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+        if (gpPathParts.Length >= 2 &&
+            gpPathParts[0].Equals("hearing-aid-brands", StringComparison.OrdinalIgnoreCase))
+        {
+            gpBrandSlug = GpNormalizeSlug(gpPathParts[1]);
+        }
+    }
+
+    var gpBrandLinks = ViewBag.BrandLinks as IEnumerable<Tuple<string, string, string>>;
+    var gpBrandLinksList = gpBrandLinks != null
+        ? gpBrandLinks.ToList()
+        : new List<Tuple<string, string, string>>();
+
+    var gpCurrentBrandLink = !string.IsNullOrWhiteSpace(gpBrandSlug)
+        ? gpBrandLinksList.FirstOrDefault(x =>
+            x != null &&
+            string.Equals(GpNormalizeSlug(x.Item1), gpBrandSlug, StringComparison.OrdinalIgnoreCase))
+        : null;
+
+    var gpBrandFaFromViewBag = GpValue(ViewBag.BrandPersianName);
+    var gpBrandEnFromViewBag = GpValue(ViewBag.BrandEnglishName);
+
+    var gpBrandFa = gpIsBrandList
+        ? "برندهای سمعک"
+        : !string.IsNullOrWhiteSpace(gpBrandFaFromViewBag)
+            ? gpBrandFaFromViewBag
+            : gpCurrentBrandLink != null && !string.IsNullOrWhiteSpace(gpCurrentBrandLink.Item2)
+                ? gpCurrentBrandLink.Item2
+                : !string.IsNullOrWhiteSpace(GpNameFromSlug(gpBrandSlug))
+                    ? GpNameFromSlug(gpBrandSlug)
+                    : "سمعک";
+
+    var gpBrandEn = gpIsBrandList
+        ? "Hearing Aid Brands"
+        : !string.IsNullOrWhiteSpace(gpBrandEnFromViewBag)
+            ? gpBrandEnFromViewBag
+            : gpCurrentBrandLink != null && !string.IsNullOrWhiteSpace(gpCurrentBrandLink.Item3)
+                ? gpCurrentBrandLink.Item3
+                : !string.IsNullOrWhiteSpace(GpNameFromSlug(gpBrandSlug))
+                    ? GpNameFromSlug(gpBrandSlug)
+                    : "Hearing Aid";
+
     var gpCanonicalUrl = gpIsBrandList
         ? gpBaseUrl + "/hearing-aid-brands"
         : gpBaseUrl + "/hearing-aid-brands/" + gpBrandSlug;
@@ -25,8 +128,8 @@
         ? Model.data.ToList()
         : new List<DataLayer.Models.Product>();
 
-    var gpBrandLinks = ViewBag.BrandLinks as IEnumerable<Tuple<string, string, string>>;
-    var gpBrandLinksList = gpBrandLinks != null ? gpBrandLinks.ToList() : new List<Tuple<string, string, string>>();
+    var gpCurrentPage = Model != null ? Model.CurrentPage : 1;
+    var gpTotalItemCount = Model != null ? Model.TotalItemCount : gpProducts.Count();
 
     ViewBag.Title = gpTitle;
     ViewBag.CanonicalUrl = gpCanonicalUrl;
@@ -82,7 +185,7 @@
                 {
                   "@@type": "ListItem",
                   "position": 3,
-                  "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpBrandFa))",
+                  "name": "@Html.Raw(GpJson(gpBrandFa))",
                   "item": "@gpCanonicalUrl"
                 }</text>
             }
@@ -96,8 +199,8 @@
           "@@type": "CollectionPage",
           "@@id": "@gpCanonicalUrl#brand-page",
           "url": "@gpCanonicalUrl",
-          "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpTitle))",
-          "description": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpMetaDesc))",
+          "name": "@Html.Raw(GpJson(gpTitle))",
+          "description": "@Html.Raw(GpJson(gpMetaDesc))",
           "inLanguage": "fa-IR",
           "isPartOf": {
             "@@type": "WebSite",
@@ -109,7 +212,7 @@
             { "@@type": "Thing", "name": "سمعک" },
             { "@@type": "Thing", "name": "خرید سمعک" },
             { "@@type": "Thing", "name": "تنظیم سمعک" },
-            { "@@type": "Brand", "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpBrandEn))", "alternateName": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpBrandFa))" },
+            { "@@type": "Brand", "name": "@Html.Raw(GpJson(gpBrandEn))", "alternateName": "@Html.Raw(GpJson(gpBrandFa))" },
             { "@@type": "Place", "name": "تهران" },
             { "@@type": "Place", "name": "تجریش" }
           ]
@@ -123,8 +226,8 @@
               "@@context": "https://schema.org",
               "@@type": "Brand",
               "@@id": "@gpCanonicalUrl#brand",
-              "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpBrandEn))",
-              "alternateName": "@Html.Raw(HttpUtility.JavaScriptStringEncode(gpBrandFa))",
+              "name": "@Html.Raw(GpJson(gpBrandEn))",
+              "alternateName": "@Html.Raw(GpJson(gpBrandFa))",
               "url": "@gpCanonicalUrl"
             }
         </script>
@@ -133,7 +236,7 @@
             {
               "@@context": "https://schema.org",
               "@@type": "ItemList",
-              "name": "مدل‌های @Html.Raw(HttpUtility.JavaScriptStringEncode(gpBrandFa))",
+              "name": "مدل‌های @Html.Raw(GpJson(gpBrandFa))",
               "url": "@gpCanonicalUrl",
               "numberOfItems": @gpProducts.Count(),
               "itemListElement": [
@@ -142,10 +245,14 @@
                 }
                 @foreach (var item in gpProducts)
                 {
+                    var gpProductNameSchema = !string.IsNullOrWhiteSpace(item.PersianName)
+                        ? item.PersianName
+                        : "سمعک " + gpBrandFa;
+
                     <text>{
                       "@@type": "ListItem",
                       "position": @gpIndex,
-                      "name": "@Html.Raw(HttpUtility.JavaScriptStringEncode(item.PersianName))",
+                      "name": "@Html.Raw(GpJson(gpProductNameSchema))",
                       "url": "https://tajrish-samak.ir/Product/Details/@item.Id"
                     }</text>
                     if (gpIndex < gpProducts.Count())
@@ -195,7 +302,7 @@
           "mainEntity": [
             {
               "@@type": "Question",
-              "name": "برای انتخاب سمعک @Html.Raw(HttpUtility.JavaScriptStringEncode(gpBrandFa)) از کجا شروع کنیم؟",
+              "name": "برای انتخاب سمعک @Html.Raw(GpJson(gpBrandFa)) از کجا شروع کنیم؟",
               "acceptedAnswer": {
                 "@@type": "Answer",
                 "text": "شروع درست، انجام تست شنوایی و بررسی نیاز فردی، شدت کم‌شنوایی، سبک زندگی و امکان تنظیم سمعک توسط متخصص شنوایی است."
@@ -203,7 +310,7 @@
             },
             {
               "@@type": "Question",
-              "name": "آیا همه مدل‌های @Html.Raw(HttpUtility.JavaScriptStringEncode(gpBrandFa)) برای همه افراد مناسب هستند؟",
+              "name": "آیا همه مدل‌های @Html.Raw(GpJson(gpBrandFa)) برای همه افراد مناسب هستند؟",
               "acceptedAnswer": {
                 "@@type": "Answer",
                 "text": "خیر. مناسب بودن مدل سمعک به نتیجه تست شنوایی، فرم گوش، نیاز شنیداری و شرایط استفاده روزمره بستگی دارد."
@@ -221,7 +328,7 @@
         }
     </script>
 
-    <style id="gp-v77-brand-geo-seo">
+    <style id="gp-v80-brand-dynamic-products-final">
         .gp-brand-page {
             direction: rtl;
             overflow: hidden;
@@ -361,7 +468,13 @@
             border: 1px solid rgba(75,22,132,.09);
             box-shadow: 0 18px 42px rgba(74,18,107,.08);
             overflow: hidden;
+            transition: transform .22s ease, box-shadow .22s ease;
         }
+
+            .gp-brand-product:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 24px 56px rgba(74,18,107,.13);
+            }
 
             .gp-brand-product a {
                 text-decoration: none !important;
@@ -501,6 +614,7 @@
     <div class="container">
         <section class="gp-brand-hero">
             <span class="gp-brand-kicker">برندهای سمعک</span>
+
             @if (gpIsBrandList)
             {
                 <h1>بررسی برندهای سمعک در شکوه تجریش</h1>
@@ -523,10 +637,13 @@
             <section class="gp-brand-card">
                 <h2>انتخاب برند سمعک</h2>
                 <p>برند مورد نظر را انتخاب کنید تا صفحه بررسی همان برند، مدل‌های مرتبط داخل سایت و مسیر مشاوره تخصصی را ببینید.</p>
+
                 <div class="gp-brand-grid">
                     @foreach (var brandLink in gpBrandLinksList)
                     {
-                        <a href="/hearing-aid-brands/@brandLink.Item1" title="سمعک @brandLink.Item2 | @brandLink.Item3">
+                        var brandSlug = GpNormalizeSlug(brandLink.Item1);
+
+                        <a href="/hearing-aid-brands/@brandSlug" title="سمعک @brandLink.Item2 | @brandLink.Item3">
                             <span>@brandLink.Item2</span>
                             <small>@brandLink.Item3</small>
                         </a>
@@ -549,20 +666,32 @@
 
             <section class="gp-brand-card">
                 <h2>مدل‌های مرتبط با @gpBrandFa در سایت</h2>
+
                 @if (gpProducts.Count() > 0)
                 {
                     <div class="gp-brand-products">
                         @foreach (var item in gpProducts)
                         {
+                            var gpProductName = !string.IsNullOrWhiteSpace(item.PersianName)
+                                ? item.PersianName
+                                : "سمعک " + gpBrandFa;
+
+                            var gpProductImage = !string.IsNullOrWhiteSpace(item.SiteFirstImage)
+                                ? item.SiteFirstImage
+                                : "/images/logo_purple.webp";
+
                             <article class="gp-brand-product" itemscope itemtype="https://schema.org/Product">
-                                <a class="gp-brand-product-media" href="/Product/Details/@item.Id" title="@item.PersianName" itemprop="url">
-                                    <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName" loading="lazy" decoding="async" itemprop="image" />
+                                <a class="gp-brand-product-media" href="/Product/Details/@item.Id" title="@gpProductName" itemprop="url">
+                                    <img src="@gpProductImage" alt="@gpProductName" title="@gpProductName" loading="lazy" decoding="async" itemprop="image" />
                                 </a>
+
                                 <div class="gp-brand-product-body">
                                     <h2 itemprop="name">
-                                        <a href="/Product/Details/@item.Id" title="@item.PersianName">@item.PersianName</a>
+                                        <a href="/Product/Details/@item.Id" title="@gpProductName">@gpProductName</a>
                                     </h2>
+
                                     <p itemprop="description">برای بررسی مشخصات، مقایسه و دریافت مشاوره تخصصی انتخاب سمعک.</p>
+
                                     <a class="gp-brand-product-btn" href="/Product/Details/@item.Id">بررسی</a>
                                 </div>
                             </article>
@@ -571,14 +700,14 @@
 
                     <div style="margin-top:20px;text-align:center;">
                         <ul class="pagination pagination-sm">
-                            <li>@Html.Pager(9, Model.CurrentPage, Model.TotalItemCount)</li>
+                            <li>@Html.Pager(9, gpCurrentPage, gpTotalItemCount)</li>
                         </ul>
                     </div>
                 }
                 else
                 {
                     <div class="gp-brand-empty">
-                        فعلاً محصولی از این برند داخل سایت نمایش داده نمی‌شود، اما برای بررسی موجودی، مدل‌های جایگزین یا مشاوره انتخاب سمعک می‌توانید با کلینیک تماس بگیرید.
+                        فعلاً محصولی از برند @gpBrandFa داخل سایت نمایش داده نمی‌شود، اما برای بررسی موجودی، مدل‌های جایگزین یا مشاوره انتخاب سمعک می‌توانید با کلینیک تماس بگیرید.
                     </div>
                 }
             </section>
@@ -586,6 +715,7 @@
 
         <section class="gp-brand-card">
             <h2>مسیرهای مرتبط برای انتخاب بهتر</h2>
+
             <div class="gp-brand-links">
                 <a href="/tehran/hearing-test">تست شنوایی در تهران</a>
                 <a href="/tajrish/hearing-test">تست شنوایی در تجریش</a>
@@ -605,10 +735,15 @@
         {
             <section class="gp-brand-card">
                 <h2>برندهای دیگر سمعک</h2>
+
                 <div class="gp-brand-grid">
-                    @foreach (var brandLink in gpBrandLinksList.Where(current => current.Item1 != gpBrandSlug))
+                    @foreach (var brandLink in gpBrandLinksList.Where(current =>
+                        current != null &&
+                        !string.Equals(GpNormalizeSlug(current.Item1), gpBrandSlug, StringComparison.OrdinalIgnoreCase)))
                     {
-                        <a href="/hearing-aid-brands/@brandLink.Item1" title="سمعک @brandLink.Item2 | @brandLink.Item3">
+                        var otherBrandSlug = GpNormalizeSlug(brandLink.Item1);
+
+                        <a href="/hearing-aid-brands/@otherBrandSlug" title="سمعک @brandLink.Item2 | @brandLink.Item3">
                             <span>@brandLink.Item2</span>
                             <small>@brandLink.Item3</small>
                         </a>

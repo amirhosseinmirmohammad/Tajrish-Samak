@@ -169,6 +169,7 @@
     <Compile Include="ViewModels\CardViewModel.cs" />
     <Compile Include="ViewModels\ContractorServiceViewModels\ContractorServiceViewModels.cs" />
     <Compile Include="ViewModels\DiscountViewModel.cs" />
+    <Compile Include="ViewModels\GoogleReviewsViewModel.cs" />
     <Compile Include="ViewModels\ManageViewModels.cs" />
     <Compile Include="ViewModels\PagerViewModel\PagerViewModels.cs" />
     <Compile Include="ViewModels\ProductDetailViewModel.cs" />
