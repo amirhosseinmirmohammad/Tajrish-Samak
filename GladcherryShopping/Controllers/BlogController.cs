@@ -18,24 +18,42 @@ namespace GladcherryShopping.Controllers
         public ActionResult Index(int? id, string sefUrl)
         {
             if (!id.HasValue)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var blog = db.Blogs
+                .Include(c => c.Category)
+                .Include(c => c.Images)
+                .Include(c => c.User)
+                .Include(c => c.User.Roles)
+                .Include(c => c.BlogComments)
+                .FirstOrDefault(c =>
+                    c.Id == id.Value &&
+                    c.IsVisible &&
+                    c.Images.Any());
+
+            // ❌ NOT FOUND → redirect (no 404 soft trap)
+            if (blog == null)
+                return RedirectPermanent("/Blog/All");
+
+            // =========================
+            // FIX 1: canonical redirect (VERY IMPORTANT)
+            // =========================
+            if (!string.IsNullOrWhiteSpace(sefUrl))
+            {
+                if (!sefUrl.Equals(blog.SefUrl, StringComparison.OrdinalIgnoreCase))
+                {
+                    return RedirectPermanent(
+                        $"/Blog/{blog.Id}/{blog.SefUrl}"
+                    );
+                }
             }
 
-            Blog blog = db.Blogs
-                .Include(current => current.Category)
-                .Include(current => current.Images)
-                .Include(current => current.User)
-                .Include(current => current.User.Roles)
-                .Include(current => current.BlogComments)
-                .FirstOrDefault(current =>
-                    current.Id == id.Value &&
-                    current.IsVisible == true &&
-                    current.Images.Any());
-
-            if (blog == null)
+            // =========================
+            // FIX 2: prevent duplicate "terms" junk pages
+            // =========================
+            if (sefUrl != null && sefUrl.Equals("terms", StringComparison.OrdinalIgnoreCase))
             {
-                return HttpNotFound();
+                return RedirectPermanent("/Blog/All");
             }
 
             blog.Survey++;
@@ -44,8 +62,8 @@ namespace GladcherryShopping.Controllers
 
             ViewBag.comments = db.BlogComments
                 .AsNoTracking()
-                .Where(current => current.BlogId == id.Value && current.IsApprove == true)
-                .OrderByDescending(current => current.DateTime)
+                .Where(c => c.BlogId == id.Value && c.IsApprove)
+                .OrderByDescending(c => c.DateTime)
                 .ToList();
 
             return View(blog);

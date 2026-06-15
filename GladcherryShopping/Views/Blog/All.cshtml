@@ -11,11 +11,29 @@
 
     var gpCacheVersion = "20260603-tajrish-v40-blog-magazine-no-slider";
     var gpBaseUrl = "https://tajrish-samak.ir";
-    var gpCanonicalUrl = gpBaseUrl + Request.Path;
+
+    var path = Request.Path.ToLower();
+    var query = Request.QueryString;
+
+    var gpCanonicalUrl = gpBaseUrl + "/Blog/All";
+
+    var page = Request.QueryString["page"];
+    var q = Request.QueryString["q"];
+
+    // search همیشه canonical اصلی
+    if (!string.IsNullOrEmpty(q))
+    {
+        gpCanonicalUrl = gpBaseUrl + "/Blog/All";
+    }
+    // pagination
+    else if (!string.IsNullOrEmpty(page) && page != "1")
+    {
+        gpCanonicalUrl = gpBaseUrl + "/Blog/All?page=" + page;
+    }
 
     var gpBlogs = Model != null && Model.data != null
-        ? Model.data.ToList()
-        : new List<DataLayer.Models.Blog>();
+? Model.data.ToList()
+: new List<DataLayer.Models.Blog>();
     var gpPopularBlogs = content.Blogs
             .AsNoTracking()
             .Include(current => current.Images)
@@ -93,6 +111,10 @@
 
     <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
     <meta name="twitter:description" content="مطالب آموزشی درباره سلامت گوش، کم‌شنوایی، تست شنوایی و انتخاب سمعک." />
+    @if (!string.IsNullOrEmpty(Request.QueryString["q"]) || !string.IsNullOrEmpty(Request.QueryString["page"]))
+    {
+        <meta name="robots" content="noindex, follow" />
+    }
 }
 
 @section Styles{

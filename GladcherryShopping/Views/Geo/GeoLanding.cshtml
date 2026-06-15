@@ -1,4 +1,4 @@
-@using System;
+﻿@using System;
 @using System.Linq;
 @using System.Web;
 @* V63: clean list marker style, no broken pseudo numbers. Keep this file saved as UTF-8 with signature/BOM. *@
@@ -213,6 +213,67 @@
             --gp-v55-card: rgba(255,255,255,.92);
             --gp-v55-border: rgba(75,22,132,.10);
             --gp-v55-shadow: 0 24px 60px rgba(74,18,107,.10);
+        }
+
+        .gp-related-section {
+            margin-top: 40px;
+            padding: 20px 0;
+        }
+
+        .gp-related-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #2b1457;
+            margin-bottom: 8px;
+        }
+
+        .gp-related-desc {
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 16px;
+            line-height: 1.9;
+        }
+
+        .gp-related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+            gap: 12px;
+        }
+
+        .gp-related-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: linear-gradient(135deg,#ffffff,#f7f5ff);
+            border: 1px solid rgba(75,22,132,0.12);
+            text-decoration: none;
+            transition: 0.25s ease;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+        }
+
+            .gp-related-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 30px rgba(75,22,132,0.18);
+                border-color: #7c3aed;
+            }
+
+        .gp-related-icon {
+            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(124,58,237,0.1);
+        }
+
+        .gp-related-text {
+            font-weight: 800;
+            color: #222;
+            line-height: 1.7;
         }
 
         .gp-geo-page {
@@ -800,19 +861,26 @@
                     </section>
                 }
 
-                <section>
-                    <h2>@H(page.RelatedTitle)</h2>
-                    <p>@H(page.RelatedDescription)</p>
-                    @if (page.RelatedLinks != null)
-                    {
-                        <div class="gp-geo-related-links">
-                            @foreach (var link in page.RelatedLinks)
-                            {
-                                <a href="@link.Url">@H(link.Text)</a>
-                            }
-                        </div>
-                    }
-                </section>
+            <section class="gp-related-section">
+                <h2 class="gp-related-title">@H(page.RelatedTitle)</h2>
+
+                <p class="gp-related-desc">
+                    @H(page.RelatedDescription)
+                </p>
+
+                @if (page.RelatedLinks != null)
+                {
+                    <div class="gp-related-grid">
+                        @foreach (var link in page.RelatedLinks)
+                        {
+                            <a class="gp-related-card" href="@link.Url">
+                                <span class="gp-related-icon">🔗</span>
+                                <span class="gp-related-text">@H(link.Text)</span>
+                            </a>
+                        }
+                    </div>
+                }
+            </section>
 
                 <section>
                     <h2>@H(T("\u0633\u0648\u0627\u0644\u0627\u062A \u067E\u0631\u062A\u06A9\u0631\u0627\u0631"))</h2>

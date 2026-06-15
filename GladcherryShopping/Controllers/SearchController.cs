@@ -70,7 +70,18 @@ namespace GladcherryShopping.Controllers
                 : "جستجو برای " + query + " | کلینیک شنوایی و سمعک شکوه تجریش";
 
             ViewBag.MetaDescription = "جستجوی سریع در محصولات، خدمات، مقالات، برندها و صفحات محله‌ای کلینیک شنوایی و سمعک شکوه تجریش.";
-            ViewBag.CanonicalUrl = "https://tajrish-samak.ir/search";
+            var baseUrl = "https://tajrish-samak.ir/search";
+
+            if (!string.IsNullOrEmpty(Request.QueryString["q"]) || !string.IsNullOrEmpty(Request.QueryString["type"]))
+            {
+                ViewBag.CanonicalUrl = baseUrl;
+            }
+            else
+            {
+                ViewBag.CanonicalUrl = baseUrl;
+            }
+
+            ViewBag.Robots = "noindex, follow";
 
             return View(model);
         }

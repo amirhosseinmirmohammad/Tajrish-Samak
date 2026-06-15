@@ -28,6 +28,11 @@ namespace GladcherryShopping.Controllers
             return View();
         }
 
+        public ActionResult RedirectToHome()
+        {
+            return RedirectPermanent("https://tajrish-samak.ir/");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SubmitMessage([Bind(Include = "Id,FullName,Body,Email")] SiteMessage model)

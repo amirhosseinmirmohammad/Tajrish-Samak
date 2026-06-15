@@ -5,10 +5,10 @@
     var gpCacheVersion = "20260608-tajrish-schema-faq-dedupe-v87";
     var gpBaseUrl = "https://tajrish-samak.ir";
     var gpLogoUrl = gpBaseUrl + Url.Content("~/images/logo_purple.webp");
-    var gpCurrentUrl = gpBaseUrl + Request.Path;
+    var path = Request.Path.ToLower().TrimEnd('/');
+    var gpCurrentUrl = gpBaseUrl + path; var gpQuery = Request.QueryString.ToString();
     var gpGeoEntityDescription = "کلینیک شنوایی و سمعک شکوه تجریش یک مرکز تخصصی شنوایی‌شناسی در تهران، محدوده تجریش و شمال تهران است که خدمات تست شنوایی، آزمایش شنوایی، مشاوره خرید سمعک، تجویز و تنظیم سمعک، تعمیر سمعک، باتری سمعک، قالب سمعک، سمعک دولتی، سمعک رایگان بهزیستی، خدمات حمایتی، پیگیری پس از تجویز و مشاوره مرتبط با وزوز گوش را ارائه می‌دهد. این کلینیک برای مراجعان تهران، شمیرانات، تجریش، نیاوران، قیطریه، زعفرانیه، الهیه، فرمانیه و محله‌های شمال تهران قابل دسترسی است.";
 
-    // برای سرعت بیشتر، داده‌های منو و فوتر فقط یک بار خوانده می‌شوند.
     var gpProductCategories = content.Categories
         .AsNoTracking()
         .Where(current => current.ParentId == null && current.IsBlog == false)
@@ -37,7 +37,11 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fa" xml:lang="fa" dir="rtl" prefix="og: http://ogp.me/ns#">
 <head>
-    <title>@ViewBag.Title</title>
+    <title>
+        @(string.IsNullOrEmpty(ViewBag.Title)
+        ? "کلینیک شنوایی و سمعک شکوه تجریش"
+        : ViewBag.Title)
+    </title>
 
     <script>
         (function () {
@@ -57,12 +61,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="alternate" href="https://tajrish-samak.ir" hreflang="fa-ir" />
-    @RenderSection("Metas", false)
-
+    @if (!string.IsNullOrEmpty(ViewBag.MetaDescription))
+    {
+        <meta name="description" content="@ViewBag.MetaDescription" />
+    }
     <!-- V54 GEO/AEO Foundation -->
-    <link rel="canonical" href="@gpCurrentUrl" />
-    <link rel="alternate" href="@gpCurrentUrl" hreflang="fa-IR" />
+    @{
+        var canonicalUrl = gpBaseUrl + Request.Path.ToLower();
+
+        var q = Request.QueryString["q"];
+        var page = Request.QueryString["page"];
+
+        // search pages => no index + clean canonical
+        if (!string.IsNullOrEmpty(q))
+        {
+            canonicalUrl = gpBaseUrl + "/search";
+        }
+
+        // pagination
+        if (!string.IsNullOrEmpty(page) && page != "1")
+        {
+            canonicalUrl = gpBaseUrl + Request.Path.ToLower() + "?page=" + page;
+        }
+
+        // remove trailing slash issues
+        canonicalUrl = canonicalUrl.TrimEnd('/');
+    }
+    <link rel="alternate" href="@gpBaseUrl + Request.Path.ToLower().TrimEnd('/')" hreflang="fa-IR" />
+    <link rel="alternate" href="@gpBaseUrl + Request.Path.ToLower().TrimEnd('/')" hreflang="x-default" />
     <link rel="alternate" href="@gpCurrentUrl" hreflang="x-default" />
+    <link rel="canonical" href="@canonicalUrl" />
     <meta name="geo.placename" content="Tehran, Tajrish" />
     <meta name="geo.position" content="35.806270;51.430387" />
     <meta name="ICBM" content="35.806270, 51.430387" />
@@ -93,7 +121,16 @@
     <meta name="document-type" content="Public" />
     <meta name="document-rating" content="General" />
     <meta name="classification" content="Consumer" />
-    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    @if (Request.Path.Contains("/terms") ||
+    Request.Path.Contains("/fa/fa") ||
+    Request.Path.Contains("/fa/en"))
+    {
+        <meta name="robots" content="noindex, follow" />
+    }
+    else
+    {
+        <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    }
     <meta name="googlebot" content="index">
     <meta property="place:location:latitude" content="35.806270" />
     <meta property="place:location:longitude" content="51.430387" />
@@ -2017,6 +2054,8 @@
     </style>
 
     @RenderSection("Styles", required: false)
+    @RenderSection("Metas", required: false)
+
 </head>
 <body class="gp-tajrish-body">
     <div id="google_translate_element" class="gp-google-translate-shell" aria-hidden="true"></div>
@@ -2639,21 +2678,22 @@
         });
     </script>
 
-
     <script>
-        /* V84: safe loader - never gets stuck after offline/online */
+        /* V88: loader only on navigation click - smooth, short, safe */
         (function () {
             var loader = document.getElementById("gpPageLoader");
-            var lottieBox = document.getElementById("gpLottieLoader");
-            var minVisibleTime = 350;
             var showAt = 0;
+            var minVisibleTime = 220;
+            var maxVisibleTime = 1800;
             var hardHideTimer = null;
 
             function hardHideLoader() {
                 if (!loader) return;
+
                 loader.classList.remove("is-visible");
                 loader.classList.add("gp-force-hidden");
                 loader.setAttribute("aria-hidden", "true");
+
                 if (hardHideTimer) {
                     window.clearTimeout(hardHideTimer);
                     hardHideTimer = null;
@@ -2662,98 +2702,99 @@
 
             function softHideLoader() {
                 if (!loader) return;
+
                 var elapsed = Date.now() - showAt;
                 var delay = Math.max(0, minVisibleTime - elapsed);
 
                 window.setTimeout(function () {
                     if (!loader) return;
+
                     loader.classList.remove("is-visible");
-                    loader.classList.add("gp-force-hidden");
                     loader.setAttribute("aria-hidden", "true");
+
+                    window.setTimeout(function () {
+                        loader.classList.add("gp-force-hidden");
+                    }, 260);
                 }, delay);
             }
 
             function showLoader() {
-                if (!loader) return;
-
-                if (!navigator.onLine) {
-                    hardHideLoader();
-                    return;
-                }
+                if (!loader || !navigator.onLine) return;
 
                 showAt = Date.now();
+
                 loader.classList.remove("gp-force-hidden");
-                loader.classList.add("is-visible");
-                loader.setAttribute("aria-hidden", "false");
+
+                window.requestAnimationFrame(function () {
+                    loader.classList.add("is-visible");
+                    loader.setAttribute("aria-hidden", "false");
+                });
 
                 if (hardHideTimer) {
                     window.clearTimeout(hardHideTimer);
                 }
 
                 hardHideTimer = window.setTimeout(function () {
-                    hardHideLoader();
-                }, 4500);
+                    softHideLoader();
+                }, maxVisibleTime);
+            }
+
+            function shouldIgnoreLink(link, event) {
+                if (!link) return true;
+
+                var href = link.getAttribute("href");
+
+                if (!href) return true;
+                if (event && (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0)) return true;
+                if (href.charAt(0) === "#") return true;
+                if (href.indexOf("javascript:") === 0) return true;
+                if (href.indexOf("tel:") === 0) return true;
+                if (href.indexOf("mailto:") === 0) return true;
+                if (link.target === "_blank") return true;
+                if (link.hasAttribute("download")) return true;
+                if (link.getAttribute("data-toggle")) return true;
+
+                return false;
             }
 
             window.gpShowPageLoader = showLoader;
             window.gpHidePageLoader = hardHideLoader;
 
-            window.addEventListener("load", function () {
-                window.setTimeout(hardHideLoader, 250);
-            });
-
             document.addEventListener("DOMContentLoaded", function () {
-                if (navigator.onLine) {
+                hardHideLoader();
+
+                document.addEventListener("click", function (event) {
+                    var link = event.target.closest ? event.target.closest("a[href]") : null;
+
+                    if (shouldIgnoreLink(link, event)) return;
+
                     showLoader();
-                } else {
-                    hardHideLoader();
-                }
+                }, true);
 
-                window.setTimeout(hardHideLoader, 2500);
-
-                var links = document.querySelectorAll("a[href]");
-                for (var i = 0; i < links.length; i++) {
-                    links[i].addEventListener("click", function () {
-                        var href = this.getAttribute("href");
-
-                        if (!href ||
-                            href.charAt(0) === "#" ||
-                            href.indexOf("tel:") === 0 ||
-                            href.indexOf("mailto:") === 0 ||
-                            this.target === "_blank" ||
-                            this.hasAttribute("download") ||
-                            this.getAttribute("data-toggle")) {
-                            return;
-                        }
-
-                        if (href.indexOf("javascript:") === 0) {
-                            return;
-                        }
-
+                var forms = document.querySelectorAll("form");
+                for (var i = 0; i < forms.length; i++) {
+                    forms[i].addEventListener("submit", function () {
                         showLoader();
                     });
                 }
             });
 
+            window.addEventListener("load", function () {
+                window.setTimeout(hardHideLoader, 120);
+            });
+
             window.addEventListener("pageshow", function () {
-                hardHideLoader();
+                window.setTimeout(hardHideLoader, 80);
             });
 
-            window.addEventListener("online", function () {
-                hardHideLoader();
-            });
-
-            window.addEventListener("offline", function () {
-                hardHideLoader();
-            });
+            window.addEventListener("online", hardHideLoader);
+            window.addEventListener("offline", hardHideLoader);
 
             document.addEventListener("visibilitychange", function () {
                 if (!document.hidden) {
-                    window.setTimeout(hardHideLoader, 250);
+                    window.setTimeout(hardHideLoader, 120);
                 }
             });
-
-            window.setTimeout(hardHideLoader, 6000);
         })();
     </script>
 
@@ -2885,8 +2926,8 @@
             });
         })();
     </script>
-    <script src="//translate.google.com/translate_a/element.js?cb=gpGoogleTranslateInit" defer></script>
 
+    <script src="//translate.google.com/translate_a/element.js?cb=gpGoogleTranslateInit" defer></script>
 
     <script>
         /* V82: service worker + live offline notice */

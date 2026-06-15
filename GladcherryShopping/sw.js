@@ -1,4 +1,4 @@
-/* Tajrish Samak safe service worker - v86 lottie fallback fix */
+﻿/* Tajrish Samak safe service worker - v86 lottie fallback fix */
 const GP_CACHE = "tajrish-samak-v86";
 const GP_OFFLINE_URL = "/offline.html";
 

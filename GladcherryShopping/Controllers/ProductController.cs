@@ -88,27 +88,24 @@ namespace GladcherryShopping.Controllers
             }
 
             if (Category.HasValue)
-            {
                 query = query.Where(current => current.CategoryId == Category.Value);
-            }
 
             if (Discount.HasValue)
-            {
                 query = query.Where(current => current.DiscountPercent >= Discount.Value);
-            }
 
             if (Min.HasValue)
-            {
                 query = query.Where(current => current.UnitPrice >= Min.Value);
-            }
 
             if (Max.HasValue)
-            {
                 query = query.Where(current => current.UnitPrice <= Max.Value);
-            }
 
             PopulateProductListingViewBags(Category, false);
+
             PagerViewModels<Product> productViewModels = CreateProductPager(query, page);
+
+            ViewBag.NoIndex = true;
+
+            ViewBag.CanonicalUrl = "https://tajrish-samak.ir/Product/All";
 
             return View("All", productViewModels);
         }

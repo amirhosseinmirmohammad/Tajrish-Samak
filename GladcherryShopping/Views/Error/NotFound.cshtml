@@ -1,0 +1,79 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .gp-404 {
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        padding:100px 20px;
+        text-align:center;
+        min-height:70vh;
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    .gp-404 svg {
+        width:140px;
+        height:140px;
+        margin-bottom:20px;
+        animation: float 2.5s ease-in-out infinite;
+    }
+
+    .gp-404 h1 {
+        font-size:64px;
+        margin:10px 0;
+        color:#6c5ce7;
+    }
+
+    .gp-404 p {
+        font-size:18px;
+        color:#555;
+        margin-bottom:25px;
+    }
+
+    .gp-404 a {
+        padding:12px 22px;
+        background:#6c5ce7;
+        color:#fff;
+        border-radius:10px;
+        text-decoration:none;
+        transition:0.3s;
+        display:inline-block;
+    }
+
+    .gp-404 a:hover {
+        background:#4e3ac7;
+        transform:translateY(-2px);
+    }
+
+    @@keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+
+    @@keyframes fadeIn {
+        from { opacity:0; transform:scale(0.95); }
+        to { opacity:1; transform:scale(1); }
+    }
+</style>
+
+<div class="gp-404">
+
+    <!-- SVG ICON -->
+    <svg viewBox="0 0 200 200" fill="none">
+        <circle cx="100" cy="100" r="90" stroke="#6c5ce7" stroke-width="8" />
+        <path d="M70 80 L130 80" stroke="#6c5ce7" stroke-width="8" stroke-linecap="round" />
+        <path d="M75 130 Q100 110 125 130" stroke="#6c5ce7" stroke-width="8" stroke-linecap="round" />
+        <circle cx="80" cy="100" r="6" fill="#6c5ce7" />
+        <circle cx="120" cy="100" r="6" fill="#6c5ce7" />
+    </svg>
+
+    <h1>404</h1>
+    <p>صفحه مورد نظر پیدا نشد یا حذف شده است</p>
+
+    <a href="/">بازگشت به صفحه اصلی</a>
+
+</div>

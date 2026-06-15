@@ -635,39 +635,119 @@ namespace GladcherryShopping.Controllers
             var serviceName = service.Name;
             var slug = location.Slug + "/" + service.Slug;
 
+            var seed = (location.Slug + service.Slug).GetHashCode();
+
+            var introVariants = new[]
+            {
+        $"{serviceName} در {area} یکی از پرجستجوترین خدمات شنوایی برای ساکنان این محدوده است.",
+        $"اگر در {area} زندگی می‌کنید و به خدمات شنوایی نیاز دارید، {serviceName} می‌تواند اولین قدم باشد.",
+        $"{serviceName} در محدوده {area} معمولاً برای بررسی، تشخیص و انتخاب سمعک استفاده می‌شود.",
+        $"بسیاری از کاربران در {area} برای مشکلات شنوایی ابتدا سراغ {serviceName} می‌روند."
+    };
+
+            var selectedIntro = introVariants[Math.Abs(seed) % introVariants.Length];
+
+            var faqPool = new[]
+            {
+        "چه زمانی باید برای خدمات شنوایی مراجعه کنیم؟",
+        "آیا تست شنوایی قبل از سمعک ضروری است؟",
+        "هزینه خدمات شنوایی در این محدوده چطور تعیین می‌شود؟",
+        "آیا امکان تنظیم مجدد سمعک وجود دارد؟"
+    };
+
+            var selectedFaq = faqPool[Math.Abs(seed + 3) % faqPool.Length];
+
             var related = BuildRelatedLinks(location, service);
 
             return new GeoLandingPage
             {
                 Slug = slug,
                 Canonical = BaseUrl + "/" + slug,
-                Title = Apply(service.TitleTemplate, area, serviceName),
-                H1 = Apply(service.H1Template, area, serviceName),
-                Kicker = serviceName + " برای " + area + " و محدوده " + location.Cluster,
-                MainService = serviceName,
+
+                Title = $"{serviceName} در {area} | کلینیک شنوایی شکوه تجریش",
+                H1 = $"{serviceName} در {area}",
+
+                Kicker = $"{serviceName} تخصصی برای ساکنان {area} و اطراف آن",
+
                 City = "تهران",
                 District = area,
-                PrimaryIntent = "Local SEO landing / " + service.Slug,
-                CtaText = "تماس و مشاوره",
-                MetaDescription = Apply(service.MetaTemplate, area, serviceName),
-                ShortAnswer = Apply(service.ShortTemplate, area, serviceName),
-                SearchIntentText = "این صفحه برای جستجوهای محلی مثل «" + serviceName + " " + area + "»، «" + serviceName + " نزدیک من»، «" + serviceName + " شمال تهران» و ترکیب‌های مرتبط با سمعک، تست شنوایی، قیمت، بیمه، گارانتی و خدمات در منزل طراحی شده است؛ اما متن صفحه برای کاربر واقعی نوشته شده و فقط جایگزینی اسم محله نیست.",
+                MainService = serviceName,
+
+                PrimaryIntent = "Local SEO / " + service.Slug,
+
+                CtaText = "مشاوره و تماس فوری",
+
+                MetaDescription =
+                    $"خدمات {serviceName} در {area} شامل بررسی شنوایی، مشاوره سمعک، تنظیم و پیگیری تخصصی در کلینیک شنوایی شکوه تجریش.",
+
+                ShortAnswer =
+                    selectedIntro + " این صفحه برای آشنایی بهتر با روند مراجعه، خدمات و تصمیم‌گیری آگاهانه طراحی شده است.",
+
+                SearchIntentText =
+                    $"کاربرانی که عبارت «{serviceName} {area}» یا «{serviceName} نزدیک من» را جستجو می‌کنند معمولاً به دنبال تشخیص، قیمت، تنظیم یا انتخاب سمعک هستند.",
+
                 RouteNote = location.Hint,
-                CompetitorAngle = "برخلاف صفحات فهرست‌محور که فقط نام چند مرکز یا شماره تماس را نمایش می‌دهند، این صفحه مسیر تصمیم‌گیری را هم توضیح می‌دهد: چه زمانی مراجعه لازم است، چه مواردی قبل از خرید یا تنظیم سمعک بررسی می‌شود و کدام خدمات بعدی ممکن است برای کاربر مهم باشد.",
+
+                CompetitorAngle =
+                    "برخلاف صفحات تکراری که فقط اطلاعات سطحی ارائه می‌دهند، این صفحه مسیر تصمیم‌گیری واقعی از مشکل تا درمان یا انتخاب سمعک را توضیح می‌دهد.",
+
                 Keywords = BuildKeywords(location, service),
                 Areas = BuildAreas(location),
-                Benefits = BuildBenefits(area, serviceName),
-                Steps = BuildSteps(area, serviceName),
-                WhoNeeds = BuildWhoNeeds(area, serviceName),
-                LocalProofs = new[] {
-                    "آدرس کلینیک در محدوده میدان تجریش و خیابان شهرداری، برای بسیاری از محله‌های شمال تهران دسترسی محلی ایجاد می‌کند.",
-                    "امکان پیگیری خدمات مرتبط مثل تست شنوایی، مشاوره انتخاب سمعک، تنظیم، باتری، قالب و تعمیرات در یک مسیر واحد وجود دارد.",
-                    "برای تصمیم‌گیری بهتر، نتیجه ارزیابی شنوایی، نیاز روزمره، بودجه، برند، گارانتی و امکان استفاده از بیمه باید هم‌زمان بررسی شود."
-                },
-                RelatedTitle = "صفحات مرتبط با " + serviceName + " در شمال تهران",
-                RelatedDescription = "برای جلوگیری از محتوای تکراری، هر صفحه فقط روی یک نیت اصلی تمرکز دارد و لینک‌های مرتبط، مسیر بعدی کاربر را مشخص می‌کنند.",
+
+                Benefits = new[]
+                {
+            $"دسترسی سریع برای ساکنان {area} و محله‌های اطراف",
+            $"ارائه مشاوره تخصصی درباره {serviceName}",
+            "بررسی دقیق وضعیت شنوایی قبل از هر تصمیم",
+            "پشتیبانی بعد از انتخاب یا تنظیم سمعک"
+        },
+
+                Steps = new[]
+                {
+            "تماس اولیه و توضیح مشکل یا نیاز",
+            "بررسی شرایط و تعیین نوع ارزیابی",
+            "انجام تست یا مشاوره تخصصی",
+            "ارائه مسیر درمان یا انتخاب سمعک"
+        },
+
+                WhoNeeds = new[]
+                {
+            $"افرادی در {area} که در شنیدن گفت‌وگو مشکل دارند",
+            "سالمندان با افت شنوایی یا وزوز گوش",
+            "کاربران دارای سمعک با مشکل تنظیم یا کیفیت صدا",
+            "افرادی که قصد خرید سمعک دارند"
+        },
+
+                LocalProofs = new[]
+                {
+            $"دسترسی از {area} به کلینیک شنوایی در شمال تهران",
+            "امکان انجام تست، مشاوره و تنظیم در یک مسیر واحد",
+            "پشتیبانی تخصصی برای انتخاب سمعک مناسب"
+        },
+
+                RelatedTitle = $"خدمات مرتبط در {area}",
+                RelatedDescription = "لینک‌های مرتبط برای ادامه مسیر کاربر و جلوگیری از تکرار محتوا",
+
                 RelatedLinks = related,
-                Faqs = BuildFaqs(location, service)
+
+                Faqs = new[]
+                {
+            new GeoFaqItem
+            {
+                Question = selectedFaq,
+                Answer = $"در {area} این خدمات معمولاً شامل بررسی شنوایی، مشاوره و در صورت نیاز انتخاب یا تنظیم سمعک است."
+            },
+            new GeoFaqItem
+            {
+                Question = $"آیا {serviceName} برای همه افراد در {area} لازم است؟",
+                Answer = "خیر، اما برای افرادی که علائم افت شنوایی یا وزوز دارند بسیار توصیه می‌شود."
+            },
+            new GeoFaqItem
+            {
+                Question = "اولین قدم چیست؟",
+                Answer = "معمولاً تماس اولیه و بررسی شرایط فرد بهترین شروع مسیر است."
+            }
+        }
             };
         }
 

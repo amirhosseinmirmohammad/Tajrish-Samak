@@ -52,10 +52,19 @@
 }
 
 @section Metas{
-    <meta name="description" content="@gpMetaDescription" />
-    <link rel="canonical" href="@gpCanonicalUrl" />
+    <meta name="description" content="@(ViewBag.MetaDescription ?? gpMetaDescription)" />
+    <link rel="canonical" href="@(ViewBag.CanonicalUrl ?? gpCanonicalUrl)" />
     <meta name="Keywords" content="@gpMetaKeywords" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    @if (ViewBag.NoIndex != null && (bool)ViewBag.NoIndex)
+    {
+        <meta name="robots" content="noindex, follow" />
+    }
+    else
+    {
+        <meta name="robots" content="index, follow" />
+    }
 
     <meta property="og:title" content="@ViewBag.Title" />
     <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />

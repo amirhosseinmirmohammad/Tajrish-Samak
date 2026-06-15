@@ -231,6 +231,7 @@
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\BrandController.cs" />
     <Compile Include="Controllers\ContactUsController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FaqController.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\GeoController.cs" />
@@ -1273,6 +1274,7 @@
     <Content Include="Views\Geo\GeoLanding.cshtml" />
     <Content Include="Views\Brand\Index.cshtml" />
     <Content Include="Views\Search\Index.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

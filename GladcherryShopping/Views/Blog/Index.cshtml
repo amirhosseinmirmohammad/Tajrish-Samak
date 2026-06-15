@@ -16,11 +16,15 @@
     var gpCacheVersion = "20260606-tajrish-v80-blog-detail-new-geo-links";
     var gpBaseUrl = "https://tajrish-samak.ir";
     var gpCanonicalPath = Url.Action("Index", "Blog", new { id = Model.Id, sefUrl = Model.SefUrl });
-    var gpCanonicalUrl = gpBaseUrl + (!string.IsNullOrWhiteSpace(gpCanonicalPath) ? gpCanonicalPath : Request.Path);
+    var gpCanonicalUrl = gpBaseUrl + Url.Action("Index", "Blog", new
+    {
+        id = Model.Id,
+        sefUrl = Model.SefUrl
+    });
 
     var gpTitle = !string.IsNullOrWhiteSpace(Model.Title)
-        ? Model.Title.Trim()
-        : "مقاله مجله کلینیک";
+? Model.Title.Trim()
+: "مقاله مجله کلینیک";
 
     var gpMetaDesc = !string.IsNullOrWhiteSpace(Model.MetaDesc)
         ? Model.MetaDesc.Trim()
