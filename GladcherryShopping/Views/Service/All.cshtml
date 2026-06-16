@@ -1,0 +1,246 @@
+﻿@model IEnumerable<DataLayer.Models.Service>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.Title = "خدمات شنوایی و سمعک در تهران";
+    ViewBag.MetaDescription = "تست شنوایی، سمعک، تنظیم سمعک و خدمات تخصصی شنوایی در تهران و شمال تهران";
+
+    var faqs = ViewBag.Faqs as List<GladcherryShopping.Controllers.ServiceController.FaqViewModel>;
+}
+
+@section Metas{
+    <meta name="description" content="@ViewBag.MetaDescription" />
+    <link rel="canonical" href="https://tajrish-samak.ir/service/all" />
+}
+
+@section Styles{
+    <style>
+
+        body {
+            background: #f6f6fb;
+            font-family: IRANSans;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background: #fff;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+            .topbar input {
+                width: 100%;
+                padding: 12px;
+                border-radius: 12px;
+                border: 1px solid #ddd;
+            }
+
+        /* GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+            gap: 12px;
+            padding: 12px;
+        }
+
+        /* CARD */
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            text-decoration: none;
+            border: 1px solid #eee;
+            transition: .2s;
+        }
+
+            .card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 10px 25px rgba(0,0,0,.08);
+            }
+
+            .card img {
+                width: 100%;
+                height: 150px;
+                object-fit: cover;
+                background: #f2f2f2;
+            }
+
+            .card h3 {
+                font-size: 15px;
+                font-weight: 900;
+                margin: 8px 10px 4px;
+            }
+
+            .card p {
+                font-size: 12.5px;
+                color: #666;
+                margin: 0 10px 10px;
+                line-height: 1.7;
+            }
+
+        /* GEO */
+        .geo {
+            margin: 15px;
+            background: #fff;
+            border-radius: 14px;
+            padding: 12px;
+        }
+
+        .geo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+            gap: 8px;
+        }
+
+            .geo-grid a {
+                padding: 10px;
+                border-radius: 10px;
+                background: #f8f8ff;
+                text-align: center;
+                text-decoration: none;
+                font-weight: 800;
+                color: #4b1684;
+                font-size: 12.5px;
+            }
+
+        /* FAQ */
+        .faq {
+            margin: 15px;
+            background: #fff;
+            border-radius: 14px;
+            padding: 12px;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+
+        .faq-q {
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .faq-a {
+            display: none;
+            font-size: 12.5px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+        }
+    </style>
+}
+
+<!-- ================= SEARCH ================= -->
+<div class="topbar">
+    <input id="searchBox" placeholder="جستجو خدمات شنوایی..." />
+</div>
+
+<!-- ================= GRID ================= -->
+<div class="grid">
+
+    @foreach (var item in Model)
+    {
+        var img = item.Images?.FirstOrDefault()?.FullPath;
+
+        <a class="card" href="/service/@item.Id/@item.SefUrl">
+
+            <img src="@(string.IsNullOrWhiteSpace(img)
+                    ? Url.Content("~/Content/images/no-image.webp")
+                    : Url.Content(img))"
+                 loading="lazy"
+                 alt="@item.Title" />
+
+            <h3>@item.Title</h3>
+
+            <p>@(item.ShortDesc ?? "خدمات تخصصی شنوایی و سمعک")</p>
+
+        </a>
+    }
+
+</div>
+
+<!-- ================= GEO LINKS ================= -->
+<section class="geo">
+
+    <h2>دسترسی سریع خدمات شنوایی</h2><br />
+
+    <div class="geo-grid">
+
+        <a href="/tehran/hearing-test">تست شنوایی تهران</a>
+        <a href="/tajrish/hearing-test">تست شنوایی تجریش</a>
+
+        <a href="/tehran/hearing-aid">سمعک تهران</a>
+        <a href="/tajrish/hearing-aid">سمعک تجریش</a>
+
+        <a href="/tehran/hearing-aid-adjustment">تنظیم سمعک تهران</a>
+        <a href="/tajrish/hearing-aid-adjustment">تنظیم سمعک تجریش</a>
+
+        <a href="/niavaran/hearing-test">نیاوران</a>
+        <a href="/qeytarieh/hearing-test">قیطریه</a>
+
+        <a href="/zaferanieh/hearing-test">زعفرانیه</a>
+        <a href="/elahiyeh/hearing-test">الهیه</a>
+
+        <a href="/farmanieh/hearing-test">فرمانیه</a>
+
+    </div>
+
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="faq">
+
+    <h2>سوالات متداول</h2>
+
+    @if (faqs != null)
+    {
+        foreach (var f in faqs)
+        {
+            <div class="faq-item">
+                <div class="faq-q">➤ @f.Q</div>
+                <div class="faq-a">@f.A</div>
+            </div>
+        }
+    }
+
+</section>
+
+@section Scripts{
+    <script>
+
+        /* SEARCH */
+        document.getElementById("searchBox").addEventListener("input", function () {
+
+            let v = this.value.toLowerCase();
+
+            document.querySelectorAll(".card").forEach(c => {
+                c.style.display = c.innerText.toLowerCase().includes(v)
+                    ? "block"
+                    : "none";
+            });
+
+        });
+
+        /* FAQ */
+        document.querySelectorAll(".faq-q").forEach(q => {
+            q.addEventListener("click", () => {
+                let a = q.nextElementSibling;
+                a.style.display = a.style.display === "block" ? "none" : "block";
+            });
+        });
+
+    </script>
+}

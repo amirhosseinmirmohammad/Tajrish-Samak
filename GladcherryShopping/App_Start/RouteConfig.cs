@@ -40,6 +40,15 @@ namespace GladcherryShopping
             );
 
             // =========================
+            // SERVICE ALL (FIX)
+            // =========================
+            routes.MapRoute(
+                name: "ServiceAll",
+                url: "service/all",
+                defaults: new { controller = "Service", action = "All" }
+            );
+
+            // =========================
             // 3. SERVICE ROUTES
             // =========================
             routes.MapRoute(
