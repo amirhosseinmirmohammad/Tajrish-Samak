@@ -3,7 +3,7 @@
 @using Microsoft.Extensions.Caching.Memory
 @using System.Linq
 @using Microsoft.EntityFrameworkCore
-@inject TajrishSamak.Web.Data.TajrishSamakDbContext Db
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
 @inject IMemoryCache Cache
 
 <PageTitle>بهترین کلینیک شنوایی تهران و شمال تهران | سمعک شکوه تجریش</PageTitle>
@@ -62,13 +62,15 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await using var db = DbFactory.CreateDbContext();
+
         // Layout-level data was queried 4x per request in the legacy app; cached here.
         try
         {
             _products = await Cache.GetOrCreateAsync("home:products", async entry =>
             {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-                return await Db.Products
+                return await db.Products
                     .Where(p => p.SiteFirstImage != null)
                     .OrderByDescending(p => p.CreateDate)
                     .Take(6)
@@ -78,15 +80,15 @@
             _categories = await Cache.GetOrCreateAsync("home:categories", async entry =>
             {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-                return await Db.Categories
+                return await db.Categories
                     .Where(c => c.ParentId == null && c.IsBlog == false)
                     .OrderByDescending(c => c.PersianName)
                     .ToListAsync();
             }) ?? new List<Category>();
 
-            _sliderCount = await Db.Sliders.CountAsync();
-            _productCount = await Db.Products.CountAsync();
-            _blogCount = await Db.Blogs.CountAsync(b => b.IsVisible == true);
+            _sliderCount = await db.Sliders.CountAsync();
+            _productCount = await db.Products.CountAsync();
+            _blogCount = await db.Blogs.CountAsync(b => b.IsVisible == true);
             _categoryCount = _categories.Count;
         }
         catch (Exception ex)

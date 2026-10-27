@@ -1,0 +1,148 @@
+@page "/Product/Details/{id:long}"
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+
+<PageTitle>@(gpTitle ?? "محصول") | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="description" content="@gpMetaDesc" />
+<link rel="canonical" href="@gpCanonicalUrl" />
+<meta property="og:title" content="@gpTitle" />
+<meta property="og:url" content="@gpCanonicalUrl" />
+<meta property="og:type" content="product" />
+<meta property="og:image" content="@gpImageUrl" />
+<link rel="stylesheet" href="css/gp-page-Product_Details.css" />
+
+@if (product == null)
+{
+    if (notFound && Http.HttpContext != null)
+    {
+        Http.HttpContext.Response.StatusCode = 404;
+    }
+    <h1 style="text-align:center;padding:60px 20px;">محصول پیدا نشد</h1>
+    <p style="text-align:center;"><a href="/Product/All">بازگشت به محصولات</a></p>
+    return;
+}
+
+<article class="gp-product-page">
+    <div class="container">
+        <h1>@gpTitle</h1>
+
+        <div class="gp-product-media-main">
+            @if (!string.IsNullOrWhiteSpace(product.SiteFirstImage))
+            {
+                <img src="@product.SiteFirstImage" alt="@gpTitle" width="420" style="max-width:100%;height:auto;" />
+            }
+        </div>
+
+        <div class="gp-product-desc">
+            @((MarkupString)product.Description)
+        </div>
+
+        <h2>محصولات مرتبط</h2>
+        <ul>
+            @foreach (var r in product.RelatedProducts.Take(6))
+            {
+                <li><a href="/Product/Details/@r.Id">@r.PersianName</a></li>
+            }
+        </ul>
+
+        <p><a class="btn btn-default" href="tel:02122735588">☎ مشاوره و تماس فوری</a></p>
+    </div>
+</article>
+
+@if (hasPrice)
+{
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@@type": "Product",
+      "@@id": "@gpCanonicalUrl#product",
+      "name": "@gpTitle",
+      "description": "@gpMetaDesc",
+      "sku": "TS-@product.Id",
+      "url": "@gpCanonicalUrl",
+      "image": "@gpImageUrl",
+      "brand": { "@@type": "Brand", "name": "@gpBrandName" },
+      "offers": {
+        "@@type": "Offer",
+        "url": "@gpCanonicalUrl",
+        "priceCurrency": "IRR",
+        "price": @finalPrice,
+        "itemCondition": "https://schema.org/NewCondition",
+        "availability": "https://schema.org/@avail",
+        "seller": {
+          "@@type": "Organization",
+          "@@id": "https://tajrish-samak.ir/#tajrish-samak",
+          "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+          "url": "https://tajrish-samak.ir/"
+        }
+      }
+    }
+    </script>
+}
+
+@code {
+    [Parameter] public long id { get; set; }
+
+    private Product product;
+    private bool notFound;
+    private string gpTitle = "محصول";
+    private string gpMetaDesc = "";
+    private string gpCanonicalUrl = "";
+    private string gpImageUrl = "https://tajrish-samak.ir/images/logo_purple.webp";
+    private string gpBrandName = "Tajrish Samak";
+    private int finalPrice;
+    private bool hasPrice;
+    private string avail = "InStock";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+        product = await db.Products
+            .AsNoTracking()
+            .Include(p => p.RelatedProducts)
+            .Include(p => p.category)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (product == null)
+        {
+            notFound = true;
+            if (Http.HttpContext != null)
+            {
+                Http.HttpContext.Response.StatusCode = 404;
+            }
+            return;
+        }
+
+        gpTitle = string.IsNullOrWhiteSpace(product.PersianName) ? "محصول سمعک" : product.PersianName;
+        gpCanonicalUrl = "https://tajrish-samak.ir/Product/Details/" + product.Id;
+        gpImageUrl = !string.IsNullOrWhiteSpace(product.SiteFirstImage)
+            ? "https://tajrish-samak.ir" + product.SiteFirstImage
+            : "https://tajrish-samak.ir/images/logo_purple.webp";
+
+        if (!string.IsNullOrWhiteSpace(product.Description))
+        {
+            var plain = System.Text.RegularExpressions.Regex.Replace(product.Description, "<[^>]+>", " ").Trim();
+            gpMetaDesc = plain.Length > 160 ? plain.Substring(0, 160) : plain;
+        }
+
+        finalPrice = product.UnitPrice - (product.UnitPrice * product.DiscountPercent / 100);
+        hasPrice = finalPrice > 0;
+        avail = product.Stock > 0 ? "InStock" : "OutOfStock";
+
+        if (product.BrandId > 0)
+        {
+            var brandName = await db.Brands
+                .AsNoTracking()
+                .Where(b => b.Id == product.BrandId)
+                .Select(b => b.PersianName)
+                .FirstOrDefaultAsync();
+            if (!string.IsNullOrWhiteSpace(brandName))
+            {
+                gpBrandName = brandName;
+            }
+        }
+    }
+
+    [Inject] Microsoft.AspNetCore.Http.IHttpContextAccessor Http { get; set; }
+}

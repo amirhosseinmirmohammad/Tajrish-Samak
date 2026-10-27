@@ -4,7 +4,10 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // ---------------- database (existing production schema, no migrations) ----------------
-builder.Services.AddDbContext<TajrishSamakDbContext>(options =>
+// IDbContextFactory is the recommended pattern for Blazor: layout and page
+// components each create their own short-lived context, avoiding the
+// "second operation started on this context instance" concurrency error.
+builder.Services.AddDbContextFactory<TajrishSamakDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("Default"),
         sql =>
@@ -73,9 +76,10 @@ app.UseOutputCache();
 app.UseAntiforgery();
 
 // ---------------- dynamic sitemap.xml (ported from legacy SitemapController) ----------------
-app.MapGet("/sitemap.xml", async (TajrishSamakDbContext db) =>
+app.MapGet("/sitemap.xml", async (IDbContextFactory<TajrishSamakDbContext> dbFactory) =>
 {
     var lastMod = DateTime.UtcNow.Date.ToString("yyyy-MM-dd");
+    await using var db = dbFactory.CreateDbContext();
     var sb = new System.Text.StringBuilder();
     sb.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
 

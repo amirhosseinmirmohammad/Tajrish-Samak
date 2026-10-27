@@ -1,0 +1,126 @@
+
+
+        body {
+            background: #f6f6fb;
+            font-family: IRANSans;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background: #fff;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+            .topbar input {
+                width: 100%;
+                padding: 12px;
+                border-radius: 12px;
+                border: 1px solid #ddd;
+            }
+
+        /* GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+            gap: 12px;
+            padding: 12px;
+        }
+
+        /* CARD */
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            text-decoration: none;
+            border: 1px solid #eee;
+            transition: .2s;
+        }
+
+            .card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 10px 25px rgba(0,0,0,.08);
+            }
+
+            .card img {
+                width: 100%;
+                height: 150px;
+                object-fit: cover;
+                background: #f2f2f2;
+            }
+
+            .card h3 {
+                font-size: 15px;
+                font-weight: 900;
+                margin: 8px 10px 4px;
+            }
+
+            .card p {
+                font-size: 12.5px;
+                color: #666;
+                margin: 0 10px 10px;
+                line-height: 1.7;
+            }
+
+        /* GEO */
+        .geo {
+            margin: 15px;
+            background: #fff;
+            border-radius: 14px;
+            padding: 12px;
+        }
+
+        .geo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+            gap: 8px;
+        }
+
+            .geo-grid a {
+                padding: 10px;
+                border-radius: 10px;
+                background: #f8f8ff;
+                text-align: center;
+                text-decoration: none;
+                font-weight: 800;
+                color: #4b1684;
+                font-size: 12.5px;
+            }
+
+        /* FAQ */
+        .faq {
+            margin: 15px;
+            background: #fff;
+            border-radius: 14px;
+            padding: 12px;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+
+        .faq-q {
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .faq-a {
+            display: none;
+            font-size: 12.5px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+        }
+    

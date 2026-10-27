@@ -1,8 +1,8 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 @using TajrishSamak.Web.Data.Entities
 @using Microsoft.Extensions.Caching.Memory
 @using Microsoft.EntityFrameworkCore
-@inject TajrishSamak.Web.Data.TajrishSamakDbContext Db
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
 @inject IMemoryCache Cache
 
 @{
@@ -16,12 +16,14 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await using var db = DbFactory.CreateDbContext();
         // Layout-level data: the legacy app ran these queries on EVERY request;
         // here they are cached for 10 minutes (identical results, far fewer queries).
         gpProductCategories = await Cache.GetOrCreateAsync("layout:product-categories", async entry =>
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-            return await Db.Categories
+            return await db.Categories
+                .AsNoTracking()
                 .Where(c => c.ParentId == null && c.IsBlog == false)
                 .OrderByDescending(c => c.PersianName)
                 .ToListAsync();
@@ -30,7 +32,8 @@
         gpBlogCategories = await Cache.GetOrCreateAsync("layout:blog-categories", async entry =>
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-            return await Db.Categories
+            return await db.Categories
+                .AsNoTracking()
                 .Where(c => c.ParentId == null && c.IsBlog == true)
                 .OrderByDescending(c => c.PersianName)
                 .ToListAsync();
@@ -39,7 +42,8 @@
         gpServiceCategories = await Cache.GetOrCreateAsync("layout:service-categories", async entry =>
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-            return await Db.ServiceCategories
+            return await db.ServiceCategories
+                .AsNoTracking()
                 .OrderByDescending(c => c.PersianName)
                 .ToListAsync();
         }) ?? new List<ServiceCategory>();
