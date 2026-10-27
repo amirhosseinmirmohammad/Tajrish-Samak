@@ -1,0 +1,323 @@
+@{
+    var gpCacheVersion = "20260603-tajrish-v37-contact-modern-seo";
+    var gpBaseUrl = "https://tajrish-samak.ir";
+    var gpCanonicalUrl = gpBaseUrl + Request.Path;
+
+    ViewBag.Title = "تماس با ما | کلینیک شنوایی و سمعک شکوه تجریش";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+    <meta name="description" content="تماس با کلینیک شنوایی و سمعک شکوه تجریش؛ آدرس، شماره تماس، مسیر‌یابی، فرم ارسال پیام و راه‌های ارتباطی برای مشاوره شنوایی، تست شنوایی و تجویز سمعک." />
+    <link rel="canonical" href="@gpCanonicalUrl" />
+    <meta name="Keywords" content="تماس با کلینیک شنوایی تجریش، آدرس سمعک تجریش، شماره کلینیک سمعک، تست شنوایی تجریش، مشاوره سمعک، شکوه تجریش" />
+
+    <meta property="og:title" content="تماس با ما | کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@gpCanonicalUrl" />
+    <meta property="og:description" content="راه‌های ارتباطی، آدرس، مسیر‌یابی و فرم تماس کلینیک شنوایی و سمعک شکوه تجریش." />
+
+    <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta name="twitter:description" content="تماس، آدرس، مسیر‌یابی و مشاوره کلینیک شنوایی و سمعک شکوه تجریش." />
+}
+
+@section Styles{
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@@type": "ListItem",
+              "position": 1,
+              "name": "صفحه اصلی",
+              "item": "https://tajrish-samak.ir/"
+            },
+            {
+              "@@type": "ListItem",
+              "position": 2,
+              "name": "تماس با ما",
+              "item": "@gpCanonicalUrl"
+            }
+          ]
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": ["LocalBusiness", "MedicalBusiness"],
+          "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+          "description": "کلینیک شنوایی و سمعک شکوه تجریش ارائه‌دهنده خدمات ارزیابی شنوایی، مشاوره، تجویز و تنظیم تخصصی سمعک است.",
+          "logo": "https://tajrish-samak.ir/images/logo_purple.webp",
+          "image": "https://tajrish-samak.ir/images/logo_purple.webp",
+          "url": "https://tajrish-samak.ir/",
+          "telephone": ["+982122735588", "+982122735599", "+989393388985"],
+          "email": "tajrishsamak@gmail.com",
+          "address": {
+            "@@type": "PostalAddress",
+            "addressCountry": "IR",
+            "addressRegion": "تهران",
+            "addressLocality": "تجریش",
+            "streetAddress": "میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰"
+          },
+          "geo": {
+            "@@type": "GeoCoordinates",
+            "latitude": 35.806270,
+            "longitude": 51.430387
+          },
+          "contactPoint": [
+            {
+              "@@type": "ContactPoint",
+              "telephone": "+982122735588",
+              "contactType": "customer service",
+              "areaServed": "IR",
+              "availableLanguage": "fa"
+            }
+          ],
+          "sameAs": [
+            "https://www.instagram.com/tajrishsamak/",
+            "https://www.telegram.me/sthc/",
+            "https://wa.me/+989393388985"
+          ]
+        }
+    </script>
+
+    
+}
+
+<section class="gp-contact-page" aria-label="تماس با کلینیک شنوایی و سمعک شکوه تجریش">
+    <div class="container">
+        <section class="gp-contact-hero" aria-label="معرفی راه‌های ارتباطی">
+            <div class="gp-contact-hero-grid">
+                <div>
+                    <span class="gp-contact-kicker">تماس با ما</span>
+                    <h1>برای شنیدن بهتر، همین‌جا شروع کنید.</h1>
+                    <p>
+                        برای مشاوره، تست شنوایی، تجویز یا تنظیم سمعک می‌توانید با کلینیک شنوایی و سمعک شکوه تجریش تماس بگیرید یا پیام بگذارید.
+                    </p>
+                    <div class="gp-contact-actions">
+                        <a href="tel:02122735588">
+                            <span aria-hidden="true">☎</span>
+                            تماس
+                        </a>
+                        <a href="#gp-contact-form">
+                            <span aria-hidden="true">✉</span>
+                            ارسال پیام
+                        </a>
+                        <a href="#gp-contact-map">
+                            <span aria-hidden="true">⌖</span>
+                            مسیر‌یابی
+                        </a>
+                    </div>
+                </div>
+
+                <div class="gp-contact-quick-cards" aria-label="تماس سریع">
+                    <div class="gp-contact-quick-card">
+                        <strong>موبایل</strong>
+                        <a href="tel:09393388985">0939 338 8985</a>
+                    </div>
+                    <div class="gp-contact-quick-card">
+                        <strong>تلفن ثابت</strong>
+                        <a href="tel:02122735588">021 2273 5588</a>
+                    </div>
+                    <div class="gp-contact-quick-card">
+                        <strong>ایمیل</strong>
+                        <a href="mailto:tajrishsamak@gmail.com">tajrishsamak@gmail.com</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="gp-contact-shell">
+            <main class="gp-contact-form-card" id="gp-contact-form" aria-label="فرم تماس">
+                <div class="gp-contact-form-head">
+                    <span>پیام مستقیم</span>
+                    <h2>سؤال یا درخواست مشاوره دارید؟</h2>
+                    <p>پیام خود را بفرستید؛ تیم کلینیک برای راهنمایی درباره تست شنوایی، انتخاب سمعک یا پیگیری خدمات با شما ارتباط می‌گیرد.</p>
+                </div>
+
+                <form class="gp-contact-form" method="post" action="/Home/SubmitMessage">
+                    @Html.AntiForgeryToken()
+                    <div class="gp-contact-field">
+                        <input type="text" placeholder="نام و نام خانوادگی" name="FullName" required />
+                    </div>
+                    <div class="gp-contact-field">
+                        <input type="email" placeholder="ایمیل" name="Email" />
+                    </div>
+                    <div class="gp-contact-field">
+                        <textarea placeholder="پیام شما" required name="Body"></textarea>
+                    </div>
+                    <button type="submit" class="gp-contact-submit">ارسال پیام</button>
+                </form>
+            </main>
+
+            <aside class="gp-contact-side" aria-label="اطلاعات تماس">
+                <section class="gp-contact-info-card">
+                    <h2>راه‌های ارتباطی</h2>
+                    <div class="gp-contact-list">
+                        <div class="gp-contact-item">
+                            <i class="gp-contact-icon" aria-hidden="true">⌖</i>
+                            <span>
+                                <strong>آدرس</strong>
+                                <span>تهران، میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰، ورودی قائم</span>
+                            </span>
+                        </div>
+
+                        <a class="gp-contact-item gp-ltr" href="tel:09393388985">
+                            <i class="gp-contact-icon" aria-hidden="true">✆</i>
+                            <span>
+                                <strong>موبایل</strong>
+                                <span>0939 338 8985</span>
+                            </span>
+                        </a>
+
+                        <a class="gp-contact-item gp-ltr" href="tel:02122735588">
+                            <i class="gp-contact-icon" aria-hidden="true">☎</i>
+                            <span>
+                                <strong>تلفن ثابت</strong>
+                                <span>021 2273 5588</span>
+                            </span>
+                        </a>
+
+                        <a class="gp-contact-item gp-ltr" href="tel:02122735599">
+                            <i class="gp-contact-icon" aria-hidden="true">☎</i>
+                            <span>
+                                <strong>تلفن ثابت</strong>
+                                <span>021 2273 5599</span>
+                            </span>
+                        </a>
+
+                        <a class="gp-contact-item gp-ltr" href="mailto:tajrishsamak@gmail.com">
+                            <i class="gp-contact-icon" aria-hidden="true">✉</i>
+                            <span>
+                                <strong>ایمیل</strong>
+                                <span>tajrishsamak@gmail.com</span>
+                            </span>
+                        </a>
+                    </div>
+
+                    <div class="gp-direction-buttons">
+                        <a target="_blank" rel="noreferrer" href="https://maps.google.com/?saddr=Current+Location&daddr=35.806270,51.430387">گوگل مپ</a>
+                        <a target="_blank" rel="noreferrer" href="https://www.waze.com/livemap/directions?navigate=yes&latlng=35.806270%2C51.430387">ویز</a>
+                    </div>
+                </section>
+
+                <section class="gp-contact-social-card">
+                    <h2>شبکه‌های اجتماعی</h2>
+                    <div class="gp-contact-socials">
+                        <a target="_blank" rel="noreferrer" href="https://www.instagram.com/tajrishsamak/" aria-label="اینستاگرام">◎</a>
+                        <a target="_blank" rel="noreferrer" href="https://www.telegram.me/sthc/" aria-label="تلگرام">➤</a>
+                        <a target="_blank" rel="noreferrer" href="https://wa.me/+989393388985" aria-label="واتساپ">☎</a>
+                        <a href="tel:09393388985" aria-label="تماس موبایل">✆</a>
+                    </div>
+                </section>
+            </aside>
+        </div>
+
+        <section class="gp-contact-map-card" id="gp-contact-map" aria-label="نقشه کلینیک">
+            <div class="gp-map-head">
+                <div>
+                    <h2>موقعیت کلینیک روی نقشه</h2>
+                    <p>میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، ساختمان ۱۱۰</p>
+                </div>
+                <div class="gp-direction-buttons">
+                    <a target="_blank" rel="noreferrer" href="https://maps.google.com/?saddr=Current+Location&daddr=35.806270,51.430387">گوگل مپ</a>
+                    <a target="_blank" rel="noreferrer" href="https://www.waze.com/livemap/directions?navigate=yes&latlng=35.806270%2C51.430387">ویز</a>
+                </div>
+            </div>
+            <div id="map"></div>
+        </section>
+    </div>
+</section>
+
+@if (TempData["Error"] != null)
+{
+    <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px">
+        <div class="modal-dialog">
+            <div class="modal-content" style="direction:rtl;text-align:right;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">وضعیت پیام</h4>
+                </div>
+                <div class="modal-body" style="text-align:center;direction:rtl;">
+                    <p class="text-danger">@TempData["Error"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px">
+        <div class="modal-dialog">
+            <div class="modal-content" style="direction:rtl;text-align:right;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">وضعیت پیام</h4>
+                </div>
+                <div class="modal-body" style="text-align:center;direction:rtl;">
+                    <p class="text-success">@TempData["Success"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            $("#myModal").modal();
+        });
+    </script>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        (function () {
+            var mapBox = document.getElementById("map");
+
+            if (!mapBox || typeof L === "undefined") {
+                return;
+            }
+
+            var lat = 35.806270;
+            var lng = 51.430387;
+
+            var map = L.map("map", {
+                scrollWheelZoom: false,
+                zoomControl: true
+            }).setView([lat, lng], 18);
+
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "کلینیک شنوایی و سمعک شکوه تجریش",
+                maxZoom: 19
+            }).addTo(map);
+
+            var popupHtml =
+                "<div class='gp-map-popup'>" +
+                "<img src='/images/logo_purple.webp' alt='کلینیک شنوایی و سمعک شکوه تجریش' />" +
+                "<strong>کلینیک شنوایی و سمعک شکوه تجریش</strong>" +
+                "<span>میدان تجریش، خیابان شهرداری</span>" +
+                "<span>021 2273 5588</span>" +
+                "</div>";
+
+            L.marker([lat, lng]).addTo(map).bindPopup(popupHtml).openPopup();
+
+            window.setTimeout(function () {
+                map.invalidateSize();
+            }, 450);
+        })();
+    </script>
+}

@@ -1,0 +1,68 @@
+@page "/faq"
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+
+<PageTitle>سوالات متداول | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="description" content="پاسخ سوالات متداول درباره کلینیک شنوایی و سمعک شکوه تجریش: عضویت، نحوه دریافت خدمات، مشاوره و رزرو وقت" />
+<link rel="canonical" href="https://tajrish-samak.ir/faq" />
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "FAQPage",
+  "mainEntity": [
+    { "@@type": "Question", "name": "به چه صورت در سایت عضو شویم؟", "acceptedAnswer": { "@@type": "Answer", "text": "در قسمت ثبت نام با وارد کردن شماره تماس و نام و نام خانوادگی عضو کلینیک شنوایی و سمعک شکوه تجریش خواهید شد." } },
+    { "@@type": "Question", "name": "نحوه سفارش خدمات به چه صورتی می باشد؟", "acceptedAnswer": { "@@type": "Answer", "text": "شما میتوانید با تماس تلفنی وقتی را برای مشاوره و یا انجام آزمایشات شنوایی خود در نظر بگیرید." } }
+  ]
+}
+</script>
+
+<div class="services-breadcrumb">
+    <div class="agile_inner_breadcrumb">
+        <div class="container">
+            <ul class="w3_short">
+                <li>
+                    <a href="/">صفحه اصلی</a>
+                    <i>|</i>
+                </li>
+                <li>سوالات متداول</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="faqs-w3l">
+    <div class="container">
+        <div class="text-center">
+            <h1 class="tittle-w3l text-center">
+                سوالات متداول
+                <span class="heading-style">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                </span>
+            </h1>
+        </div>
+        <h3 class="w3-head">سوالات متداول</h3>
+        <div class="faq-w3agile container">
+            <ul class="faq">
+                <li class="item1">
+                    <a href="#">به چه صورت در سایت عضو شویم ؟</a>
+                    <ul>
+                        <li class="subitem1">
+                            <p>در قسمت ثبت نام با وارد کردن شماره تماس و نام و نام خانوادگی عضو کلینیک شنوایی و سمعک شکوه تجریش خواهید شد.</p>
+                        </li>
+                    </ul>
+                </li>
+                <li class="item2">
+                    <a href="#">نحوه سفارش خدمات به چه صورتی می باشد ؟</a>
+                    <ul>
+                        <li class="subitem1">
+                            <p>شما میتوانید با تماس تلفنی وقتی را برای مشاوره و یا انجام آزمایشات شنوایی خود در نظر بگیرید .</p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

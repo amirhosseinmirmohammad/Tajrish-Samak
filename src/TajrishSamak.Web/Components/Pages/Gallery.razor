@@ -1,0 +1,63 @@
+@page "/Gallery"
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+
+<PageTitle>گالری | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="description" content="گالری تصاویر کلینیک شنوایی و سمعک شکوه تجریش" />
+<meta name="robots" content="noindex, follow" />
+<link rel="canonical" href="https://tajrish-samak.ir/Gallery" />
+<link rel="stylesheet" href="Content/Gallery/style.css" />
+
+<div class="gallery">
+    <div class="container">
+        <h2>گالری</h2>
+        <div class="wthree_gallery_grids">
+            @if (galleryImages.Any())
+            {
+                <div class="bs-example bs-example-tabs" role="tabpanel" data-example-id="togglable-tabs">
+                    <div id="myTabContent" class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="home">
+                            <div class="tab_img">
+                                @foreach (var item in galleryImages)
+                                {
+                                    <div class="col-md-3 agile_gallery_grids">
+                                        <a href="@item.Link" title="کلینیک شنوایی و سمعک شکوه تجریش">
+                                            <div class="view view-sixth">
+                                                <img src="@item.Link" alt="گالری کلینیک شنوایی و سمعک شکوه تجریش" class="img-responsive" loading="lazy" decoding="async" />
+                                                <div class="mask">
+                                                    <p>کلینیک شنوایی و سمعک شکوه تجریش</p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                }
+                                <div class="clearfix"> </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="gp-empty-products">در حال حاضر تصویری در گالری ثبت نشده است.</div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Image> galleryImages = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+
+        var gallery = await db.Galleries
+            .AsNoTracking()
+            .Include(g => g.Images)
+            .FirstOrDefaultAsync();
+
+        galleryImages = gallery?.Images?.ToList() ?? new List<Image>();
+    }
+}

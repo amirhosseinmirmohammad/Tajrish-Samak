@@ -1,0 +1,182 @@
+@page "/terms"
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+
+<PageTitle>قوانین و مقررات | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+
+@code {
+    const string gpCanonicalUrl = "https://tajrish-samak.ir/terms";
+}
+<link rel="canonical" href="https://tajrish-samak.ir/terms" />
+<link rel="stylesheet" href="css/gp-page-Terms.css" />
+
+<HeadContent>
+
+    <meta name="description" content="قوانین و مقررات استفاده از وب‌سایت کلینیک شنوایی و سمعک شکوه تجریش؛ شامل شرایط استفاده، حساب کاربری، اطلاعات شخصی، حقوق محتوا و رعایت قوانین جمهوری اسلامی ایران." />
+    <link rel="canonical" href="@gpCanonicalUrl" />
+    <meta name="Keywords" content="قوانین و مقررات شکوه تجریش، شرایط استفاده سایت، قوانین سمعک، کلینیک شنوایی تجریش، حریم اطلاعات، کپی رایت" />
+
+    <meta property="og:title" content="قوانین و مقررات | کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@gpCanonicalUrl" />
+    <meta property="og:description" content="شرایط استفاده، قوانین حساب کاربری، اطلاعات شخصی و حقوق محتوا در وب‌سایت کلینیک شنوایی و سمعک شکوه تجریش." />
+
+    <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta name="twitter:description" content="قوانین و مقررات استفاده از وب‌سایت کلینیک شنوایی و سمعک شکوه تجریش." />
+</HeadContent>
+
+<section class="gp-terms-page" aria-label="قوانین و مقررات کلینیک شنوایی و سمعک شکوه تجریش">
+    <div class="container">
+        <section class="gp-terms-hero" aria-label="معرفی قوانین و مقررات">
+            <div class="gp-terms-hero-grid">
+                <div>
+                    <span class="gp-terms-kicker">قوانین و مقررات</span>
+                    <h1>شفاف، ساده و قابل فهم.</h1>
+                    <p>
+                        استفاده از وب‌سایت کلینیک شنوایی و سمعک شکوه تجریش به معنی پذیرش چارچوب‌های قانونی، حقوق محتوا و اصول استفاده درست از خدمات آنلاین سایت است.
+                    </p>
+                    <div class="gp-terms-actions">
+                        <a href="#gp-terms-list">
+                            <span aria-hidden="true">⌄</span>
+                            مطالعه قوانین
+                        </a>
+                        <a href="/contactus">
+                            <span aria-hidden="true">☎</span>
+                            تماس با کلینیک
+                        </a>
+                    </div>
+                </div>
+
+                <div class="gp-terms-stats" aria-label="خلاصه قوانین">
+                    <div class="gp-terms-stat">
+                        <strong>۵</strong>
+                        <span>بخش اصلی قوانین</span>
+                    </div>
+                    <div class="gp-terms-stat">
+                        <strong>۱</strong>
+                        <span>حساب کاربری برای هر کاربر</span>
+                    </div>
+                    <div class="gp-terms-stat">
+                        <strong>✓</strong>
+                        <span>استفاده از محتوا با ذکر منبع</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="gp-terms-shell">
+            <main class="gp-terms-card" id="gp-terms-list" aria-label="لیست قوانین">
+                <div class="gp-terms-section-head">
+                    <span>راهنمای استفاده</span>
+                    <h2>قوانین استفاده از سایت</h2>
+                    <p>موارد زیر برای شفافیت بیشتر، به‌صورت دسته‌بندی‌شده و قابل باز شدن نمایش داده شده‌اند.</p>
+                </div>
+
+                <div class="gp-terms-list">
+                    <article class="gp-terms-item is-open">
+                        <button type="button" class="gp-terms-toggle" aria-expanded="true">
+                            <i class="gp-terms-icon" aria-hidden="true">✓</i>
+                            <strong>کلینیک شنوایی و سمعک شکوه تجریش</strong>
+                            <span class="gp-terms-arrow" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="gp-terms-content">
+                            <p>تجویز سمعک و انجام آزمایشات شنوایی از محورهای اصلی خدمات کلینیک شنوایی و سمعک شکوه تجریش است.</p>
+                        </div>
+                    </article>
+
+                    <article class="gp-terms-item">
+                        <button type="button" class="gp-terms-toggle" aria-expanded="false">
+                            <i class="gp-terms-icon" aria-hidden="true">§</i>
+                            <strong>قوانین حکومتی</strong>
+                            <span class="gp-terms-arrow" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="gp-terms-content">
+                            <p>وب‌سایت شکوه تجریش، یک وب‌سایت تخصصی سمعک و شنوایی‌سنجی است که تحت قوانین جمهوری اسلامی ایران فعالیت می‌کند. این وب‌سایت به عنوان یک نشریه الکترونیکی، تمام قوانین مکتوب و عرفی حاکم بر کشور را محترم می‌شمارد و خود را موظف به پیروی از آن‌ها می‌داند.</p>
+                        </div>
+                    </article>
+
+                    <article class="gp-terms-item">
+                        <button type="button" class="gp-terms-toggle" aria-expanded="false">
+                            <i class="gp-terms-icon" aria-hidden="true">◎</i>
+                            <strong>حساب کاربری</strong>
+                            <span class="gp-terms-arrow" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="gp-terms-content">
+                            <p>هر کاربر تنها حق انتخاب یک نام کاربری را دارد و در صورت فعالیت با بیش از یک نام، حساب کاربری وی محدود یا حذف خواهد شد.</p>
+                        </div>
+                    </article>
+
+                    <article class="gp-terms-item">
+                        <button type="button" class="gp-terms-toggle" aria-expanded="false">
+                            <i class="gp-terms-icon" aria-hidden="true">◇</i>
+                            <strong>اطلاعات شخصی</strong>
+                            <span class="gp-terms-arrow" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="gp-terms-content">
+                            <p>در این وب‌سایت، ثبت‌کننده اطلاعات شخصاً مالک مطالب ارائه‌شده محسوب می‌شود و این سایت نسبت به اطلاعات ارائه‌شده هیچ‌گونه مسئولیتی را به عهده نخواهد گرفت.</p>
+                        </div>
+                    </article>
+
+                    <article class="gp-terms-item">
+                        <button type="button" class="gp-terms-toggle" aria-expanded="false">
+                            <i class="gp-terms-icon" aria-hidden="true">©</i>
+                            <strong>کپی‌رایت</strong>
+                            <span class="gp-terms-arrow" aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="gp-terms-content">
+                            <p>بهره‌برداری و استفاده از اطلاعات این سایت با ذکر شکوه تجریش به عنوان منبع و برای مقاصد مطابق با قوانین اعلام‌شده مجاز است و در صورت بروز هرگونه تخلف، پیگرد قانونی خواهد داشت.</p>
+                        </div>
+                    </article>
+                </div>
+            </main>
+
+            <aside class="gp-terms-side" aria-label="اطلاعات تکمیلی قوانین">
+                <section class="gp-terms-side-card">
+                    <h3>نیاز به توضیح بیشتر دارید؟</h3>
+                    <p>اگر درباره قوانین، حساب کاربری یا نحوه استفاده از محتوای سایت سؤال دارید، می‌توانید با کلینیک تماس بگیرید.</p>
+                    <a href="/contactus">تماس با ما</a>
+                </section>
+
+                <section class="gp-terms-side-card">
+                    <div class="gp-terms-note">
+                        <strong>نکته مهم</strong>
+                        <span>استفاده از سایت به معنی پذیرش این قوانین است. در صورت تغییر قوانین، نسخه به‌روزشده در همین صفحه منتشر می‌شود.</span>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        var items = document.querySelectorAll(".gp-terms-item");
+
+        for (var i = 0; i < items.length; i++) {
+            var button = items[i].querySelector(".gp-terms-toggle");
+
+            if (!button) {
+                continue;
+            }
+
+            button.addEventListener("click", function () {
+                var currentItem = this.closest(".gp-terms-item");
+                var isOpen = currentItem.classList.contains("is-open");
+
+                for (var j = 0; j < items.length; j++) {
+                    items[j].classList.remove("is-open");
+                    var btn = items[j].querySelector(".gp-terms-toggle");
+                    if (btn) {
+                        btn.setAttribute("aria-expanded", "false");
+                    }
+                }
+
+                if (!isOpen) {
+                    currentItem.classList.add("is-open");
+                    this.setAttribute("aria-expanded", "true");
+                }
+            });
+        }
+    })();
+</script>
