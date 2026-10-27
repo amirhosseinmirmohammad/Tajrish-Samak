@@ -1,0 +1,107 @@
+@page "/search"
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+
+<PageTitle>جستجو | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="robots" content="noindex, follow" />
+<link rel="canonical" href="https://tajrish-samak.ir/search" />
+
+<section class="gp-search-page">
+    <div class="container">
+        <h1>نتایج جستجو برای «@query»</h1>
+
+        @if (results.Count == 0)
+        {
+            <p>چیزی پیدا نشد. عبارت دیگری را امتحان کنید یا با کلینیک تماس بگیرید.</p>
+        }
+        else
+        {
+            <p>@(results.Count) نتیجه پیدا شد</p>
+            <ul class="gp-search-results">
+                @foreach (var r in results)
+                {
+                    <li>
+                        <span class="gp-search-type">@r.TypeName</span>
+                        <a href="@r.Url">@r.Title</a>
+                        @if (!string.IsNullOrWhiteSpace(r.Description))
+                        {
+                            <p>@r.Description</p>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</section>
+
+@code {
+    [SupplyParameterFromQuery(Name = "q")]
+    public string Query { get; set; }
+
+    private string query = "";
+    private List<SearchResult> results = new();
+
+    private class SearchResult
+    {
+        public string TypeName { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Url { get; set; }
+        public int Score { get; set; }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // noindex for search results (legacy SEO behaviour)
+        if (Http.HttpContext != null)
+        {
+            Http.HttpContext.Response.StatusCode = 200;
+        }
+
+        query = (Query ?? "").Trim();
+        results = new List<SearchResult>();
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return;
+        }
+
+        await using var db = DbFactory.CreateDbContext();
+
+        var products = await db.Products
+            .AsNoTracking()
+            .Where(p => p.SiteFirstImage != null &&
+                (p.PersianName.Contains(query) || p.EnglishName.Contains(query) || p.Description.Contains(query)))
+            .Take(12)
+            .Select(p => new SearchResult { TypeName = "محصول", Title = p.PersianName, Url = "/Product/Details/" + p.Id })
+            .ToListAsync();
+        results.AddRange(products);
+
+        var blogs = await db.Blogs
+            .AsNoTracking()
+            .Where(b => b.IsVisible == true && b.Images.Any() &&
+                (b.Title.Contains(query) || b.ShortDesc.Contains(query) || b.MetaDesc.Contains(query)))
+            .Take(10)
+            .Select(b => new SearchResult { TypeName = "مقاله", Title = b.Title, Url = "/blog/" + b.Id + "/" + b.SefUrl })
+            .ToListAsync();
+        results.AddRange(blogs);
+
+        var services = await db.Services
+            .AsNoTracking()
+            .Where(s => s.IsVisible == true && s.Images.Any() &&
+                (s.Title.Contains(query) || s.ShortDesc.Contains(query)))
+            .Take(10)
+            .Select(s => new SearchResult { TypeName = "خدمت", Title = s.Title, Url = "/Service/" + s.Id + "/" + s.SefUrl })
+            .ToListAsync();
+        results.AddRange(services);
+
+        results = results
+            .GroupBy(r => r.Url)
+            .Select(g => g.First())
+            .OrderByDescending(r => r.Title.Contains(query) ? 1 : 0)
+            .Take(60)
+            .ToList();
+    }
+}

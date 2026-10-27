@@ -1,0 +1,140 @@
+@page "/Blog/All"
+@page "/Home/Blogs/{id:long}"
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Caching.Memory
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject IMemoryCache Cache
+
+<PageTitle>مجله کلینیک | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="description" content="مقالات تخصصی شنوایی، سمعک، وزوز گوش و مراقبت شنوایی در مجله کلینیک شنوایی و سمعک شکوه تجریش" />
+<link rel="canonical" href="https://tajrish-samak.ir/Blog/All" />
+<link rel="stylesheet" href="css/gp-page-Blog_All.css" />
+
+<section class="gp-blog-page">
+    <div class="container">
+        <section class="gp-blog-hero">
+            <div>
+                <span class="gp-blog-kicker">مجله کلینیک</span>
+                <h1>مطالب تخصصی شنوایی و سمعک</h1>
+            </div>
+        </section>
+
+        <div class="gp-blog-shell">
+            <main>
+                @if (gpBlogs.Count > 0)
+                {
+                    <div class="gp-blog-grid">
+                        @foreach (var item in gpBlogs)
+                        {
+                            <article class="gp-blog-card" itemscope itemtype="https://schema.org/BlogPosting">
+                                <a class="gp-blog-card-media" title="@item.Title" href="/blog/@item.Id/@item.SefUrl">
+                                    @if (item.Images != null && item.Images.Any())
+                                    {
+                                        <img src="@item.Images.First().FullPath" alt="@item.Title" loading="lazy" decoding="async" itemprop="image" />
+                                    }
+                                </a>
+                                <div class="gp-blog-card-body">
+                                    <h2 itemprop="headline">
+                                        <a title="@item.Title" href="/blog/@item.Id/@item.SefUrl">@item.Title</a>
+                                    </h2>
+                                    <p itemprop="description">@item.ShortDesc</p>
+                                    <a class="gp-blog-read-more" href="/blog/@item.Id/@item.SefUrl" title="@item.Title">ادامه مطلب</a>
+                                </div>
+                            </article>
+                        }
+                    </div>
+
+                    <div class="gp-product-pagination text-center">
+                        <nav aria-label="صفحه‌بندی مقالات">
+                            <ul class="pagination pagination-sm">
+                                @if (CurrentPage > 1)
+                                {
+                                    <li><a href="@BlogPath?page=@(CurrentPage - 1)">قبلی</a></li>
+                                }
+                                @if (CurrentPage * 4 < TotalCount)
+                                {
+                                    <li><a href="@BlogPath?page=@(CurrentPage + 1)">بعدی</a></li>
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+                }
+                else
+                {
+                    <div class="gp-empty-products">هنوز مطلبی در سایت وجود ندارد.</div>
+                }
+            </main>
+
+            <aside class="gp-blog-side">
+                <div class="gp-side-card">
+                    <h3>پربازدیدترین مقالات</h3>
+                    <div class="gp-side-posts">
+                        @foreach (var item in gpPopularBlogs)
+                        {
+                            <a class="gp-side-post" href="/blog/@item.Id/@item.SefUrl" title="@item.Title">
+                                <strong>@item.Title</strong>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+@code {
+    [Parameter] public long? id { get; set; }
+
+    [SupplyParameterFromQuery(Name = "q")]
+    public string Query { get; set; }
+
+    [SupplyParameterFromQuery(Name = "page")]
+    public int PageQuery { get; set; }
+
+    private int CurrentPage => PageQuery < 1 ? 1 : PageQuery;
+
+    private string BlogPath => id.HasValue ? "/Home/Blogs/" + id.Value : "/Blog/All";
+    private int TotalCount;
+    private List<Blog> gpBlogs = new();
+    private List<Blog> gpPopularBlogs = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+
+        var query = db.Blogs
+            .AsNoTracking()
+            .Include(b => b.Images)
+            .Where(b => b.Images.Any() && b.IsVisible == true);
+
+        if (id.HasValue)
+        {
+            query = query.Where(b => b.CategoryId == id.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(Query))
+        {
+            query = query.Where(b =>
+                b.Title.Contains(Query) ||
+                b.ShortDesc.Contains(Query) ||
+                b.MetaDesc.Contains(Query));
+        }
+
+        TotalCount = await query.CountAsync();
+
+        gpBlogs = await query
+            .OrderByDescending(b => b.CreateDate)
+            .Skip((CurrentPage - 1) * 4)
+            .Take(4)
+            .ToListAsync();
+
+        gpPopularBlogs = await db.Blogs
+            .AsNoTracking()
+            .Where(b => b.Images.Any() && b.IsVisible == true)
+            .OrderByDescending(b => b.Survey)
+            .Take(5)
+            .Select(b => new Blog { Id = b.Id, SefUrl = b.SefUrl, Title = b.Title })
+            .ToListAsync();
+    }
+}

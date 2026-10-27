@@ -1,0 +1,104 @@
+@page "/Service/{id:long}/{sefUrl}"
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+
+<PageTitle>@(service?.Title ?? "خدمت") | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="description" content="@service?.MetaDesc" />
+<link rel="canonical" href="@canonicalUrl" />
+<meta property="og:title" content="@service?.Title" />
+<meta property="og:url" content="@canonicalUrl" />
+<link rel="stylesheet" href="css/gp-page-Service_Index.css" />
+
+@if (service == null)
+{
+    <h1 style="text-align:center;padding:60px 20px;">خدمت پیدا نشد</h1>
+    <p style="text-align:center;"><a href="/Service/All">بازگشت به خدمات</a></p>
+    return;
+}
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "Service",
+  "@@id": "@canonicalUrl#service",
+  "name": "@service.Title",
+  "description": "@service.MetaDesc",
+  "url": "@canonicalUrl",
+  "provider": {
+    "@@type": ["LocalBusiness", "MedicalBusiness", "MedicalClinic"],
+    "@@id": "https://tajrish-samak.ir/#tajrish-samak",
+    "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+    "telephone": "+982122735588"
+  }
+}
+</script>
+
+<article class="gp-service-detail">
+    <div class="container">
+        <h1>@service.Title</h1>
+        @if (service.Images != null && service.Images.Any())
+        {
+            <img src="@service.Images.First().FullPath" alt="@service.Title" style="max-width:100%;height:auto;" />
+        }
+        <div>
+            @((MarkupString)service.Body)
+        </div>
+
+        <h2>خدمات مرتبط</h2>
+        <ul>
+            @foreach (var r in related)
+            {
+                <li><a href="/Service/@r.Id/@r.SefUrl">@r.Title</a></li>
+            }
+        </ul>
+
+        <p><a href="/Service/All">بازگشت به خدمات</a></p>
+    </div>
+</article>
+
+@code {
+    [Parameter] public long id { get; set; }
+    [Parameter] public string sefUrl { get; set; }
+
+    private Service service;
+    private List<Service> related = new();
+    private string canonicalUrl;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+
+        service = await db.Services
+            .AsNoTracking()
+            .Include(s => s.Category)
+            .Include(s => s.Images)
+            .Include(s => s.User)
+            .FirstOrDefaultAsync(s => s.Id == id && s.IsVisible == true && s.Images.Any());
+
+        if (service == null)
+        {
+            if (Http.HttpContext != null)
+            {
+                Http.HttpContext.Response.StatusCode = 404;
+            }
+            return;
+        }
+
+        canonicalUrl = "https://tajrish-samak.ir/Service/" + service.Id + "/" + service.SefUrl;
+
+        // atomic single-column counter (legacy behaviour, query best practice)
+        await db.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE Services SET Survey = Survey + 1 WHERE Id = {id}");
+        service.Survey++;
+
+        related = await db.Services
+            .AsNoTracking()
+            .Include(s => s.Images)
+            .Where(s => s.IsVisible == true && s.Id != service.Id && s.CategoryId == service.CategoryId && s.Images.Any())
+            .OrderByDescending(s => s.Survey)
+            .Take(4)
+            .ToListAsync();
+    }
+}

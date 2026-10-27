@@ -1,0 +1,121 @@
+@page "/blog/{id:long}/{sefUrl}"
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+
+<PageTitle>@(post?.Title ?? "مقاله") | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="description" content="@post?.MetaDesc" />
+<link rel="canonical" href="@canonicalUrl" />
+<meta property="og:title" content="@post?.Title" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="@canonicalUrl" />
+<link rel="stylesheet" href="css/gp-page-Blog_Index.css" />
+
+@if (post == null)
+{
+    <h1 style="text-align:center;padding:60px 20px;">مقاله پیدا نشد</h1>
+    <p style="text-align:center;"><a href="/Blog/All">بازگشت به مجله</a></p>
+    return;
+}
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "BlogPosting",
+  "@@id": "@canonicalUrl#article",
+  "headline": "@post.Title",
+  "description": "@post.MetaDesc",
+  "url": "@canonicalUrl",
+  "datePublished": "@dateStr",
+  "inLanguage": "fa-IR",
+  "author": { "@@type": "Organization", "name": "کلینیک شنوایی و سمعک شکوه تجریش" },
+  "publisher": { "@@id": "https://tajrish-samak.ir/#tajrish-samak" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@@type": "ListItem", "position": 1, "name": "صفحه اصلی", "item": "https://tajrish-samak.ir/" },
+    { "@@type": "ListItem", "position": 2, "name": "مجله", "item": "https://tajrish-samak.ir/Blog/All" },
+    { "@@type": "ListItem", "position": 3, "name": "@post.Title", "item": "@canonicalUrl" }
+  ]
+}
+</script>
+
+<article class="gp-article" itemscope itemtype="https://schema.org/BlogPosting">
+    <div class="container">
+        <h1 itemprop="headline">@post.Title</h1>
+        @if (post.Images != null && post.Images.Any())
+        {
+            <img src="@post.Images.First().FullPath" alt="@post.Title" itemprop="image" style="max-width:100%;height:auto;" />
+        }
+        <div itemprop="articleBody">
+            @((MarkupString)post.Body)
+        </div>
+
+        <h2>نظرات کاربران</h2>
+        @if (post.BlogComments != null && post.BlogComments.Any())
+        {
+            @foreach (var comment in post.BlogComments)
+            {
+                <div class="gp-comment-item">
+                    <strong>@comment.FullName</strong>
+                    <p>@comment.Text</p>
+                </div>
+            }
+        }
+        else
+        {
+            <p>هنوز نظری ثبت نشده است.</p>
+        }
+
+        <p><a href="/Blog/All">بازگشت به مجله</a></p>
+    </div>
+</article>
+
+@code {
+    [Parameter] public long id { get; set; }
+    [Parameter] public string sefUrl { get; set; }
+
+    private Blog post;
+    private string canonicalUrl;
+    private string dateStr = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+
+        post = await db.Blogs
+            .AsNoTracking()
+            .Include(b => b.Images)
+            .Include(b => b.BlogComments.Where(c => c.IsApprove))
+            .Include(b => b.Category)
+            .Include(b => b.User)
+            .FirstOrDefaultAsync(b => b.Id == id && b.IsVisible && b.Images.Any());
+
+        if (post == null)
+        {
+            if (Http.HttpContext != null)
+            {
+                Http.HttpContext.Response.StatusCode = 404;
+            }
+            return;
+        }
+
+        canonicalUrl = "https://tajrish-samak.ir/Blog/" + post.Id + "/" + post.SefUrl;
+        dateStr = post.CreateDate?.ToString("yyyy-MM-dd") ?? "";
+
+        // legacy behaviour: wrong slug -> permanent redirect to the canonical URL
+        if (!string.Equals(sefUrl, post.SefUrl, StringComparison.OrdinalIgnoreCase))
+        {
+            if (Http.HttpContext != null)
+            {
+                Http.HttpContext.Response.Redirect("/Blog/" + post.Id + "/" + post.SefUrl, true);
+            }
+        }
+    }
+}

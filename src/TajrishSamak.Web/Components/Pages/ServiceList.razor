@@ -1,0 +1,56 @@
+@page "/Service/All"
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+
+<PageTitle>خدمات شنوایی و سمعک در تهران | کلینیک شنوایی شکوه تجریش</PageTitle>
+<meta name="description" content="خدمات شنوایی و سمعک کلینیک شکوه تجریش: تست شنوایی، مشاوره، تجویز، تنظیم و پیگیری سمعک در تهران" />
+<link rel="canonical" href="https://tajrish-samak.ir/Service/All" />
+<link rel="stylesheet" href="css/gp-page-Service_All.css" />
+
+<section class="gp-service-page">
+    <div class="container">
+        <h1>خدمات شنوایی و سمعک</h1>
+
+        @if (services.Count > 0)
+        {
+            <div class="gp-service-grid">
+                @foreach (var item in services)
+                {
+                    <article class="gp-service-card">
+                        @if (item.Images != null && item.Images.Any())
+                        {
+                            <a href="/Service/@item.Id/@item.SefUrl" title="@item.Title">
+                                <img src="@item.Images.First().FullPath" alt="@item.Title" loading="lazy" decoding="async" />
+                            </a>
+                        }
+                        <h2><a href="/Service/@item.Id/@item.SefUrl" title="@item.Title">@item.Title</a></h2>
+                        <p>@item.ShortDesc</p>
+                        <a class="gp-service-more" href="/Service/@item.Id/@item.SefUrl" title="@item.Title">مشاهده و مشاوره</a>
+                    </article>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="gp-empty-products">در حال حاضر خدمتی ثبت نشده است.</div>
+        }
+    </div>
+</section>
+
+@code {
+    private List<Service> services = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+
+        services = await db.Services
+            .AsNoTracking()
+            .Include(s => s.Images)
+            .Include(s => s.Category)
+            .Where(s => s.IsVisible)
+            .OrderByDescending(s => s.Survey)
+            .ToListAsync();
+    }
+}
