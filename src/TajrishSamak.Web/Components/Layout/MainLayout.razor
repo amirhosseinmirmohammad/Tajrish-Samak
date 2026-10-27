@@ -1,8 +1,395 @@
 ﻿@inherits LayoutComponentBase
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.Extensions.Caching.Memory
+@using Microsoft.EntityFrameworkCore
+@inject TajrishSamak.Web.Data.TajrishSamakDbContext Db
+@inject IMemoryCache Cache
 
-@* Skeleton layout: the full legacy header/footer/nav port lands in the next batch.
-   This keeps asset wiring + RTL + body class identical to the legacy site. *@
+@{
+    const string gpGeoEntityDescription = "کلینیک شنوایی و سمعک شکوه تجریش یک مرکز تخصصی شنوایی‌شناسی در تهران، محدوده تجریش و شمال تهران است که خدمات تست شنوایی، آزمایش شنوایی، مشاوره خرید سمعک، تجویز و تنظیم سمعک، تعمیر سمعک، باتری سمعک، قالب سمعک، سمعک دولتی، سمعک رایگان بهزیستی، خدمات حمایتی، پیگیری پس از تجویز و مشاوره مرتبط با وزوز گوش را ارائه می‌دهد. این کلینیک برای مراجعان تهران، شمیرانات، تجریش، نیاوران، قیطریه، زعفرانیه، الهیه، فرمانیه و محله‌های شمال تهران قابل دسترسی است.";
+}
 
-<main>
-    @Body
-</main>
+@code {
+    private List<Category> gpProductCategories = new();
+    private List<Category> gpBlogCategories = new();
+    private List<ServiceCategory> gpServiceCategories = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Layout-level data: the legacy app ran these queries on EVERY request;
+        // here they are cached for 10 minutes (identical results, far fewer queries).
+        gpProductCategories = await Cache.GetOrCreateAsync("layout:product-categories", async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            return await Db.Categories
+                .Where(c => c.ParentId == null && c.IsBlog == false)
+                .OrderByDescending(c => c.PersianName)
+                .ToListAsync();
+        }) ?? new List<Category>();
+
+        gpBlogCategories = await Cache.GetOrCreateAsync("layout:blog-categories", async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            return await Db.Categories
+                .Where(c => c.ParentId == null && c.IsBlog == true)
+                .OrderByDescending(c => c.PersianName)
+                .ToListAsync();
+        }) ?? new List<Category>();
+
+        gpServiceCategories = await Cache.GetOrCreateAsync("layout:service-categories", async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            return await Db.ServiceCategories
+                .OrderByDescending(c => c.PersianName)
+                .ToListAsync();
+        }) ?? new List<ServiceCategory>();
+    }
+}
+
+<div class="gp-page-loader" id="gpPageLoader" aria-hidden="true">
+    <div class="gp-loader-card" role="status" aria-live="polite">
+        <div id="gpLottieLoader" aria-hidden="true">
+            <span class="gp-loader-sound-wave"></span>
+            <span class="gp-loader-sound-wave"></span>
+            <span class="gp-loader-ear-core"></span>
+        </div>
+        <strong>در حال آماده‌سازی صفحه</strong>
+        <span>چند لحظه تا شنیدن بهتر...</span>
+        <div class="gp-loader-dots" aria-hidden="true">
+            <i></i><i></i><i></i>
+        </div>
+    </div>
+</div>
+
+<div class="gp-page-progress" id="gpPageProgress" aria-hidden="true"></div>
+
+<div class="gp-dynamic-island" id="gpDynamicIsland" aria-hidden="true">
+    <span class="gp-island-dot"></span>
+    <strong id="gpIslandText">آماده شنیدن بهتر</strong>
+</div>
+
+<div class="gp-offline-mini" id="gpOfflineMini" role="status" aria-live="polite" aria-hidden="true">
+    <div class="gp-offline-mini-copy">
+        <span class="gp-offline-mini-icon" aria-hidden="true">!</span>
+        <div>
+            <strong id="gpOfflineMiniTitle">اینترنت قطع شده</strong>
+            <span id="gpOfflineMiniText">اگر صفحه‌ای باز نشد، نسخه آفلاین نمایش داده می‌شود.</span>
+        </div>
+    </div>
+    <button type="button" id="gpOfflineMiniRetry">بررسی مجدد</button>
+</div>
+
+<div class="footer-call">
+    <a id="alo-phoneIcon" href="tel:02122735588" class="alo-phone alo-green alo-show">
+        <div class="alo-ph-circle"></div>
+        <div class="alo-ph-circle-fill"></div>
+        <div class="alo-ph-img-circle"><i class="phone-icon fa-fa-phone"></i></div>
+        <span class="alo-ph-text">021-22735588</span>
+    </a>
+</div>
+<div class="header-most-top"></div>
+
+<div class="header-bot">
+    <div class="header-bot_inner_wthreeinfo_header_mid">
+        <div class="col-md-4 logo_agile">
+            <h2>
+                <a href="/">
+                    <img src="/images/logo_purple.webp" width="296" height="80" fetchpriority="high" decoding="async" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک">
+                </a>
+            </h2>
+        </div>
+        <div class="col-md-8 header">
+            <ul>
+                <li class="tell">
+                    <span class="gp-menu-glyph" aria-hidden="true">☎</span> <a href="tel:02122735599">021 2273 5599</a>
+                </li>
+                <li class="tell">
+                    <span class="gp-menu-glyph" aria-hidden="true">☎</span> <a href="tel:02122735588">021 2273 5588</a>
+                </li>
+                <li>
+                    <a href="tel:09393388985" class="gp-header-mobile-phone">
+                        <span class="gp-mobile-phone-glyph" aria-hidden="true">✆</span>
+                        <span>0939 338 8985</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="agileits_search gp-header-search-box">
+                <form action="/search" class="form-search" method="get">
+                    <button type="submit" class="btn btn-default">
+                        <span class="gp-search-glyph" aria-hidden="true">⌕</span>
+                    </button>
+                    <input name="q" type="search" placeholder="جستجو در سمعک‌ها، خدمات، مقالات و برندها..." required="">
+                </form>
+            </div>
+            <div class="gp-header-tools">
+                <button type="button" class="gp-language-toggle gp-language-toggle-top notranslate" id="gpLanguageToggleTop" data-gp-lang-toggle data-gp-tip="English / فارسی" aria-label="تغییر زبان سایت">
+                    <span class="gp-lang-option gp-lang-en">EN</span>
+                    <span class="gp-lang-option gp-lang-fa">FA</span>
+                </button>
+                <button type="button" class="gp-ios-theme-switch gp-theme-toggle gp-theme-toggle-top" data-gp-tip="تغییر حالت شب و روز" aria-label="تغییر حالت شب و روز">
+                    <span aria-hidden="true">◐</span>
+                    <span class="gp-theme-toggle-text">حالت شب</span>
+                </button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+<div class="top_nav_left">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header"></div>
+            <div class="collapse navbar-collapse menu--shylock" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav menu__list">
+                    <li class="dropdown">
+                        <a class="nav-stylehead dropdown-toggle" href="#" data-toggle="dropdown">
+                            <i class="fa fa-ear-listen"></i>
+                            سمعک
+                        </a>
+                        <ul class="dropdown-menu agile_short_dropdown">
+                            @foreach (var category in gpProductCategories)
+                            {
+                                <li><a title="@category.PersianName" href="/Product/All/@category.Id">@category.PersianName</a></li>
+                            }
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-stylehead dropdown-toggle" href="#" data-toggle="dropdown">
+                            <i class="fa fa-solid fa-bars"></i>
+                            برندهای سمعک
+                        </a>
+                        <ul class="dropdown-menu agile_short_dropdown gp-brand-dropdown-menu">
+                            <li><a title="همه برندهای سمعک" href="/hearing-aid-brands">همه برندهای سمعک</a></li>
+                            <li><a title="سمعک ویدکس | Widex" href="/hearing-aid-brands/widex">سمعک ویدکس</a></li>
+                            <li><a title="سمعک سیگنیا | Signia" href="/hearing-aid-brands/signia">سمعک سیگنیا</a></li>
+                            <li><a title="سمعک اتیکن | Oticon" href="/hearing-aid-brands/oticon">سمعک اتیکن</a></li>
+                            <li><a title="سمعک فوناک | Phonak" href="/hearing-aid-brands/phonak">سمعک فوناک</a></li>
+                            <li><a title="سمعک ریساند | ReSound" href="/hearing-aid-brands/resound">سمعک ریساند</a></li>
+                            <li><a title="سمعک استارکی | Starkey" href="/hearing-aid-brands/starkey">سمعک استارکی</a></li>
+                            <li><a title="سمعک برنافن | Bernafon" href="/hearing-aid-brands/bernafon">سمعک برنافن</a></li>
+                            <li><a title="سمعک یونیترون | Unitron" href="/hearing-aid-brands/unitron">سمعک یونیترون</a></li>
+                            <li><a title="سمعک هنساتون | Hansaton" href="/hearing-aid-brands/hansaton">سمعک هنساتون</a></li>
+                            <li><a title="سمعک بلتون | Beltone" href="/hearing-aid-brands/beltone">سمعک بلتون</a></li>
+                            <li><a title="سمعک ادیفون | Audifon" href="/hearing-aid-brands/audifon">سمعک ادیفون</a></li>
+                            <li><a title="سمعک سونیک | Sonic" href="/hearing-aid-brands/sonic">سمعک سونیک</a></li>
+                            <li><a title="سمعک اینترتون | Interton" href="/hearing-aid-brands/interton">سمعک اینترتون</a></li>
+                            <li><a title="سمعک ریون | Rion" href="/hearing-aid-brands/rion">سمعک ریون</a></li>
+                            <li><a title="سمعک کوسلجی | Coselgi" href="/hearing-aid-brands/coselgi">سمعک کوسلجی</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-stylehead dropdown-toggle" href="#" data-toggle="dropdown">
+                            <span class="gp-menu-glyph" aria-hidden="true">▤</span>
+                            مقالات
+                        </a>
+                        <ul class="dropdown-menu agile_short_dropdown">
+                            @foreach (var category in gpBlogCategories)
+                            {
+                                <li><a title="@category.PersianName" href="/Home/Blogs/@category.Id">@category.PersianName</a></li>
+                            }
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-stylehead dropdown-toggle" href="#" data-toggle="dropdown">
+                            <span class="gp-menu-glyph" aria-hidden="true">⚙</span>
+                            خدمات
+                        </a>
+                        <ul class="dropdown-menu agile_short_dropdown">
+                            @foreach (var category in gpServiceCategories)
+                            {
+                                <li><a title="@category.PersianName" href="/Home/Services/@category.Id">@category.PersianName</a></li>
+                            }
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a class="nav-stylehead" href="/aboutus">
+                            <span class="gp-menu-glyph" aria-hidden="true">i</span>
+                            درباره ما
+                        </a>
+                    </li>
+                    <li class="">
+                        <a class="nav-stylehead" href="/contactus">
+                            <span class="gp-menu-glyph" aria-hidden="true">☎</span>
+                            تماس با ما
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+@Body
+
+<section class="gp-footer-stage" aria-label="پاورقی سایت">
+    <span class="gp-footer-blob gp-footer-blob-a" aria-hidden="true"></span>
+    <span class="gp-footer-blob gp-footer-blob-b" aria-hidden="true"></span>
+    <span class="gp-footer-blob gp-footer-blob-c" aria-hidden="true"></span>
+
+    <div class="container gp-footer-wrap">
+        <div class="gp-footer-card gp-reveal">
+            <div class="gp-footer-topline">
+                <div class="gp-footer-brand">
+                    <a href="/" class="gp-footer-logo-link" aria-label="صفحه اصلی کلینیک شنوایی و سمعک شکوه تجریش">
+                        <img src="/images/logo_purple.webp" loading="lazy" decoding="async" width="296" height="80" alt="کلینیک شنوایی و سمعک شکوه تجریش" />
+                    </a>
+                    <div>
+                        <h2>کلینیک شنوایی و سمعک شکوه تجریش</h2>
+                        <p>ارزیابی شنوایی، تجویز و تنظیم تخصصی سمعک با تجربه، دقت و پیگیری واقعی.</p>
+                    </div>
+                </div>
+                <div class="gp-footer-actions">
+                    <a href="tel:02122735588" class="gp-footer-cta gp-footer-cta-primary" data-gp-tip="تماس مستقیم">
+                        <span aria-hidden="true">☎</span>
+                        تماس سریع
+                    </a>
+                    <a href="/contactus" class="gp-footer-cta" data-gp-tip="فرم تماس">
+                        <span aria-hidden="true">✦</span>
+                        درخواست مشاوره
+                    </a>
+                    <button type="button" class="gp-language-toggle notranslate" id="gpLanguageToggleFooter" data-gp-lang-toggle data-gp-tip="English / فارسی" aria-label="تغییر زبان سایت">
+                        <span class="gp-lang-option gp-lang-en">EN</span>
+                        <span class="gp-lang-option gp-lang-fa">FA</span>
+                    </button>
+                    <button type="button" class="gp-ios-theme-switch gp-theme-toggle" id="gpThemeToggle" data-gp-tip="ذخیره حالت روز/شب" aria-label="تغییر حالت شب و روز">
+                        <span aria-hidden="true">◐</span>
+                        <span class="gp-theme-toggle-text">حالت شب</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="gp-footer-grid gp-footer-grid-v80">
+                <div class="gp-footer-column">
+                    <h3>خدمات شنوایی</h3>
+                    <ul>
+                        <li><a href="/tehran/hearing-test" title="تست شنوایی در تهران">تست شنوایی در تهران</a></li>
+                        <li><a href="/tajrish/hearing-test" title="آزمایش شنوایی در تجریش">آزمایش شنوایی در تجریش</a></li>
+                        <li><a href="/tehran/hearing-clinic" title="کلینیک شنوایی در تهران">کلینیک شنوایی در تهران</a></li>
+                        <li><a href="/tehran/hearing-aid-adjustment" title="تنظیم سمعک در تهران">تنظیم سمعک</a></li>
+                        <li><a href="/tehran/hearing-aid" title="تجویز و خرید سمعک در تهران">تجویز سمعک</a></li>
+                    </ul>
+                </div>
+
+                <div class="gp-footer-column">
+                    <h3>انواع سمعک</h3>
+                    <ul>
+                        @foreach (var category in gpProductCategories.Take(5))
+                        {
+                            <li><a title="@category.PersianName" href="/Product/All/@category.Id">@category.PersianName</a></li>
+                        }
+                        <li><a href="/Product/All" title="مشاهده همه سمعک‌ها">همه سمعک‌ها</a></li>
+                    </ul>
+                </div>
+
+                <div class="gp-footer-column gp-footer-brand-column">
+                    <h3>برندهای سمعک</h3>
+                    <ul>
+                        <li><a href="/hearing-aid-brands" title="همه برندهای سمعک">همه برندهای سمعک</a></li>
+                        <li><a href="/hearing-aid-brands/widex" title="سمعک ویدکس">سمعک ویدکس</a></li>
+                        <li><a href="/hearing-aid-brands/signia" title="سمعک سیگنیا">سمعک سیگنیا</a></li>
+                        <li><a href="/hearing-aid-brands/oticon" title="سمعک اتیکن">سمعک اتیکن</a></li>
+                        <li><a href="/hearing-aid-brands/phonak" title="سمعک فوناک">سمعک فوناک</a></li>
+                        <li><a href="/hearing-aid-brands/resound" title="سمعک ریساند">سمعک ریساند</a></li>
+                    </ul>
+                </div>
+
+                <div class="gp-footer-column gp-footer-contact">
+                    <h3>در ارتباط باشید</h3>
+                    <ul>
+                        <li><span aria-hidden="true">⌖</span><b>تهران، میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰</b></li>
+                        <li class="gp-footer-phone-row"><span aria-hidden="true">☎</span><a href="tel:02122735588">021 2273 5588</a></li>
+                        <li class="gp-footer-phone-row"><span aria-hidden="true">☎</span><a href="tel:02122735599">021 2273 5599</a></li>
+                        <li><span aria-hidden="true">✉</span><a href="mailto:tajrishsamak@gmail.com">tajrishsamak@gmail.com</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="gp-footer-bottom-panel">
+                <div class="gp-footer-newsletter">
+                    <div class="gp-newsletter-copy">
+                        <strong>خبرهای شنوایی را کوتاه و مفید بگیرید</strong>
+                        <span>بدون شلوغی؛ فقط نکته‌های کاربردی درباره سمعک و مراقبت شنوایی.</span>
+                    </div>
+                    <div class="gp-newsletter-form">
+                        <input id="textnews" type="email" placeholder="ایمیل شما" name="email" required="" />
+                        <button id="btntext" type="button">عضویت</button>
+                    </div>
+                    <h6 class="newsletter"><i id="msg"></i></h6>
+                </div>
+
+                <div class="gp-footer-socials" aria-label="شبکه‌های اجتماعی">
+                    <a target="_blank" rel="noreferrer" data-gp-tip="اینستاگرام" href="https://www.instagram.com/tajrishsamak/" aria-label="اینستاگرام">◎</a>
+                    <a target="_blank" rel="noreferrer" data-gp-tip="تلگرام" href="https://www.telegram.me/sthc/" aria-label="تلگرام">➤</a>
+                    <a target="_blank" rel="noreferrer" data-gp-tip="واتساپ" href="https://wa.me/+989393388985" aria-label="واتساپ">☎</a>
+                    <a href="tel:09393388985" data-gp-tip="تماس موبایل" aria-label="تماس موبایل">✆</a>
+                </div>
+            </div>
+
+            <section class="gp-geo-entity-panel" aria-label="معرفی تخصصی کلینیک برای جستجوی محلی و هوش مصنوعی" itemscope itemtype="https://schema.org/MedicalBusiness">
+                <h2 itemprop="name">کلینیک شنوایی و سمعک شکوه تجریش؛ مرکز تخصصی تست شنوایی و سمعک در تهران</h2>
+                <p itemprop="description">
+                    @gpGeoEntityDescription
+                </p>
+                <div class="gp-geo-entity-keywords" aria-label="موضوعات تخصصی کلینیک">
+                    <a href="/tehran/hearing-test" title="تست شنوایی در تهران">تست شنوایی در تهران</a>
+                    <a href="/tajrish/hearing-test" title="آزمایش شنوایی در تجریش">آزمایش شنوایی در تجریش</a>
+                    <a href="/tehran/hearing-aid" title="خرید سمعک در تهران">خرید سمعک در تهران</a>
+                    <a href="/Product/All" title="سمعک نامرئی و دیجیتال">سمعک نامرئی و دیجیتال</a>
+                    <a href="/tehran/hearing-aid-adjustment" title="تنظیم سمعک در تهران">تنظیم سمعک</a>
+                    <a href="/tehran/hearing-aid" title="تجویز سمعک در تهران">تجویز سمعک در تهران</a>
+                    <a href="/Blog/All?q=وزوز گوش" title="مطالب وزوز گوش">وزوز گوش</a>
+                    <a href="/Blog/All?q=کم‌شنوایی سالمندان" title="مطالب کم‌شنوایی سالمندان">کم‌شنوایی سالمندان</a>
+                </div>
+                <meta itemprop="telephone" content="+982122735588" />
+                <meta itemprop="email" content="tajrishsamak@gmail.com" />
+                <meta itemprop="address" content="تهران، میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰" />
+            </section>
+
+            <div class="gp-footer-legal-line">
+                <span>تمامی حقوق برای کلینیک شنوایی و سمعک شکوه تجریش محفوظ است.</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<nav class="gp-mobile-bottom-nav" aria-label="دسترسی سریع موبایل">
+    <a href="/" class="gp-mobile-nav-item" data-gp-tip="خانه" data-gp-path="/">
+        <span class="gp-mobile-nav-icon gp-nav-home" aria-hidden="true">⌂</span>
+        <small>خانه</small>
+    </a>
+    <a href="/Product/All" class="gp-mobile-nav-item" data-gp-tip="سمعک‌ها" data-gp-path="/Product/All">
+        <span class="gp-mobile-nav-icon gp-nav-hearing" aria-hidden="true">🎧</span>
+        <small>سمعک</small>
+    </a>
+    <a href="/blog/all" class="gp-mobile-nav-item" data-gp-tip="مقالات" data-gp-path="/blog">
+        <span class="gp-mobile-nav-icon gp-nav-blog" aria-hidden="true">▤</span>
+        <small>مقالات</small>
+    </a>
+    <a href="/aboutus" class="gp-mobile-nav-item" data-gp-tip="درباره ما" data-gp-path="/aboutus">
+        <span class="gp-mobile-nav-icon gp-nav-info" aria-hidden="true">i</span>
+        <small>درباره</small>
+    </a>
+    <a href="/contactus" class="gp-mobile-nav-item" data-gp-tip="تماس" data-gp-path="/contactus">
+        <span class="gp-mobile-nav-icon gp-nav-phone" aria-hidden="true">☎</span>
+        <small>تماس</small>
+    </a>
+</nav>
+
+<div id="error-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> پیغام سایت </h4>
+            </div>
+            <div class="modal-body">
+                <p class="inner-text"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">بازگشت به سایت</button>
+            </div>
+        </div>
+    </div>
+</div>

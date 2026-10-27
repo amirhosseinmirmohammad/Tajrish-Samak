@@ -124,9 +124,12 @@ namespace TajrishSamak.Web.Data
             modelBuilder.Entity<Order>().HasOne(o => o.Address).WithMany(a => a.Orders).HasForeignKey(o => o.AddressId);
 
             // ---------- user / location ----------
-            modelBuilder.Entity<Address>().HasOne(a => a.Users).WithMany().HasForeignKey(a => a.UserId);
+            modelBuilder.Entity<Address>().HasOne(a => a.Users).WithMany(u => u.Addresses).HasForeignKey(a => a.UserId);
             modelBuilder.Entity<ApplicationUser>().HasOne(u => u.State).WithMany(s => s.Users).HasForeignKey(u => u.StateId);
             modelBuilder.Entity<ApplicationUser>().HasOne(u => u.City).WithMany(c => c.Users).HasForeignKey(u => u.CityId);
+
+            // legacy convention FK: ServiceCategories.ApplicationUser_Id
+            modelBuilder.Entity<ApplicationUser>().HasMany(u => u.ServiceCategories).WithOne().HasForeignKey("ApplicationUser_Id");
 
             // ---------- legacy many-to-many join tables ----------
             modelBuilder.Entity<Discount>()

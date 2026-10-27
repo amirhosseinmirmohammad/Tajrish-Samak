@@ -1,27 +1,187 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <base href="/" />
     <ResourcePreloader />
+    <HeadOutlet />
+
+    <meta name="theme-color" content="#920ab6" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#920ab6" />
+    <meta name="msapplication-navbutton-color" content="#920ab6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta name="apple-mobile-web-app-title" content="تجریش سمعک" />
+    <meta name="msapplication-TileColor" content="#920ab6" />
+    <meta name="geo.placename" content="Tehran, Tajrish" />
+    <meta name="geo.position" content="35.806270;51.430387" />
+    <meta name="ICBM" content="35.806270, 51.430387" />
+    <meta name="geo.region" content="ir" />
+    <meta property="og:site_name" content="کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta property="og:locale" content="fa_ir" />
+    <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta property="og:image:secure_url" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta property="og:image:width" content="296" />
+    <meta property="og:image:height" content="80" />
+    <meta property="og:image:alt" content="کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:domain" content="https://tajrish-samak.ir" />
+    <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+    <meta name="author" content="کلینیک شنوایی و سمعک شکوه تجریش" />
+    <meta name="copyright" content="کلینیک شنوایی و سمعک شکوه تجریش" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/webp" href="images/logo_purple.webp" />
+    <link rel="preload" as="image" href="images/logo_purple.webp" fetchpriority="high" />
+
     <link rel="stylesheet" href="@Assets["css/bootstrap.css"]" />
     <link rel="stylesheet" href="@Assets["css/style.css"]" />
     <link rel="stylesheet" href="@Assets["css/font-awesome.css"]" />
     <link rel="stylesheet" href="@Assets["css/gp-tajrish-modern.css"]" />
+    <link rel="stylesheet" href="@Assets["css/gp-layout-legacy.css"]" />
     <link rel="stylesheet" href="@Assets["TajrishSamak.Web.styles.css"]" />
     <ImportMap />
-    <HeadOutlet />
-    <meta name="theme-color" content="#920ab6" />
-    <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="icon" type="image/webp" href="images/logo_purple.webp" />
+
+    <script>
+        (function () {
+            try {
+                var savedLang = localStorage.getItem("gpTajrishLang") || "fa";
+                var root = document.documentElement;
+                root.setAttribute("lang", savedLang === "en" ? "en" : "fa");
+                root.setAttribute("dir", savedLang === "en" ? "ltr" : "rtl");
+                root.classList.toggle("gp-lang-en", savedLang === "en");
+                root.classList.toggle("gp-lang-fa", savedLang !== "en");
+            } catch (e) { }
+        })();
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@@type": ["LocalBusiness", "MedicalBusiness"],
+      "@@id": "https://tajrish-samak.ir/#organization",
+      "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+      "url": "https://tajrish-samak.ir/",
+      "logo": "https://tajrish-samak.ir/images/logo_purple.webp",
+      "image": "https://tajrish-samak.ir/images/logo_purple.webp",
+      "telephone": ["+982122735588", "+982122735599", "+989393388985"],
+      "email": "tajrishsamak@gmail.com",
+      "address": {
+        "@@type": "PostalAddress",
+        "addressCountry": "IR",
+        "addressLocality": "تهران",
+        "streetAddress": "میدان تجریش، خیابان شهرداری، رو به روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰"
+      },
+      "geo": {
+        "@@type": "GeoCoordinates",
+        "latitude": "35.806270",
+        "longitude": "51.430387"
+      },
+      "sameAs": [
+        "https://www.instagram.com/tajrishsamak/",
+        "https://www.telegram.me/sthc/"
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@@type": "WebSite",
+      "@@id": "https://tajrish-samak.ir/#website",
+      "url": "https://tajrish-samak.ir/",
+      "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+      "inLanguage": "fa-IR",
+      "publisher": { "@@id": "https://tajrish-samak.ir/#organization" },
+      "potentialAction": {
+        "@@type": "SearchAction",
+        "target": "https://tajrish-samak.ir/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json" id="gp-v54-geo-schema">
+    {
+      "@@context": "https://schema.org",
+      "@@graph": [
+        {
+          "@@type": ["Organization", "LocalBusiness", "MedicalBusiness", "MedicalClinic"],
+          "@@id": "https://tajrish-samak.ir/#tajrish-samak",
+          "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+          "alternateName": ["تجریش سمعک", "سمعک تجریش", "Tajrish Samak", "Shokouh Tajrish Hearing Aid Clinic"],
+          "url": "https://tajrish-samak.ir/",
+          "logo": { "@@type": "ImageObject", "url": "https://tajrish-samak.ir/images/logo_purple.webp" },
+          "image": "https://tajrish-samak.ir/images/logo_purple.webp",
+          "description": "کلینیک شنوایی و سمعک شکوه تجریش یک مرکز تخصصی شنوایی‌شناسی در تهران، محدوده تجریش و شمال تهران است که خدمات تست شنوایی، آزمایش شنوایی، مشاوره خرید سمعک، تجویز و تنظیم سمعک، تعمیر سمعک، باتری سمعک، قالب سمعک، سمعک دولتی، سمعک رایگان بهزیستی، خدمات حمایتی، پیگیری پس از تجویز و مشاوره مرتبط با وزوز گوش را ارائه می‌دهد. این کلینیک برای مراجعان تهران، شمیرانات، تجریش، نیاوران، قیطریه، زعفرانیه، الهیه، فرمانیه و محله‌های شمال تهران قابل دسترسی است.",
+          "telephone": ["+982122735588", "+982122735599", "+989393388985"],
+          "email": "tajrishsamak@gmail.com",
+          "priceRange": "$$",
+          "currenciesAccepted": "IRR",
+          "paymentAccepted": "Cash, Card",
+          "address": {
+            "@@type": "PostalAddress",
+            "addressCountry": "IR",
+            "addressRegion": "تهران",
+            "addressLocality": "تهران",
+            "streetAddress": "میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰"
+          },
+          "geo": { "@@type": "GeoCoordinates", "latitude": 35.806270, "longitude": 51.430387 },
+          "areaServed": [
+            { "@@type": "City", "name": "تهران" },
+            { "@@type": "AdministrativeArea", "name": "شمیرانات" },
+            { "@@type": "Place", "name": "تجریش" },
+            { "@@type": "Place", "name": "نیاوران" },
+            { "@@type": "Place", "name": "قیطریه" },
+            { "@@type": "Place", "name": "زعفرانیه" },
+            { "@@type": "Place", "name": "الهیه" },
+            { "@@type": "Place", "name": "فرمانیه" },
+            { "@@type": "Place", "name": "پاسداران" },
+            { "@@type": "Place", "name": "اقدسیه" },
+            { "@@type": "Place", "name": "ولنجک" },
+            { "@@type": "Place", "name": "شمال تهران" }
+          ],
+          "medicalSpecialty": ["Audiology", "Hearing Aid Fitting", "Hearing Test", "Hearing Care"],
+          "sameAs": ["https://www.instagram.com/tajrishsamak/", "https://www.telegram.me/sthc/", "https://wa.me/+989393388985"],
+          "contactPoint": [
+            { "@@type": "ContactPoint", "telephone": "+982122735588", "contactType": "customer service", "areaServed": "IR", "availableLanguage": ["fa", "en"] },
+            { "@@type": "ContactPoint", "telephone": "+989393388985", "contactType": "WhatsApp consultation", "areaServed": "IR", "availableLanguage": ["fa", "en"] }
+          ]
+        },
+        {
+          "@@type": "WebSite",
+          "@@id": "https://tajrish-samak.ir/#website-v54",
+          "url": "https://tajrish-samak.ir/",
+          "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+          "alternateName": "تجریش سمعک",
+          "inLanguage": "fa-IR",
+          "publisher": { "@@id": "https://tajrish-samak.ir/#tajrish-samak" }
+        },
+        {
+          "@@type": "WebPage",
+          "@@id": "https://tajrish-samak.ir#webpage",
+          "url": "https://tajrish-samak.ir",
+          "isPartOf": { "@@id": "https://tajrish-samak.ir/#website-v54" },
+          "about": { "@@id": "https://tajrish-samak.ir/#tajrish-samak" },
+          "inLanguage": "fa-IR",
+          "speakable": {
+            "@@type": "SpeakableSpecification",
+            "cssSelector": [".gp-geo-entity-panel", ".gp-hidden-aeo", "h1"]
+          }
+        }
+      ]
+    }
+    </script>
 </head>
 
 <body class="gp-tajrish-body">
     <Routes />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script src="@Assets["js/gp-layout-legacy.js"]"></script>
+    <script src="@Assets["js/jquery-2.1.4.min.js"]"></script>
+    <script src="@Assets["js/bootstrap.js"]"></script>
 </body>
 
 </html>
