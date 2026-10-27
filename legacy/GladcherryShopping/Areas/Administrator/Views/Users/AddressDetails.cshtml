@@ -1,0 +1,91 @@
+﻿@model DataLayer.Models.Address
+
+@{
+    ViewBag.Title = "جزئیات آدرس کاربر";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>جزئیات آدرس کاربر</h2>
+
+<div>
+    @*<h4>Address</h4>*@
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Addrress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Addrress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.plaque)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.plaque)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.unit)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.unit)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tell)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Tell)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Mobile)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Mobile)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsConfirm)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsConfirm)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.latitude)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.latitude)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.longitude)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.longitude)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.UserId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserId)
+        </dd>*@
+
+    </dl>
+</div>
+<p>
+    @*@Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |*@
+    @Html.ActionLink("بازگشت به لیست کاربران", "Index",null,new { @class = "btn btn-default" })
+</p>

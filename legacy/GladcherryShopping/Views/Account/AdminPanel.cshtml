@@ -1,0 +1,182 @@
+﻿@{
+    GladcherryShopping.Models.ApplicationDbContext db = new GladcherryShopping.Models.ApplicationDbContext();
+}
+@using System.Data.Entity;
+@{
+    ViewBag.Title = "پنل مدیریتی کلینیک شنوایی و سمعک شکوه تجریش";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var Userrole = db.Roles.Where(current => current.Name == "User");
+    var AllUsers = db.Users.Include(current => current.Roles).Where(current => current.Roles.Any(p => p.RoleId == Userrole.FirstOrDefault().Id));
+    var Orders = db.Orders;
+    var Messages = db.SiteMessages;
+}
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="widget style1">
+                <div class="row">
+                    <div class="col-xs-4 text-center">
+                        <i class="fa fa-calendar-o fa-5x"></i>
+                    </div>
+                    <div class="col-xs-8 text-right">
+                        <span> امروز </span>
+                        <h2 class="font-bold">@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(DateTime.Now, false, false)</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a href="/Administrator/SiteMessages/Index">
+            <div class="col-lg-3">
+                <div class="widget style1 navy-bg">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <i class="fa fa-file-text fa-5x"></i>
+                        </div>
+                        <div class="col-xs-8 text-right">
+                            <span> پیام سایت </span>
+                            <h2 class="font-bold">@Messages.Count()</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <a href="/Administrator/Orders/Index">
+            <div class="col-lg-3">
+                <div class="widget style1 lazur-bg">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <i class="fa fa-list-alt fa-5x"></i>
+                        </div>
+                        <div class="col-xs-8 text-right">
+                            <span>سفارشات </span>
+                            <h2 class="font-bold">@Orders.Count()</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <a href="/Administrator/Users/Index">
+            <div class="col-lg-3">
+                <div class="widget style1 yellow-bg">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <i class="fa fa-user fa-5x"></i>
+                        </div>
+                        <div class="col-xs-8 text-right">
+                            <span> کاربران </span>
+                            <h2 class="font-bold">@AllUsers.Count()</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div style="height:1150px">
+    <canvas id="myChart"></canvas>
+    <canvas id="myChart2"></canvas>
+</div>
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script>
+        function color() {
+            var randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            return randomColor;
+        };
+
+        var ctx = document.getElementById("myChart");
+        var usersCount = [];
+        var dates = [];
+        var back = [];
+        var ordersCount = [];
+
+        dates = ["@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(DateTime.Now.AddDays(-3),false,false)", "@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(DateTime.Now.AddDays(-2).Date, false, false)", "@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(DateTime.Now.AddDays(-1).Date, false, false)", "@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(DateTime.Now.Date, false, false)", "@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(DateTime.Now.AddDays(1).Date, false, false)", "@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(DateTime.Now.AddDays(2).Date, false, false)", "@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(DateTime.Now.AddDays(3).Date, false, false)"]
+        @{
+            var TwoDaysLaterStartDate = DateTime.Today.AddDays(2);
+            var TwoDaysLaterEndTime = DateTime.Today.AddDays(3).AddTicks(-1);
+            var TomorrowStartDate = DateTime.Today.AddDays(1);
+            var TomorrowEndTime = DateTime.Today.AddDays(2).AddTicks(-1);
+            var TodayStartDate = DateTime.Today;
+            var TodayEndTime = DateTime.Today.AddDays(1).AddTicks(-1);
+            var YesterdayStartDate = DateTime.Today.AddDays(-1);
+            var YesterdayEndTime = DateTime.Today.AddTicks(-1);
+            var TwoDaysAgoStartDate = DateTime.Today.AddDays(-2);
+            var TwoDaysAgoEndTime = DateTime.Today.AddDays(-1).AddTicks(-1);
+            var ThreeDaysAgoEndTime = DateTime.Today.AddDays(-2).AddTicks(-1);
+            var ThreeDaysAgoStartDate = DateTime.Today.AddDays(-3);
+            var ThreeDaysLaterEndTime = DateTime.Today.AddDays(4).AddTicks(-1);
+            var ThreeDaysLaterStartDate = DateTime.Today.AddDays(3);
+            var orders = db.Orders.Where(current => current.OrderDate >= ThreeDaysAgoStartDate && current.OrderDate <= ThreeDaysLaterEndTime & current.Done == true).ToList();
+            var role = db.Roles.Where(current => current.Name == "User");
+            var Users = db.Users.Include(current => current.Roles).Where(current => current.Roles.Any(p => p.RoleId == role.FirstOrDefault().Id)).Where(current => current.RegistrationDate >= ThreeDaysAgoStartDate && current.RegistrationDate <= ThreeDaysLaterEndTime).ToList();
+        }
+        ordersCount = [@orders.Where(current => current.OrderDate <= ThreeDaysAgoEndTime && current.OrderDate >= ThreeDaysAgoStartDate).Count(),
+        @orders.Where(current => current.OrderDate <= TwoDaysAgoEndTime && current.OrderDate >= TwoDaysAgoStartDate).Count(),
+        @orders.Where(current => current.OrderDate <= YesterdayEndTime && current.OrderDate >= YesterdayStartDate).Count(),
+        @orders.Where(current => current.OrderDate <= TodayEndTime && current.OrderDate >= TodayStartDate).Count(),
+        @orders.Where(current => current.OrderDate <= TomorrowEndTime && current.OrderDate >= TomorrowStartDate).Count(),
+        @orders.Where(current => current.OrderDate <= TwoDaysLaterEndTime && current.OrderDate >= TwoDaysLaterStartDate).Count(),
+        @orders.Where(current => current.OrderDate <= ThreeDaysLaterEndTime && current.OrderDate >= ThreeDaysLaterStartDate).Count(), ]
+
+        usersCount = [@orders.Where(current => current.OrderDate <= ThreeDaysAgoEndTime && current.OrderDate >= ThreeDaysAgoStartDate).Count(),
+        @Users.Where(current => current.RegistrationDate <= TwoDaysAgoEndTime && current.RegistrationDate >= TwoDaysAgoStartDate).Count(),
+        @Users.Where(current => current.RegistrationDate <= YesterdayEndTime && current.RegistrationDate >= YesterdayStartDate).Count(),
+        @Users.Where(current => current.RegistrationDate <= TodayEndTime && current.RegistrationDate >= TodayStartDate).Count(),
+        @Users.Where(current => current.RegistrationDate <= TomorrowEndTime && current.RegistrationDate >= TomorrowStartDate).Count(),
+        @Users.Where(current => current.RegistrationDate <= TwoDaysLaterEndTime && current.RegistrationDate >= TwoDaysLaterStartDate).Count(),
+        @Users.Where(current => current.RegistrationDate <= ThreeDaysLaterEndTime && current.RegistrationDate >= ThreeDaysLaterStartDate).Count(), ]
+
+        //for (x = 0; x < 7; x++) {
+        //    back.push(color())
+        //}
+
+        var data = {
+            labels: dates,
+            datasets: [
+                {
+                    label: "سفارشات انجام شده",
+                    backgroundColor: back,
+                    borderColor: back,
+                    borderWidth: 1,
+                    data: ordersCount
+                }
+            ]
+        };
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true
+            }
+        });
+
+        var ctx2 = document.getElementById("myChart2");
+        var data1 = {
+            labels: dates,
+            datasets: [
+                {
+                    label: "کاربران ثبت نام شده",
+                    backgroundColor: back,
+                    borderColor: back,
+                    borderWidth: 1,
+                    data: usersCount
+                }]
+        };
+        var myBarChart2 = new Chart(ctx2, {
+            type: 'bar',
+            data: data1,
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+}
+
+
+

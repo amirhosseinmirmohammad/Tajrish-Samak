@@ -1,0 +1,97 @@
+﻿@model DataLayer.Models.Upload
+
+@{
+    ViewBag.Title = "افزودن تصویر جدید";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>افزودن تصویر جدید</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5> افزودن تصویر جدید </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    @using (Html.BeginForm("Create", "Uploads", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @*<h4>HubSYS Software Application 2016-2017</h4>
+        <hr />*@
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2 text-right">فایل</label>
+                            <div class="col-md-10">
+                                <input type="file" name="Image" class="form-control" required />
+                                @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        @*<div class="form-group">
+                            <label class="control-label col-md-2 text-right">تصویر موبایل</label>
+                            <div class="col-md-10">
+                                <input type="file" name="MobImage" class="form-control" required />
+                                @Html.ValidationMessageFor(model => model.MobImage, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Link, htmlAttributes: new { @class = "control-label col-md-2 text-right" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Link, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Link, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.IsApp, htmlAttributes: new { @class = "control-label col-md-2 text-right" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.IsApp, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.IsApp, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-10 pull-left">
+                                <div class="alert alert-info text-right">
+                                    <strong> توجه! </strong> کاربر گرامی جهت در صورت انتخاب گزینه اپلیکیشن تصویر تنها در اپ نمایش داده میشود و در صورت عدم انتخاب در سایت قرار میگیرد . <br /><br />
+                                </div>
+                            </div>
+                        </div>*@
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="ذخیره اطلاعات" class="btn btn-success btn-md" />
+                                @Html.ActionLink("بازگشت به لیست", "Index", null, new { @class = "btn btn-default btn-md" })
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

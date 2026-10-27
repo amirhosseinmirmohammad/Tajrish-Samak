@@ -1,0 +1,93 @@
+﻿@{
+    ViewBag.Title = "حساب کاربری در کلینیک شنوایی و سمعک شکوه تجریش";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش در زمینه سفارش آنلاین گیفت باکس،گل،هدیه،کادو،فلاور باکس،پلکسی و تشریفات مجالس به مناسبت هایی مانند ولنتاین،نامزدی،عقد،بله برون و روز مادر فعال است.">
+    <meta name="Keywords" content="گل,فلاور باکس,هدیه,کادو,گل فروشی,گیفت,ولنتاین,تولد,گیفت باکس,روز مادر,عید,تاج گل,دسته گل,بله برون,نامزدی,عقد,تشریفات,پرنسا,باکس گل,باکس چوبی,پلکسی,TajrishSamak">
+    <meta property="og:title" content="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک" />
+    <meta property="og:url" content="http://www.TajrishSamak.com/" />
+    <meta property="og:image" content="http://www.TajrishSamak.com/images/pransa_logo_web.png" />
+    <meta name="twitter:image" content="کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک">
+}
+
+@section Styles{
+    <style>
+        .btn-confirm {
+            outline: none;
+            color: #FFFFFF;
+            font-size: 15px;
+            letter-spacing: 2px;
+            background: #920ab6;
+            border: none;
+            -webkit-transition: 0.5s all;
+            -moz-transition: 0.5s all;
+            -o-transition: 0.5s all;
+            -ms-transition: 0.5s all;
+            transition: 0.5s all;
+            padding: 10px;
+        }
+    </style>
+}
+
+<!-- Navigation -->
+
+@if (TempData["Error"] != null)
+{
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px;text-align:right;direction:rtl;">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">وضعیت تایید</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger">@TempData["Error"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!--sign in start here-->
+<div class="signin">
+    <div class="container">
+        <div class="signin-main text-center">
+            <br />
+            <h1>تایید شماره تلفن همراه</h1>
+            <form method="post" action="/Account/ApproveNumber">
+                @Html.AntiForgeryToken()
+                <div style="margin-top:50px" class="col-md-6 col-md-offset-3">
+                    <div>
+                        <input class="form-control" style="width:100%;direction:rtl;padding-right:10px;" type="text" name="Code" placeholder="لطفا کد ارسالی به تلفن همراه خود را وارد نمایید" required>
+                        <input type="hidden" name="PhoneNumber" value="@Request.QueryString["PhoneNumber"]" />
+                        <input type="hidden" name="ReturnUrl" value="@Request.QueryString["ReturnUrl"]" />
+                    </div>
+                    <br />
+                    <div style="margin-bottom:20px;">
+                        <div style="width:71px;height:36px;margin:0 auto">
+                            <input class="btn-confirm" style="margin:0 auto" type="submit" value="تایید">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--sign in end here-->
+
+@section Scripts{
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#myModal").modal();
+        });
+    </script>
+}
+
+

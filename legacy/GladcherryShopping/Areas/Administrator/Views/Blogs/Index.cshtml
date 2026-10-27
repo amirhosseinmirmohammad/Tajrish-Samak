@@ -1,0 +1,172 @@
+﻿@model DataLayer.ViewModels.PagerViewModel.PagerViewModels<DataLayer.Models.Blog>
+@{ GladcherryShopping.Models.ApplicationDbContext db = new GladcherryShopping.Models.ApplicationDbContext();}
+@using Microsoft.AspNet.Identity;
+@using System.Data.Entity;
+@using MvcPager
+@{
+    ViewBag.Title = "لیست بلاگ ها";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>لیست بلاگ ها</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>نویسنده</th>
+                                <th>عنوان</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.data)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    @{
+                                        var Adminrole = db.Roles.Where(p => p.Name == "Administrator").FirstOrDefault();
+                                        var Contractorrole = db.Roles.Where(p => p.Name == "Contractor").FirstOrDefault();
+                                    }
+                                    <td>
+                                        @if(item.User.Roles.FirstOrDefault().RoleId == Adminrole.Id)
+                                        {
+                                            <span>مدیریت کلینیک شنوایی و سمعک شکوه تجریش</span>
+                                        }
+                                        @*else if(item.User.Roles.FirstOrDefault().RoleId == Contractorrole.Id)
+                                        {
+                                            string userId = item.UserId;
+                                            var user = db.Users.Find(userId);
+                                            var contractor = db.Contractors.Where(current => current.EmailAddress == user.Email).FirstOrDefault();
+                                            if (contractor != null)
+                                            {
+                                                <span>@contractor.FirstName @contractor.LastName</span>
+                                            }
+                                        }*@
+                                    </td>
+                                    <td>@item.Title</td>
+                                    <td>
+                                        @Html.ActionLink("ویرایش", "Edit", new { id = item.Id }, new { @class = "label label-warning" }) |
+                                        @Html.ActionLink("نظرات", "Comments", new { id = item.Id }, new { @class = "label label-primary" }) |
+                                        @Html.ActionLink("حذف", "Delete", new { id = item.Id }, new { @class = "label label-danger" })
+                                    </td>
+                                </tr>
+                                        }
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-6" style="direction: ltr">
+                            <ul class="pagination pagination-sm">
+                                <li>@Html.Pager(10, Model.CurrentPage, Model.TotalItemCount)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>پیام</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#">گزینه 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">گزینه 2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="alert alert-success">
+                                @TempData["Success"]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>پیام</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#">گزینه 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">گزینه 2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="alert alert-danger">
+                                @TempData["Error"]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,97 @@
+@page "/"
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.Extensions.Caching.Memory
+@using System.Linq
+@using Microsoft.EntityFrameworkCore
+@inject TajrishSamak.Web.Data.TajrishSamakDbContext Db
+@inject IMemoryCache Cache
+
+<PageTitle>بهترین کلینیک شنوایی تهران و شمال تهران | سمعک شکوه تجریش</PageTitle>
+<meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش؛ تست شنوایی، آزمایش شنوایی، مشاوره و تجویز سمعک در تجریش و شمال تهران." />
+
+<section class="gp-home-debug">
+    <h1>کلینیک شنوایی و سمعک شکوه تجریش</h1>
+    <p>نسخه Blazor (.NET 10) - در حال مهاجرت. این صفحه داده‌های واقعی را از دیتابیس می‌خواند.</p>
+    <p style="background:#ffffcc; padding:8px;">DIAG: @_diag</p>
+
+    <div class="gp-home-stats">
+        <div><strong>@_sliderCount</strong><span>اسلایدر</span></div>
+        <div><strong>@_productCount</strong><span>محصول</span></div>
+        <div><strong>@_blogCount</strong><span>مقاله</span></div>
+        <div><strong>@_categoryCount</strong><span>دسته‌بندی</span></div>
+    </div>
+
+    <h2>محصولات اخیر</h2>
+    <ul>
+        @foreach (var p in _products)
+        {
+            <li>
+                <a href="/Product/Details/@p.Id">@p.PersianName</a>
+                @if (!string.IsNullOrWhiteSpace(p.SiteFirstImage))
+                {
+                    <img src="@p.SiteFirstImage" alt="@p.PersianName" width="48" height="48" loading="lazy" />
+                }
+            </li>
+        }
+    </ul>
+
+    <h2>دسته‌بندی‌ها</h2>
+    <ul>
+        @foreach (var c in _categories)
+        {
+            <li>@c.PersianName (@c.Products.Count محصول)</li>
+        }
+    </ul>
+</section>
+
+<style>
+    .gp-home-debug { max-width: 900px; margin: 24px auto; padding: 24px; direction: rtl; font-family: Tahoma, sans-serif; }
+    .gp-home-stats { display: flex; gap: 16px; margin: 16px 0; }
+    .gp-home-stats > div { background: #f7f3fb; border-radius: 14px; padding: 14px 22px; text-align: center; }
+    .gp-home-stats strong { display: block; font-size: 26px; color: #920ab6; }
+</style>
+
+@code {
+    private int _sliderCount;
+    private int _productCount;
+    private int _blogCount;
+    private int _categoryCount;
+    private string _diag = "";
+    private List<Product> _products = new();
+    private List<Category> _categories = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Layout-level data was queried 4x per request in the legacy app; cached here.
+        try
+        {
+            _products = await Cache.GetOrCreateAsync("home:products", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+                return await Db.Products
+                    .Where(p => p.SiteFirstImage != null)
+                    .OrderByDescending(p => p.CreateDate)
+                    .Take(6)
+                    .ToListAsync();
+            }) ?? new List<Product>();
+
+            _categories = await Cache.GetOrCreateAsync("home:categories", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+                return await Db.Categories
+                    .Where(c => c.ParentId == null && c.IsBlog == false)
+                    .OrderByDescending(c => c.PersianName)
+                    .ToListAsync();
+            }) ?? new List<Category>();
+
+            _sliderCount = await Db.Sliders.CountAsync();
+            _productCount = await Db.Products.CountAsync();
+            _blogCount = await Db.Blogs.CountAsync(b => b.IsVisible == true);
+            _categoryCount = _categories.Count;
+        }
+        catch (Exception ex)
+        {
+            _diag += " || QUERY ERR: " + ex.GetType().Name + " - " + ex.Message;
+        }
+    }
+}

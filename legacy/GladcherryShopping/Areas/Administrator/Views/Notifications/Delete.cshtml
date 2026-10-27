@@ -1,0 +1,41 @@
+﻿@model DataLayer.Models.Notification
+
+@{
+    ViewBag.Title = "حذف اعلانیه";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>حذف اعلانیه</h2>
+
+<h3>آیا از حذف این اعلانیه مطمئن هستید ؟</h3>
+<div>
+    @*<h4>Notification</h4>*@
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ForwardDate)
+        </dt>
+
+        <dd>
+            @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(Model.ForwardDate,true,true)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+
+        <dd>
+            @Html.Raw(Model.Text)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="حذف" class="btn btn-danger" /> |
+            @Html.ActionLink("بازگشت به لیست", "Index",null,new { @class = "btn btn-default" })
+        </div>
+    }
+</div>

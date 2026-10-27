@@ -1,0 +1,99 @@
+﻿@model DataLayer.Models.Discount
+
+@{
+    ViewBag.Title = "جزییات تخفیف";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>مدیریت تخفیف ها</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5> جزییات تخفیف <span style="color:darkred"> @Model.Title </span>  </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div>
+                        @*<h4>HubSYS Software Application 2016-2017</h4>
+                            <hr />*@
+                        <dl class="dl-horizontal">
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Code)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Code)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Title)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Title)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Percent)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Percent)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Count)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Count)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.MaxCount)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.MaxCount)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.IsActived)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.IsActived)
+                            </dd>
+
+                        </dl>
+                    </div>
+                    <p>
+                        @Html.ActionLink("ویرایش", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning btn-md" }) |
+                        @Html.ActionLink("بازگشت به لیست", "Index", null, new { @class = "btn btn-default btn-md" })
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

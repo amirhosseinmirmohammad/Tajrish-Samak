@@ -1,0 +1,78 @@
+{
+  "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+  "short_name": "تجریش سمعک",
+  "description": "تست شنوایی، مشاوره خرید، تجویز و تنظیم تخصصی سمعک در تهران و تجریش",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#920ab6",
+  "dir": "rtl",
+  "lang": "fa-IR",
+  "categories": [
+    "medical",
+    "health",
+    "shopping"
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/content/images/pwa/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/content/images/pwa/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/content/images/pwa/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/content/images/pwa/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "تست شنوایی",
+      "short_name": "تست شنوایی",
+      "description": "شروع مسیر ارزیابی شنوایی",
+      "url": "/tehran/hearing-test?source=pwa-shortcut",
+      "icons": [
+        {
+          "src": "/content/images/pwa/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "خرید سمعک",
+      "short_name": "خرید سمعک",
+      "description": "مشاوره و انتخاب سمعک",
+      "url": "/tehran/hearing-aid?source=pwa-shortcut",
+      "icons": [
+        {
+          "src": "/content/images/pwa/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

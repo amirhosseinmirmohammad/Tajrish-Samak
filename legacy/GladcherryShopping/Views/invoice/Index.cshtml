@@ -1,0 +1,188 @@
+﻿@model DataLayer.Models.FinalViewModel
+@{
+    ViewBag.Title = "پیش فاکتور کلینیک شنوایی و سمعک شکوه تجریش";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Metas{
+<meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+<meta name="Keywords" content="تجویز سمعک">
+<meta property="og:title" content="تجویز سمعک" />
+@*<meta property="og:url" content="@facebook" />*@
+<meta property="og:image" content="http://tajrish-samak.ir/images/logo_purple.png" />
+<meta name="twitter:image" content="تجویز سمعک">
+<meta name="twitter:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+@*<meta name="twitter:site" content="@twitter">*@
+<meta property="og:description" content="کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک ، تجویز سمعک داخل گوشی ، دیجیتال ، نامرئی ، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .">
+}
+
+@{
+    int pr = Convert.ToInt32(ViewBag.Price);
+}
+
+@section Styles{
+}
+
+<style>
+    .card {
+        direction: rtl !important;
+    }
+
+    .reciever div {
+        margin-top: 20px;
+    }
+</style>
+<!-- banner-2 -->
+@*<div class="page-head_agile_info_w3l">
+
+</div>*@
+<!-- //banner-2 -->
+<!-- page -->
+<div class="services-breadcrumb">
+    <div class="agile_inner_breadcrumb">
+        <div class="container">
+            <ul class="w3_short">
+                <li>
+                    <a href="/">صفحه اصلی</a>
+                    <i>|</i>
+                </li>
+                <li>پیش فاکتور</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- //page -->
+<!-- header-starts -->
+<header class="header-section">
+    <div class="header-left  clearfix">
+        <!--logo start-->
+        <div class="brand">
+            <button id="showLeftPush">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <!--logo end-->
+    </div>
+    <div class="header-right">
+    </div>
+</header>
+<!-- //header-ends -->
+@if (TempData["Success"] != null)
+{
+    <div class="grid_3 grid_5 w3ls">
+        <div class="alert alert-success" role="alert" style="direction:rtl;text-align:center;">
+            <strong>پرداخت موفق !</strong> @TempData["Success"]
+        </div>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="grid_3 grid_5 w3ls">
+        <div class="alert alert-danger" role="alert" style="direction:rtl;text-align:center;">
+            <strong>خطا در پرداخت !</strong> @TempData["Error"]
+        </div>
+    </div>
+}
+<!-- main content start-->
+<div id="page-wrapper">
+    <!-- inner banner -->
+    <div class="inner-banner">
+    </div>
+    <!-- //inner banner -->
+    @using (Html.BeginForm("SubmitOrder", "Home", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    تاریخ :
+                    <strong>@GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(DateTime.Now, false, false)</strong><br /><br />
+                    <span class="float-right"> <strong> وضعیت : </strong>صدور فاکتور</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <br />
+                        <div class="col-sm-6 text-center">
+                            <h6 class="mb-3">دریافت کننده سفارش :</h6><br />
+                            <div>
+                                <label>نام و نام خانوادگی * :</label>
+                                @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                                @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })<br />
+                                @*<input type="text" name="FullName" class="form-control" required /><br />*@
+                                <br />
+                                <label>شماره موبایل * :</label>
+                                @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", required = "required", min = "0" } })
+                                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })<br />
+                                @*<input type="number" name="Phone" class="form-control" required min="0" />*@
+                                <br />
+                                <label>آدرس کامل جهت ارسال * :</label>
+                                @Html.EditorFor(model => model.UserAddress, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                                @Html.ValidationMessageFor(model => model.UserAddress, "", new { @class = "text-danger" })
+                                @*<textarea name="UserAddress" class="form-control"></textarea>*@
+                                <br />
+                                <label>توضیحات و تاریخ درخواستی * :</label>
+                                @Html.EditorFor(model => model.UserOrderDescription, new { htmlAttributes = new { @class = "form-control", required = "required", placeholder = "اگر توضیحاتی در مورد سفارش خود دارید یادداشت نمایید ، همچنین تاریخ مد نظر خود برای تحویل سفارش را نیز ذکر نمایید . . ." } })
+                                @Html.ValidationMessageFor(model => model.UserOrderDescription, "", new { @class = "text-danger" })
+                                @*<textarea name="UserOrderDescription" placeholder="اگر توضیحاتی در مورد سفارش خود دارید یادداشت نمایید ، همچنین تاریخ مد نظر خود برای تحویل سفارش را نیز ذکر نمایید . . ." class="form-control"></textarea>*@
+                                <br />
+                                <label>کد تخفیف :</label>
+                                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", placeholder = "اگر کد تخفیف دارید وارد نمایید" } })
+                                @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
+                                @*<input type="text" name="Discount" class="form-control" placeholder="اگر کد تخفیف دارید وارد نمایید" /><br />*@
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-sm-6 text-center reciever">
+                            <h6 class="mb-3">گیرنده :</h6><br />
+                            <div>
+                                <strong>کلینیک شنوایی و سمعک شکوه تجریش</strong>
+                            </div>
+                            <div>ایران ، تهران</div>
+                            <div> میدان تجریش - خیابان شهرداری - رو به روی سینما آستارا - پلاک ۲۲۴ - ساختمان ۱۱۰ (ورودی قائم) </div>
+                            <div>ایمیل : info@tajrish-samak.com</div>
+                            <div>تلفن : 3388985-0939</div>
+                        </div>
+                    </div>
+                    <br />
+                    <hr />
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-5">
+                        </div>
+                        <div class="col-lg-4 col-sm-5 ml-auto">
+                            <table class="table table-clear">
+                                <tbody>
+                                    <tr>
+                                        <td class="left">
+                                            <strong>خالص قیمت</strong>
+                                        </td>
+                                        <td class="right">@string.Format("{0:n0}", pr) ریال</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="left">
+                                            <strong>ارزش افزوده (9 درصد)</strong>
+                                        </td>
+                                        <td class="right">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="left">
+                                            <strong>مجموع قابل پرداخت</strong>
+                                        </td>
+                                        <td class="right">
+                                            <strong>@string.Format("{0:n0}", pr) ریال</strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">ثبت نهایی سفارش</button>
+                </div><br />
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts{
+}
+

@@ -1,0 +1,249 @@
+﻿@model DataLayer.ViewModels.PagerViewModels<DataLayer.Models.Payment>
+@using MvcPager
+@{
+    ViewBag.Title = "مدیریت اسناد پرداختی";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>مدیریت اسناد پرداختی</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>لیست اسناد پرداختی</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    واریز کننده
+                                </th>
+                                @*<th>
+                                        دریافت کننده
+                                    </th>*@
+                                <th>
+                                    شماره سفارش
+                                </th>
+                                <th>
+                                    توضیحات
+                                </th>
+                                <th>
+                                    کد پیگیری
+                                </th>
+                                <th>
+                                    مبلغ به ریال
+                                </th>
+                                <th>
+                                    شماره تراکنش
+                                </th>
+                                <th>نوع عملیات</th>
+                                <th>
+                                    تاریخ ثبت پرداخت
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.data)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.getStatus
+                                    </td>
+                                    @*@if (item.Contractor != null && item.Status != 2)
+                                        {
+                                            <td>
+                                                خدمات دهنده : @item.Contractor.FirstName <span> </span> @item.Contractor.LastName
+                                            </td>
+                                        }
+                                        else if (item.Contractor != null && item.Status == 2)
+                                        {
+                                            <td>مدیریت</td>
+                                        }
+                                        else if (item.UserId != null && item.Status != 1)
+                                        {
+                                            <td>
+                                                کاربر : @item.User.FirstName <span> </span> @item.User.LastName
+                                            </td>
+                                        }
+                                        else if (item.UserId != null && item.Status == 1)
+                                        {
+                                            {
+                                                <td>مدیریت</td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                تعیین نشده
+                                            </td>
+                                        }*@
+                                    @if (item.OrderId != null)
+                                    {
+                                        <td>
+                                            @item.OrderId
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            ندارد
+                                        </td>
+                                    }
+                                    <td>
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                        @item.TrackingCode
+                                    </td>
+                                    <td class="Ammount" style="direction:ltr;float:right;">
+                                        @if (item.Status == 2 && item.ActionType == 2)
+                                        {
+                                            //افزایش اعتبار سرویس دهنده
+                                            <span>@item.Amount</span>
+                                        }
+                                        else if (item.Status == 2 && item.ActionType == 1)
+                                        {
+                                            //حق کمیسیون مدیریت
+                                            <span>-@item.Amount</span>
+                                        }
+                                        else if (item.Status == 3 && item.ActionType == 1 && item.TransactionId != null)
+                                        {
+                                            //در صورت پرداخت اعتباری کاربر مبلغی به حساب سرویس دهنده افزوده میشود .
+                                            <span>@item.Amount</span>
+                                        }
+                                        else if (item.Status == 3 && item.ActionType == 1 && item.TransactionId == null)
+                                        {
+                                            //در صورت پرداخت نقدی کاربر مبلغی بابت کمیسیون از حساب سرویس دهنده برداشت میشود .
+                                            <span>-@item.Amount</span>
+                                        }
+                                        else if (item.Status == 1 && item.ActionType == 1)
+                                        {
+                                            //تسویه حساب مدیریت با سرویس دهنده
+                                            <span>@item.Amount</span>
+                                        }
+                                    </td>
+                                    @if (item.TransactionId != null && item.OrderId != null)
+                                    {
+                                        <td>
+                                            @item.TransactionId
+                                        </td>
+                                    }
+                                    else if (item.TransactionId == null && item.OrderId != null)
+                                    {
+                                        <td>
+                                            پرداخت نقدی
+                                        </td>
+                                    }
+                                    else if (item.TransactionId == null && item.OrderId == null)
+                                    {
+                                        <td>
+                                            ندارد
+                                        </td>
+                                    }
+                                    else if (item.TransactionId != null && item.OrderId == null)
+                                    {
+                                        <td>
+                                            @item.TransactionId
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            تعیین نشده
+                                        </td>
+                                    }
+                                    <td>
+                                        @item.getActionType
+                                    </td>
+                                    <td>
+                                        @AtaTaxi.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, true, true).ToString()
+                                    </td>
+                                    <td>
+                                        @*@Html.ActionLink("ویرایش", "Edit", new { id = item.Id }, new { @class = "btn btn-warning btn-xs" })*@
+                                        @*@Html.ActionLink("جزئیات", "Details", new { id = item.Id }, new { @class = "btn btn-info btn-xs" }) |*@
+                                        @*@Html.ActionLink("حذف", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-xs" })*@
+                                        @*@Html.ActionLink("تراکنش", "Transaction", new { id = item.Id }, new { @class = "btn btn-primary btn-xs" }) |
+                                            @Html.ActionLink("پرسش و پاسخ", "Answers", new { id = item.Id, userId = item.UserId }, new { @class = "btn btn-warning btn-xs" }) |
+                                            @Html.ActionLink("شکایات", "Complaints", new { id = item.Id }, new { @class = "btn btn-default btn-xs" }) |
+                                            @Html.ActionLink("امتیازات", "Scorings", new { id = item.Id }, new { @class = "btn btn-score btn-xs" }) |
+                                            @Html.ActionLink("پیشنهادات", "ContractorSuggestions", new { id = item.Id }, new { @class = "btn btn-success btn-md btn-xs" })*@
+                                    </td>
+                                </tr>
+                            }
+                            <tr style="background-color:cornsilk">
+
+                                <td id="Situation">
+                                    @*وضعیت :*@
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td id="result">
+                                    @*مانده حساب :*@
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-6" style="direction: ltr">
+                            <ul class="pagination pagination-sm">
+                                <li>@Html.Pager(10, Model.CurrentPage, Model.TotalItemCount)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            var sum = 0;
+            // iterate through each td based on class and add the values
+            $(".Ammount").each(function () {
+                var value = $(this).text();
+                // add only if the value is number
+                if (!isNaN(value) && value.length != 0) {
+                    sum += parseFloat(value);
+                }
+            });
+            $('#result').html("مانده حساب :" + sum + " ریال ");
+            if (sum > 0) {
+                $('#Situation').html("وضعیت :" + "بستانکار");
+            }
+            else if (sum < 0) {
+                $('#Situation').html("وضعیت :" + "بدهکار");
+            }
+            else {
+                $('#Situation').html("وضعیت :" + "عادی");
+            }
+        });
+    </script>
+}

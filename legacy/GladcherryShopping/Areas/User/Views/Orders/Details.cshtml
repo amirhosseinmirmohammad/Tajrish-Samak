@@ -1,0 +1,260 @@
+﻿@model DataLayer.Models.Order
+@{
+    ViewBag.Title = "جزییات سفارش";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<h2>مدیریت سفارش ها</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5> جزییات سفارش <span style="color:darkred"> @Model.Id </span>  </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div>
+                        @*<h4>HubSYS Software Application 2016-2017</h4>
+                            <hr />*@
+                        <dl class="dl-horizontal">
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.FullName)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.FullName)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.UserAddress)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.UserAddress)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Phone)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Phone)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.UserOrderDescription)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.UserOrderDescription)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Receiver)
+                            </dt>
+
+                            <dd>
+                                @if (Model.Receiver == 1 || Model.Receiver == 2)
+            {
+                                    <span>
+                                        @Html.DisplayFor(model => model.getReceiver)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span>
+                                        تعیین نشده
+                                    </span>
+                                }
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Type)
+                            </dt>
+
+                            <dd>
+                                @if (Model.Type == 1 || Model.Type == 2)
+            {
+                                    <span>
+                                        @Html.DisplayFor(model => model.getType)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span>
+                                        تعیین نشده
+                                    </span>
+                                }
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.PaymentType)
+                            </dt>
+
+                            <dd>
+                                @if (Model.PaymentType == 1 || Model.PaymentType == 2)
+            {
+                                    <span>
+                                        @Html.DisplayFor(model => model.getPaymentType)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span>
+                                        تعیین نشده
+                                    </span>
+                                }
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.OrderDate)
+                            </dt>
+
+                            <dd>
+                                @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)Model.OrderDate, true, true).ToString()
+                            </dd>
+
+                            <dt>
+                                انجام شده یا خیر ؟
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Done)
+                            </dd>
+
+                            <dt>
+                                کد پیگیری
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.InvoiceNumber)
+                            </dd>
+
+                            <dt>
+                                قیمت نهایی مورد توافق
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.TotalPrice) ریال
+                            </dd>
+
+                            <dt>
+                                شماره فاکتور
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.FactorNumber)
+                            </dd>
+
+                            <dt>
+                                آیا لغو شده ؟
+                            </dt>
+
+                            @if (Model.IsCanceled == true)
+            {
+                                <dd>
+                                    لغو شده
+                                </dd>
+                                <dt>
+                                    علت لغو درخواست
+                                </dt>
+                                <dd>
+                                    @Model.CancelDescription
+                                </dd>
+                            }
+                            else
+                            {
+                                <dd>
+                                    خیر
+                                </dd>
+                            }
+
+                            @if (Model.Latitude != null && Model.Longitude != null)
+            {
+                                <dt>
+                                    عرض جفرافیایی
+                                </dt>
+                                <dd>
+                                    @Model.Latitude
+                                </dd>
+                                <dt>
+                                    طول جغرافیایی
+                                </dt>
+                                <dd>
+                                    @Model.Longitude
+                                </dd>
+                            }
+                            else if (Model.Latitude == null && Model.Longitude == null && Model.Address != null)
+                            {
+                                <dt>
+                                    عرض جفرافیایی
+                                </dt>
+                                <dd>
+                                    @Model.Address.latitude
+                                </dd>
+                                <dt>
+                                    طول جغرافیایی
+                                </dt>
+                                <dd>
+                                    @Model.Address.longitude
+                                </dd>
+                                <dt>
+                                    پلاک
+                                </dt>
+                                <dd>
+                                    @Model.Address.plaque
+                                </dd>
+                                <dt>
+                                    واحد
+                                </dt>
+                                <dd>
+                                    @Model.Address.unit
+                                </dd>
+                                <dt>
+                                    تلفن ثابت
+                                </dt>
+                                <dd>
+                                    @Model.Address.Tell
+                                </dd>
+                            }
+
+                            <dd>
+                                <br /><br />
+                                <label>محصولات : </label>
+                            </dd>
+
+                            @foreach (var pr in ViewBag.Products)
+                            {
+                                <a target="_blank" href="/Product/Details/@pr.ProductId"><span></span><img src="@pr.Product.SiteFirstImage" title="@pr.Product.PersianName" class="customized_panel_table img-circle" /><span>&nbsp;&nbsp; @pr.Product.PersianName (@pr.Count) </span></a>
+                                <br />
+                            }
+                        </dl>
+                    </div>
+                    <p>
+                        @Html.ActionLink("بازگشت به لیست", "Index", null, new { @class = "btn btn-default btn-md" })
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

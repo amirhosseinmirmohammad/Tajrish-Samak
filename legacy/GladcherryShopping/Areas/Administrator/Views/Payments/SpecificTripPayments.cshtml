@@ -1,0 +1,166 @@
+﻿@model DataLayer.ViewModels.PagerViewModels<DataLayer.Models.GladCherryPayment>
+@using MvcPager
+@{
+    ViewBag.Title = "مدیریت اسناد پرداختی";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>مدیریت اسناد پرداختی</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>لیست اسناد پرداختی</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    واریز کننده
+                                </th>
+                                @*<th>
+                                        دریافت کننده
+                                    </th>*@
+                                <th>
+                                    مبلغ به ریال
+                                </th>
+                                <th>
+                                    توضیحات
+                                </th>
+                                <th>
+                                    کد پیگیری
+                                </th>
+                                <th>
+                                    شماره سفارش
+                                </th>
+                                <th>
+                                    شماره تراکنش
+                                </th>
+                                <th>
+                                    تاریخ ثبت پرداخت
+                                </th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.data)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.getStatus
+                                    </td>
+                                    @*@if (item.Contractor == null && item.User == null)
+                                        {
+                                            <td>
+                                                مدیریت
+                                            </td>
+                                        }
+                                        else if (item.Contractor != null && item.Status == 1 || item.Status == 3)
+                                        {
+                                            <td>
+                                               خدمات دهنده : @item.Contractor.FirstName <span> </span> @item.Contractor.LastName
+                                            </td>
+                                        }
+
+                                        else if (item.Contractor != null && item.Status == 2)
+                                        {
+                                            <td>
+                                                مدیریت
+                                            </td>
+                                        }
+
+                                        else if (item.UserId == null && item.Status == 1)
+                                        {
+                                            <td>
+                                                مدیریت
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                تعیین نشده
+                                            </td>
+                                        }*@
+                                    <td>
+                                        @item.Amount
+                                    </td>
+                                    <td>
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                        @item.TrackingCode
+                                    </td>
+                                    @if (item.OrderId != null)
+                                    {
+                                        <td>
+                                            @item.OrderId
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            ندارد
+                                        </td>
+                                    }
+                                    @if (item.TransactionId != null)
+                                    {
+                                        <td>
+                                            @item.TransactionId
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            ندارد
+                                        </td>
+                                    }
+                                    <td>
+                                        @AtaTaxi.Helpers.FunctionsHelper.GetPersianDateTime((DateTime)item.CreateDate, true, true).ToString()
+                                    </td>
+                                    <td>
+                                        @*@Html.ActionLink("ویرایش", "Edit", new { id = item.Id }, new { @class = "btn btn-warning btn-xs" })*@
+                                        @*@Html.ActionLink("جزئیات", "Details", new { id = item.Id }, new { @class = "btn btn-info btn-xs" }) |*@
+                                        @Html.ActionLink("حذف", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-xs" })
+                                        @*@Html.ActionLink("تراکنش", "Transaction", new { id = item.Id }, new { @class = "btn btn-primary btn-xs" }) |
+                                            @Html.ActionLink("پرسش و پاسخ", "Answers", new { id = item.Id, userId = item.UserId }, new { @class = "btn btn-warning btn-xs" }) |
+                                            @Html.ActionLink("شکایات", "Complaints", new { id = item.Id }, new { @class = "btn btn-default btn-xs" }) |
+                                            @Html.ActionLink("امتیازات", "Scorings", new { id = item.Id }, new { @class = "btn btn-score btn-xs" }) |
+                                            @Html.ActionLink("پیشنهادات", "ContractorSuggestions", new { id = item.Id }, new { @class = "btn btn-success btn-md btn-xs" })*@
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-6" style="direction: ltr">
+                            <ul class="pagination pagination-sm">
+                                <li>@Html.Pager(10, Model.CurrentPage, Model.TotalItemCount)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

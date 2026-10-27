@@ -1,0 +1,46 @@
+﻿@{
+    Layout = null;
+}
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>نتیجه تراکنش</title>
+    <style>
+        @@font-face {
+            font-family: 'iransans';
+            src: url('../fonts/IranSans/eot/IRANSansWeb_Bold.eot') format('eot'), url('../fonts/IranSans/woff/IRANSansWeb_Bold.woff') format('woff'), url('../fonts/IranSans/ttf/IRANSansWeb_Bold.ttf'), url('../fonts/IranSans/woff/IRANSansWeb_Bold.woff') format('woff2'), url('../fonts/IranSans/woff2/IRANSansWeb_Bold.woff2') format('truetype');
+            font-style: normal;
+            font-weight: normal;
+        }
+
+        a {
+            color: #00b48a;
+            text-decoration: none;
+            border: 2px solid;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+            a:hover {
+                background-color: #b6f7e8;
+            }
+
+        body {
+            font-family: iransans;
+            background-color: #f4f1f7;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23000000' fill-opacity='0.14' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center;direction:rtl;padding-top:50px;">@ViewBag.Message</h2><br />
+    <div style="text-align:center;">
+        <img src="~/images/sep-logo-new91.png" width="160" class="img-responsive" />
+        <img src="~/images/pransa_logo_web.png" width="100" class="img-responsive" />
+        <h3>کلینیک شنوایی و سمعک شکوه تجریش ، آزمایشات شنوایی و تجویز سمعک</h3>
+        <a class="btn btn-danger btn-xs" href="intent:#Intent;action=gladcherry.TajrishSamak.MainCategories;end">اپلیکیشن کلینیک شنوایی و سمعک شکوه تجریش</a>
+        <br /><br /><br />
+        @Html.ActionLink("بازگشت به سایت", "Index", "Home", new { area = "" }, new { @class = "btn btn-danger btn-xs" })
+    </div>
+</body>
+</html>

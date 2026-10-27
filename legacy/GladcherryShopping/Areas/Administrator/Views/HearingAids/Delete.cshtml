@@ -1,0 +1,201 @@
+﻿@model DataLayer.Models.Product
+
+@{
+    ViewBag.Title = "حذف محصول";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>مدیریت محصولات</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5> آیا از حذف این محصول با عنوان <span style="color:darkred"> @Model.PersianName </span> اطمینان دارید ؟ </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div>
+                        @*<h4>HubSYS Software Application 2016-2017</h4>
+                            <hr />*@
+                        <dl class="dl-horizontal">
+                            <dt>
+                                @Html.DisplayNameFor(model => model.PersianName)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.PersianName)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.EnglishName)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.EnglishName)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.UnitPrice)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.UnitPrice) ریال
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Stock)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Stock)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.DiscountPercent)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.DiscountPercent) %
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </dt>
+
+                            <dd>
+                                @Html.Raw(Model.Description)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SliderImage)
+                            </dt>
+
+                            <dd>
+                                @if (Model.SliderImage != null)
+                                {
+                                    <img src="@Model.SliderImage" width="200" />
+                                }
+                                else
+                                {
+                                    <span>فاقد عکس</span>
+                                }
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.AppSmallImage)
+                            </dt>
+
+                            <dd>
+                                @if (Model.AppSmallImage != null)
+                                {
+                                    <img src="@Model.AppSmallImage" width="200" />
+                                }
+                                else
+                                {
+                                    <span>فاقد عکس</span>
+                                }
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.AppLargeImage)
+                            </dt>
+
+                            <dd>
+                                @if (Model.AppLargeImage != null)
+                                {
+                                    <img src="@Model.AppLargeImage" width="200" />
+                                }
+                                else
+                                {
+                                    <span>فاقد عکس</span>
+                                }
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SiteFirstImage)
+                            </dt>
+
+                            <dd>
+                                @if (Model.SiteFirstImage != null)
+                                {
+                                    <img src="@Model.SiteFirstImage" width="200" />
+                                }
+                                else
+                                {
+                                    <span>فاقد عکس</span>
+                                }
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SiteSecondImage)
+                            </dt>
+
+                            <dd>
+                                @if (Model.SiteSecondImage != null)
+                                {
+                                    <img src="@Model.SiteSecondImage" width="200" />
+                                }
+                                else
+                                {
+                                    <span>فاقد عکس</span>
+                                }
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SiteThirdImage)
+                            </dt>
+
+                            <dd>
+                                @if (Model.SiteThirdImage != null)
+                                {
+                                    <img src="@Model.SiteThirdImage" width="200" />
+                                }
+                                else
+                                {
+                                    <span>فاقد عکس</span>
+                                }
+                            </dd>
+                            <br />
+                            <dt>
+                                @Html.DisplayNameFor(model => model.CreateDate)
+                            </dt>
+                            <br />
+                            <dd>
+                                @GladCherryShopping.Helpers.FunctionsHelper.GetPersianDateTime(Model.CreateDate, true, true)
+                            </dd>
+
+                        </dl>
+                    </div>
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-actions no-color">
+                            <input type="submit" value="حذف" class="btn btn-danger btn-md" /> |
+                            @Html.ActionLink("بازگشت به لیست", "Index", null, new { @class = "btn btn-default btn-md" })
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+﻿@using DataLayer.ViewModels
+@model LoginViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ورود به مدیریت شکوه تجریش</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Credit Login / Register Form Responsive Widget,Login form widgets, Sign up Web forms , Login signup Responsive web form,Flat Pricing table,Flat Drop downs,Registration Forms,News letter Forms,Elements" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!-- Custom Theme files -->
+    <link href="~/Content/Login/font-awesome.min.css" rel="stylesheet" media="all" />
+    <link href="~/Content/Login/popuo-box.css" rel="stylesheet media=" all"" />
+    <link href="~/Content/Login/style.css" rel="stylesheet" media="all" />
+    <!-- //Custom Theme files -->
+</head>
+<body>
+    <h1>Shokouh Tajrish Management Login</h1>
+    <div class="main-agileits">
+        <!--form-stars-here-->
+        <div class="form-gladcherry-agile">
+            <h2> ورود به مدیریت شکوه تجریش</h2>
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-sub-gladcherry">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "UserName" })
+                    <div class="icon-gladcherry">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-sub-gladcherry">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password" })
+                    <div class="icon-gladcherry">
+                        <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                </div>
+                <p class="p-bottom-gladcherryls"><a target="_blank" class="gladcherry_play_icon1" href="/"> بازگشت به سایت </a></p>
+                <div class="submit-gladcherryl">
+                    <input type="submit" value="ورود">
+                </div>
+            }
+        </div>
+        <!--//form-ends-here-->
+    </div>
+    <!-- copyright -->
+    <div class="copyright gladcherry-agile">
+        <p>تمامی حقوق برای شکوه تجریش محفوظ است</p>
+    </div>
+    <!-- //copyright -->
+    <script src="~/Scripts/jquery-3.1.1.js"></script>
+</body>
+</html>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

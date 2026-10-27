@@ -1,0 +1,74 @@
+﻿@model DataLayer.Models.Payment
+
+@{
+    ViewBag.Title = "حذف سند پرداختی";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>حذف سند پرداختی</h2>
+
+<h3>آیا از حذف این سند پرداختی اطمینان دارید ؟</h3>
+<div>
+    @*<h4>Payment</h4>*@
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayName("مبلغ")
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Amount) ریال
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.getStatus)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActionType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.getActionType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateDate)
+        </dd>*@
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TrackingCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TrackingCode)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="حذف" class="btn btn-danger" /> |
+            @Html.ActionLink("بازگشت به لیست اسناد پرداختی", "Index",null,new { @class = "btn btn-default" })
+        </div>
+    }
+</div>

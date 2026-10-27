@@ -1,0 +1,129 @@
+﻿@model DataLayer.Models.Brand
+
+@{
+    ViewBag.Title = "افزودن برند جدید";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>مدیریت برند ها</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5> افزودن برند جدید </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    @using (Html.BeginForm("Create", "Brands", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PersianName, htmlAttributes: new { @class = "control-label col-md-2 text-right" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.PersianName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.PersianName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EnglishName, htmlAttributes: new { @class = "control-label col-md-2 text-right" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.EnglishName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.EnglishName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Icon, htmlAttributes: new { @class = "control-label col-md-2 text-right" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.Icon, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Icon, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-10 pull-left">
+                                    <div class="alert alert-info text-right">
+                                        <strong> توجه! </strong>  کاربر گرامی جهت مشاهده آیکون های قابل استفاده از لینک زیر استفاده کنید . <br /><br />
+                                        <p style="text-indent:10px;"><a target="_blank" href="http://fontawesome.io/icons" style="font-weight:bold;color:#31708f"> لینک آیکون های قابل استفاده </a></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SmallImage, htmlAttributes: new { @class = "control-label col-md-2 text-right" })
+                                <div class="col-md-10">
+                                    <input type="file" name="small_image" class="form-control" />
+                                    @Html.ValidationMessageFor(model => model.SmallImage, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LargeImage, htmlAttributes: new { @class = "control-label col-md-2 text-right" })
+                                <div class="col-md-10">
+                                    <input type="file" name="large_image" class="form-control" />
+                                    @Html.ValidationMessageFor(model => model.LargeImage, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2 text-right">تصویر پس زمینه برند</label>
+                                <div class="col-md-10">
+                                    <input type="file" name="background_image" class="form-control" />
+                                    @Html.ValidationMessageFor(model => model.BackgroundProImage, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2 text-right"> نام برند پدر </label>
+                                @*@Html.LabelFor(model => model.ParentId, "ParentId", htmlAttributes: new { @class = "control-label col-md-2 text-right" })*@
+                                <div class="col-md-10">
+                                    @Html.DropDownList("ParentId", null, "لطفا انتخاب کنید", htmlAttributes: new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.ParentId, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-10 pull-left">
+                                    <div class="alert alert-info text-right">
+                                        <strong> توجه! </strong>  کاربر گرامی در صورتی که هیچ برندی را انتخاب نکنید ، این دسته یه عنوان برند اصلی محسوب می گردد . <br /><br />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="ذخیره اطلاعات" class="btn btn-success btn-md" />
+                                    @Html.ActionLink("بازگشت به لیست", "Index", null, new { @class = "btn btn-default btn-md" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

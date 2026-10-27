@@ -1,0 +1,152 @@
+﻿@model DataLayer.ViewModels.PagerViewModel.PagerViewModels<DataLayer.Models.Product>
+@{ GladcherryShopping.Models.ApplicationDbContext content = new GladcherryShopping.Models.ApplicationDbContext();}
+@using MvcPager
+@{
+    ViewBag.Title = "لیست محصولات ویژه";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+    <meta name="description" content="برند VIP با مدیریت پیام کاویانی ستاره سابق تیم ملی والیبال از برترین برند های ورزشی حال حاضر بوده که در تولید لباس ورزشی ، کفش ورزشی ، اکسسوری و دیگر وسایل ورزشی و طراحی لباس های تیم های ملی والیبال شهرت بسیاری دارد ." />
+    <meta name="keywords" content="لباس , کفش , شلوار , برند , وی آی پی , تخفیف , حراجی , زنانه , پوشاک ترک , کفش زنانه , نایک , نیوبالانس , برند ترکیه , vip , کفش ورزشی , آدیداس , بچگانه" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="http://gladcherry.com">
+    <meta name="Designer" content="Design, Develope by, GladCherry, Co. Email : info@gladcherry.com">
+    <meta name="copyright" content="http://gladcherry.com, 2017 - software company">
+    <meta name="expires" content="never">
+    <meta name="rating" content="Safe For Kids">
+    <meta name="og:site_name" content="فروشگاه VIP" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:url" content="https://vipiranian.org/" />
+    <meta name="robots" content="INDEX,FOLLOW">
+    <meta name="googlebot" content="index">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">
+    <meta name="twitter:title" content="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">
+    <meta name="twitter:domain" content="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">
+}
+
+@section Styles{
+}
+
+<div class="product-big-title-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="product-bit-title text-center">
+                    <h2 title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">لیست محصولات ویژه</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="single-product-area">
+    <div class="zigzag-bottom"></div>
+    <div class="container">
+        <div class="row">
+            @if (Model.data.Count() > 0)
+            {
+                <form action="/Product/Filter" method="get">
+                    <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 pull-right">
+                        <section class="sky-form">
+                            <h4 title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">درصد تخفیف</h4>
+                            <div class="row1 row2 scroll-pane">
+                                <div class="col col-4">
+                                    <label class="radio"><input value="60" type="radio" name="Discount"><i></i>60 درصد به بالا</label>
+                                    <label class="radio"><input value="50" type="radio" name="Discount"><i></i>50 درصد به بالا</label>
+                                    <label class="radio"><input value="40" type="radio" name="Discount"><i></i>40 درصد به بالا</label>
+                                </div>
+                                <div class="col col-4">
+                                    <label class="radio"><input value="30" type="radio" name="Discount"><i></i>30 درصد به بالا</label>
+                                    <label class="radio"><input value="20" type="radio" name="Discount"><i></i>20 درصد به بالا</label>
+                                    <label class="radio"><input value="10" type="radio" name="Discount"><i></i>10 درصد به بالا</label>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="sky-form">
+                            <h4 title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران">دسته بندی</h4>
+                            <div class="row1 row2 scroll-pane">
+                                <div class="col col-4">
+                                    @foreach (var item in content.Categories.Where(current => current.SmallImage != null && current.ParentId == null).OrderBy(current => current.PersianName).Take(7).ToList())
+                                    {
+                                        <label class="radio"><input value="@item.Id" type="radio" name="Category"><i></i>@item.PersianName</label>
+                                    }
+                                </div>
+                            </div>
+                        </section>
+                        <input type="submit" value="اعمال فیلتر" />
+                    </div>
+                </form>
+                foreach (var product in Model.data)
+                {
+                    <div class="col-md-3 col-sm-6">
+                        <div class="single-shop-product">
+                            <div class="product-upper">
+                                @if (product.SiteFirstImage != null)
+                                {
+                                    <img src="@product.SiteFirstImage" alt="@product.PersianName" title="@product.PersianName">
+                                }
+                                else
+                                {
+                                    <img src="~/images/hand-shake.png" alt="@product.PersianName" title="@product.PersianName">
+                                }
+                            </div>
+                            <h2><a title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" href="/Product/Details/@product.Id">@product.PersianName</a></h2>
+                            <div class="product-carousel-price">
+                                @if (product.DiscountPercent > 0)
+                                {
+                                    int pricewithdiscount = product.UnitPrice - (product.UnitPrice) * (product.DiscountPercent) / 100;
+
+                                    <ins>@pricewithdiscount ریال</ins> <del>@product.UnitPrice</del>
+
+                                }
+                                else
+                                {
+                                    <ins>@product.UnitPrice ریال</ins> <del>@product.UnitPrice</del>
+                                }
+                            </div>
+
+                            <div class="product-option-shop">
+                                @if (product.Stock > 0)
+                                {
+                                    <a title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" class="add_to_cart_button btncard" data-quantity="1" data-product_sku="" productid="@product.Id" rel="nofollow" href="~/Home/Basket/@product.Id">سبد خرید</a>
+                                }
+                                else
+                                {
+                                    <a title="فروشگاه VIP | برترین تولید کننده لباس ورزشی در ایران" class="add_to_cart_button" data-quantity="1" data-product_sku="">ناموجود</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            else
+            {
+                <span>محصولی در این دسته بندی وجود ندارد .</span>
+            }
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="product-pagination text-center">
+                    <nav>
+                        @{
+                            string Search = Request.QueryString["Search"];
+                        }
+                        <ul class="pagination pagination-sm">
+                            <li>@Html.Pager(10, Model.CurrentPage, Model.TotalItemCount, new RouteValueDictionary { { "Search", Search } })</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+}

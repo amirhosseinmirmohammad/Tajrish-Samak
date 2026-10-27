@@ -1,0 +1,64 @@
+﻿@model DataLayer.Models.NewsLetter
+
+@{
+    ViewBag.Title = "حذف عضو خبرنامه";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<h2>مدیریت اعضای خبرنامه</h2>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5> آیا از حذف این عضو خبرنامه با ایمیل <span style="color:darkred"> @Model.Email </span> اطمینان دارید ؟ </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li>
+                                <a href="#">گزینه 1</a>
+                            </li>
+                            <li>
+                                <a href="#">گزینه 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div>
+                        @*<h4>HubSYS Software Application 2016-2017</h4>
+                            <hr />*@
+                        <dl class="dl-horizontal">
+
+                            <dt>
+                                <span>ایمیل</span>
+                            </dt>
+
+                            <dd>
+                                @Model.Email
+                            </dd>                          
+
+                        </dl>
+                    </div>
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-actions no-color">
+                            <input type="submit" value="حذف" class="btn btn-danger btn-md" /> |
+                            @Html.ActionLink("بازگشت به لیست", "Index", null, new { @class = "btn btn-default btn-md" })
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

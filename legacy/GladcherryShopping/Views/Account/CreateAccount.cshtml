@@ -1,0 +1,98 @@
+﻿@{
+    ViewBag.Title = "حساب کاربری در پرنسا";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Metas{
+    @*<meta name="description" content="سفارش آنلاین انواع چینی آلات">
+    <meta name="keywords" content="سفارش آنلاین , چینی آلات">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="http://gladcherry.com">
+    <meta name="Designer" content="Design, Develope by, GladCherry, Co. Email : info@gladcherry.com">
+    <meta name="copyright" content="http://gladcherry.com, 2017 - software company">
+    <meta name="expires" content="never">
+    <meta name="rating" content="Safe For Kids">
+    <meta name="og:site_name" content="چینی آلات" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:url" content="https://ajoorr.com/" />
+    <meta name="robots" content="INDEX,FOLLOW">
+    <meta name="googlebot" content="index">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="سفارش آنلاین انواع چینی آلات">
+    <meta name="twitter:title" content="سفارش آنلاین انواع چینی آلات">
+    <meta name="twitter:domain" content="سفارش آنلاین انواع چینی آلات">*@
+}
+
+@section Styles{
+}
+
+<!-- Navigation -->
+
+@if (TempData["Error"] != null)
+{
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog" style="margin-top:80px;text-align:right;direction:rtl;">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">وضعیت تایید</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger">@TempData["Error"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!--sign in start here-->
+<div class="signin">
+    <div class="container">
+        <div class="signin-main">
+            <h1>ثبت نام در پرنسا</h1>
+            @*<h2>Informations</h2>*@
+            <form method="post" action="/Account/GenerateVerificationCode">
+                @Html.AntiForgeryToken()
+                <div style="margin-top:50px" class="col-md-6 col-md-offset-3">
+                    <div>
+                        <input style="width:100%" type="text" name="PhoneNumber" placeholder="شماره تلفن همراه" required>
+                    </div>
+                    <div>
+                        <input style="width:100%;margin: 0em 2.5em 1em 0em;" name="Name" type="text" class="no-margin" placeholder="نام">
+                    </div>
+                    <div>
+                        <input style="width:100%;margin: 0em 2.5em 1em 0em;" name="Family" type="text" class="no-margin" placeholder="نام خانوادگی">
+                    </div>
+                    <div>
+                        <div style="width:71px;height:36px;margin:0 auto">
+                            <input style="margin:0 auto" type="submit" value="ثبت نام">
+                        </div>
+                    </div>
+                </div>
+                @*<input type="password" placeholder="Password" required="" />
+                    <input type="password" class="no-margin" placeholder="Confirm Password" required="" />
+                    <span class="checkbox1">
+                        <label class="checkbox"><input type="checkbox" name="" checked=""><i> </i>i agree terms of use and privacy</label>
+                    </span>*@
+
+            </form>
+        </div>
+    </div>
+</div>
+<!--sign in end here-->
+
+@section Scripts{
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#myModal").modal();
+        });
+    </script>
+}
+
+

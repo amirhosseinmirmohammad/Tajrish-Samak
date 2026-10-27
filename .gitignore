@@ -1,0 +1,27 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+
+## IDE
+.vs/
+.idea/
+
+## legacy copy: assets stay on disk, but the huge binary tree isn't versioned
+## (the original lives in the tajrish-samak repo / on the server)
+legacy/css/blog/
+legacy/images/
+legacy/Content/images/
+legacy/Content/404/
+legacy/GladcherryShopping.bak/
+
+## keep legacy source + config for reference
+!legacy/**/*.cs
+!legacy/**/*.cshtml
+!legacy/**/*.csproj
+!legacy/**/*.config
+
+## logs / temp
+*.log
+app-*.log
