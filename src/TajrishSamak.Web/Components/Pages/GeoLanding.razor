@@ -1,0 +1,283 @@
+@page "/{areaSlug}/{serviceSlug}"
+@using TajrishSamak.Web.Services
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+
+<PageTitle>@(page?.Title ?? "صفحه یافت نشد")</PageTitle>
+
+@if (notFound || page == null)
+{
+    <h1 style="text-align:center;padding:60px 20px;">صفحه مورد نظر پیدا نشد</h1>
+    <p style="text-align:center;"><a href="/">بازگشت به صفحه اصلی</a></p>
+    return;
+}
+
+<meta name="description" content="@(page.MetaDescription)" />
+<link rel="canonical" href="@(page.Canonical)" />
+<meta property="og:title" content="@(page.Title)" />
+<meta property="og:description" content="@(page.MetaDescription)" />
+<meta property="og:url" content="@(page.Canonical)" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+<meta property="og:locale" content="fa_IR" />
+<meta name="twitter:title" content="@(page.Title)" />
+<meta name="twitter:description" content="@(page.MetaDescription)" />
+<meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+<link rel="stylesheet" href="css/gp-geo-landing.css" />
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@graph": [
+    {
+      "@@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@@type": "ListItem", "position": 1, "name": "صفحه اصلی", "item": "https://tajrish-samak.ir/" },
+        { "@@type": "ListItem", "position": 2, "name": "@(page.MainService)", "item": "@(page.Canonical)" }
+      ]
+    },
+    {
+      "@@type": "Service",
+      "@@id": "@(page.Canonical)#service",
+      "name": "@(page.H1)",
+      "serviceType": "@(page.MainService)",
+      "description": "@(page.MetaDescription)",
+      "areaServed": [
+        { "@@type": "Place", "name": "@(page.District)" },
+        { "@@type": "City", "name": "@(page.City)" }
+      ],
+      "provider": {
+        "@@type": ["LocalBusiness", "MedicalBusiness", "MedicalClinic"],
+        "@@id": "https://tajrish-samak.ir/#tajrish-samak",
+        "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+        "url": "https://tajrish-samak.ir/",
+        "telephone": "+982122735588",
+        "address": {
+          "@@type": "PostalAddress",
+          "addressCountry": "IR",
+          "addressRegion": "تهران",
+          "addressLocality": "تهران",
+          "streetAddress": "میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰"
+        }
+      }
+    },
+    {
+      "@@type": "FAQPage",
+      "@@id": "@(page.Canonical)#faq",
+      "mainEntity": [
+        @for (var i = 0; i < page.Faqs.Length; i++)
+        {
+          <text>
+          {
+            "@@type": "Question",
+            "name": "@(page.Faqs)[i].Question",
+            "acceptedAnswer": { "@@type": "Answer", "text": "@(page.Faqs)[i].Answer" }
+          }@(i < page.Faqs.Length - 1 ? "," : "")
+          </text>
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<section class="gp-geo-page" aria-label="@(page.H1)">
+    <div class="container">
+        <section class="gp-geo-hero">
+            <div class="gp-geo-hero-grid">
+                <div>
+                    <span class="gp-geo-kicker">@(page.Kicker)</span>
+                    <h1>@(page.H1)</h1>
+                    <p>@(page.MetaDescription)</p>
+                    <div class="gp-geo-actions">
+                        <a href="tel:02122735588">☎ @(page.CtaText)</a>
+                        <a href="https://wa.me/+989393388985">مشاوره در واتساپ</a>
+                    </div>
+                </div>
+
+                <div class="gp-geo-stats">
+                    <div class="gp-geo-stat">
+                        <strong>تهران</strong>
+                        <span>محدوده خدمات</span>
+                    </div>
+                    <div class="gp-geo-stat">
+                        <strong>تجریش</strong>
+                        <span>موقعیت کلینیک</span>
+                    </div>
+                    <div class="gp-geo-stat">
+                        <strong>تخصصی</strong>
+                        <span>@(page.MainService)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="gp-geo-shell">
+            <main class="gp-geo-card gp-geo-main">
+                <section class="gp-geo-answer">
+                    <h2>پاسخ کوتاه</h2>
+                    <p>@(page.ShortAnswer)</p>
+                    @if (page.RouteNote != null)
+                    {
+                        <p class="gp-geo-muted-note">@(page.RouteNote)</p>
+                    }
+                </section>
+
+                @if (page.SearchIntentText != null || page.CompetitorAngle != null)
+                {
+                    <section>
+                        <h2>چرا این صفحه به جستجوی شما نزدیک است؟</h2>
+                        @if (page.SearchIntentText != null)
+                        {
+                            <p>@(page.SearchIntentText)</p>
+                        }
+                        @if (page.CompetitorAngle != null)
+                        {
+                            <p>@(page.CompetitorAngle)</p>
+                        }
+                    </section>
+                }
+
+                <section>
+                    <h2>چرا شکوه تجریش برای @(page.MainService)؟</h2>
+                    <div class="gp-geo-grid">
+                        @foreach (var benefit in page.Benefits)
+                        {
+                            <div class="gp-geo-mini">
+                                <strong>مزیت کلینیک</strong>
+                                <span>@benefit</span>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <section>
+                    <h2>مراحل مراجعه</h2>
+                    <ul class="gp-geo-list">
+                        @foreach (var step in page.Steps)
+                        {
+                            <li>@step</li>
+                        }
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>چه کسانی بهتر است اقدام کنند؟</h2>
+                    <ul class="gp-geo-list">
+                        @foreach (var item in page.WhoNeeds)
+                        {
+                            <li>@item</li>
+                        }
+                    </ul>
+                </section>
+
+                @if (page.LocalProofs != null)
+                {
+                    <section>
+                        <h2>نکته‌های محلی و کاربردی</h2>
+                        <ul class="gp-geo-list">
+                            @foreach (var proof in page.LocalProofs)
+                            {
+                                <li>@proof</li>
+                            }
+                        </ul>
+                    </section>
+                }
+
+                <section class="gp-related-section">
+                    <h2 class="gp-related-title">@(page.RelatedTitle)</h2>
+                    <p class="gp-related-desc">@(page.RelatedDescription)</p>
+                    @if (page.RelatedLinks != null)
+                    {
+                        <div class="gp-related-grid">
+                            @foreach (var link in page.RelatedLinks)
+                            {
+                                <a class="gp-related-card" href="@link.Url">
+                                    <span class="gp-related-icon">🔗</span>
+                                    <span class="gp-related-text">@link.Text</span>
+                                </a>
+                            }
+                        </div>
+                    }
+                </section>
+
+                <section>
+                    <h2>سوالات پرتکرار</h2>
+                    <div class="gp-geo-faq">
+                        @foreach (var faq in page.Faqs)
+                        {
+                            <details>
+                                <summary>@faq.Question</summary>
+                                <p>@faq.Answer</p>
+                            </details>
+                        }
+                    </div>
+                </section>
+            </main>
+
+            <aside class="gp-geo-side">
+                <section class="gp-geo-side-card">
+                    <h3>تماس با کلینیک</h3>
+                    <p>برای هماهنگی مراجعه یا دریافت مشاوره اولیه، با کلینیک شنوایی و سمعک شکوه تجریش تماس بگیرید.</p>
+                    <a class="gp-geo-side-cta" href="tel:02122735588">تماس</a>
+                </section>
+
+                <section class="gp-geo-side-card">
+                    <h3>کلمات مرتبط</h3>
+                    <div class="gp-geo-chip-list">
+                        @foreach (var keyword in page.Keywords)
+                        {
+                            <span>@keyword</span>
+                        }
+                    </div>
+                </section>
+
+                <section class="gp-geo-side-card">
+                    <h3>مناطق تحت پوشش</h3>
+                    <div class="gp-geo-chip-list">
+                        @foreach (var area in page.Areas)
+                        {
+                            <span>@area</span>
+                        }
+                    </div>
+                </section>
+
+                <section class="gp-geo-side-card">
+                    <h3>لینک‌های مهم</h3>
+                    <div class="gp-geo-chip-list">
+                        <a href="/Service/All">خدمات</a>
+                        <a href="/Product/All">محصولات سمعک</a>
+                        <a href="/Blog/All">مجله کلینیک</a>
+                        <a href="/contactus">تماس با ما</a>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </div>
+</section>
+
+@code {
+    [Parameter] public string areaSlug { get; set; }
+    [Parameter] public string serviceSlug { get; set; }
+
+    private GeoLandingPage page;
+    private bool notFound;
+
+    protected override void OnParametersSet()
+    {
+        if (GeoCatalog.TryFind(areaSlug, serviceSlug, out var location, out var service))
+        {
+            page = GeoPageBuilder.Build(location, service);
+            notFound = false;
+        }
+        else
+        {
+            page = null;
+            notFound = true;
+
+            if (Http.HttpContext != null)
+            {
+                Http.HttpContext.Response.StatusCode = 404;
+            }
+        }
+    }
+}

@@ -30,6 +30,7 @@ builder.Services.AddRazorComponents()
 // ---------------- memory cache: the legacy layout ran 4 DB queries per request,
 // these are now cached (categories/brands/service categories) ----------------
 builder.Services.AddMemoryCache();
+builder.Services.AddHttpContextAccessor();
 
 // ---------------- response output caching for public pages ----------------
 builder.Services.AddOutputCache(options =>

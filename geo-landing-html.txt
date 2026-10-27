@@ -1,0 +1,178 @@
+<section class="gp-geo-page" aria-label="@Html.Raw(Entity(page.H1))">
+    <div class="container">
+        <section class="gp-geo-hero">
+            <div class="gp-geo-hero-grid">
+                <div>
+                    <span class="gp-geo-kicker">@page.Kicker</span>
+                    <h1>@H(page.H1)</h1>
+                    <p>@H(page.MetaDescription)</p>
+                    <div class="gp-geo-actions">
+                        <a href="tel:02122735588">&#9742; @page.CtaText</a>
+                        <a href="https://wa.me/+989393388985">@H(T("\u0645\u0634\u0627\u0648\u0631\u0647 \u062F\u0631 \u0648\u0627\u062A\u0633\u0627\u067E"))</a>
+                    </div>
+                </div>
+
+                <div class="gp-geo-stats">
+                    <div class="gp-geo-stat">
+                        <strong>@H(T("\u062A\u0647\u0631\u0627\u0646"))</strong>
+                        <span>@H(T("\u0645\u062D\u062F\u0648\u062F\u0647 \u062E\u062F\u0645\u0627\u062A"))</span>
+                    </div>
+                    <div class="gp-geo-stat">
+                        <strong>@H(T("\u062A\u062C\u0631\u06CC\u0634"))</strong>
+                        <span>@H(T("\u0645\u0648\u0642\u0639\u06CC\u062A \u06A9\u0644\u06CC\u0646\u06CC\u06A9"))</span>
+                    </div>
+                    <div class="gp-geo-stat">
+                        <strong>@H(T("\u062A\u062E\u0635\u0635\u06CC"))</strong>
+                        <span>@H(page.MainService)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="gp-geo-shell">
+            <main class="gp-geo-card gp-geo-main">
+                <section class="gp-geo-answer">
+                    <h2>@H(T("\u067E\u0627\u0633\u062E \u06A9\u0648\u062A\u0627\u0647"))</h2>
+                    <p>@page.ShortAnswer</p>
+                    @if (page.RouteNote != null)
+                    {
+                        <p class="gp-geo-muted-note">@H(page.RouteNote)</p>
+                    }
+                </section>
+
+                @if (page.SearchIntentText != null || page.CompetitorAngle != null)
+                {
+                    <section>
+                        <h2>@H(T("\u0686\u0631\u0627 \u0627\u06CC\u0646 \u0635\u0641\u062D\u0647 \u0628\u0647 \u062C\u0633\u062A\u062C\u0648\u06CC \u0634\u0645\u0627 \u0646\u0632\u062F\u06CC\u06A9 \u0627\u0633\u062A\u061F"))</h2>
+                        @if (page.SearchIntentText != null)
+                        {
+                            <p>@H(page.SearchIntentText)</p>
+                        }
+                        @if (page.CompetitorAngle != null)
+                        {
+                            <p>@H(page.CompetitorAngle)</p>
+                        }
+                    </section>
+                }
+
+                <section>
+                    <h2>@H(T("\u0686\u0631\u0627 \u0634\u06A9\u0648\u0647 \u062A\u062C\u0631\u06CC\u0634 \u0628\u0631\u0627\u06CC "))@H(page.MainService)@H(T("\u061F"))</h2>
+                    <div class="gp-geo-grid">
+                        @foreach (var benefit in page.Benefits)
+                        {
+                            <div class="gp-geo-mini">
+                                <strong>@H(T("\u0645\u0632\u06CC\u062A \u06A9\u0644\u06CC\u0646\u06CC\u06A9"))</strong>
+                                <span>@H(benefit)</span>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <section>
+                    <h2>@H(T("\u0645\u0631\u0627\u062D\u0644 \u0645\u0631\u0627\u062C\u0639\u0647"))</h2>
+                    <ul class="gp-geo-list">
+                        @foreach (var step in page.Steps)
+                        {
+                            <li>@H(step)</li>
+                        }
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>@H(T("\u0686\u0647 \u06A9\u0633\u0627\u0646\u06CC \u0628\u0647\u062A\u0631 \u0627\u0633\u062A \u0627\u0642\u062F\u0627\u0645 \u06A9\u0646\u0646\u062F\u061F"))</h2>
+                    <ul class="gp-geo-list">
+                        @foreach (var item in page.WhoNeeds)
+                        {
+                            <li>@H(item)</li>
+                        }
+                    </ul>
+                </section>
+
+                @if (page.LocalProofs != null)
+                {
+                    <section>
+                        <h2>@H(T("\u0646\u06A9\u062A\u0647\u200C\u0647\u0627\u06CC \u0645\u062D\u0644\u06CC \u0648 \u06A9\u0627\u0631\u0628\u0631\u062F\u06CC"))</h2>
+                        <ul class="gp-geo-list">
+                            @foreach (var proof in page.LocalProofs)
+                            {
+                                <li>@H(proof)</li>
+                            }
+                        </ul>
+                    </section>
+                }
+
+            <section class="gp-related-section">
+                <h2 class="gp-related-title">@H(page.RelatedTitle)</h2>
+
+                <p class="gp-related-desc">
+                    @H(page.RelatedDescription)
+                </p>
+
+                @if (page.RelatedLinks != null)
+                {
+                    <div class="gp-related-grid">
+                        @foreach (var link in page.RelatedLinks)
+                        {
+                            <a class="gp-related-card" href="@link.Url">
+                                <span class="gp-related-icon">🔗</span>
+                                <span class="gp-related-text">@H(link.Text)</span>
+                            </a>
+                        }
+                    </div>
+                }
+            </section>
+
+                <section>
+                    <h2>@H(T("\u0633\u0648\u0627\u0644\u0627\u062A \u067E\u0631\u062A\u06A9\u0631\u0627\u0631"))</h2>
+                    <div class="gp-geo-faq">
+                        @foreach (var faq in page.Faqs)
+                        {
+                            <details>
+                                <summary>@H(faq.Question)</summary>
+                                <p>@H(faq.Answer)</p>
+                            </details>
+                        }
+                    </div>
+                </section>
+            </main>
+
+            <aside class="gp-geo-side">
+                <section class="gp-geo-side-card">
+                    <h3>@H(T("\u062A\u0645\u0627\u0633 \u0628\u0627 \u06A9\u0644\u06CC\u0646\u06CC\u06A9"))</h3>
+                    <p>@H(T("\u0628\u0631\u0627\u06CC \u0647\u0645\u0627\u0647\u0646\u06AF\u06CC \u0645\u0631\u0627\u062C\u0639\u0647 \u06CC\u0627 \u062F\u0631\u06CC\u0627\u0641\u062A \u0645\u0634\u0627\u0648\u0631\u0647 \u0627\u0648\u0644\u06CC\u0647\u060C \u0628\u0627 \u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0634\u0646\u0648\u0627\u06CC\u06CC \u0648 \u0633\u0645\u0639\u06A9 \u0634\u06A9\u0648\u0647 \u062A\u062C\u0631\u06CC\u0634 \u062A\u0645\u0627\u0633 \u0628\u06AF\u06CC\u0631\u06CC\u062F."))</p>
+                    <a class="gp-geo-side-cta" href="tel:02122735588">@H(T("\u062A\u0645\u0627\u0633"))</a>
+                </section>
+
+                <section class="gp-geo-side-card">
+                    <h3>@H(T("\u06A9\u0644\u0645\u0627\u062A \u0645\u0631\u062A\u0628\u0637"))</h3>
+                    <div class="gp-geo-chip-list">
+                        @foreach (var keyword in page.Keywords)
+                        {
+                            <span>@H(keyword)</span>
+                        }
+                    </div>
+                </section>
+
+                <section class="gp-geo-side-card">
+                    <h3>@H(T("\u0645\u0646\u0627\u0637\u0642 \u062A\u062D\u062A \u067E\u0648\u0634\u0634"))</h3>
+                    <div class="gp-geo-chip-list">
+                        @foreach (var area in page.Areas)
+                        {
+                            <span>@H(area)</span>
+                        }
+                    </div>
+                </section>
+
+                <section class="gp-geo-side-card">
+                    <h3>@H(T("\u0644\u06CC\u0646\u06A9\u200C\u0647\u0627\u06CC \u0645\u0647\u0645"))</h3>
+                    <div class="gp-geo-chip-list">
+                        <a href="/Service/All">@H(T("\u062E\u062F\u0645\u0627\u062A"))</a>
+                        <a href="/Product/All">@H(T("\u0645\u062D\u0635\u0648\u0644\u0627\u062A \u0633\u0645\u0639\u06A9"))</a>
+                        <a href="/Blog/All">@H(T("\u0645\u062C\u0644\u0647 \u06A9\u0644\u06CC\u0646\u06CC\u06A9"))</a>
+                        <a href="/contactus">@H(T("\u062A\u0645\u0627\u0633 \u0628\u0627 \u0645\u0627"))</a>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </div>
+</section>
