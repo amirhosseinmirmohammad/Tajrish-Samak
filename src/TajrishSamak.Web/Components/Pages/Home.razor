@@ -1,99 +1,733 @@
 @page "/"
 @using TajrishSamak.Web.Data.Entities
-@using Microsoft.Extensions.Caching.Memory
-@using System.Linq
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Caching.Memory
+@using System.Globalization
 @inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
 @inject IMemoryCache Cache
 
 <PageTitle>بهترین کلینیک شنوایی تهران و شمال تهران | سمعک شکوه تجریش</PageTitle>
-<meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش؛ تست شنوایی، آزمایش شنوایی، مشاوره و تجویز سمعک در تجریش و شمال تهران." />
+<meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش در تجریش و شمال تهران؛ تست شنوایی، آزمایش شنوایی، مشاوره خرید سمعک، تجویز و تنظیم سمعک، تعمیر، باتری، قالب و خدمات تخصصی شنوایی." />
+<meta name="Keywords" content="بهترین کلینیک شنوایی تهران، بهترین کلینیک شنوایی شمال تهران، تست شنوایی تجریش، خرید سمعک، تنظیم سمعک، قیمت سمعک، سمعک در شمال تهران" />
+<meta property="og:title" content="بهترین کلینیک شنوایی تهران | شکوه تجریش" />
+<meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+<meta property="og:type" content="website" />
+<meta property="og:description" content="شکوه تجریش؛ کلینیک شنوایی و سمعک در تجریش و شمال تهران برای تست شنوایی، مشاوره، تجویز و تنظیم سمعک." />
+<meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
+<meta name="twitter:description" content="شکوه تجریش؛ کلینیک شنوایی و سمعک در تجریش و شمال تهران برای تست شنوایی، مشاوره، تجویز و تنظیم سمعک." />
+<link rel="canonical" href="https://tajrish-samak.ir/" />
+<link rel="stylesheet" href="css/gp-page-Home_Index.css" />
 
-<section class="gp-home-debug">
-    <h1>کلینیک شنوایی و سمعک شکوه تجریش</h1>
-    <p>نسخه Blazor (.NET 10) - در حال مهاجرت. این صفحه داده‌های واقعی را از دیتابیس می‌خواند.</p>
-    <p style="background:#ffffcc; padding:8px;">DIAG: @_diag</p>
+@if (firstSliderImage != null)
+{
+    <link rel="preload" as="image" href="@firstSliderImage" fetchpriority="high" />
+}
+@if (firstSliderMobileImage != null)
+{
+    <link rel="preload" as="image" href="@firstSliderMobileImage" media="(max-width: 768px)" fetchpriority="high" />
+}
 
-    <div class="gp-home-stats">
-        <div><strong>@_sliderCount</strong><span>اسلایدر</span></div>
-        <div><strong>@_productCount</strong><span>محصول</span></div>
-        <div><strong>@_blogCount</strong><span>مقاله</span></div>
-        <div><strong>@_categoryCount</strong><span>دسته‌بندی</span></div>
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "Organization",
+  "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+  "description": "کلینیک شنوایی و سمعک شکوه تجریش ارائه دهنده خدمات خرید سمعک، تجویز سمعک داخل گوشی، دیجیتال، نامرئی، پشت گوشی با گارانتی بین المللی و آزمایشات شنوایی است .",
+  "logo": "https://tajrish-samak.ir/images/logo_purple.webp",
+  "url": "https://tajrish-samak.ir/",
+  "sameAs": [ "https://www.instagram.com/tajrishsamak/", "https://www.telegram.me/sthc/" ],
+  "address": "تهران - میدان تجریش - خیابان شهرداری - رو به روی سینما آستارا - پلاک ۲۲۴ - ساختمان ۱۱۰ (ورودی قائم)",
+  "contactPoint": [{
+    "@@type": "ContactPoint",
+    "telephone": ["+98-21-22735588"],
+    "contactType": "customer service"
+  }]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@@type": "Question",
+      "name": "برای انتخاب سمعک از کجا شروع کنیم؟",
+      "acceptedAnswer": { "@@type": "Answer", "text": "بهترین شروع، انجام تست شنوایی و بررسی سبک زندگی، سن و نیاز شنیداری فرد توسط متخصص شنوایی است." }
+    },
+    {
+      "@@type": "Question",
+      "name": "آیا مشاوره سمعک در کلینیک شکوه تجریش رایگان است؟",
+      "acceptedAnswer": { "@@type": "Answer", "text": "در کلینیک شنوایی و سمعک شکوه تجریش امکان دریافت مشاوره برای بررسی وضعیت شنوایی و انتخاب مناسب‌تر سمعک فراهم است." }
+    },
+    {
+      "@@type": "Question",
+      "name": "تنظیم سمعک بعد از خرید چه اهمیتی دارد؟",
+      "acceptedAnswer": { "@@type": "Answer", "text": "تنظیم دقیق سمعک باعث وضوح بهتر صدا، راحتی بیشتر و سازگاری بهتر کاربر با محیط‌های شنیداری مختلف می‌شود." }
+    }
+  ]
+}
+</script>
+
+<section id="mainheader" class="gp-v10-compact-hero" aria-label="معرفی کلینیک شنوایی و سمعک شکوه تجریش">
+    <div class="container">
+        <div class="gp-v10-hero-card">
+            <div class="gp-v10-hero-copy">
+                <span class="gp-v10-eyebrow">کلینیک شنوایی شکوه تجریش</span>
+                <h1>شنیدن بهتر،<br />با انتخاب دقیق‌تر</h1>
+                <p>تست شنوایی، مشاوره رایگان، انتخاب و تنظیم تخصصی سمعک .</p>
+                <div class="gp-v10-hero-actions">
+                    <a href="tel:02122735588" class="gp-v10-primary">مشاوره رایگان</a>
+                    <a href="/contactus" class="gp-v10-secondary">رزرو وقت</a>
+                </div>
+            </div>
+            <div class="gp-v10-hero-services" aria-label="دسته‌بندی خدمات">
+                <a href="/tajrish/hearing-test" class="gp-v10-service-card gp-v10-service-a"><span>〰</span><b>تست شنوایی</b><small>ارزیابی دقیق</small></a>
+                <a href="/tajrish/hearing-aid" class="gp-v10-service-card gp-v10-service-b"><span>◖</span><b>انواع سمعک</b><small>انتخاب متناسب</small></a>
+                <a href="/tajrish/hearing-aid-consultation" class="gp-v10-service-card gp-v10-service-c"><span>✦</span><b>مشاوره تخصصی</b><small>تعیین وقت</small></a>
+            </div>
+        </div>
     </div>
-
-    <h2>محصولات اخیر</h2>
-    <ul>
-        @foreach (var p in _products)
-        {
-            <li>
-                <a href="/Product/Details/@p.Id">@p.PersianName</a>
-                @if (!string.IsNullOrWhiteSpace(p.SiteFirstImage))
-                {
-                    <img src="@p.SiteFirstImage" alt="@p.PersianName" width="48" height="48" loading="lazy" />
-                }
-            </li>
-        }
-    </ul>
-
-    <h2>دسته‌بندی‌ها</h2>
-    <ul>
-        @foreach (var c in _categories)
-        {
-            <li>@c.PersianName (@c.Products.Count محصول)</li>
-        }
-    </ul>
 </section>
 
-<style>
-    .gp-home-debug { max-width: 900px; margin: 24px auto; padding: 24px; direction: rtl; font-family: Tahoma, sans-serif; }
-    .gp-home-stats { display: flex; gap: 16px; margin: 16px 0; }
-    .gp-home-stats > div { background: #f7f3fb; border-radius: 14px; padding: 14px 22px; text-align: center; }
-    .gp-home-stats strong { display: block; font-size: 26px; color: #920ab6; }
-</style>
+<section class="gp-hidden-aeo" aria-label="پرسش‌های شنوایی سنجی">
+    <h2>پرسش و پاسخ خدمات شنوایی و سمعک</h2>
+    <h3>برای انتخاب سمعک از کجا شروع کنیم؟</h3>
+    <p>انتخاب سمعک با تست شنوایی، بررسی نوع کم‌شنوایی و مشاوره تخصصی انجام می‌شود.</p>
+    <h3>آیا همه سمعک‌ها برای همه افراد مناسب هستند؟</h3>
+    <p>خیر، نوع سمعک باید بر اساس نتیجه شنوایی‌سنجی، سبک زندگی و نیاز شنیداری هر فرد انتخاب شود.</p>
+    <h3>چرا تنظیم سمعک مهم است؟</h3>
+    <p>تنظیم دقیق باعث افزایش کیفیت شنیدن، کاهش آزار صوتی و سازگاری بهتر با سمعک می‌شود.</p>
+    <h3>بهترین کلینیک شنوایی در شمال تهران چه ویژگی‌هایی دارد؟</h3>
+    <p>کلینیک مناسب باید تست شنوایی دقیق، مشاوره انتخاب سمعک، تنظیم و پیگیری پس از تجویز، خدمات تعمیر، باتری، قالب و دسترسی مناسب از محله‌های شمال تهران داشته باشد.</p>
+    <h3>شکوه تجریش برای کدام مناطق تهران خدمات شنوایی ارائه می‌کند؟</h3>
+    <p>شکوه تجریش در محدوده تجریش و شمیرانات قرار دارد و برای تهران، شمال تهران، نیاوران، قیطریه، زعفرانیه، الهیه، فرمانیه و محله‌های اطراف خدمات شنوایی و سمعک ارائه می‌کند.</p>
+</section>
+
+<section class="gp-ai-answer-v85 gp-home-section" aria-label="معرفی قابل استناد کلینیک شنوایی در تهران و شمال تهران">
+    <div class="container">
+        <div class="gp-ai-answer-v85-shell">
+            <div class="gp-ai-answer-v85-main">
+                <span class="gp-ai-answer-v85-kicker">راهنمای سریع انتخاب کلینیک شنوایی</span>
+                <h2>کلینیک شنوایی و سمعک شکوه تجریش در تهران و شمال تهران</h2>
+                <p>
+                    کلینیک شنوایی و سمعک شکوه تجریش در محدوده میدان تجریش و شمیرانات فعالیت می‌کند و برای مراجعان تهران، شمال تهران، نیاوران، قیطریه، زعفرانیه، الهیه، فرمانیه و محله‌های اطراف، خدمات تست شنوایی، مشاوره انتخاب سمعک، تجویز و تنظیم سمعک، تعمیر سمعک، باتری، قالب سمعک و پیگیری پس از تجویز را ارائه می‌دهد.
+                </p>
+                <div class="gp-ai-answer-v85-actions">
+                    <a href="/tehran/best-audiology-clinic">بهترین کلینیک شنوایی تهران</a>
+                    <a href="/north-tehran/best-audiology-clinic">بهترین کلینیک شنوایی شمال تهران</a>
+                    <a href="/tajrish/hearing-test">شروع با تست شنوایی تجریش</a>
+                </div>
+            </div>
+            <div class="gp-ai-answer-v85-facts">
+                <div>
+                    <b>محدوده اصلی</b>
+                    <span>تجریش، شمیرانات و شمال تهران</span>
+                </div>
+                <div>
+                    <b>خدمات کلیدی</b>
+                    <span>تست شنوایی، تجویز، تنظیم، تعمیر و مشاوره سمعک</span>
+                </div>
+                <div>
+                    <b>مسیر مراجعه</b>
+                    <span>تماس، رزرو وقت، ارزیابی شنوایی و انتخاب راهکار مناسب</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="gp-home-finder-v85 gp-home-section" aria-label="جستجوی سریع خدمت، برند و محله">
+    <div class="container">
+        <div class="gp-finder-v85-shell">
+            <div class="gp-finder-v85-copy">
+                <span class="gp-finder-v85-kicker">جستجوی سریع شکوه تجریش</span>
+                <h2>خدمت، برند یا محله را سریع پیدا کنید</h2>
+                <p>
+                    نام خدمت، برند یا محله را انتخاب کنید؛ یا عبارتی مثل «بهترین کلینیک شنوایی شمال تهران»، «قیمت سمعک سال ۱۴۰۵» و «باتری سمعک تجریش» را مستقیم جستجو کنید.
+                </p>
+                <div class="gp-finder-v85-mini">
+                    <span>۱۰۶+ محدوده</span>
+                    <span>۵۱+ خدمت</span>
+                    <span>برندهای سمعک</span>
+                </div>
+            </div>
+            <div class="gp-finder-v85-card">
+                <div class="gp-finder-v85-searchline">
+                    <label for="gpFinderSearchV85">جستجوی سریع</label>
+                    <div class="gp-finder-v85-inputwrap">
+                        <input id="gpFinderSearchV85" type="search" autocomplete="off" placeholder="مثلاً بهترین کلینیک شنوایی شمال تهران، قیمت سمعک سال ۱۴۰۵..." />
+                        <button type="button" id="gpFinderGoV85">مشاهده</button>
+                    </div>
+                    <div class="gp-finder-v85-suggestions" id="gpFinderSuggestionsV85" aria-label="پیشنهادهای جستجو"></div>
+                </div>
+                <div class="gp-finder-v85-grid">
+                    <div class="gp-finder-v85-field">
+                        <label for="gpFinderServiceV85">خدمت</label>
+                        <select id="gpFinderServiceV85">
+                            <option value="">انتخاب خدمت</option>
+                            <option value="best-audiology-clinic">بهترین کلینیک شنوایی</option>
+                            <option value="best-hearing-clinic">بهترین مرکز شنوایی</option>
+                            <option value="best-hearing-aid-clinic">بهترین مرکز سمعک</option>
+                            <option value="hearing-test">تست شنوایی</option>
+                            <option value="audiology-clinic">کلینیک شنوایی</option>
+                            <option value="hearing-aid">خرید سمعک</option>
+                            <option value="hearing-aid-adjustment">تنظیم سمعک</option>
+                            <option value="home-visit-hearing-aid">ویزیت سمعک در منزل</option>
+                            <option value="in-home-hearing-aid-prescription">تجویز سمعک در منزل</option>
+                            <option value="in-home-hearing-aid-adjustment">تنظیم سمعک در منزل</option>
+                            <option value="hearing-aid-price">قیمت سمعک</option>
+                            <option value="hearing-aid-price-1405">قیمت سمعک سال ۱۴۰۵</option>
+                            <option value="installment-hearing-aid">سمعک قسطی</option>
+                            <option value="insurance-hearing-aid">سمعک با بیمه</option>
+                            <option value="hearing-aid-insurance-tariff">تعرفه سمعک با بیمه</option>
+                            <option value="government-hearing-aid">سمعک دولتی</option>
+                            <option value="free-behzisti-hearing-aid">سمعک رایگان بهزیستی</option>
+                            <option value="deaf-support">حمایت ناشنوایان و کم‌شنوایان</option>
+                            <option value="hearing-aid-battery">باتری سمعک</option>
+                            <option value="hearing-aid-filter">فیلتر سمعک</option>
+                            <option value="hearing-aid-repair">تعمیر سمعک</option>
+                            <option value="earmold">قالب سمعک</option>
+                            <option value="waterproof-earmold">قالب ضد آب</option>
+                            <option value="silicone-earmold">قالب سیلیکونی</option>
+                            <option value="earmold-replacement">تعویض قالب سمعک</option>
+                            <option value="hearing-test-price">هزینه تست شنوایی</option>
+                            <option value="audiometry-price">آزمایش شنوایی چنده</option>
+                            <option value="hearing-aid-cost">سمعک چنده</option>
+                            <option value="rechargeable-hearing-aid">سمعک شارژی</option>
+                            <option value="battery-free-hearing-aid">سمعک بدون باتری</option>
+                            <option value="invisible-hearing-aid">سمعک نامرئی</option>
+                            <option value="tinnitus-hearing-aid">وزوز گوش و سمعک</option>
+                            <option value="hearing-aid-warranty">گارانتی و ضمانت سمعک</option>
+                            <option value="hearing-aid-cleaning">نظافت سمعک</option>
+                            <option value="hearing-aid-durability">دوام سمعک</option>
+                            <option value="hearing-aid-tube">شلنگ و تیوب سمعک</option>
+                            <option value="hearing-aid-hook">هوک سمعک</option>
+                            <option value="waterproof-hearing-aid">سمعک ضد آب</option>
+                            <option value="sweatproof-hearing-aid">سمعک ضد عرق</option>
+                            <option value="hearing-aid-consultation">مشاوره سمعک</option>
+                            <option value="signia-hearing-aid-price">قیمت سمعک سیگنیا</option>
+                            <option value="siemens-hearing-aid-price">قیمت سمعک زیمنس</option>
+                            <option value="widex-hearing-aid-price">قیمت سمعک ویدکس</option>
+                            <option value="phonak-hearing-aid-price">قیمت سمعک فوناک</option>
+                        </select>
+                    </div>
+                    <div class="gp-finder-v85-field">
+                        <label for="gpFinderAreaV85">محله</label>
+                        <select id="gpFinderAreaV85">
+                            <option value="tajrish">تجریش</option>
+                            <option value="tehran">تهران</option>
+                            <option value="north-tehran">شمال تهران</option>
+                            <option value="northeast-tehran">شمال شرق تهران</option>
+                            <option value="near-me">نزدیک من</option>
+                            <option value="shemiran">شمیران</option>
+                            <option value="shemiranat">شمیرانات</option>
+                            <option value="darabad">دارآباد</option>
+                            <option value="kashanak">کاشانک</option>
+                            <option value="jamaran">جماران</option>
+                            <option value="dezashib">دزاشیب</option>
+                            <option value="yaser">یاسر</option>
+                            <option value="farmanieh">فرمانیه</option>
+                            <option value="niavaran">نیاوران</option>
+                            <option value="qeytarieh">قیطریه</option>
+                            <option value="zaferanieh">زعفرانیه</option>
+                            <option value="elahiyeh">الهیه</option>
+                            <option value="velenjak">ولنجک</option>
+                            <option value="aghdasiyeh">اقدسیه</option>
+                            <option value="pasdaran">پاسداران</option>
+                            <option value="heravi">هروی</option>
+                            <option value="azgol">ازگل</option>
+                            <option value="sohanak">سوهانک</option>
+                            <option value="artesh">ارتش</option>
+                            <option value="nobonyad">نوبنیاد</option>
+                            <option value="kamranieh">کامرانیه</option>
+                            <option value="andarzgoo">اندرزگو</option>
+                            <option value="darband">دربند</option>
+                            <option value="emamzadeh-saleh">امامزاده صالح</option>
+                            <option value="bazar-tajrish">بازار تجریش</option>
+                            <option value="meydan-ghods">میدان قدس</option>
+                            <option value="bagh-ferdos">باغ فردوس</option>
+                            <option value="parkway">پارک‌وی</option>
+                            <option value="lavasan">لواسان</option>
+                            <option value="feshm">فشم</option>
+                        </select>
+                    </div>
+                    <div class="gp-finder-v85-field">
+                        <label for="gpFinderBrandV85">برند</label>
+                        <select id="gpFinderBrandV85">
+                            <option value="">انتخاب برند</option>
+                            <option value="signia">سیگنیا / زیمنس</option>
+                            <option value="widex">ویدکس</option>
+                            <option value="phonak">فوناک</option>
+                            <option value="resound">ریساند</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="gp-finder-v85-actions">
+                    <button type="button" class="gp-finder-v85-primary" id="gpFinderBuildV85">ساخت مسیر پیشنهادی</button>
+                    <a class="gp-finder-v85-secondary" href="/tehran/best-audiology-clinic">بهترین کلینیک تهران</a>
+                    <a class="gp-finder-v85-secondary" href="/north-tehran/best-audiology-clinic">بهترین کلینیک شمال تهران</a>
+                </div>
+                <div class="gp-finder-v85-preview" id="gpFinderPreviewV85">
+                    <span>مسیر پیشنهادی:</span>
+                    <a href="/tajrish/hearing-test">/tajrish/hearing-test</a>
+                </div>
+                <div class="gp-finder-v85-chips" aria-label="جستجوهای محبوب">
+                    <button type="button" data-area="north-tehran" data-service="best-audiology-clinic">بهترین کلینیک شنوایی شمال تهران</button>
+                    <button type="button" data-area="tehran" data-service="best-audiology-clinic">بهترین کلینیک شنوایی تهران</button>
+                    <button type="button" data-area="tajrish" data-service="hearing-aid-price-1405">قیمت سمعک سال ۱۴۰۵ تجریش</button>
+                    <button type="button" data-area="shemiran" data-service="hearing-aid-battery">باتری سمعک شمیران</button>
+                    <button type="button" data-area="north-tehran" data-service="home-visit-hearing-aid">ویزیت منزل شمال تهران</button>
+                    <button type="button" data-area="farmanieh" data-service="signia-hearing-aid-price">قیمت سمعک سیگنیا فرمانیه</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="gp-v10-showcase" aria-label="خدمات، برندها و اسلایدر کلینیک">
+    <div class="container">
+        <div class="gp-v10-showcase-shell">
+            <div class="gp-v10-showcase-info">
+                <span class="gp-v10-section-label">مسیر تجویز سمعک</span>
+                <h2>متناسب با میزان شنوایی شما</h2>
+                <p>برندهای معتبر</p>
+                <div class="gp-v10-category-row">
+                    <a href="/tajrish/hearing-aid">سمعک</a>
+                    <a href="/blog/all">مجله کلینیک</a>
+                    <a href="/contactus">مشاوره</a>
+                </div>
+                <div class="gp-v10-brand-strip" aria-label="برندهای سمعک">
+                    @foreach (var item in gpBrands)
+                    {
+                        <a title="@item.PersianName" href="/Home/Brands/@item.Id">
+                            <img alt="@item.PersianName" title="@item.PersianName" src="@item.SmallImage" width="96" height="56" loading="lazy" decoding="async" />
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <div class="gp-v10-slider-wrap">
+                <div class="gp-v10-auto-slider" data-gp-auto-slider data-gp-slide-count="@gpDynamicSlides.Count" aria-label="اسلایدر معرفی کلینیک">
+                    @if (gpDynamicSlides.Count > 0)
+                    {
+                        var gpDynamicSlideIndex = 0;
+                        foreach (var item in gpDynamicSlides)
+                        {
+                            var gpDesktopImage = !string.IsNullOrWhiteSpace(item.Image) ? item.Image : item.MobImage;
+                            var gpMobileImage = !string.IsNullOrWhiteSpace(item.MobImage) ? item.MobImage : gpDesktopImage;
+                            var gpSlideLink = !string.IsNullOrWhiteSpace(item.Link) ? item.Link : "#";
+                            var gpActiveClass = gpDynamicSlideIndex == 0 ? "gp-auto-slide is-active" : "gp-auto-slide";
+                            var gpLoadingMode = gpDynamicSlideIndex == 0 ? "eager" : "lazy";
+
+                            <a class="@gpActiveClass" href="@gpSlideLink" aria-label="اسلاید معرفی کلینیک شنوایی و سمعک شکوه تجریش">
+                                <picture>
+                                    <source media="(max-width: 768px)" srcset="@gpMobileImage" />
+                                    <img src="@gpDesktopImage" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" loading="@gpLoadingMode" decoding="async" />
+                                </picture>
+                            </a>
+                            gpDynamicSlideIndex++;
+                        }
+                    }
+                    else
+                    {
+                        <a class="gp-auto-slide is-active" href="/contactus" aria-label="مشاوره رایگان شنوایی">
+                            <picture>
+                                <source media="(max-width: 768px)" srcset="/images/slider/tajrish-slider-v10-01-mobile.webp" />
+                                <img src="/images/slider/tajrish-slider-v10-01-desktop.webp" alt="شنیدن بهتر از همین امروز، تست شنوایی و مشاوره رایگان" loading="eager" decoding="async" />
+                            </picture>
+                        </a>
+                        <a class="gp-auto-slide" href="/Product/All" aria-label="انتخاب سمعک هوشمند">
+                            <picture>
+                                <source media="(max-width: 768px)" srcset="/images/slider/tajrish-slider-v10-02-mobile.webp" />
+                                <img src="/images/slider/tajrish-slider-v10-02-desktop.webp" alt="سمعک هوشمند، انتخاب دقیق و تنظیم راحت" loading="lazy" decoding="async" />
+                            </picture>
+                        </a>
+                    }
+                    <div class="gp-v8-slider-dots gp-v10-slider-dots" aria-hidden="true"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="gp-v8-life-title" aria-label="شعار کلینیک">
+    <div class="container">
+        <div class="gp-v8-life-card">
+            <h2 class="animate-charcter">برای شنیدن بهترین آواز زندگی‌تان</h2>
+            <p>خوب شنیدن؛ آرامش، ارتباط و کیفیت زندگی است.</p>
+        </div>
+    </div>
+</section>
+
+<div class="ads-grid gp-home-section" id="products">
+    <div class="container">
+        <div class="agileinfo-ads-display col-md-12">
+            <div class="wrapper">
+                <div class="product-sec1 product-sec2 gp-clinic-strip">
+                    <div class="col-xs-6 effect-bg">
+                        <h3 class="">کلینیک شنوایی و سمعک شکوه تجریش</h3>
+                        <h6>تشخیص دقیق، مسیر درمان روشن</h6>
+                        <p>انواع آزمایشات شنوایی</p>
+                    </div>
+                    <div class="col-xs-6 bg-right-nut">
+                        <img src="/images/pransa_logo_web.png" loading="lazy" decoding="async" title="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" alt="کلینیک شنوایی و سمعک شکوه تجریش، آزمایشات شنوایی و تجویز سمعک" width="200" height="54">
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <h3 class="tittle-w3l">
+                    سمعک ها
+                    <span class="heading-style">
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                    </span>
+                </h3>
+                <section class="gp-product-popular-stage" aria-label="پرطرفدارترین سمعک‌ها">
+                    <div class="gp-product-popular-head">
+                        <span>پرطرفدارترین‌ها</span>
+                        <h3>سمعک‌های محبوب کلینیک</h3>
+                        <p>چهار مدل منتخب برای شروع مقایسه؛ جمع‌وجور، مرتب و مناسب مشاوره سریع.</p>
+                    </div>
+
+                    <div class="gp-product-plan-grid">
+                        @{ var gpProductIndex = 0; }
+                        @foreach (var item in gpPopularProducts)
+                        {
+                            var gpProductClass = gpProductIndex == 2 ? "gp-product-plan-card is-highlighted" : "gp-product-plan-card";
+                            <article class="@gpProductClass">
+                                <div class="gp-product-plan-top">
+                                    <div>
+                                        <span class="gp-product-rank">@((gpProductIndex + 1).ToString("00"))</span>
+                                        <h4>
+                                            <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
+                                        </h4>
+                                    </div>
+                                    @if (gpProductIndex == 2)
+                                    {
+                                        <span class="gp-product-recommended">پیشنهادی</span>
+                                    }
+                                </div>
+                                <a class="gp-product-plan-image" title="@item.PersianName" href="/Product/Details/@item.Id">
+                                    <img src="@item.SiteFirstImage" alt="@item.PersianName" title="@item.PersianName" loading="lazy" decoding="async" />
+                                </a>
+                                <div class="gp-product-plan-meta gp-product-plan-meta-clean">
+                                    <span>محبوب در کلینیک</span>
+                                    <b>مشاوره تخصصی</b>
+                                </div>
+                                <ul class="gp-product-plan-features">
+                                    <li>انتخاب بر اساس تست شنوایی</li>
+                                    <li>تنظیم تخصصی و پیگیری</li>
+                                    <li>مشاوره قبل از خرید</li>
+                                </ul>
+                                <a title="@item.PersianName" class="gp-product-plan-btn" href="/Product/Details/@item.Id">
+                                    مشاهده جزئیات
+                                    <span aria-hidden="true">←</span>
+                                </a>
+                            </article>
+                            gpProductIndex++;
+                        }
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="gp-services-v85 gp-home-section" aria-label="خدمات کامل کلینیک شنوایی و سمعک شکوه تجریش">
+    <div class="container">
+        <div class="gp-services-v85-head">
+            <span>خدمات تخصصی شکوه تجریش</span>
+            <h2>از تست شنوایی تا انتخاب، تنظیم و نگهداری سمعک</h2>
+            <p>
+                این بخش برای اینکه کاربر و موتورهای جستجو دقیق‌تر بفهمند شکوه تجریش چه خدماتی ارائه می‌دهد، کامل‌تر شده است.
+            </p>
+        </div>
+
+        <div class="gp-services-v85-grid">
+            <a href="/tehran/hearing-test" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">〰</span>
+                <b>تست شنوایی و آزمایش گوش</b>
+                <small>ادیومتری، بررسی افت شنوایی و شروع مسیر انتخاب سمعک</small>
+            </a>
+            <a href="/tehran/audiology-clinic" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">◉</span>
+                <b>کلینیک شنوایی</b>
+                <small>ارزیابی تخصصی، مشاوره شنوایی و بررسی نیاز فردی</small>
+            </a>
+            <a href="/tehran/hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">◖</span>
+                <b>خرید و انتخاب سمعک</b>
+                <small>انتخاب مدل مناسب بر اساس تست شنوایی، بودجه و سبک زندگی</small>
+            </a>
+            <a href="/tehran/hearing-aid-adjustment" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">⚙</span>
+                <b>تنظیم تخصصی سمعک</b>
+                <small>بهبود وضوح گفتار، کاهش آزار صوتی و پیگیری پس از تجویز</small>
+            </a>
+            <a href="/north-tehran/home-visit-hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">⌂</span>
+                <b>ویزیت و مشاوره در منزل</b>
+                <small>مناسب سالمندان و افرادی که رفت‌وآمد برایشان سخت است</small>
+            </a>
+            <a href="/tehran/hearing-aid-repair" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">✚</span>
+                <b>تعمیر و سرویس سمعک</b>
+                <small>بررسی قطع صدا، خرابی قطعه، فیلتر، تیوب، هوک و مصرف باتری</small>
+            </a>
+            <a href="/tehran/hearing-aid-battery" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">▰</span>
+                <b>باتری، فیلتر و قطعات مصرفی</b>
+                <small>باتری سمعک، فیلتر، شلنگ، تیوب، هوک و راهنمای نگهداری</small>
+            </a>
+            <a href="/tehran/earmold" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">◌</span>
+                <b>قالب سمعک</b>
+                <small>قالب سیلیکونی، قالب ضدآب، تعویض قالب و رفع سوت سمعک</small>
+            </a>
+            <a href="/tehran/hearing-aid-price-1405" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">۱۴۰۵</span>
+                <b>قیمت سمعک سال ۱۴۰۵</b>
+                <small>راهنمای هزینه، بیمه، گارانتی، برند و مدل مناسب</small>
+            </a>
+            <a href="/tehran/insurance-hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">☑</span>
+                <b>سمعک با بیمه و شرایط پرداخت</b>
+                <small>راهنمای بیمه، تعرفه، مدارک و امکان بررسی خرید قسطی</small>
+            </a>
+            <a href="/tehran/government-hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">دولتی</span>
+                <b>سمعک دولتی</b>
+                <small>راهنمای مسیر دریافت، مدارک، شرایط حمایتی و انتخاب مدل مناسب</small>
+            </a>
+            <a href="/tehran/free-behzisti-hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">بهزیستی</span>
+                <b>سمعک رایگان بهزیستی</b>
+                <small>راهنمای بررسی حمایت، مدارک احتمالی و مسیر پیگیری برای افراد واجد شرایط</small>
+            </a>
+            <a href="/tehran/deaf-support" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">حمایت</span>
+                <b>حمایت ناشنوایان و کم‌شنوایان</b>
+                <small>مشاوره درباره مسیر ارزیابی، سمعک، خدمات حمایتی و پیگیری شنوایی</small>
+            </a>
+            <a href="/tehran/tinnitus-hearing-aid" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">≈</span>
+                <b>وزوز گوش و کم‌شنوایی</b>
+                <small>بررسی وزوز، افت شنوایی همراه و مسیر مناسب پیگیری</small>
+            </a>
+            <a href="/hearing-aid-brands" class="gp-service-v85-card">
+                <span class="gp-service-v85-icon">★</span>
+                <b>برندهای سمعک</b>
+                <small>سیگنیا، ویدکس، فوناک، ریساند و مقایسه اولیه برندها</small>
+            </a>
+        </div>
+
+        <div class="gp-services-v85-areas">
+            <span>صفحات مهم برای ورودی محلی:</span>
+            <a href="/tehran/best-audiology-clinic">بهترین کلینیک شنوایی تهران</a>
+            <a href="/north-tehran/best-audiology-clinic">بهترین کلینیک شنوایی شمال تهران</a>
+            <a href="/tajrish/hearing-test">تست شنوایی تجریش</a>
+            <a href="/qeytarieh/hearing-aid">سمعک قیطریه</a>
+            <a href="/niavaran/hearing-aid-adjustment">تنظیم سمعک نیاوران</a>
+            <a href="/farmanieh/hearing-aid-price">قیمت سمعک فرمانیه</a>
+            <a href="/tehran/government-hearing-aid">سمعک دولتی تهران</a>
+            <a href="/north-tehran/free-behzisti-hearing-aid">سمعک رایگان بهزیستی شمال تهران</a>
+        </div>
+    </div>
+</section>
+
+@if (blogs.Count > 0)
+{
+    <section class="gp-magazine-section" aria-label="مجله کلینیک شنوایی">
+        <div class="container">
+            <div class="gp-magazine-head">
+                <span class="gp-section-eyebrow">مجله کلینیک</span>
+                <h2>رشد آگاهی شنوایی از همین‌جا شروع می‌شود.</h2>
+                <p>راهنماهای ساده و کاربردی درباره تست شنوایی، انتخاب سمعک، مراقبت، تنظیم و تجربه شنیدن بهتر.</p>
+            </div>
+
+            <div class="gp-magazine-grid">
+                @foreach (var item in blogs.Take(3).ToList())
+                {
+                    var ig = item.Images.Where(c => c.Extension.Contains("jpeg") || c.Extension.Contains("gif") || c.Extension.Contains("png") || c.Extension.Contains("jpg") || c.Extension.Contains("webp")).FirstOrDefault();
+                    var vd = item.Images.Where(c => c.Extension.Contains("mp4") || c.Extension.Contains("mpeg") || c.Extension.Contains("wmv")).FirstOrDefault();
+                    <article class="gp-magazine-card">
+                        <a class="gp-magazine-media" title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">
+                            @if (ig != null)
+                            {
+                                <img src="@ig.FullPath" alt="@item.Title" title="@item.Title" loading="lazy" decoding="async" />
+                            }
+                            else if (vd != null)
+                            {
+                                <video src="@vd.FullPath" muted playsinline preload="metadata"></video>
+                            }
+                            else
+                            {
+                                <span class="gp-magazine-fallback" aria-hidden="true">
+                                    <b>مجله</b>
+                                    <small>شنوایی و سمعک</small>
+                                </span>
+                            }
+                            <span class="gp-magazine-floating-tag">مقاله</span>
+                        </a>
+
+                        <div class="gp-magazine-content">
+                            <div class="gp-magazine-meta">
+                                <span>@Truncate(GetPersianDate(item.CreateDate), 40)</span>
+                                <span>@item.Survey بازدید</span>
+                            </div>
+                            <h3>
+                                <a title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">@item.Title</a>
+                            </h3>
+                            <p>@Truncate(item.ShortDesc, 90)</p>
+                            <a class="gp-magazine-read" href="/blog/@item.Id/@item.SefUrl">
+                                ادامه مطلب
+                                <span aria-hidden="true">←</span>
+                            </a>
+                        </div>
+                    </article>
+                }
+            </div>
+
+            @if (gpPopularBlogs != null && gpPopularBlogs.Count > 0)
+            {
+                <div class="gp-popular-articles" aria-label="پرطرفدارترین مقاله‌های کلینیک">
+                    <div class="gp-popular-titlebar">
+                        <span>پرطرفدارترین‌ها</span>
+                        <p>۴ مقاله پربازدید اخیر</p>
+                    </div>
+
+                    <div class="gp-popular-grid">
+                        @{ var gpPopularIndex = 0; }
+                        @foreach (var item in gpPopularBlogs.ToList())
+                        {
+                            var gpPopularClass = gpPopularIndex == 1 ? "gp-popular-card is-featured" : "gp-popular-card";
+                            <article class="@gpPopularClass">
+                                @if (gpPopularIndex == 1)
+                                {
+                                    <span class="gp-popular-recommended">پیشنهادی</span>
+                                }
+                                <div class="gp-popular-card-head">
+                                    <span class="gp-popular-views">@item.Survey بازدید</span>
+                                    <span class="gp-popular-rank">@((gpPopularIndex + 1).ToString("00"))</span>
+                                </div>
+                                <h3>
+                                    <a title="@item.Title | کلینیک شنوایی و سمعک شکوه تجریش" href="/blog/@item.Id/@item.SefUrl">@item.Title</a>
+                                </h3>
+                                <p>@Truncate(item.ShortDesc, 72)</p>
+                                <a class="gp-popular-read" href="/blog/@item.Id/@item.SefUrl">
+                                    مطالعه مقاله
+                                    <span aria-hidden="true">←</span>
+                                </a>
+                            </article>
+                            gpPopularIndex++;
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="gp-magazine-action">
+                <a href="/blog/all" class="gp-magazine-all-link">
+                    مشاهده همه مقالات
+                    <span aria-hidden="true">←</span>
+                </a>
+            </div>
+        </div>
+    </section>
+}
+
+<script src="js/gp-home-legacy.js"></script>
 
 @code {
-    private int _sliderCount;
-    private int _productCount;
-    private int _blogCount;
-    private int _categoryCount;
-    private string _diag = "";
-    private List<Product> _products = new();
-    private List<Category> _categories = new();
+    private List<Blog> blogs = new();
+    private List<Blog> gpPopularBlogs = new();
+    private List<Slider> slider = new();
+    private List<Slider> gpDynamicSlides = new();
+    private List<Product> gpPopularProducts = new();
+    private List<Brand> gpBrands = new();
+    private string firstSliderImage;
+    private string firstSliderMobileImage;
 
     protected override async Task OnInitializedAsync()
     {
         await using var db = DbFactory.CreateDbContext();
 
-        // Layout-level data was queried 4x per request in the legacy app; cached here.
-        try
+        blogs = await Cache.GetOrCreateAsync("home:blogs", async entry =>
         {
-            _products = await Cache.GetOrCreateAsync("home:products", async entry =>
-            {
-                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-                return await db.Products
-                    .Where(p => p.SiteFirstImage != null)
-                    .OrderByDescending(p => p.CreateDate)
-                    .Take(6)
-                    .ToListAsync();
-            }) ?? new List<Product>();
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            return await db.Blogs
+                .AsNoTracking()
+                .Include(b => b.Images)
+                .Where(b => b.Images.Count > 0 && b.IsVisible == true)
+                .OrderByDescending(b => b.CreateDate)
+                .Take(4)
+                .ToListAsync();
+        }) ?? new List<Blog>();
 
-            _categories = await Cache.GetOrCreateAsync("home:categories", async entry =>
-            {
-                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-                return await db.Categories
-                    .Where(c => c.ParentId == null && c.IsBlog == false)
-                    .OrderByDescending(c => c.PersianName)
-                    .ToListAsync();
-            }) ?? new List<Category>();
-
-            _sliderCount = await db.Sliders.CountAsync();
-            _productCount = await db.Products.CountAsync();
-            _blogCount = await db.Blogs.CountAsync(b => b.IsVisible == true);
-            _categoryCount = _categories.Count;
-        }
-        catch (Exception ex)
+        gpPopularBlogs = await Cache.GetOrCreateAsync("home:popular-blogs", async entry =>
         {
-            _diag += " || QUERY ERR: " + ex.GetType().Name + " - " + ex.Message;
-        }
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            return await db.Blogs
+                .AsNoTracking()
+                .Include(b => b.Images)
+                .Where(b => b.Images.Count > 0 && b.IsVisible == true)
+                .OrderByDescending(b => b.Survey)
+                .ThenByDescending(b => b.CreateDate)
+                .Take(4)
+                .ToListAsync();
+        }) ?? new List<Blog>();
+
+        slider = await Cache.GetOrCreateAsync("home:sliders", async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            return await db.Sliders
+                .AsNoTracking()
+                .OrderByDescending(s => s.LastDate)
+                .ToListAsync();
+        }) ?? new List<Slider>();
+
+        gpDynamicSlides = slider
+            .Where(s => !string.IsNullOrWhiteSpace(s.Image) || !string.IsNullOrWhiteSpace(s.MobImage))
+            .ToList();
+
+        var first = gpDynamicSlides.FirstOrDefault();
+        firstSliderImage = first != null && !string.IsNullOrWhiteSpace(first.Image) ? first.Image : null;
+        firstSliderMobileImage = first != null && !string.IsNullOrWhiteSpace(first.MobImage) ? first.MobImage : null;
+
+        gpPopularProducts = await Cache.GetOrCreateAsync("home:popular-products", async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            return await db.Products
+                .AsNoTracking()
+                .Include(p => p.Orders)
+                .Where(p => p.SiteFirstImage != null)
+                .OrderByDescending(p => p.Orders.Count())
+                .Take(4)
+                .ToListAsync();
+        }) ?? new List<Product>();
+
+        gpBrands = await Cache.GetOrCreateAsync("home:brands", async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            return await db.Brands
+                .AsNoTracking()
+                .Take(8)
+                .ToListAsync();
+        }) ?? new List<Brand>();
+    }
+
+    private static string Truncate(string text, int len)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return "";
+        var plain = System.Text.RegularExpressions.Regex.Replace(text, "<[^>]+>", " ").Trim();
+        return plain.Length <= len ? plain : plain.Substring(0, len) + "…";
+    }
+
+    private static string GetPersianDate(DateTime? date)
+    {
+        if (!date.HasValue) return "";
+        var cal = new PersianCalendar();
+        var d = date.Value;
+        return $"{cal.GetYear(d):0000}/{cal.GetMonth(d):00}/{cal.GetDayOfMonth(d):00}";
     }
 }
