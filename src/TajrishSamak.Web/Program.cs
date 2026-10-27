@@ -62,14 +62,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseResponseCompression();
 
-// static assets: long-lived immutable caching for versioned files
-app.UseStaticFiles(new StaticFileOptions
-{
-    OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers.CacheControl = "public,max-age=604800";
-    }
-});
+// static assets: .NET 10 native static assets pipeline (build manifest,
+// fingerprinting + precompression) - replaces legacy UseStaticFiles
+app.MapStaticAssets();
 
 app.UseOutputCache();
 
