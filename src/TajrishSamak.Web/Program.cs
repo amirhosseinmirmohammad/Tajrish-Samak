@@ -1,4 +1,5 @@
 using TajrishSamak.Web.Data;
+using TajrishSamak.Web.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,6 +70,43 @@ app.MapStaticAssets();
 app.UseOutputCache();
 
 app.UseAntiforgery();
+
+// ---------------- newsletter signup (ported 1:1 from legacy HomeController.NewsLetter) ----------------
+app.MapGet("/Home/NewsLetter", async (string? text, IDbContextFactory<TajrishSamakDbContext> dbFactory) =>
+{
+    if (string.IsNullOrWhiteSpace(text))
+    {
+        return Results.Json(new { text = "لطفا ایمیل خود را وارد نمایید .", status = 0 });
+    }
+
+    text = text.Trim();
+
+    if (text.Length > 254 || !new System.ComponentModel.DataAnnotations.EmailAddressAttribute().IsValid(text))
+    {
+        return Results.Json(new { text = "لطفا ایمیل معتبری را وارد نمایید .", status = 0 });
+    }
+
+    await using var db = dbFactory.CreateDbContext();
+    var emailExists = await db.NewsLetters
+        .AsNoTracking()
+        .AnyAsync(n => n.Email == text);
+
+    if (emailExists)
+    {
+        return Results.Json(new { text = "ایمیل شما قبلا در سیستم ثبت شده است .", status = 0 });
+    }
+
+    try
+    {
+        db.NewsLetters.Add(new NewsLetter { Email = text });
+        await db.SaveChangesAsync();
+        return Results.Json(new { text = "ایمیل شما با موفقیت در سیستم ثبت شد .", status = 1 });
+    }
+    catch
+    {
+        return Results.Json(new { text = "خطایی رخ داده است لطفا مجدد تلاش فرمایید .", status = 0 });
+    }
+});
 
 // ---------------- dynamic sitemap.xml (ported from legacy SitemapController) ----------------
 app.MapGet("/sitemap.xml", async (IDbContextFactory<TajrishSamakDbContext> dbFactory) =>

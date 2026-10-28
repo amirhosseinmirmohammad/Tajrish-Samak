@@ -2390,3 +2390,40 @@
             }
         }
     
+/* =========================================================
+   V91: float-containment + top navbar fixes (Blazor port)
+   Legacy style.css floats .navbar-default right and gives
+   .top_nav_left no BFC, so the float escapes its container
+   (height: 0) and narrows every following block section -
+   the V10 hero card collapsed to ~280px. Contains the float
+   and lets the modern .menu__list flex centering work.
+   ========================================================= */
+.top_nav_left {
+    display: flow-root;
+}
+
+.navbar-default {
+    float: none !important;
+}
+
+.top_nav_left .navbar-collapse.menu--shylock {
+    display: flex !important;
+    justify-content: center;
+}
+
+@media (max-width: 767px) {
+    /* Bootstrap 3 collapses the menu below 768px; the new layout has no
+       navbar-toggle button, so keep the menu reachable and wrap it neatly. */
+    .top_nav_left .navbar-collapse.menu--shylock {
+        max-height: none;
+    }
+
+    .top_nav_left .navbar-collapse.menu--shylock.collapse:not(.in) {
+        display: flex !important;
+    }
+
+    .menu__list {
+        justify-content: center;
+        gap: 4px;
+    }
+}

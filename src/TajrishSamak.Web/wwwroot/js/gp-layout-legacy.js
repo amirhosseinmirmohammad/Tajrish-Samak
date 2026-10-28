@@ -1,9 +1,10 @@
 /* Legacy layout scripts (loader, language toggle, service worker, newsletter) - ported from _Layout.cshtml */
+/* NOTE: /Home/NewsLetter is a minimal-API endpoint registered in Program.cs (port of HomeController.NewsLetter). */
 
         $("#btntext").click(function (e) {
             e.preventDefault()
             $.ajax({
-                url: "@Url.Action("NewsLetter","Home")",
+                url: "/Home/NewsLetter",
                 contentType: "application/json; charset=utf-8",
                 data: { text: $("#textnews").val() },
                 dataType: "json",

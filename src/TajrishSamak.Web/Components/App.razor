@@ -46,6 +46,14 @@
     <link rel="stylesheet" href="@Assets["TajrishSamak.Web.styles.css"]" />
     <ImportMap />
 
+    @* Legacy jQuery stack must load in <head> (blocking) BEFORE body scripts:
+       page-level scripts (gp-home-legacy.js, gp-contact-legacy.js) use $ at
+       parse time, exactly like the legacy _Layout.cshtml did. *@
+    <script src="@Assets["js/jquery-2.1.4.min.js"]"></script>
+    <script src="@Assets["js/bootstrap.js"]"></script>
+    <script src="@Assets["js/gp-tajrish-modern.js"]"></script>
+    <script src="@Assets["js/gp-layout-legacy.js"]"></script>
+
     <script>
         (function () {
             try {
@@ -178,10 +186,11 @@
 
 <body class="gp-tajrish-body">
     <Routes />
-    <script src="@Assets["_framework/blazor.web.js"]"></script>
-    <script src="@Assets["js/gp-layout-legacy.js"]"></script>
-    <script src="@Assets["js/jquery-2.1.4.min.js"]"></script>
-    <script src="@Assets["js/bootstrap.js"]"></script>
+    <script src="@Assets["_framework/blazor.web.js"]" autostart="false"></script>
+    @* This port keeps the legacy full-page-load behavior: dozens of per-page
+       jQuery scripts (sliders, popups, finders) are not enhanced-navigation
+       safe and would never re-initialize after a client-side DOM swap. *@
+    <script>Blazor.start({ disableEnhancedNavigation: true });</script>
 </body>
 
 </html>

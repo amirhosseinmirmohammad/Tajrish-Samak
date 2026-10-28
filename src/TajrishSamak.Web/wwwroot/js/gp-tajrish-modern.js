@@ -159,6 +159,14 @@
             for (var j = 0; j < revealItems.length; j++) {
                 observer.observe(revealItems[j]);
             }
+
+            // Safety net: if the observer never fires (background tab, browser
+            // quirk, missing paint), content must never stay invisible.
+            window.setTimeout(function () {
+                for (var f = 0; f < revealItems.length; f++) {
+                    revealItems[f].classList.add("is-visible");
+                }
+            }, 2500);
         } else {
             for (var k = 0; k < revealItems.length; k++) {
                 revealItems[k].classList.add("is-visible");
