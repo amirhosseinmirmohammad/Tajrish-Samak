@@ -7139,3 +7139,100 @@ footer {
         background-position: 200% center;
     }
 }
+
+.clinic-gallery {
+    direction: rtl;
+    --gap: 14px;
+    --radius: 16px;
+    --shadow: 0 10px 25px rgba(0,0,0,.10);
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    gap: var(--gap);
+    margin: 28px auto 16px;
+}
+
+.clinic-card {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    aspect-ratio: 4/3;
+    background: #f6f6f6;
+    cursor: pointer
+}
+
+    .clinic-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform .35s
+    }
+
+    .clinic-card:hover img {
+        transform: scale(1.04)
+    }
+
+.clinic-badge {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px
+}
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.85);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .35s;
+    z-index: 9999
+}
+
+    .lightbox.open {
+        visibility: visible;
+        opacity: 1
+    }
+
+    .lightbox img {
+        max-width: 92vw;
+        max-height: 86vh;
+        border-radius: 12px;
+        box-shadow: 0 20px 45px rgba(0,0,0,.35);
+        transform: scale(.85);
+        opacity: 0;
+        transition: transform .35s,opacity .35s
+    }
+
+    .lightbox.open img {
+        transform: scale(1);
+        opacity: 1
+    }
+
+    .lightbox .close {
+        z-index: 9999999;
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: rgb(0, 0, 0, 0.58);
+        color: #fff;
+        font-size: 30px;
+        line-height: 42px;
+        text-align: center;
+        cursor: pointer
+    }
+
+        .lightbox .close:hover {
+            background: rgba(255,255,255,.25)
+        }
