@@ -164,6 +164,19 @@ app.Use(async (context, next) =>
         "frame-ancestors 'none'; " +
         "base-uri 'self'";
     await next();
+    // persian text files must declare utf-8 (llms.txt / robots.txt)
+    try
+    {
+        var ctype = context.Response.ContentType;
+        if (!string.IsNullOrEmpty(ctype) &&
+            ctype.StartsWith("text/plain", StringComparison.OrdinalIgnoreCase) &&
+            !ctype.Contains("charset") &&
+            !context.Response.HasStarted)
+        {
+            context.Response.ContentType = "text/plain; charset=utf-8";
+        }
+    }
+    catch { /* response already started */ }
 });
 
 app.UseHttpsRedirection();

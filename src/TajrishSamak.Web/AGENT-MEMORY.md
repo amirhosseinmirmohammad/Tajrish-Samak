@@ -46,3 +46,11 @@
 - 'محصولات سمعک' renamed to 'سمعک' everywhere (nav, titles, GeoLanding, Products).
 - Homepage: new DB-driven services section gp-svcdb-* (ServiceCategories -> /Home/Services/{id}).
 - Footer: gp-footer-quicklinks row (درباره ما/تماس با ما/FAQ/قوانین).
+
+## 2026-10-30 (5) — FINAL AEO/GEO audit + llms.txt + robots + mime
+- AEO/GEO technical audit: 13/13 PASS (llms.txt, robots AI bots, FAQPage 8Q, Product/Offer, MedicalBusiness+Geo, sitemap 5500+ incl aboutus/faq/services, geo landings, fonts, viewport, H1).
+- llms.txt (llmstxt.org format, Persian) at /llms.txt — update it whenever services/brands/pages change.
+- robots.txt extended: Google-Extended, anthropic-ai, Claude-Web, Applebot(-Extended), Perplexity-User, cohere-ai, YouBot, meta-externalagent, Amazonbot, Diffbot.
+- web.config (server): staticContent mimeMap .txt/.json = charset utf-8 (llms.txt was mojibake without charset).
+- OFF-SITE TODO (owner): Google Business Profile + reviews, directory listings (pezeshkan/doctorala), weekly blog posts answering real questions, Instagram mentions. Code-side AEO is done; rankings depend on off-site signals now.
+- PWA card: mobile bottom 92px (above gp-mobile-bottom-nav), desktop 24px; guide modes ios/desktop/android; frequency cap 5-day re-ask.

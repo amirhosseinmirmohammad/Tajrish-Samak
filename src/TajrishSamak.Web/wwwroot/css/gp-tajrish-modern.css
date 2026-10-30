@@ -8217,3 +8217,31 @@ html.gp-dark-mode .gp-suggest-loading {
     .gp-v10-hero-copy h1 { font-size: clamp(15px, 4.4vw, 20px) !important; white-space: nowrap; }
     .gp-v10-hero-copy h1 br { display: none; }
 }
+
+/* =========================================================
+   PHONE NUMBERS: always LTR (021 area code stays LEFT) + tappable
+   ========================================================= */
+.header-bot .col-md-8.header ul li.tell a,
+.gp-footer-phone-row a,
+.alo-ph-text,
+.gp-contact-item.gp-ltr,
+a[href^="tel:02122735588"].gp-contact-phone,
+.gppd-call, .gppd-call * {
+    text-decoration: none;
+}
+.header-bot .col-md-8.header ul li.tell a,
+.gp-footer-phone-row a,
+.alo-ph-text,
+.gp-contact-item.gp-ltr,
+a[href^="tel:02122735588"].gp-contact-phone {
+    direction: ltr !important;
+    unicode-bidi: isolate !important;
+}
+.header-bot .col-md-8.header ul li.tell a,
+.gp-footer-phone-row a {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px;
+}
+.gp-footer-phone-row a:hover,
+.header-bot .col-md-8.header ul li.tell a:hover { color: #d1f411 !important; }

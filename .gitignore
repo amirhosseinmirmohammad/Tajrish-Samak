@@ -25,3 +25,6 @@ legacy/GladcherryShopping.bak/
 ## logs / temp
 *.log
 app-*.log
+
+# legacy MVC site (contains server credentials - never commit)
+legacy/
