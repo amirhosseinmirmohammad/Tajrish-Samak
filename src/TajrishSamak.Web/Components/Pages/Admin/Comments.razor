@@ -1,0 +1,152 @@
+@page "/admin/comments"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inherits TajrishSamak.Web.Components.Shared.AdmListBase
+
+<PageTitle>دیدگاه‌ها | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<form method="get" class="adm-search">
+    <input type="hidden" name="sort" value="@Sort" />
+    <input type="hidden" name="dir" value="@DirStr" />
+    <input type="search" name="q" value="@Q" placeholder="جستجو: نویسنده، متن، مقاله..." />
+    <button type="submit" class="adm-btn adm-btn-purple">جستجو</button>
+    @if (!string.IsNullOrEmpty(Q))
+    {
+        <a class="adm-btn adm-btn-danger" href="@UrlWith(("q", (string?)null), ("page", (string?)null))">✕ پاک‌کردن</a>
+    }
+</form>
+
+<div class="adm-card adm-table-wrap">
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <AdmTh Key="FullName" Label="نویسنده" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <th>متن دیدگاه</th>
+                <AdmTh Key="Blog" Label="مقاله" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="DateTime" Label="تاریخ" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <th>وضعیت</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Rows)
+            {
+                <tr>
+                    <td>@FaNum(c.Id)</td>
+                    <td>@c.FullName</td>
+                    <td>@Truncate(c.Text, 90)</td>
+                    <td>@(c.Blog?.Title ?? "—")</td>
+                    <td>@FaDate(c.DateTime)</td>
+                    <td>
+                        <span class="adm-badge @(c.IsApprove ? "adm-badge-green" : "adm-badge-yellow")">@(c.IsApprove ? "تاییدشده" : "در انتظار")</span>
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:6px">
+                            @if (!c.IsApprove)
+                            {
+                                <form method="post" action="/admin/comments/approve">
+                                    <input type="hidden" name="id" value="@c.Id" />
+                                    <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                                    <button type="submit" class="adm-btn adm-btn-green">تایید</button>
+                                </form>
+                            }
+                            <form method="post" action="/admin/comments/delete">
+                                <input type="hidden" name="id" value="@c.Id" />
+                                <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                                <button type="submit" class="adm-btn adm-btn-danger">حذف</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (Rows.Count == 0)
+            {
+                <tr><td colspan="7">دیدگاهی یافت نشد.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<AdmPager Page="Page" PageSize="PageSize" Total="Filtered.Count()" PageUrl="@PageUrl" />
+
+@code {
+    private List<BlogComment> comments = new();
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "q")] public string? QP { get => Qs; set => Qs = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "page")] public int? PageQP { get => PageN; set => PageN = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "sort")] public string? SortQP { get => SortS; set => SortS = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "dir")] public string? DirQP { get => DirS; set => DirS = value; }
+    private string token = "";
+
+    private IEnumerable<BlogComment> Filtered
+    {
+        get
+        {
+            IEnumerable<BlogComment> q = comments;
+            var term = (Q ?? "").Trim();
+            if (term.Length > 0)
+            {
+                q = q.Where(c =>
+                    (c.FullName ?? "").Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (c.Text ?? "").Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (c.Blog?.Title ?? "").Contains(term, StringComparison.OrdinalIgnoreCase));
+            }
+            q = (Sort, Asc) switch
+            {
+                ("FullName", true) => q.OrderBy(c => c.FullName),
+                ("FullName", false) => q.OrderByDescending(c => c.FullName),
+                ("Blog", true) => q.OrderBy(c => c.Blog?.Title),
+                ("Blog", false) => q.OrderByDescending(c => c.Blog?.Title),
+                ("DateTime", true) => q.OrderBy(c => c.DateTime ?? DateTime.MinValue),
+                ("DateTime", false) => q.OrderByDescending(c => c.DateTime ?? DateTime.MinValue),
+                _ => q
+            };
+            return q;
+        }
+    }
+
+    private List<BlogComment> Rows => Filtered.Skip((Page - 1) * PageSize).Take(PageSize).ToList();
+
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+        comments = await db.BlogComments
+            .AsNoTracking()
+            .Include(c => c.Blog)
+            .OrderByDescending(c => c.Id)
+            .ToListAsync();
+    }
+
+    private static string Truncate(string? text, int len)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return "—";
+        return text.Length <= len ? text : text.Substring(0, len) + "…";
+    }
+
+    private static string FaDate(DateTime? d)
+    {
+        if (!d.HasValue) return "—";
+        var cal = new System.Globalization.PersianCalendar();
+        return $"{cal.GetYear(d.Value):0000}/{cal.GetMonth(d.Value):00}/{cal.GetDayOfMonth(d.Value):00}";
+    }
+
+    private static string FaNum(long v)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(v.ToString("N0").Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}

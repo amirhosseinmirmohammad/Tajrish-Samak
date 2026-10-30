@@ -1,0 +1,95 @@
+@page "/admin/brands/edit/{id:int?}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject NavigationManager Nav
+
+<PageTitle>@(IsNew ? "برند جدید" : "ویرایش برند") | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<div class="adm-editor">
+    <h2>@(IsNew ? "★ برند جدید" : "✏ ویرایش برند")</h2>
+
+    <form method="post" action="/admin/save/brand" class="adm-form">
+        <input type="hidden" name="id" value="@(id ?? 0)" />
+        <input type="hidden" name="__RequestVerificationToken" value="@token" />
+
+        <div class="adm-form-grid">
+            <div>
+                <label>نام فارسی *</label>
+                <input type="text" name="name" value="@FaName" required maxlength="200" />
+            </div>
+            <div>
+                <label>نام انگلیسی</label>
+                <input type="text" name="enName" value="@EnName" dir="ltr" />
+            </div>
+        </div>
+
+        <div class="adm-form-grid">
+            <div>
+                <label>آیکن (Icon URL)</label>
+                <input type="text" name="icon" value="@Icon" dir="ltr" placeholder="/images/..." />
+            </div>
+            <div>
+                <label>پس‌زمینه پروفایل</label>
+                <input type="text" name="bgImage" value="@BgImage" dir="ltr" placeholder="/images/..." />
+            </div>
+        </div>
+
+        <div class="adm-form-grid">
+            <div>
+                <label>عکس کوچک (Small Image URL)</label>
+                <div class="gpc-upload-zone" data-folder="brands">
+                    <div class="gpc-upload-inner"><span aria-hidden="true">📤</span><small>آپلود</small></div>
+                    <input type="text" name="smallImage" value="@SmallImage" dir="ltr" placeholder="/images/..." />
+                </div>
+            </div>
+            <div>
+                <label>عکس بزرگ (Large Image URL)</label>
+                <div class="gpc-upload-zone" data-folder="brands">
+                    <div class="gpc-upload-inner"><span aria-hidden="true">📤</span><small>آپلود</small></div>
+                    <input type="text" name="largeImage" value="@LargeImage" dir="ltr" placeholder="/images/..." />
+                </div>
+            </div>
+        </div>
+
+        <div class="adm-editor-actions">
+            <button type="submit" class="adm-btn adm-btn-purple">💾 ذخیره</button>
+            <a href="/admin/brands" class="adm-btn adm-btn-ghost">انصراف</a>
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter] public int? id { get; set; }
+
+    private Brand brand;
+    private bool IsNew => id == null || id == 0;
+    private string token = "";
+    private string FaName = "", EnName = "", Icon = "", SmallImage = "", LargeImage = "", BgImage = "";
+
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+        if (!IsNew && brand == null)
+        {
+            brand = await db.Brands.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id);
+            if (brand == null) { Nav.NavigateTo("/admin/brands"); return; }
+            FaName = brand.PersianName ?? ""; EnName = brand.EnglishName ?? "";
+            Icon = brand.Icon ?? ""; SmallImage = brand.SmallImage ?? ""; LargeImage = brand.LargeImage ?? "";
+            BgImage = brand.BackgroundProImage ?? "";
+        }
+    }
+}

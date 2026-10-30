@@ -1,56 +1,158 @@
 @page "/Service/All"
+@page "/Home/Services/{id:long}"
 @using TajrishSamak.Web.Data.Entities
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
 
-<PageTitle>خدمات شنوایی و سمعک در تهران | کلینیک شنوایی شکوه تجریش</PageTitle>
+<PageTitle>@(categoryName != null ? "خدمات " + categoryName : "خدمات شنوایی و سمعک در تهران") | کلینیک شنوایی شکوه تجریش</PageTitle>
 <meta name="description" content="خدمات شنوایی و سمعک کلینیک شکوه تجریش: تست شنوایی، مشاوره، تجویز، تنظیم و پیگیری سمعک در تهران" />
 <link rel="canonical" href="https://tajrish-samak.ir/Service/All" />
-<link rel="stylesheet" href="css/gp-page-Service_All.css" />
+<meta property="og:title" content="خدمات شنوایی و سمعک کلینیک شکوه تجریش" />
+<meta property="og:type" content="website" />
+<link rel="stylesheet" href="/css/gp-page-Service_All.css?v=11" />
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@@type": "ListItem", "position": 1, "name": "صفحه اصلی", "item": "https://tajrish-samak.ir/" },
+    { "@@type": "ListItem", "position": 2, "name": "خدمات", "item": "https://tajrish-samak.ir/Service/All" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "ItemList",
+  "name": "خدمات کلینیک شنوایی و سمعک شکوه تجریش",
+  "itemListElement": [
+    @for (var i = 0; i < services.Count; i++)
+    {
+        <text>{ "@@type": "ListItem", "position": @(i + 1), "name": "@services[i].Title", "url": "https://tajrish-samak.ir/Service/@services[i].Id/@services[i].SefUrl" }@(i < services.Count - 1 ? "," : "")</text>
+    }
+  ]
+}
+</script>
 
 <section class="gp-service-page">
     <div class="container">
-        <h1>خدمات شنوایی و سمعک</h1>
+        <section class="gp-svc-hero">
+            <div class="gp-svc-hero-copy">
+                <span class="gp-svc-kicker">خدمات کلینیک</span>
+                <h1>@(categoryName != null ? "خدمات " + categoryName : "خدمات شنوایی و سمعک")</h1>
+                <p>
+                    از تست شنوایی تا انتخاب، تجویز، تنظیم و نگهداری سمعک؛ همه خدمات تخصصی شنوایی شکوه تجریش را اینجا ببینید و برای هر کدام مستقیم مشاوره بگیرید.
+                </p>
+                <div class="gp-svc-hero-actions">
+                    <a href="tel:02122735588"><span aria-hidden="true">☎</span> مشاوره رایگان</a>
+                    <a href="/Blog/All">مجله کلینیک</a>
+                </div>
+            </div>
+            <div class="gp-svc-hero-stats" aria-label="آمار خدمات">
+                <div class="gp-svc-stat"><b>@FaNum(services.Count)</b><span>خدمت فعال</span></div>
+                <div class="gp-svc-stat"><b>@FaNum(gpCategoryCount)</b><span>گروه تخصصی</span></div>
+            </div>
+        </section>
 
         @if (services.Count > 0)
         {
             <div class="gp-service-grid">
                 @foreach (var item in services)
                 {
-                    <article class="gp-service-card">
-                        @if (item.Images != null && item.Images.Any())
-                        {
-                            <a href="/Service/@item.Id/@item.SefUrl" title="@item.Title">
-                                <img src="@item.Images.First().FullPath" alt="@item.Title" loading="lazy" decoding="async" />
-                            </a>
-                        }
-                        <h2><a href="/Service/@item.Id/@item.SefUrl" title="@item.Title">@item.Title</a></h2>
-                        <p>@item.ShortDesc</p>
-                        <a class="gp-service-more" href="/Service/@item.Id/@item.SefUrl" title="@item.Title">مشاهده و مشاوره</a>
+                    <article class="gp-service-card" itemscope itemtype="https://schema.org/Service">
+                        <a class="gp-service-card-media" href="/Service/@item.Id/@item.SefUrl" title="@item.Title" itemprop="url">
+                            @if (item.Images != null && item.Images.Any())
+                            {
+                                <img src="@item.Images.First().FullPath" alt="@item.Title" loading="lazy" decoding="async" itemprop="image" />
+                            }
+                            @if (item.Category != null)
+                            {
+                                <span class="gp-service-card-cat" itemprop="serviceType">@item.Category.PersianName</span>
+                            }
+                        </a>
+                        <div class="gp-service-card-body">
+                            <h2 itemprop="name"><a href="/Service/@item.Id/@item.SefUrl" title="@item.Title">@item.Title</a></h2>
+                            <p itemprop="description">@item.ShortDesc</p>
+                            <a class="gp-service-more" href="/Service/@item.Id/@item.SefUrl" title="@item.Title">مشاهده و مشاوره <span aria-hidden="true">←</span></a>
+                        </div>
                     </article>
                 }
             </div>
         }
         else
         {
-            <div class="gp-empty-products">در حال حاضر خدمتی ثبت نشده است.</div>
+            <div class="gp-empty-products">@(invalidCategory ? "گروه خدمات مورد نظر پیدا نشد." : "در حال حاضر خدمتی ثبت نشده است.")</div>
+            @if (invalidCategory)
+            {
+                <meta name="robots" content="noindex" />
+            }
         }
+
+        <section class="gp-svc-cta" aria-label="تماس با کلینیک">
+            <div>
+                <h2>خدمت مورد نظرتان را پیدا نکردید؟</h2>
+                <p>تماس بگیرید؛ تیم کلینیک راهنمایی‌تان می‌کند.</p>
+            </div>
+            <a href="tel:02122735588"><span aria-hidden="true">☎</span> ۰۲۱-۲۲۷۳۵۵۸۸</a>
+        </section>
     </div>
 </section>
 
 @code {
     private List<Service> services = new();
+    private string categoryName;
+    private bool invalidCategory;
+    private int gpCategoryCount;
+
+    [Parameter] public long? id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await using var db = DbFactory.CreateDbContext();
 
-        services = await db.Services
-            .AsNoTracking()
-            .Include(s => s.Images)
-            .Include(s => s.Category)
-            .Where(s => s.IsVisible)
-            .OrderByDescending(s => s.Survey)
-            .ToListAsync();
+        gpCategoryCount = await db.ServiceCategories.AsNoTracking().CountAsync();
+
+        // legacy Home/Services(id) filtered by ServiceCategoryId and rejected
+        // unknown ids; keep the same behaviour for the navbar dropdown links.
+        if (id.HasValue)
+        {
+            categoryName = await db.ServiceCategories
+                .AsNoTracking()
+                .Where(c => c.Id == id.Value)
+                .Select(c => c.PersianName)
+                .FirstOrDefaultAsync();
+
+            if (categoryName == null)
+            {
+                invalidCategory = true;
+                return;
+            }
+
+            services = await db.Services
+                .AsNoTracking()
+                .Include(s => s.Images)
+                .Include(s => s.Category)
+                .Where(s => s.IsVisible && s.CategoryId == id.Value)
+                .OrderByDescending(s => s.CreateDate)
+                .ToListAsync();
+        }
+        else
+        {
+            services = await db.Services
+                .AsNoTracking()
+                .Include(s => s.Images)
+                .Include(s => s.Category)
+                .Where(s => s.IsVisible)
+                .OrderByDescending(s => s.Survey)
+                .ToListAsync();
+        }
+    }
+
+    private static string FaNum(int value)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(value.ToString("N0", System.Globalization.CultureInfo.InvariantCulture).Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
     }
 }

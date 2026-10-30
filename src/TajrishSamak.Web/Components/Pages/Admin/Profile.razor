@@ -1,0 +1,105 @@
+@page "/admin/profile"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@using System.Security.Claims
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+<PageTitle>پروفایل مدیر | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+@{
+    var userId = Http.HttpContext?.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var msg = Http.HttpContext?.Request.Query["msg"].ToString();
+    var pwErr = Http.HttpContext?.Request.Query["pw"].ToString();
+    var saved = msg == "saved";
+    var pwChanged = msg == "pw";
+    var pwWrong = pwErr == "wrong";
+    var pwShort = pwErr == "short";
+
+    if (!loaded && !string.IsNullOrEmpty(userId))
+    {
+        loaded = true;
+        using var loadDb = DbFactory.CreateDbContext();
+        var user = loadDb.Users.AsNoTracking().FirstOrDefault(u => u.Id == userId);
+        if (user != null)
+        {
+            FirstName = user.FirstName ?? ""; LastName = user.LastName ?? "";
+            Email = user.Email ?? ""; Mobile = user.Mobile ?? "";
+        }
+    }
+
+    token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+}
+
+<div class="adm-editor">
+    <h2>👤 پروفایل مدیر</h2>
+
+    @if (saved)
+    {
+        <div class="adm-editor-saved">✓ اطلاعات ذخیره شد</div>
+    }
+    @if (pwChanged)
+    {
+        <div class="adm-editor-saved">✓ رمز عبور تغییر کرد</div>
+    }
+    @if (pwWrong)
+    {
+        <div class="adm-login-error">✕ رمز فعلی اشتباه است</div>
+    }
+    @if (pwShort)
+    {
+        <div class="adm-login-error">✕ رمز جدید باید حداقل ۶ کاراکتر باشد</div>
+    }
+
+    <form method="post" action="/admin/save/profile" class="adm-form">
+        <input type="hidden" name="__RequestVerificationToken" value="@token" />
+
+        <h3 style="color:#8a8fa3;font-size:12px;margin:0 0 0">اطلاعات شخصی</h3>
+        <div class="adm-form-grid">
+            <div>
+                <label>نام</label>
+                <input type="text" name="firstName" value="@FirstName" />
+            </div>
+            <div>
+                <label>نام خانوادگی</label>
+                <input type="text" name="lastName" value="@LastName" />
+            </div>
+        </div>
+        <div class="adm-form-grid">
+            <div>
+                <label>ایمیل</label>
+                <input type="text" name="email" value="@Email" dir="ltr" />
+            </div>
+            <div>
+                <label>موبایل</label>
+                <input type="text" name="mobile" value="@Mobile" dir="ltr" />
+            </div>
+        </div>
+
+        <h3 style="color:#8a8fa3;font-size:12px;margin:20px 0 0">تغییر رمز عبور</h3>
+        <div class="adm-form-grid">
+            <div>
+                <label>رمز فعلی</label>
+                <input type="password" name="currentPassword" autocomplete="current-password" />
+            </div>
+            <div>
+                <label>رمز جدید</label>
+                <input type="password" name="newPassword" autocomplete="new-password" />
+            </div>
+        </div>
+
+        <div class="adm-editor-actions">
+            <button type="submit" class="adm-btn adm-btn-purple">💾 ذخیره تغییرات</button>
+        </div>
+    </form>
+</div>
+
+@code {
+    private bool loaded;
+    private string token = "";
+    private string FirstName = "", LastName = "", Email = "", Mobile = "";
+}

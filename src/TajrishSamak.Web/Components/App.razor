@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="کلینیک شنوایی و سمعک شکوه تجریش؛ بررسی رایگان شنوایی، تنظیم سمعک و عرضه انواع سمعک از برندهای معتبر جهان در شمال تهران با بیش از دو دهه تجربه." />
     <base href="/" />
     <ResourcePreloader />
     <HeadOutlet />
@@ -35,24 +36,24 @@
     <meta name="copyright" content="کلینیک شنوایی و سمعک شکوه تجریش" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="icon" type="image/webp" href="images/logo_purple.webp" />
-    <link rel="preload" as="image" href="images/logo_purple.webp" fetchpriority="high" />
+    <link rel="icon" type="image/webp" href="/images/logo_purple.webp" />
+    <link rel="preload" as="image" href="/images/logo_purple.webp" fetchpriority="high" />
 
-    <link rel="stylesheet" href="@Assets["css/bootstrap.css"]" />
-    <link rel="stylesheet" href="@Assets["css/style.css"]" />
-    <link rel="stylesheet" href="@Assets["css/font-awesome.css"]" />
-    <link rel="stylesheet" href="@Assets["css/gp-tajrish-modern.css"]" />
-    <link rel="stylesheet" href="@Assets["css/gp-layout-legacy.css"]" />
-    <link rel="stylesheet" href="@Assets["TajrishSamak.Web.styles.css"]" />
+    <link rel="stylesheet" href="/css/bootstrap.css?v=11" />
+    <link rel="stylesheet" href="/css/style.css?v=11" />
+    <link rel="stylesheet" href="/css/font-awesome.css?v=11" />
+    <link rel="stylesheet" href="/css/gp-tajrish-modern.css?v=11" />
+    <link rel="stylesheet" href="/css/gp-layout-legacy.css?v=11" />
+    <link rel="stylesheet" href="/TajrishSamak.Web.styles.css?v=11" />
     <ImportMap />
 
     @* Legacy jQuery stack must load in <head> (blocking) BEFORE body scripts:
        page-level scripts (gp-home-legacy.js, gp-contact-legacy.js) use $ at
        parse time, exactly like the legacy _Layout.cshtml did. *@
-    <script src="@Assets["js/jquery-2.1.4.min.js"]"></script>
-    <script src="@Assets["js/bootstrap.js"]"></script>
-    <script src="@Assets["js/gp-tajrish-modern.js"]"></script>
-    <script src="@Assets["js/gp-layout-legacy.js"]"></script>
+    <script src="/js/jquery-2.1.4.min.js?v=11"></script>
+    <script src="/js/bootstrap.js?v=11"></script>
+    <script src="/js/gp-tajrish-modern.js?v=11"></script>
+    <script src="/js/gp-layout-legacy.js?v=11"></script>
 
     <script>
         (function () {
@@ -128,7 +129,8 @@
           "email": "tajrishsamak@gmail.com",
           "priceRange": "$$",
           "currenciesAccepted": "IRR",
-          "paymentAccepted": "Cash, Card",
+          "paymentAccepted": "Cash, Card", "opens": "09:00", "closes": "20:00" }
+          ],
           "address": {
             "@@type": "PostalAddress",
             "addressCountry": "IR",

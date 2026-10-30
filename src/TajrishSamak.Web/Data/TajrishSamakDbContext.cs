@@ -31,6 +31,8 @@ namespace TajrishSamak.Web.Data
         public DbSet<Gallery> Galleries { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<NewsLetter> NewsLetters { get; set; }
+        public DbSet<IdentityRoleEntity> IdentityRoles { get; set; }
+        public DbSet<IdentityUserRoleEntity> IdentityUserRoles { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Payment> Payments { get; set; }
@@ -76,6 +78,9 @@ namespace TajrishSamak.Web.Data
             modelBuilder.Entity<ProductInOrder>().ToTable("ProductsInOrders");
             modelBuilder.Entity<SentEmail>().ToTable("SentEmails");
             modelBuilder.Entity<ApplicationUser>().ToTable("AspNetUsers");
+
+            // ---------- legacy identity role tables (composite key) ----------
+            modelBuilder.Entity<IdentityUserRoleEntity>().HasKey(x => new { x.UserId, x.RoleId });
 
             // ---------- file (attachment) relationships ----------
             modelBuilder.Entity<FileEntity>().HasOne(f => f.blog).WithMany(b => b.Images).HasForeignKey(f => f.BlogId);

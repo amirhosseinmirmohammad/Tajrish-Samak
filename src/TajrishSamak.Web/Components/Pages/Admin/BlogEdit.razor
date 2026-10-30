@@ -1,0 +1,104 @@
+@page "/admin/blogs/edit/{id:long?}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject NavigationManager Nav
+
+<PageTitle>@(IsNew ? "مقاله جدید" : "ویرایش مقاله") | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<div class="adm-editor">
+    <h2>@(IsNew ? "📝 مقاله جدید" : "✏ ویرایش مقاله")</h2>
+
+    <form method="post" action="/admin/save/blog" class="adm-form">
+        <input type="hidden" name="id" value="@EditId" />
+        <input type="hidden" name="__RequestVerificationToken" value="@token" />
+
+        <label>عنوان مقاله *</label>
+        <input type="text" name="title" value="@Title" required maxlength="300" />
+
+        <div class="adm-form-grid">
+            <div>
+                <label>دسته</label>
+                <select name="categoryId">
+                    <option value="">— بدون دسته —</option>
+                    @foreach (var c in blogCategories)
+                    {
+                        <option value="@c.Id" selected="@(CategoryId == c.Id)">@c.PersianName</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label>اسلاگ (SefUrl) — خالی = خودکار از عنوان</label>
+                <input type="text" name="sefUrl" value="@SefUrl" dir="ltr" />
+            </div>
+        </div>
+
+        <label>خلاصه (ShortDesc)</label>
+        <textarea name="shortDesc" rows="2">@ShortDesc</textarea>
+
+        <label>متن مقاله (Body) — HTML مجاز</label>
+        <textarea name="body" rows="14" class="mono">@Body</textarea>
+
+        <div class="adm-form-grid">
+            <div>
+                <label>متا دیسکریپشن (سئو)</label>
+                <textarea name="metaDesc" rows="2">@MetaDesc</textarea>
+            </div>
+            <div>
+                <label>متا کیوردز (Enter یا , = افزودن)</label>
+                <div class="gp-tags-editor" data-name="metaKey" data-values="@MetaKey"></div>
+            </div>
+        </div>
+
+        <label class="adm-checkbox">
+            <input type="checkbox" name="isVisible" value="true" checked="@(IsVisible)" />
+            نمایش داده شود
+        </label>
+
+        <div class="adm-editor-actions">
+            <button type="submit" class="adm-btn adm-btn-purple">💾 ذخیره</button>
+            <a href="/admin/blogs" class="adm-btn adm-btn-ghost">انصراف</a>
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter] public long? id { get; set; }
+
+    private Blog? post;
+    private bool IsNew => id == null || id == 0;
+    private long EditId => id ?? 0;
+    private string token = "";
+    private string Title = "", SefUrl = "", ShortDesc = "", Body = "", MetaKey = "", MetaDesc = "";
+    private long? CategoryId;
+    private bool IsVisible = true;
+    private List<Category> blogCategories = new();
+
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+        blogCategories = await db.Categories.AsNoTracking().Where(c => c.IsBlog == true).OrderBy(c => c.PersianName).ToListAsync();
+
+        if (!IsNew && post == null)
+        {
+            post = await db.Blogs.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id);
+            if (post == null) { Nav.NavigateTo("/admin/blogs"); return; }
+            Title = post.Title; SefUrl = post.SefUrl ?? ""; ShortDesc = post.ShortDesc ?? "";
+            Body = post.Body ?? ""; MetaKey = post.MetaKey ?? ""; MetaDesc = post.MetaDesc ?? "";
+            CategoryId = post.CategoryId; IsVisible = post.IsVisible == true;
+        }
+    }
+}

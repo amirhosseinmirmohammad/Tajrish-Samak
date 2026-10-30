@@ -1,0 +1,125 @@
+@page "/admin/brands"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inherits TajrishSamak.Web.Components.Shared.AdmListBase
+
+<PageTitle>برندها (جدول) | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<div class="adm-toolbar-row" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+    <form method="get" class="adm-search" style="margin-bottom:0">
+        <input type="hidden" name="sort" value="@Sort" />
+        <input type="hidden" name="dir" value="@DirStr" />
+        <input type="search" name="q" value="@Q" placeholder="جستجو: نام فارسی، انگلیسی..." />
+        <button type="submit" class="adm-btn adm-btn-purple">جستجو</button>
+    </form>
+    <a class="adm-btn adm-btn-purple" href="/admin/brands/edit">＋ برند جدید</a>
+</div>
+
+<div class="adm-card adm-table-wrap">
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>لوگو</th>
+                <AdmTh Key="PersianName" Label="نام فارسی" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="EnglishName" Label="نام انگلیسی" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var b in Rows)
+            {
+                <tr>
+                    <td>@FaNum(b.Id)</td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(b.SmallImage))
+                        {
+                            <img src="@b.SmallImage" width="60" style="border-radius:8px" />
+                        }
+                    </td>
+                    <td>@b.PersianName</td>
+                    <td dir="ltr" style="text-align:right">@b.EnglishName</td>
+                    <td>
+                        <div style="display:flex;gap:5px;align-items:center">
+                            <a class="adm-btn adm-btn-purple" href="/admin/brands/edit/@b.Id">ویرایش</a>
+                            <form method="post" action="/admin/delete">
+                                <input type="hidden" name="entity" value="brand" />
+                                <input type="hidden" name="id" value="@b.Id" />
+                                <input type="hidden" name="returnUrl" value="/admin/brands" />
+                                <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                                <button type="submit" class="adm-btn adm-btn-danger">حذف</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (Rows.Count == 0)
+            {
+                <tr><td colspan="5">برندی یافت نشد.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<AdmPager Page="Page" PageSize="PageSize" Total="Filtered.Count()" PageUrl="@PageUrl" />
+
+@code {
+    private List<Brand> brands = new();
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "q")] public string? QP { get => Qs; set => Qs = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "page")] public int? PageQP { get => PageN; set => PageN = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "sort")] public string? SortQP { get => SortS; set => SortS = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "dir")] public string? DirQP { get => DirS; set => DirS = value; }
+    private string token = "";
+
+    private IEnumerable<Brand> Filtered
+    {
+        get
+        {
+            IEnumerable<Brand> q = brands;
+            var term = (Q ?? "").Trim();
+            if (term.Length > 0)
+            {
+                q = q.Where(b =>
+                    (b.PersianName ?? "").Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (b.EnglishName ?? "").Contains(term, StringComparison.OrdinalIgnoreCase));
+            }
+            q = (Sort, Asc) switch
+            {
+                ("PersianName", true) => q.OrderBy(b => b.PersianName),
+                ("PersianName", false) => q.OrderByDescending(b => b.PersianName),
+                ("EnglishName", true) => q.OrderBy(b => b.EnglishName),
+                ("EnglishName", false) => q.OrderByDescending(b => b.EnglishName),
+                _ => q
+            };
+            return q;
+        }
+    }
+
+    private List<Brand> Rows => Filtered.Skip((Page - 1) * PageSize).Take(PageSize).ToList();
+
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+        brands = await db.Brands.AsNoTracking().OrderBy(b => b.Id).ToListAsync();
+    }
+
+    private static string FaNum(long v)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(v.ToString("N0").Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}

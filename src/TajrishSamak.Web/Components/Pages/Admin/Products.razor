@@ -1,0 +1,285 @@
+@page "/admin/products"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inherits TajrishSamak.Web.Components.Shared.AdmListBase
+
+<PageTitle>محصولات | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<div class="adm-toolbar-row" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:12.5px;font-weight:900;color:#6d0592">@FaNum(Filtered.Count()) محصول @HasFilterStr یافت شد</span>
+    <a class="adm-btn adm-btn-purple" href="/admin/products/edit">＋ محصول جدید</a>
+</div>
+
+<div class="adm-card">
+    <h2>🔍 جستجوی پیشرفته</h2>
+    <form method="get" class="adm-filter">
+        <div class="adm-filter-field adm-filter-field-wide">
+            <label>جستجو</label>
+            <input type="text" name="q" value="@Q" placeholder="نام فارسی، نام لاتین یا کد محصول..." />
+        </div>
+        <div class="adm-filter-field">
+            <label>دسته‌بندی</label>
+            <select name="cat">
+                <option value="">همه دسته‌ها</option>
+                @foreach (var c in categories)
+                {
+                    <option value="@c.Id" selected="@(Cat == c.Id)">@c.PersianName</option>
+                }
+            </select>
+        </div>
+        <div class="adm-filter-field">
+            <label>برند</label>
+            <select name="brand">
+                <option value="">همه برندها</option>
+                @foreach (var b in brands)
+                {
+                    <option value="@b.Id" selected="@(Brands == b.Id)">@b.PersianName</option>
+                }
+            </select>
+        </div>
+        <div class="adm-filter-field">
+            <label>موجودی</label>
+            <select name="stock">
+                <option value="" selected="@(string.IsNullOrEmpty(Stock))">همه</option>
+                <option value="in" selected="@(Stock == "in")">موجود</option>
+                <option value="out" selected="@(Stock == "out")">ناموجود</option>
+            </select>
+        </div>
+        <div class="adm-filter-field">
+            <label>تخفیف</label>
+            <select name="disc">
+                <option value="" selected="@(string.IsNullOrEmpty(Disc))">همه</option>
+                <option value="yes" selected="@(Disc == "yes")">دارای تخفیف</option>
+                <option value="no" selected="@(Disc == "no")">بدون تخفیف</option>
+            </select>
+        </div>
+        <div class="adm-filter-field">
+            <label>محصول ویژه</label>
+            <select name="sp">
+                <option value="" selected="@(string.IsNullOrEmpty(Sp))">همه</option>
+                <option value="yes" selected="@(Sp == "yes")">ویژه</option>
+                <option value="no" selected="@(Sp == "no")">معمولی</option>
+            </select>
+        </div>
+        <div class="adm-filter-field">
+            <label>حداقل قیمت (تومان)</label>
+            <input type="number" name="min" value="@Min" min="0" placeholder="از" />
+        </div>
+        <div class="adm-filter-field">
+            <label>حداکثر قیمت (تومان)</label>
+            <input type="number" name="max" value="@Max" min="0" placeholder="تا" />
+        </div>
+        <div class="adm-filter-field">
+            <label>مرتب‌سازی</label>
+            <select name="sort">
+                <option value="" selected="@(string.IsNullOrEmpty(Sort) || Sort is "Name" or "Category" or "Brand" or "Price" or "Stock" or "Discount")">جدیدترین</option>
+                <option value="old" selected="@(Sort == "old")">قدیمی‌ترین</option>
+                <option value="expensive" selected="@(Sort == "expensive")">گران‌ترین</option>
+                <option value="cheap" selected="@(Sort == "cheap")">ارزان‌ترین</option>
+                <option value="stock" selected="@(Sort == "stock")">بیشترین موجودی</option>
+            </select>
+        </div>
+        <div class="adm-filter-actions">
+            <button type="submit" class="adm-btn adm-btn-purple">اعمال فیلتر</button>
+            <a class="adm-btn adm-btn-danger" href="/admin/products">حذف فیلترها</a>
+        </div>
+    </form>
+</div>
+
+<div class="adm-card adm-table-wrap">
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <AdmTh Key="Name" Label="محصول" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="Category" Label="دسته" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="Brand" Label="برند" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="Price" Label="قیمت (تومان)" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="Stock" Label="موجودی" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="Discount" Label="تخفیف" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Rows)
+            {
+                var finalPrice = p.UnitPrice - (p.UnitPrice * p.DiscountPercent / 100);
+                <tr>
+                    <td>@FaNum(p.Id)</td>
+                    <td>
+                        <a href="/Product/Details/@p.Id" target="_blank" style="color:#6d0592;font-weight:900;text-decoration:none">@Truncate(p.PersianName, 35)</a>
+                        @if (p.IsSpecial)
+                        {
+                            <span class="adm-badge adm-badge-yellow" style="margin-right:5px">ویژه</span>
+                        }
+                    </td>
+                    <td>@(p.category?.PersianName ?? "—")</td>
+                    <td>@(p.Brand?.PersianName ?? "—")</td>
+                    <td>
+                        @if (p.DiscountPercent > 0)
+                        {
+                            <del style="color:#b3125c;font-size:11px">@FaNum(p.UnitPrice)</del>
+                            <b>@FaNum(finalPrice)</b>
+                        }
+                        else
+                        {
+                            <b>@FaNum(p.UnitPrice)</b>
+                        }
+                    </td>
+                    <td>
+                        @if (p.Stock > 0)
+                        {
+                            <span class="adm-badge adm-badge-green">@FaNum(p.Stock)</span>
+                        }
+                        else
+                        {
+                            <span class="adm-badge adm-badge-red">ناموجود</span>
+                        }
+                    </td>
+                    <td>@(p.DiscountPercent > 0 ? "٪" + FaNum(p.DiscountPercent) : "—")</td>
+                    <td>
+                        <div style="display:flex;gap:5px;align-items:center">
+                            <a class="adm-btn adm-btn-purple" href="/admin/products/edit/@p.Id">ویرایش</a>
+                            <form method="post" action="/admin/delete">
+                                <input type="hidden" name="entity" value="product" />
+                                <input type="hidden" name="id" value="@p.Id" />
+                                <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+                                <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                                <button type="submit" class="adm-btn adm-btn-danger">حذف</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (Rows.Count == 0)
+            {
+                <tr><td colspan="8" style="text-align:center;color:#8a8fa3;font-weight:900;padding:26px 0">محصولی با این فیلترها یافت نشد.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<AdmPager Page="Page" PageSize="PageSize" Total="Filtered.Count()" PageUrl="@PageUrl" />
+
+@code {
+    private List<Product> products = new();
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "q")] public string? QP { get => Qs; set => Qs = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "page")] public int? PageQP { get => PageN; set => PageN = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "sort")] public string? SortQP { get => SortS; set => SortS = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "dir")] public string? DirQP { get => DirS; set => DirS = value; }
+    private List<Category> categories = new();
+    private List<Brand> brands = new();
+    private string token = "";
+
+    private string ReturnUrl => "/admin/products";
+
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "cat")] public int? Cat { get; set; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "brand")] public int? Brands { get; set; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "stock")] public string? Stock { get; set; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "disc")] public string? Disc { get; set; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "sp")] public string? Sp { get; set; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "min")] public int? Min { get; set; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "max")] public int? Max { get; set; }
+
+    private string HasFilterStr => HasFilter ? "(فیلترشده)" : "";
+    private bool HasFilter =>
+        !string.IsNullOrWhiteSpace(Q) || Cat.HasValue || Brands.HasValue ||
+        !string.IsNullOrEmpty(Stock) || !string.IsNullOrEmpty(Disc) ||
+        !string.IsNullOrEmpty(Sp) || Min.HasValue || Max.HasValue;
+
+    private IEnumerable<Product> Filtered
+    {
+        get
+        {
+            IEnumerable<Product> q = products;
+            q = Sort switch
+            {
+                "expensive" => q.OrderByDescending(p => p.UnitPrice),
+                "cheap" => q.OrderBy(p => p.UnitPrice),
+                "old" => q.OrderBy(p => p.Id),
+                "stock" => q.OrderByDescending(p => p.Stock),
+                "Name" => Asc ? q.OrderBy(p => p.PersianName) : q.OrderByDescending(p => p.PersianName),
+                "Category" => Asc ? q.OrderBy(p => p.category?.PersianName) : q.OrderByDescending(p => p.category?.PersianName),
+                "Brand" => Asc ? q.OrderBy(p => p.Brand?.PersianName) : q.OrderByDescending(p => p.Brand?.PersianName),
+                "Price" => Asc ? q.OrderBy(p => p.UnitPrice) : q.OrderByDescending(p => p.UnitPrice),
+                "Stock" => Asc ? q.OrderBy(p => p.Stock) : q.OrderByDescending(p => p.Stock),
+                "Discount" => Asc ? q.OrderBy(p => p.DiscountPercent) : q.OrderByDescending(p => p.DiscountPercent),
+                _ => q
+            };
+            return q;
+        }
+    }
+
+    private List<Product> Rows => Filtered.Skip((Page - 1) * PageSize).Take(PageSize).ToList();
+
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+
+        categories = await db.Categories.AsNoTracking()
+            .OrderBy(c => c.PersianName).Select(c => new Category { Id = c.Id, PersianName = c.PersianName })
+            .ToListAsync();
+        brands = await db.Brands.AsNoTracking()
+            .OrderBy(b => b.PersianName).Select(b => new Brand { Id = b.Id, PersianName = b.PersianName })
+            .ToListAsync();
+
+        var query = db.Products
+            .AsNoTracking()
+            .Include(p => p.category)
+            .Include(p => p.Brand)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(Q))
+        {
+            var q = Q.Trim();
+            query = query.Where(p =>
+                p.PersianName.Contains(q) ||
+                p.EnglishName.Contains(q) ||
+                p.Id.ToString() == q);
+        }
+        if (Cat.HasValue) query = query.Where(p => p.CategoryId == Cat.Value);
+        if (Brands.HasValue) query = query.Where(p => p.BrandId == Brands.Value);
+        if (Stock == "in") query = query.Where(p => p.Stock > 0);
+        else if (Stock == "out") query = query.Where(p => p.Stock == 0);
+        if (Disc == "yes") query = query.Where(p => p.DiscountPercent > 0);
+        else if (Disc == "no") query = query.Where(p => p.DiscountPercent == 0);
+        if (Sp == "yes") query = query.Where(p => p.IsSpecial);
+        else if (Sp == "no") query = query.Where(p => !p.IsSpecial);
+        if (Min.HasValue) query = query.Where(p => p.UnitPrice >= Min.Value);
+        if (Max.HasValue) query = query.Where(p => p.UnitPrice <= Max.Value);
+
+        if (Sort is "old") query = query.OrderBy(p => p.Id);
+        else if (Sort is "expensive") query = query.OrderByDescending(p => p.UnitPrice);
+        else if (Sort is "cheap") query = query.OrderBy(p => p.UnitPrice);
+        else if (Sort is "stock") query = query.OrderByDescending(p => p.Stock);
+        else query = query.OrderByDescending(p => p.Id);
+
+        products = await query.ToListAsync();
+    }
+
+    private static string Truncate(string? text, int len)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return "—";
+        return text.Length <= len ? text : text.Substring(0, len) + "…";
+    }
+
+    private static string FaNum(long v)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(v.ToString("N0").Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}

@@ -5,14 +5,30 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
 
 <PageTitle>@(service?.Title ?? "خدمت") | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
-<meta name="description" content="@service?.MetaDesc" />
+<meta name="description" content="@(service?.MetaDesc ?? "خدمات تخصصی شنوایی و سمعک در کلینیک شکوه تجریش")" />
+<meta name="Keywords" content="@(service?.MetaKey ?? "")" />
 <link rel="canonical" href="@canonicalUrl" />
 <meta property="og:title" content="@service?.Title" />
+<meta property="og:type" content="article" />
 <meta property="og:url" content="@canonicalUrl" />
-<link rel="stylesheet" href="css/gp-page-Service_Index.css" />
+<meta property="og:description" content="@(service?.ShortDesc ?? service?.MetaDesc ?? "")" />
+@if (!string.IsNullOrWhiteSpace(ogImage))
+{
+    <meta property="og:image" content="@ogImage" />
+}
+<meta property="og:locale" content="fa_IR" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="@service?.Title" />
+<meta name="twitter:description" content="@(service?.ShortDesc ?? service?.MetaDesc ?? "")" />
+@if (!string.IsNullOrWhiteSpace(ogImage))
+{
+    <meta name="twitter:image" content="@ogImage" />
+}
+<link rel="stylesheet" href="/css/gp-page-Service_Index.css?v=11" />
 
 @if (service == null)
 {
+    <meta name="robots" content="noindex" />
     <h1 style="text-align:center;padding:60px 20px;">خدمت پیدا نشد</h1>
     <p style="text-align:center;"><a href="/Service/All">بازگشت به خدمات</a></p>
     return;
@@ -24,39 +40,195 @@
   "@@type": "Service",
   "@@id": "@canonicalUrl#service",
   "name": "@service.Title",
-  "description": "@service.MetaDesc",
+  "description": "@(service.ShortDesc ?? service.MetaDesc)",
   "url": "@canonicalUrl",
+  "serviceType": "@service.Category?.PersianName",
+  "@if (!string.IsNullOrWhiteSpace(ogImage))
+  {
+      <text>"image": "@ogImage",</text>
+  }
+  "areaServed": { "@@type": "City", "name": "تهران" },
   "provider": {
     "@@type": ["LocalBusiness", "MedicalBusiness", "MedicalClinic"],
     "@@id": "https://tajrish-samak.ir/#tajrish-samak",
     "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-    "telephone": "+982122735588"
+    "telephone": "+982122735588",
+    "address": {
+      "@@type": "PostalAddress",
+      "addressCountry": "IR",
+      "addressLocality": "تهران",
+      "streetAddress": "میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، پلاک ۲۱۴، ساختمان ۱۱۰"
+    }
   }
 }
 </script>
 
-<article class="gp-service-detail">
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@@type": "ListItem", "position": 1, "name": "صفحه اصلی", "item": "https://tajrish-samak.ir/" },
+    { "@@type": "ListItem", "position": 2, "name": "خدمات", "item": "https://tajrish-samak.ir/Service/All" },
+    { "@@type": "ListItem", "position": 3, "name": "@service.Title", "item": "@canonicalUrl" }
+  ]
+}
+</script>
+
+<article class="gsd" itemscope itemtype="https://schema.org/Service">
     <div class="container">
-        <h1>@service.Title</h1>
-        @if (service.Images != null && service.Images.Any())
-        {
-            <img src="@service.Images.First().FullPath" alt="@service.Title" style="max-width:100%;height:auto;" />
-        }
-        <div>
-            @((MarkupString)service.Body)
+
+        <nav class="gsd-crumb" aria-label="مسیر صفحه">
+            <a href="/">خانه</a>
+            <span aria-hidden="true">‹</span>
+            <a href="/Service/All">خدمات</a>
+            @if (service.Category != null)
+            {
+                <span aria-hidden="true">‹</span>
+                <a href="/Home/Services/@service.Category.Id">@service.Category.PersianName</a>
+            }
+            <span aria-hidden="true">‹</span>
+            <span>@Truncate(service.Title, 46)</span>
+        </nav>
+
+        @* ---------- hero: copy + floating image ---------- *@
+        <div class="gsd-hero">
+            <div class="gsd-hero-copy">
+                @if (service.Category != null)
+                {
+                    <a class="gsd-chip" href="/Home/Services/@service.Category.Id" itemprop="serviceType">
+                        <i aria-hidden="true">◈</i> @service.Category.PersianName
+                    </a>
+                }
+                <h1 itemprop="name">@service.Title</h1>
+                @if (!string.IsNullOrWhiteSpace(service.ShortDesc))
+                {
+                    <p class="gsd-lead" itemprop="description">@service.ShortDesc</p>
+                }
+
+                <div class="gsd-hero-actions">
+                    <a class="gsd-btn gsd-btn-primary" href="tel:02122735588">
+                        <span aria-hidden="true">☎</span> مشاوره و رزرو رایگان
+                    </a>
+                    <a class="gsd-btn gsd-btn-ghost" href="https://wa.me/+989393388985?text=@TitleEncoded" target="_blank" rel="noreferrer">
+                        <span aria-hidden="true">✆</span> واتساپ
+                    </a>
+                </div>
+
+                <div class="gsd-hero-meta" aria-label="اطلاعات خدمت">
+                    <span><i aria-hidden="true">👁</i> @FaNum(service.Survey ?? 0) بازدید</span>
+                    @if (service.CreateDate.HasValue)
+                    {
+                        <span><i aria-hidden="true">📅</i> @GetPersianDate(service.CreateDate)</span>
+                    }
+                </div>
+
+                <div class="gsd-hero-share" aria-label="اشتراک‌گذاری">
+                    <span>اشتراک‌گذاری:</span>
+                    <a href="https://t.me/share/url?url=@UrlEncoded&text=@TitleEncoded" target="_blank" rel="noreferrer" aria-label="تلگرام">➤</a>
+                    <a href="https://wa.me/?text=@TitleEncoded%20@UrlEncoded" target="_blank" rel="noreferrer" aria-label="واتساپ">✆</a>
+                    <a href="mailto:?subject=@TitleEncoded&body=@UrlEncoded" aria-label="ایمیل">✉</a>
+                    <button type="button" class="gsd-copy" data-copy="@canonicalUrl" aria-label="کپی لینک">⧉</button>
+                </div>
+            </div>
+
+            <figure class="gsd-hero-media">
+                @if (service.Images != null && service.Images.Any())
+                {
+                    <img src="@service.Images.First().FullPath" alt="@service.Title" itemprop="image" width="760" height="560" fetchpriority="high" decoding="async" />
+                }
+                <figcaption class="gsd-media-badge">
+                    <b>@FaNum(service.Survey ?? 0)</b>
+                    <small>بازدید</small>
+                </figcaption>
+            </figure>
         </div>
 
-        <h2>خدمات مرتبط</h2>
-        <ul>
-            @foreach (var r in related)
-            {
-                <li><a href="/Service/@r.Id/@r.SefUrl">@r.Title</a></li>
-            }
-        </ul>
+        @* ---------- body + sticky side panel ---------- *@
+        <div class="gsd-main">
+            <div class="gsd-body" itemprop="description">
+                @((MarkupString)service.Body)
+            </div>
 
-        <p><a href="/Service/All">بازگشت به خدمات</a></p>
+            <aside class="gsd-panel">
+                <div class="gsd-panel-box">
+                    <h2>چطور این خدمت را دریافت کنم؟</h2>
+                    <ol class="gsd-steps">
+                        <li><i>۱</i><div><b>تماس یا پیام</b><small>مشاوره اولیه رایگان با کارشناس کلینیک</small></div></li>
+                        <li><i>۲</i><div><b>رزرو نوبت</b><small>تعیین زمان مراجعه یا هماهنگی خدمت</small></div></li>
+                        <li><i>۳</i><div><b>دریافت خدمت</b><small>ارائه تخصصی و پیگیری پس از خدمت</small></div></li>
+                    </ol>
+
+                    <div class="gsd-panel-actions">
+                        <a href="tel:02122735588" class="gsd-panel-call"><span aria-hidden="true">☎</span> ۰۲۱-۲۲۷۳۵۵۸۸</a>
+                        <a href="https://wa.me/+989393388985" target="_blank" rel="noreferrer" class="gsd-panel-wa"><span aria-hidden="true">✆</span> واتساپ کلینیک</a>
+                    </div>
+                </div>
+
+                <div class="gsd-panel-box gsd-panel-share">
+                    <h2>اشتراک‌گذاری</h2>
+                    <div class="gsd-panel-share-row">
+                        <a href="https://t.me/share/url?url=@UrlEncoded&text=@TitleEncoded" target="_blank" rel="noreferrer" aria-label="تلگرام">➤</a>
+                        <a href="https://wa.me/?text=@TitleEncoded%20@UrlEncoded" target="_blank" rel="noreferrer" aria-label="واتساپ">✆</a>
+                        <a href="mailto:?subject=@TitleEncoded&body=@UrlEncoded" aria-label="ایمیل">✉</a>
+                        <button type="button" class="gsd-copy" data-copy="@canonicalUrl" aria-label="کپی لینک">⧉</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        @if (related.Count > 0)
+        {
+            <section class="gsd-related" aria-label="خدمات مرتبط">
+                <h2><span>خدمات مرتبط</span></h2>
+                <div class="gp-related-grid">
+                    @foreach (var relItem in related)
+                    {
+                        <a class="gp-related-card" href="/Service/@relItem.Id/@relItem.SefUrl" title="@relItem.Title">
+                            @if (relItem.Images != null && relItem.Images.Any())
+                            {
+                                <img src="@relItem.Images.First().FullPath" alt="@relItem.Title" loading="lazy" decoding="async" />
+                            }
+                            <b>@Truncate(relItem.Title, 52)</b>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        <section class="gsd-final-cta" aria-label="تماس با کلینیک">
+            <div>
+                <h2>برای این خدمت راهنمایی می‌خواهید؟</h2>
+                <p>کارشناسان کلینیک شنوایی شکوه تجریش پاسخ‌گوی شما هستند.</p>
+            </div>
+            <a href="tel:02122735588"><span aria-hidden="true">☎</span> تماس و مشاوره رایگان</a>
+        </section>
+
+        <div class="gsd-back">
+            <a href="/Service/All">← بازگشت به همه خدمات</a>
+        </div>
     </div>
 </article>
+
+<script>
+    (function () {
+        document.addEventListener("click", function (event) {
+            var btn = event.target.closest(".gsd-copy");
+            if (!btn) return;
+            var url = btn.getAttribute("data-copy");
+            var done = function () {
+                var old = btn.textContent;
+                btn.textContent = "✓";
+                setTimeout(function () { btn.textContent = old; }, 1400);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(done).catch(function () { window.prompt("لینک خدمت:", url); });
+            } else {
+                window.prompt("لینک خدمت:", url);
+            }
+        });
+    })();
+</script>
 
 @code {
     [Parameter] public long id { get; set; }
@@ -64,7 +236,11 @@
 
     private Service service;
     private List<Service> related = new();
-    private string canonicalUrl;
+    private string canonicalUrl = "https://tajrish-samak.ir/Service/All";
+    private string ogImage = "";
+
+    private string UrlEncoded => Uri.EscapeDataString(canonicalUrl);
+    private string TitleEncoded => Uri.EscapeDataString((service?.Title ?? "خدمات کلینیک شنوایی و سمعک شکوه تجریش") + " | کلینیک شنوایی شکوه تجریش");
 
     protected override async Task OnParametersSetAsync()
     {
@@ -87,6 +263,7 @@
         }
 
         canonicalUrl = "https://tajrish-samak.ir/Service/" + service.Id + "/" + service.SefUrl;
+        ogImage = service.Images?.FirstOrDefault()?.FullPath ?? "";
 
         // atomic single-column counter (legacy behaviour, query best practice)
         await db.Database.ExecuteSqlInterpolatedAsync(
@@ -100,5 +277,26 @@
             .OrderByDescending(s => s.Survey)
             .Take(4)
             .ToListAsync();
+    }
+
+    private static string Truncate(string text, int len)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return "";
+        var plain = System.Text.RegularExpressions.Regex.Replace(text, "<[^>]+>", " ").Trim();
+        return plain.Length <= len ? plain : plain.Substring(0, len) + "…";
+    }
+
+    private static string GetPersianDate(DateTime? date)
+    {
+        if (!date.HasValue) return "";
+        var cal = new System.Globalization.PersianCalendar();
+        var d = date.Value;
+        return $"{cal.GetYear(d):0000}/{cal.GetMonth(d):00}/{cal.GetDayOfMonth(d):00}";
+    }
+
+    private static string FaNum(int value)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(value.ToString("N0", System.Globalization.CultureInfo.InvariantCulture).Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
     }
 }

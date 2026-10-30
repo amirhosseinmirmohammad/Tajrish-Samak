@@ -9,9 +9,9 @@
 <meta property="og:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://tajrish-samak.ir/contactus" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="css/gp-page-ContactUs.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="@Assets["lib/leaflet/leaflet.css"]" />
+<link rel="stylesheet" href="/css/gp-page-ContactUs.css?v=11" />
+<script src="@Assets["lib/leaflet/leaflet.js"]"></script>
 
 <script type="application/ld+json">
 {
@@ -101,7 +101,7 @@
                     <p>پیام خود را بفرستید؛ تیم کلینیک برای راهنمایی درباره تست شنوایی، انتخاب سمعک یا پیگیری خدمات با شما ارتباط می‌گیرد.</p>
                 </div>
 
-                <TajrishSamak.Web.Components.Pages.ContactForm @rendermode="InteractiveServer" />
+                <TajrishSamak.Web.Components.Pages.ContactForm />
             </main>
 
             <aside class="gp-contact-side" aria-label="اطلاعات تماس">
@@ -150,8 +150,9 @@
                     </div>
 
                     <div class="gp-direction-buttons">
-                        <a target="_blank" rel="noreferrer" href="https://maps.google.com/?saddr=Current+Location&daddr=35.806270,51.430387">گوگل مپ</a>
-                        <a target="_blank" rel="noreferrer" href="https://www.waze.com/livemap/directions?navigate=yes&latlng=35.806270%2C51.430387">ویز</a>
+                        <a target="_blank" rel="noreferrer" href="https://maps.google.com/?saddr=Current+Location&daddr=35.806270,51.430387"><span aria-hidden="true">🗺️</span>گوگل مپ</a>
+                        <a target="_blank" rel="noreferrer" href="https://www.waze.com/livemap/directions?navigate=yes&latlng=35.806270%2C51.430387"><span aria-hidden="true">🚙</span>ویز</a>
+                        <a target="_blank" rel="noreferrer" href="https://neshan.org/maps/@@35.806270,51.430387,16z"><span aria-hidden="true">🧭</span>نشان</a>
                     </div>
                 </section>
 
@@ -174,8 +175,9 @@
                     <p>میدان تجریش، خیابان شهرداری، روبه‌روی سینما آستارا، ساختمان ۱۱۰</p>
                 </div>
                 <div class="gp-direction-buttons">
-                    <a target="_blank" rel="noreferrer" href="https://maps.google.com/?saddr=Current+Location&daddr=35.806270,51.430387">گوگل مپ</a>
-                    <a target="_blank" rel="noreferrer" href="https://www.waze.com/livemap/directions?navigate=yes&latlng=35.806270%2C51.430387">ویز</a>
+                    <a target="_blank" rel="noreferrer" href="https://maps.google.com/?saddr=Current+Location&daddr=35.806270,51.430387"><span aria-hidden="true">🗺️</span>گوگل مپ</a>
+                    <a target="_blank" rel="noreferrer" href="https://www.waze.com/livemap/directions?navigate=yes&latlng=35.806270%2C51.430387"><span aria-hidden="true">🚙</span>ویز</a>
+                    <a target="_blank" rel="noreferrer" href="https://neshan.org/maps/@@35.806270,51.430387,16z"><span aria-hidden="true">🧭</span>نشان</a>
                 </div>
             </div>
             <div id="map"></div>
@@ -183,4 +185,4 @@
     </div>
 </section>
 
-<script src="js/gp-contact-legacy.js"></script>
+<script src="/js/gp-contact-legacy.js?v=11"></script>

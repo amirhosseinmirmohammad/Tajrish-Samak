@@ -1,5 +1,7 @@
 @page "/"
 @using TajrishSamak.Web.Data.Entities
+@using TajrishSamak.Web.Controllers
+@using TajrishSamak.Web.Services
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Caching.Memory
 @using System.Globalization
@@ -16,15 +18,13 @@
 <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
 <meta name="twitter:description" content="شکوه تجریش؛ کلینیک شنوایی و سمعک در تجریش و شمال تهران برای تست شنوایی، مشاوره، تجویز و تنظیم سمعک." />
 <link rel="canonical" href="https://tajrish-samak.ir/" />
-<link rel="stylesheet" href="css/gp-page-Home_Index.css" />
+<link rel="stylesheet" href="/css/gp-page-Home_Index.css?v=11" />
 
 @if (firstSliderImage != null)
 {
-    <link rel="preload" as="image" href="@firstSliderImage" fetchpriority="high" />
 }
 @if (firstSliderMobileImage != null)
 {
-    <link rel="preload" as="image" href="@firstSliderMobileImage" media="(max-width: 768px)" fetchpriority="high" />
 }
 
 <script type="application/ld+json">
@@ -301,7 +301,14 @@
                     @foreach (var item in gpBrands)
                     {
                         <a title="@item.PersianName" href="/Home/Brands/@item.Id">
-                            <img alt="@item.PersianName" title="@item.PersianName" src="@item.SmallImage" width="96" height="56" loading="lazy" decoding="async" />
+                            @if (!string.IsNullOrWhiteSpace(item.SmallImage))
+                            {
+                                <img alt="@item.PersianName" title="@item.PersianName" src="@item.SmallImage" width="96" height="56" loading="lazy" decoding="async" />
+                            }
+                            else
+                            {
+                                <span class="gp-brand-initial" aria-hidden="true">@item.PersianName.Trim().Substring(0, 1)</span>
+                            }
                         </a>
                     }
                 </div>
@@ -360,6 +367,75 @@
     </div>
 </section>
 
+<section class="gp-journey-v93 gp-home-section" aria-label="مسیر شنوایی شما در شکوه تجریش">
+    <div class="container">
+        <div class="gp-journey-v93-head">
+            <span>مسیر شنوایی شما</span>
+            <h2>از اولین تماس تا شنیدن واضح؛ چهار قدم ساده</h2>
+            <p>
+                هر قدم با ارزیابی و مشاوره تخصصی همراه است تا انتخاب سمعک دقیق باشد و بعد از تجویز هم تنها نمانید.
+            </p>
+        </div>
+        <ol class="gp-journey-v93-timeline">
+            <li class="gp-journey-step">
+                <span class="gp-journey-num">۰۱</span>
+                <div>
+                    <h3>تماس و مشاوره اولیه</h3>
+                    <p>شرایط زندگی، انتظارات و سابقه شنوایی‌تان را می‌شنویم و مسیر مناسب را پیشنهاد می‌دهیم.</p>
+                    <a href="tel:02122735588">☎ تماس با کلینیک</a>
+                </div>
+            </li>
+            <li class="gp-journey-step">
+                <span class="gp-journey-num">۰۲</span>
+                <div>
+                    <h3>تست و ارزیابی شنوایی</h3>
+                    <p>با ادیومتری دقیق، نوع و میزان کم‌شنوایی به‌روشنی مشخص می‌شود؛ پایه هر انتخاب درست.</p>
+                    <a href="/tajrish/hearing-test">رزرو تست شنوایی در تجریش ←</a>
+                </div>
+            </li>
+            <li class="gp-journey-step">
+                <span class="gp-journey-num">۰۳</span>
+                <div>
+                    <h3>انتخاب و تجویز سمعک</h3>
+                    <p>بر اساس نتیجه تست، سبک زندگی و بودجه، از برندهای معتبر جهانی مدل مناسب پیشنهاد می‌شود.</p>
+                    <a href="/tajrish/hearing-aid">راهنمای انتخاب سمعک ←</a>
+                </div>
+            </li>
+            <li class="gp-journey-step">
+                <span class="gp-journey-num">۰۴</span>
+                <div>
+                    <h3>تنظیم دقیق و پیگیری</h3>
+                    <p>سمعک تنظیم، آموزش استفاده و پیگیری‌های بعدی؛ تا وضوح صدا در زندگی روزمره حس شود.</p>
+                    <a href="/tehran/hearing-aid-adjustment">تنظیم تخصصی سمعک ←</a>
+                </div>
+            </li>
+        </ol>
+    </div>
+</section>
+
+<section class="gp-stats-v93" aria-label="شکوه تجریش در یک نگاه">
+    <div class="container">
+        <div class="gp-stats-v93-grid">
+            <div class="gp-stat-v93-card">
+                <b>@Fa(LegacyBrands.All.Length)</b>
+                <span>برند معتبر جهانی سمعک</span>
+            </div>
+            <div class="gp-stat-v93-card">
+                <b>@Fa(GeoCatalog.LocationList.Length)</b>
+                <span>محدوده تحت پوشش در تهران</span>
+            </div>
+            <div class="gp-stat-v93-card">
+                <b>@Fa(GeoCatalog.ServiceList.Length)</b>
+                <span>خدمت تخصصی شنوایی</span>
+            </div>
+            <div class="gp-stat-v93-card">
+                <b>@Fa(blogs.Count)</b>
+                <span>مقاله آموزشی مجله</span>
+            </div>
+        </div>
+    </div>
+</section>
+
 <div class="ads-grid gp-home-section" id="products">
     <div class="container">
         <div class="agileinfo-ads-display col-md-12">
@@ -367,7 +443,7 @@
                 <div class="product-sec1 product-sec2 gp-clinic-strip">
                     <div class="col-xs-6 effect-bg">
                         <h3 class="">کلینیک شنوایی و سمعک شکوه تجریش</h3>
-                        <h6>تشخیص دقیق، مسیر درمان روشن</h6>
+                        <h6 role="heading" aria-level="3">تشخیص دقیق، مسیر درمان روشن</h6>
                         <p>انواع آزمایشات شنوایی</p>
                     </div>
                     <div class="col-xs-6 bg-right-nut">
@@ -534,9 +610,40 @@
             <a href="/north-tehran/free-behzisti-hearing-aid">سمعک رایگان بهزیستی شمال تهران</a>
         </div>
     </div>
+
 </section>
 
-@if (blogs.Count > 0)
+@if (gpServiceCats.Count > 0)
+{
+    <section class="gp-svcdb-section gp-home-section" aria-label="خدمات تخصصی کلینیک">
+        <div class="container">
+            <div class="gp-svcdb-head">
+                <span class="gp-section-eyebrow">خدمات تخصصی</span>
+                <h2>هر خدمتی برای شنوایی بهتر، یک قدم فاصله دارد</h2>
+                <p>از تست و تجویز تا تنظیم و تعمیر — خدمت موردنظرتان را انتخاب کنید و مستقیم وارد صفحه آن شوید.</p>
+            </div>
+            <div class="gp-svcdb-grid">
+                @foreach (var cat in gpServiceCats)
+                {
+                    <a class="gp-svcdb-card" href="/Home/Services/@cat.Id" title="@cat.PersianName">
+                        <span class="gp-svcdb-icon" aria-hidden="true">
+                            @if (!string.IsNullOrWhiteSpace(cat.SmallImage))
+                            {
+                                <img src="@cat.SmallImage" alt="" loading="lazy" decoding="async" />
+                            }
+                            else
+                            {
+                                <text>⚙</text>
+                            }
+                        </span>
+                        <b>@cat.PersianName</b>
+                        <span class="gp-svcdb-more">مشاهده خدمات <i aria-hidden="true">←</i></span>
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+}
 {
     <section class="gp-magazine-section" aria-label="مجله کلینیک شنوایی">
         <div class="container">
@@ -636,7 +743,7 @@
     </section>
 }
 
-<script src="js/gp-home-legacy.js"></script>
+<script src="/js/gp-home-legacy.js?v=11"></script>
 
 @code {
     private List<Blog> blogs = new();
@@ -645,6 +752,7 @@
     private List<Slider> gpDynamicSlides = new();
     private List<Product> gpPopularProducts = new();
     private List<Brand> gpBrands = new();
+    private List<ServiceCategory> gpServiceCats = new();
     private string firstSliderImage;
     private string firstSliderMobileImage;
 
@@ -706,6 +814,15 @@
                 .ToListAsync();
         }) ?? new List<Product>();
 
+        gpServiceCats = await Cache.GetOrCreateAsync("home:service-cats", async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            return await db.ServiceCategories
+                .AsNoTracking()
+                .OrderBy(sc => sc.Id)
+                .ToListAsync();
+        }) ?? new List<ServiceCategory>();
+
         gpBrands = await Cache.GetOrCreateAsync("home:brands", async entry =>
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
@@ -714,6 +831,14 @@
                 .Take(8)
                 .ToListAsync();
         }) ?? new List<Brand>();
+    }
+
+    private static string Fa(int value)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        var digits = value.ToString("N0", CultureInfo.InvariantCulture);
+        var chars = digits.Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c);
+        return new string(chars.ToArray());
     }
 
     private static string Truncate(string text, int len)

@@ -3,17 +3,37 @@
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject NavigationManager Nav
 
-<PageTitle>@(post?.Title ?? "مقاله") | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
-<meta name="description" content="@post?.MetaDesc" />
+<PageTitle>@(post?.Title ?? "مقاله") | مجله کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="description" content="@(post?.MetaDesc ?? "مقالات تخصصی شنوایی و سمعک")" />
 <link rel="canonical" href="@canonicalUrl" />
+@if (gpTags.Count > 0)
+{
+    <meta name="Keywords" content="@string.Join(", ", gpTags)" />
+}
 <meta property="og:title" content="@post?.Title" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="@canonicalUrl" />
-<link rel="stylesheet" href="css/gp-page-Blog_Index.css" />
+<meta property="og:description" content="@(post?.MetaDesc ?? "")" />
+@if (!string.IsNullOrWhiteSpace(ogImage))
+{
+    <meta property="og:image" content="@ogImage" />
+}
+<meta property="og:locale" content="fa_IR" />
+<meta property="article:published_time" content="@dateStr" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="@post?.Title" />
+<meta name="twitter:description" content="@(post?.MetaDesc ?? "")" />
+@if (!string.IsNullOrWhiteSpace(ogImage))
+{
+    <meta name="twitter:image" content="@ogImage" />
+}
+<link rel="stylesheet" href="/css/gp-page-Blog_Index.css?v=11" />
 
 @if (post == null)
 {
+    <meta name="robots" content="noindex" />
     <h1 style="text-align:center;padding:60px 20px;">مقاله پیدا نشد</h1>
     <p style="text-align:center;"><a href="/Blog/All">بازگشت به مجله</a></p>
     return;
@@ -24,13 +44,29 @@
   "@@context": "https://schema.org",
   "@@type": "BlogPosting",
   "@@id": "@canonicalUrl#article",
+  "mainEntityOfPage": { "@@type": "WebPage", "@@id": "@canonicalUrl" },
   "headline": "@post.Title",
   "description": "@post.MetaDesc",
   "url": "@canonicalUrl",
   "datePublished": "@dateStr",
+  "dateModified": "@dateStr",
   "inLanguage": "fa-IR",
-  "author": { "@@type": "Organization", "name": "کلینیک شنوایی و سمعک شکوه تجریش" },
-  "publisher": { "@@id": "https://tajrish-samak.ir/#tajrish-samak" }
+  "image": "@LdImage",
+  "author": {
+    "@@type": "MedicalBusiness",
+    "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+    "url": "https://tajrish-samak.ir/"
+  },
+  "publisher": {
+    "@@type": "Organization",
+    "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+    "logo": { "@@type": "ImageObject", "url": "https://tajrish-samak.ir/images/logo_purple.webp" }
+  },
+  "interactionStatistic": {
+    "@@type": "InteractionCounter",
+    "interactionType": "https://schema.org/ReadAction",
+    "userInteractionCount": @(post.Survey ?? 0)
+  }
 }
 </script>
 
@@ -47,43 +83,272 @@
 </script>
 
 <article class="gp-article" itemscope itemtype="https://schema.org/BlogPosting">
+    <div class="gp-read-progress" id="gpReadProgress" aria-hidden="true"></div>
     <div class="container">
-        <h1 itemprop="headline">@post.Title</h1>
+
+        <nav class="gp-article-breadcrumb" aria-label="مسیر صفحه">
+            <a href="/">خانه</a>
+            <span aria-hidden="true">‹</span>
+            <a href="/Blog/All">مجله</a>
+            <span aria-hidden="true">‹</span>
+            <span>@Truncate(post.Title, 46)</span>
+        </nav>
+
+        <header class="gp-article-hero">
+            @if (post.Category != null)
+            {
+                <a class="gp-article-cat-chip" href="/Home/Blogs/@post.Category.Id" itemprop="articleSection">@post.Category.PersianName</a>
+            }
+            <h1 itemprop="headline">@post.Title</h1>
+
+            <div class="gp-article-meta" aria-label="اطلاعات مقاله">
+                @if (post.CreateDate.HasValue)
+                {
+                    <span class="gp-article-meta-item"><i aria-hidden="true">📅</i><time datetime="@dateStr" itemprop="datePublished">@GetPersianDate(post.CreateDate)</time></span>
+                }
+                <span class="gp-article-meta-item"><i aria-hidden="true">👁</i><span itemprop="interactionCount">@FaNum(post.Survey ?? 0)</span> بازدید</span>
+                <span class="gp-article-meta-item"><i aria-hidden="true">⏱</i>حدود @FaNum(ReadingMinutes) دقیقه مطالعه</span>
+            </div>
+
+            <div class="gp-article-share" aria-label="اشتراک‌گذاری مقاله">
+                <span class="gp-share-label">اشتراک‌گذاری:</span>
+                <a class="gp-share-btn gp-share-tg" href="https://t.me/share/url?url=@UrlEncoded&text=@TitleEncoded" target="_blank" rel="noreferrer" aria-label="اشتراک‌گذاری در تلگرام" title="تلگرام">➤</a>
+                <a class="gp-share-btn gp-share-wa" href="https://wa.me/?text=@TitleEncoded%20@UrlEncoded" target="_blank" rel="noreferrer" aria-label="اشتراک‌گذاری در واتساپ" title="واتساپ">✆</a>
+                <a class="gp-share-btn gp-share-x" href="https://twitter.com/intent/tweet?url=@UrlEncoded&text=@TitleEncoded" target="_blank" rel="noreferrer" aria-label="اشتراک‌گذاری در X" title="X (توییتر)">𝕏</a>
+                <a class="gp-share-btn gp-share-mail" href="mailto:?subject=@TitleEncoded&body=@UrlEncoded" aria-label="اشتراک‌گذاری با ایمیل" title="ایمیل">✉</a>
+                <button type="button" class="gp-share-btn gp-share-copy" data-copy="@canonicalUrl" aria-label="کپی لینک مقاله" title="کپی لینک">⧉</button>
+            </div>
+
+            <div class="gp-article-vote" aria-label="آیا این مقاله مفید بود؟">
+                <span>این مقاله مفید بود؟</span>
+                <button type="button" class="gp-vote-btn gp-vote-like" data-blog="@post.Id" data-vote="like"><i aria-hidden="true">👍</i> مفید بود (<span class="gp-like-count">@(FaNum(post.Like ?? 0))</span>)</button>
+                <button type="button" class="gp-vote-btn gp-vote-dislike" data-blog="@post.Id" data-vote="dislike"><i aria-hidden="true">👎</i> مفید نبود (<span class="gp-dislike-count">@(FaNum(post.DissLike ?? 0))</span>)</button>
+            </div>
+        </header>
+
         @if (post.Images != null && post.Images.Any())
         {
-            <img src="@post.Images.First().FullPath" alt="@post.Title" itemprop="image" style="max-width:100%;height:auto;" />
+            <figure class="gp-article-figure">
+                <img src="@post.Images.First().FullPath" alt="@post.Title" itemprop="image" width="1200" height="630" fetchpriority="high" decoding="async" />
+            </figure>
         }
-        <div itemprop="articleBody">
+
+        <nav class="gp-article-toc" id="gpArticleToc" hidden aria-label="فهرست مطالب">
+            <strong>📑 فهرست مطالب</strong>
+            <ol id="gpTocList"></ol>
+        </nav>
+
+        <div class="gp-article-body" id="gpArticleBody" itemprop="articleBody">
             @((MarkupString)post.Body)
         </div>
 
-        <h2>نظرات کاربران</h2>
-        @if (post.BlogComments != null && post.BlogComments.Any())
+        @if (gpTags.Count > 0)
         {
-            @foreach (var comment in post.BlogComments)
-            {
-                <div class="gp-comment-item">
-                    <strong>@comment.FullName</strong>
-                    <p>@comment.Text</p>
-                </div>
-            }
-        }
-        else
-        {
-            <p>هنوز نظری ثبت نشده است.</p>
+            <div class="gp-article-tags" aria-label="کلیدواژه‌های مقاله">
+                <span class="gp-tags-label">🔑 کلیدواژه‌ها:</span>
+                @foreach (var tag in gpTags)
+                {
+                    <a href="/Blog/All?q=@Uri.EscapeDataString(tag)">#@tag</a>
+                }
+            </div>
         }
 
-        <p><a href="/Blog/All">بازگشت به مجله</a></p>
+        @if (relatedPosts.Count > 0)
+        {
+            <section class="gp-article-related" aria-label="مقالات مرتبط">
+                <h2><span>مقالات مرتبط</span></h2>
+                <div class="gp-related-grid">
+                    @foreach (var rel in relatedPosts)
+                    {
+                        <a class="gp-related-card" href="/blog/@rel.Id/@rel.SefUrl" title="@rel.Title">
+                            @if (rel.Images != null && rel.Images.Any())
+                            {
+                                <img src="@rel.Images.First().FullPath" alt="@rel.Title" loading="lazy" decoding="async" />
+                            }
+                            <b>@Truncate(rel.Title, 52)</b>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        @if (prevPost != null || nextPost != null)
+        {
+            <nav class="gp-article-pn" aria-label="مقاله قبلی و بعدی">
+                @if (prevPost != null)
+                {
+                    <a class="gp-pn-card" href="/blog/@prevPost.Id/@prevPost.SefUrl" title="@prevPost.Title">
+                        <small>مقاله قبلی</small>
+                        <b>⏎ @Truncate(prevPost.Title, 46)</b>
+                    </a>
+                }
+                else
+                {
+                    <span class="gp-pn-card gp-pn-disabled"></span>
+                }
+                @if (nextPost != null)
+                {
+                    <a class="gp-pn-card gp-pn-next" href="/blog/@nextPost.Id/@nextPost.SefUrl" title="@nextPost.Title">
+                        <small>مقاله بعدی</small>
+                        <b>@Truncate(nextPost.Title, 46) ⏎</b>
+                    </a>
+                }
+                else
+                {
+                    <span class="gp-pn-card gp-pn-disabled"></span>
+                }
+            </nav>
+        }
+
+        <section class="gp-comments-card" aria-label="نظرات کاربران">
+            <h2><span>نظرات کاربران</span></h2>
+            @if (post.BlogComments != null && post.BlogComments.Any())
+            {
+                <div class="gp-comments-list">
+                    @foreach (var comment in post.BlogComments)
+                    {
+                        <div class="gp-comment-item">
+                            <span class="gp-comment-avatar" aria-hidden="true">@(string.IsNullOrEmpty(comment.FullName) ? "؟" : comment.FullName.Trim().Substring(0, 1))</span>
+                            <div class="gp-comment-body">
+                                <strong>@comment.FullName</strong>
+                                <p>@comment.Text</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="gp-comments-empty">هنوز نظری برای این مقاله ثبت نشده است؛ اولین نفر باشید!</p>
+            }
+
+            <TajrishSamak.Web.Components.Pages.BlogCommentForm BlogId="post.Id" />
+        </section>
+
+        <div class="gp-article-back">
+            <a href="/Blog/All">← بازگشت به مجله کلینیک</a>
+        </div>
     </div>
 </article>
+
+<script>
+    (function () {
+        /* 1) copy-link share button */
+        document.addEventListener("click", function (event) {
+            var btn = event.target.closest(".gp-share-copy");
+            if (!btn) return;
+            var url = btn.getAttribute("data-copy");
+            var done = function () {
+                var old = btn.textContent;
+                btn.textContent = "✓";
+                setTimeout(function () { btn.textContent = old; }, 1400);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(done).catch(function () { window.prompt("لینک مقاله:", url); });
+            } else {
+                window.prompt("لینک مقاله:", url);
+            }
+        });
+
+        /* 2) table of contents built from h2 headings inside the article body */
+        var body = document.getElementById("gpArticleBody");
+        var tocNav = document.getElementById("gpArticleToc");
+        if (body && tocNav) {
+            var headings = body.querySelectorAll("h2");
+            if (headings.length >= 2) {
+                var list = document.getElementById("gpTocList");
+                headings.forEach(function (heading, index) {
+                    var id = "gp-h2-" + (index + 1);
+                    heading.id = id;
+                    var li = document.createElement("li");
+                    var link = document.createElement("a");
+                    link.href = "#" + id;
+                    link.textContent = heading.textContent.trim();
+                    li.appendChild(link);
+                    list.appendChild(li);
+                });
+                tocNav.hidden = false;
+            }
+        }
+
+        /* 3) reading progress bar scoped to the article body */
+        var progress = document.getElementById("gpReadProgress");
+        var body2 = document.getElementById("gpArticleBody");
+        if (progress && body2) {
+            var update = function () {
+                var rect = body2.getBoundingClientRect();
+                var total = rect.height - window.innerHeight;
+                var passed = Math.min(Math.max(-rect.top + Math.min(window.innerHeight * 0.4, rect.height), 0), Math.max(total, 1));
+                var pct = Math.min(100, Math.max(0, (passed / Math.max(total, 1)) * 100));
+                progress.style.width = pct + "%";
+            };
+            window.addEventListener("scroll", update, { passive: true });
+            window.addEventListener("resize", update, { passive: true });
+            update();
+        }
+
+        /* 4) like / dislike voting (one vote per browser via localStorage) */
+        document.addEventListener("click", function (event) {
+            var btn = event.target.closest(".gp-vote-btn");
+            if (!btn || btn.disabled) return;
+            var blogId = btn.getAttribute("data-blog");
+            var vote = btn.getAttribute("data-vote");
+            var storageKey = "gpBlogVote:" + blogId;
+            try {
+                if (window.localStorage.getItem(storageKey)) {
+                    btn.textContent = "شما قبلاً رای داده‌اید ✓";
+                    return;
+                }
+            } catch (e) { }
+
+            fetch("/blog/" + blogId + "/vote", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ value: vote })
+            })
+                .then(function (response) { return response.ok ? response.json() : null; })
+                .then(function (data) {
+                    if (!data || !data.ok) {
+                        btn.textContent = "خطا؛ دوباره تلاش کنید";
+                        return;
+                    }
+                    try { window.localStorage.setItem(storageKey, vote); } catch (e) { }
+                    var likeEl = document.querySelector(".gp-like-count");
+                    var dislikeEl = document.querySelector(".gp-dislike-count");
+                    if (likeEl && typeof data.likes === "number") { likeEl.textContent = toFa(data.likes); }
+                    if (dislikeEl && typeof data.dislikes === "number") { dislikeEl.textContent = toFa(data.dislikes); }
+                    btn.classList.add("is-voted");
+                    btn.textContent = "رای شما ثبت شد ✓";
+                    var other = btn.parentElement.querySelector(".gp-vote-btn:not(.is-voted)");
+                    if (other) { other.disabled = true; other.style.opacity = ".45"; }
+                })
+                .catch(function () { btn.textContent = "خطا؛ دوباره تلاش کنید"; });
+        });
+
+        function toFa(n) {
+            var fa = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+            return String(n).replace(/\d/g, function (d) { return fa[+d]; });
+        }
+    })();
+</script>
 
 @code {
     [Parameter] public long id { get; set; }
     [Parameter] public string sefUrl { get; set; }
 
     private Blog post;
-    private string canonicalUrl;
+    private string canonicalUrl = "https://tajrish-samak.ir/Blog/All";
     private string dateStr = "";
+    private string ogImage = "";
+    private int ReadingMinutes;
+    private int ReadingWords;
+    private List<Blog> relatedPosts = new();
+    private Blog prevPost;
+    private Blog nextPost;
+    private List<string> gpTags = new();
+    private string UrlEncoded => Uri.EscapeDataString(canonicalUrl);
+    private string TitleEncoded => Uri.EscapeDataString((post?.Title ?? "مقاله کلینیک شنوایی و سمعک شکوه تجریش") + " | کلینیک شنوایی شکوه تجریش");
+    private string LdImage => string.IsNullOrWhiteSpace(ogImage) ? "https://tajrish-samak.ir/images/logo_purple.webp" : ogImage;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -108,14 +373,93 @@
 
         canonicalUrl = "https://tajrish-samak.ir/Blog/" + post.Id + "/" + post.SefUrl;
         dateStr = post.CreateDate?.ToString("yyyy-MM-dd") ?? "";
+        ogImage = post.Images?.FirstOrDefault()?.FullPath ?? "";
 
-        // legacy behaviour: wrong slug -> permanent redirect to the canonical URL
+        // accurate reading time: strip script/style blocks + tags, decode entities, count real words (~180 wpm)
+        var plain = System.Text.RegularExpressions.Regex.Replace(post.Body ?? "", "<(script|style)[^>]*>[\\s\\S]*?</\\1>", " ", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        plain = System.Text.RegularExpressions.Regex.Replace(plain, "<[^>]+>", " ");
+        plain = System.Net.WebUtility.HtmlDecode(plain);
+        var wordCount = plain.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+        ReadingMinutes = Math.Max(1, (int)Math.Ceiling(wordCount / 180.0));
+        ReadingWords = wordCount;
+
+        relatedPosts = await db.Blogs
+            .AsNoTracking()
+            .Include(b => b.Images)
+            .Where(b => b.Id != post.Id && b.IsVisible == true && b.Images.Any() && b.CategoryId == post.CategoryId)
+            .OrderByDescending(b => b.Survey)
+            .Take(3)
+            .ToListAsync();
+
+        // fallback: if the same category has no siblings, show the most popular ones
+        if (relatedPosts.Count == 0)
+        {
+            relatedPosts = await db.Blogs
+                .AsNoTracking()
+                .Include(b => b.Images)
+                .Where(b => b.Id != post.Id && b.IsVisible == true && b.Images.Any())
+                .OrderByDescending(b => b.Survey)
+                .Take(3)
+                .ToListAsync();
+        }
+
+        // previous / next posts (by publish date)
+        if (post.CreateDate.HasValue)
+        {
+            prevPost = await db.Blogs
+                .AsNoTracking()
+                .Where(b => b.Id != post.Id && b.IsVisible == true && b.Images.Any() && b.CreateDate < post.CreateDate)
+                .OrderByDescending(b => b.CreateDate)
+                .Select(b => new Blog { Id = b.Id, SefUrl = b.SefUrl, Title = b.Title })
+                .FirstOrDefaultAsync();
+
+            nextPost = await db.Blogs
+                .AsNoTracking()
+                .Where(b => b.Id != post.Id && b.IsVisible == true && b.Images.Any() && b.CreateDate > post.CreateDate)
+                .OrderBy(b => b.CreateDate)
+                .Select(b => new Blog { Id = b.Id, SefUrl = b.SefUrl, Title = b.Title })
+                .FirstOrDefaultAsync();
+        }
+
+        // legacy DB may hold corrupted keyword rows (e.g. "????") - only keep
+        // tokens that actually contain letters (Persian or Latin)
+        gpTags = (post.MetaKey ?? "")
+            .Split(new[] { '،', ',' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(t => t.Trim())
+            .Where(t => t.Length > 1 && t.Any(char.IsLetter))
+            .Distinct()
+            .Take(8)
+            .ToList();
+
+        // legacy behaviour: wrong slug -> 301 to the canonical URL
         if (!string.Equals(sefUrl, post.SefUrl, StringComparison.OrdinalIgnoreCase))
         {
             if (Http.HttpContext != null)
             {
-                Http.HttpContext.Response.Redirect("/Blog/" + post.Id + "/" + post.SefUrl, true);
+                Http.HttpContext.Response.Redirect("/Blog/" + post.Id + "/" + Uri.EscapeDataString(post.SefUrl), true);
             }
+            return;
         }
+    }
+
+    private static string Truncate(string text, int len)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return "";
+        var plainText = System.Text.RegularExpressions.Regex.Replace(text, "<[^>]+>", " ").Trim();
+        return plainText.Length <= len ? plainText : plainText.Substring(0, len) + "…";
+    }
+
+    private static string GetPersianDate(DateTime? date)
+    {
+        if (!date.HasValue) return "";
+        var cal = new System.Globalization.PersianCalendar();
+        var d = date.Value;
+        return $"{cal.GetYear(d):0000}/{cal.GetMonth(d):00}/{cal.GetDayOfMonth(d):00}";
+    }
+
+    private static string FaNum(int value)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(value.ToString("N0", System.Globalization.CultureInfo.InvariantCulture).Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
     }
 }

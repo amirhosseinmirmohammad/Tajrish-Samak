@@ -1,0 +1,141 @@
+@page "/admin"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+
+<PageTitle>داشبورد | پنل مدیریت شکوه تجریش</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<div class="adm-stats">
+    <a class="adm-stat" href="/admin/users">
+        <i aria-hidden="true">👥</i>
+        <div><b>@FaNum(userCount)</b><span>کاربر ثبت‌نام‌شده</span></div>
+    </a>
+    <a class="adm-stat" href="/admin/orders">
+        <i aria-hidden="true">🧾</i>
+        <div><b>@FaNum(orderCount)</b><span>سفارش</span></div>
+    </a>
+    <a class="adm-stat" href="/admin/messages">
+        <i aria-hidden="true">✉</i>
+        <div><b>@FaNum(messageCount)</b><span>پیام سایت</span></div>
+    </a>
+    <a class="adm-stat" href="/admin/comments">
+        <i aria-hidden="true">💬</i>
+        <div><b>@FaNum(pendingComments)</b><span>دیدگاه در انتظار تایید</span></div>
+    </a>
+    <a class="adm-stat" href="/admin/newsletters">
+        <i aria-hidden="true">📬</i>
+        <div><b>@FaNum(newsletterCount)</b><span>عضو خبرنامه</span></div>
+    </a>
+    <a class="adm-stat" href="/admin/products">
+        <i aria-hidden="true">🛍</i>
+        <div><b>@FaNum(productCount)</b><span>محصول</span></div>
+    </a>
+</div>
+
+<div class="adm-chart-row">
+    <div class="adm-card">
+        <h2>ثبت‌نام کاربران (۷ روز اخیر)</h2>
+        <div class="adm-bars">
+            @foreach (var bar in registrationBars)
+            {
+                <div class="adm-bar-col">
+                    <div class="adm-bar" style="height:@(bar.Percent)%"><b>@bar.Value</b></div>
+                    <span class="adm-bar-label">@bar.Label</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="adm-card">
+        <h2>سفارشات (۷ روز اخیر)</h2>
+        <div class="adm-bars">
+            @foreach (var bar in orderBars)
+            {
+                <div class="adm-bar-col">
+                    <div class="adm-bar" style="height:@(bar.Percent)%"><b>@bar.Value</b></div>
+                    <span class="adm-bar-label">@bar.Label</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="adm-card">
+    <h2>دسترسی سریع</h2>
+    <div class="adm-stats" style="margin:0">
+        <a class="adm-stat" href="/admin/products"><i aria-hidden="true">🛍</i><div><b>@FaNum(productCount)</b><span>مدیریت محصولات</span></div></a>
+        <a class="adm-stat" href="/admin/blogs"><i aria-hidden="true">📰</i><div><b>@FaNum(blogCount)</b><span>مدیریت مقالات</span></div></a>
+        <a class="adm-stat" href="/admin/services"><i aria-hidden="true">⚙</i><div><b>@FaNum(serviceCount)</b><span>مدیریت خدمات</span></div></a>
+        <a class="adm-stat" href="/"><i aria-hidden="true">🌐</i><div><b>سایت</b><span>مشاهده وب‌سایت</span></div></a>
+    </div>
+</div>
+
+@code {
+    private int userCount, orderCount, messageCount, pendingComments, newsletterCount, productCount, blogCount, serviceCount;
+    private List<(string Label, int Value, int Percent)> registrationBars = new();
+    private List<(string Label, int Value, int Percent)> orderBars = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+
+        userCount = await db.Users.AsNoTracking().CountAsync();
+        orderCount = await db.Orders.AsNoTracking().CountAsync();
+        messageCount = await db.SiteMessages.AsNoTracking().CountAsync();
+        pendingComments = await db.BlogComments.AsNoTracking().CountAsync(c => !c.IsApprove);
+        newsletterCount = await db.NewsLetters.AsNoTracking().CountAsync();
+        productCount = await db.Products.AsNoTracking().CountAsync(p => p.SiteFirstImage != null);
+        blogCount = await db.Blogs.AsNoTracking().CountAsync(b => b.IsVisible == true);
+        serviceCount = await db.Services.AsNoTracking().CountAsync(s => s.IsVisible);
+
+        var today = DateTime.Today;
+        var weekStart = today.AddDays(-6);
+
+        var registrations = await db.Users.AsNoTracking()
+            .Where(u => u.RegistrationDate >= weekStart)
+            .GroupBy(u => u.RegistrationDate.Date)
+            .Select(g => new { Date = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Date, x => x.Count);
+
+        var orders = await db.Orders.AsNoTracking()
+            .Where(o => o.OrderDate >= weekStart)
+            .GroupBy(o => o.OrderDate.Date)
+            .Select(g => new { Date = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Date, x => x.Count);
+
+        var fa = new[] { "ش", "ی", "د", "س", "چ", "پ", "ج" };
+        var cal = new System.Globalization.PersianCalendar();
+
+        for (var i = 0; i < 7; i++)
+        {
+            var day = weekStart.AddDays(i);
+            var label = fa[((int)cal.GetDayOfWeek(day) + 1) % 7].ToString();
+
+            var reg = registrations.GetValueOrDefault(day);
+            var ord = orders.GetValueOrDefault(day);
+            registrationBars.Add((label, reg, reg));
+            orderBars.Add((label, ord, ord));
+        }
+
+        Normalize(registrationBars);
+        Normalize(orderBars);
+    }
+
+    private static void Normalize(List<(string Label, int Value, int Percent)> bars)
+    {
+        var max = Math.Max(1, bars.Max(b => b.Value));
+        for (var i = 0; i < bars.Count; i++)
+        {
+            bars[i] = (bars[i].Label, bars[i].Value, Math.Max(4, bars[i].Value * 100 / max));
+        }
+    }
+
+    private static string FaNum(int value)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(value.ToString("N0", System.Globalization.CultureInfo.InvariantCulture).Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}

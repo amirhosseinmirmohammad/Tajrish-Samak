@@ -6,145 +6,224 @@
 @inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
 @inject IMemoryCache Cache
 
-<PageTitle>@(gpCategoryName ?? "محصولات سمعک") | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
-<meta name="description" content="بررسی و مشاوره محصولات سمعک در کلینیک شنوایی و سمعک شکوه تجریش" />
+<PageTitle>@(gpCategoryName ?? "سمعک") | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="description" content="بررسی و مشاوره سمعک در کلینیک شنوایی و سمعک شکوه تجریش؛ انواع سمعک داخل گوشی، پشت گوشی و دیجیتال با گارانتی بین‌المللی" />
+<meta name="Keywords" content="سمعک، خرید سمعک، قیمت سمعک، سمعک دیجیتال، @(gpCategoryName ?? "سمعک تجریش")" />
 <link rel="canonical" href="@gpCanonicalUrl" />
-<link rel="stylesheet" href="css/gp-page-Product_All.css" />
+<meta property="og:title" content="@(gpCategoryName ?? "سمعک") | کلینیک شنوایی شکوه تجریش" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="@gpCanonicalUrl" />
+<meta name="twitter:card" content="summary" />
+<link rel="stylesheet" href="/css/gp-page-Product_All.css?v=11" />
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@@type": "ListItem", "position": 1, "name": "صفحه اصلی", "item": "https://tajrish-samak.ir/" },
+    { "@@type": "ListItem", "position": 2, "name": "محصولات", "item": "https://tajrish-samak.ir/Product/All" }
+    @if (id.HasValue && gpCategoryName != "سمعک")
+    {
+        <text>,{ "@@type": "ListItem", "position": 3, "name": "@gpCategoryName", "item": "@gpCanonicalUrl" }</text>
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "ItemList",
+  "name": "@gpCategoryName",
+  "itemListElement": [
+    @for (var i = 0; i < gpCurrentProducts.Count; i++)
+    {
+        <text>{ "@@type": "ListItem", "position": @(i + 1), "name": "@gpCurrentProducts[i].PersianName", "url": "https://tajrish-samak.ir/Product/Details/@gpCurrentProducts[i].Id" }@(i < gpCurrentProducts.Count - 1 ? "," : "")</text>
+    }
+  ]
+}
+</script>
 
 @if (notFound)
 {
+    <meta name="robots" content="noindex" />
     <h1 style="text-align:center;padding:60px 20px;">دسته‌بندی پیدا نشد</h1>
     <p style="text-align:center;"><a href="/Product/All">بازگشت به محصولات</a></p>
     return;
 }
 
-<section class="gp-category-page" aria-label="@gpCategoryName">
+<section class="gpc-page" aria-label="@(gpCategoryName ?? "سمعک")">
     <div class="container">
-        <section class="gp-category-hero" aria-label="دسته‌بندی محصولات">
-            <div class="gp-category-hero-grid">
-                <div>
-                    <span class="gp-category-kicker">کلینیک شنوایی تجریش</span>
-                    <h1>@(gpHasSubCategories ? "دسته " + gpCategoryName : gpCategoryName)</h1>
-                    <div class="gp-category-hero-actions">
-                        <a href="tel:02122735588">
-                            <span aria-hidden="true">☎</span>
-                            تماس سریع
-                        </a>
-                    </div>
-                </div>
-                <div class="gp-category-stats" aria-label="آمار صفحه">
-                    <div class="gp-category-stat-card">
-                        <strong>@(gpHasSubCategories ? gpSubCategories.Count : gpCurrentProducts.Count)</strong>
-                        <span>@(gpHasSubCategories ? "زیرگروه قابل بررسی" : "محصول در این صفحه")</span>
-                    </div>
+
+        <nav class="gpc-crumb" aria-label="مسیر صفحه">
+            <a href="/">خانه</a>
+            <span aria-hidden="true">‹</span>
+            <a href="/Product/All">محصولات</a>
+            @if (id.HasValue && gpCategoryName != "سمعک")
+            {
+                <span aria-hidden="true">‹</span>
+                <span>@gpCategoryName</span>
+            }
+        </nav>
+
+        <header class="gpc-hero">
+            <div class="gpc-hero-copy">
+                <span class="gpc-kicker"><i aria-hidden="true">◈</i> @(id.HasValue ? "دسته‌بندی محصول" : "شوروم سمعک")</span>
+                <h1>@(gpHasSubCategories ? gpCategoryName : (gpCategoryName ?? "سمعک"))</h1>
+                <p>
+                    @if (gpHasSubCategories)
+                    {
+                        <text>زیرگروه مورد نظرت را انتخاب کن تا مدل‌های مرتبط را ببینی.</text>
+                    }
+                    else
+                    {
+                        <text>مدل‌های منتخب با گارانتی بین‌المللی؛ برای انتخاب دقیق، تست شنوایی و مشاوره تخصصی پیش‌نیاز است.</text>
+                    }
+                </p>
+                <div class="gpc-hero-actions">
+                    <a href="tel:02122735588"><span aria-hidden="true">☎</span> مشاوره رایگان</a>
+                    <a href="/tajrish/hearing-test">تست شنوایی</a>
                 </div>
             </div>
-        </section>
+            <div class="gpc-hero-stats" aria-label="آمار">
+                <div class="gpc-stat"><b>@FaNum(TotalCount)</b><span>محصول</span></div>
+                <div class="gpc-stat"><b>@FaNum(gpBrandCount)</b><span>برند معتبر</span></div>
+                <div class="gpc-stat"><b>@FaNum(gpAllCategories.Count)</b><span>دسته‌بندی</span></div>
+            </div>
+        </header>
 
-        <div class="gp-category-content-grid">
-            <aside>
-                <div class="gp-side-card">
+        <div class="gpc-shell">
+            <aside class="gpc-side">
+                <div class="gpc-side-box">
                     <h3>دسته‌بندی‌ها</h3>
-                    <ul class="gp-side-list">
+                    <div class="gpc-side-list">
+                        <a href="/Product/All" class="@(id.HasValue ? null : "is-active")"><i aria-hidden="true">◎</i> <span class="gpc-side-name">همه محصولات</span></a>
                         @foreach (var c in gpAllCategories)
                         {
-                            <li><a href="/Product/All/@c.Id">@c.PersianName</a></li>
+                            var count = gpCategoryCounts.GetValueOrDefault(c.Id);
+                            <a href="/Product/All/@c.Id" class="@(id == c.Id ? "is-active" : null) @(count == 0 ? "is-empty" : null)">
+                                <i aria-hidden="true">◗</i>
+                                <span class="gpc-side-name">@c.PersianName</span>
+                                @if (count > 0)
+                                {
+                                    <span class="gpc-side-count">@FaNum(count)</span>
+                                }
+                            </a>
                         }
-                    </ul>
+                    </div>
+                </div>
+
+                <div class="gpc-side-box gpc-side-cta">
+                    <h3>مطمئن نیستی کدام مدل؟</h3>
+                    <p>تست شنوایی نقطه شروع انتخاب درست است.</p>
+                    <a href="/tajrish/hearing-test" class="gpc-side-cta-btn">رزرو تست شنوایی</a>
                 </div>
             </aside>
 
-            @if (gpHasSubCategories)
-            {
-                <main class="gp-category-list-card">
-                    <div class="gp-category-toolbar">
-                        <div>
-                            <h2>انواع @gpCategoryName</h2>
-                            <p>زیرگروه مورد نظر را انتخاب کنید تا مدل‌های مرتبط را ببینید.</p>
-                        </div>
+            <main>
+                @if (gpHasSubCategories)
+                {
+                    <div class="gpc-toolbar">
+                        <h2>زیرگروه‌های @gpCategoryName</h2>
+                        <p>یک زیرگروه را انتخاب کن تا مدل‌هایش را ببینی.</p>
                     </div>
-                    <div class="gp-subcategory-grid">
+                    <div class="gpc-sub-grid">
                         @foreach (var cat in gpSubCategories)
                         {
-                            <article class="gp-subcategory-card">
-                                <a class="gp-subcategory-media" href="/Product/All/@cat.Id" title="@cat.PersianName">
+                            <a class="gpc-sub-card" href="/Product/All/@cat.Id" title="@cat.PersianName">
+                                <span class="gpc-sub-media">
                                     @if (!string.IsNullOrWhiteSpace(cat.SmallImage))
                                     {
                                         <img src="@cat.SmallImage" alt="@cat.PersianName" loading="lazy" decoding="async" />
                                     }
-                                    <span class="gp-subcategory-badge">دسته</span>
+                                    else
+                                    {
+                                        <i aria-hidden="true">◖</i>
+                                    }
+                                </span>
+                                <span class="gpc-sub-body">
+                                    <b>@cat.PersianName</b>
+                                    <small>مشاهده مدل‌های این زیرگروه</small>
+                                </span>
+                                <span class="gpc-sub-go" aria-hidden="true">←</span>
+                            </a>
+                        }
+                    </div>
+                }
+                else if (gpCurrentProducts.Count > 0)
+                {
+                    <div class="gpc-toolbar">
+                        <h2>مدل‌های @gpCategoryName</h2>
+                        <p>برای انتخاب دقیق، تست شنوایی و مشاوره تخصصی پیش‌نیاز است.</p>
+                    </div>
+
+                    <div class="gpc-products">
+                        @foreach (var item in gpCurrentProducts)
+                        {
+                            <article class="gpc-product" itemscope itemtype="https://schema.org/Product">
+                                <a class="gpc-product-media" title="@item.PersianName" href="/Product/Details/@item.Id/@Slugify(item.PersianName)">
+                                    <img src="@item.SiteFirstImage" alt="@item.PersianName" loading="lazy" decoding="async" itemprop="image" />
                                 </a>
-                                <div class="gp-subcategory-body">
-                                    <h2><a href="/Product/All/@cat.Id" title="@cat.PersianName">@cat.PersianName</a></h2>
-                                    <p>مشاهده محصولات این زیرگروه و بررسی گزینه‌های مناسب برای مشاوره تخصصی.</p>
+                                <div class="gpc-product-body">
+                                    <div class="gpc-product-chips" aria-label="مشخصات">
+                                        @if (item.Brand != null)
+                                        {
+                                            <span class="gpc-chip gpc-chip-brand" itemprop="brand">★ @item.Brand.PersianName</span>
+                                        }
+                                        @if (item.category != null)
+                                        {
+                                            <span class="gpc-chip gpc-chip-cat" itemprop="category">@item.category.PersianName</span>
+                                        }
+                                    </div>
+                                    <h2 itemprop="name"><a title="@item.PersianName" href="/Product/Details/@item.Id/@Slugify(item.PersianName)">@item.PersianName</a></h2>
+                                    <div class="gpc-product-features">
+                                        <span>🌐 گارانتی بین‌المللی</span>
+                                        <span>⚙ تنظیم تخصصی</span>
+                                    </div>
+                                    <div class="gpc-product-actions">
+                                        <a class="gpc-product-btn" title="@item.PersianName" href="/Product/Details/@item.Id/@Slugify(item.PersianName)">بررسی تخصصی</a>
+                                        <a class="gpc-product-wa" href="https://wa.me/+989393388985?text=@Uri.EscapeDataString("سلام، درباره " + (item.PersianName ?? "") + " سوال دارم")" target="_blank" rel="noreferrer" aria-label="واتساپ برای @item.PersianName" title="مشاوره در واتساپ"><span aria-hidden="true">✆</span></a>
+                                    </div>
                                 </div>
                             </article>
                         }
                     </div>
-                </main>
-            }
-            else
-            {
-                <main class="gp-category-list-card" aria-label="محصولات دسته">
-                    <div class="gp-category-toolbar">
-                        <div>
-                            <h2>گزینه‌های قابل بررسی در @gpCategoryName</h2>
-                            <p>هر محصولی که مناسب بود به علاقه‌مندی اضافه کنید تا موقع تماس یا مراجعه سریع‌تر مقایسه شود.</p>
-                        </div>
-                    </div>
 
-                    @if (gpCurrentProducts.Count > 0)
+                    @if (CurrentPage > 1 || CurrentPage * 6 < TotalCount)
                     {
-                        <div class="gp-category-products-grid">
-                            @foreach (var item in gpCurrentProducts)
+                        <nav class="gpc-pager" aria-label="صفحه‌بندی">
+                            @if (CurrentPage > 1)
                             {
-                                <article class="gp-category-product-card">
-                                    <a class="gp-category-product-media" title="@item.PersianName" href="/Product/Details/@item.Id">
-                                        <img src="@item.SiteFirstImage" alt="@item.PersianName" loading="lazy" decoding="async" />
-                                        <span class="gp-product-new-badge">جدید</span>
-                                    </a>
-                                    <div class="gp-product-card-body">
-                                        <h2>
-                                            <a title="@item.PersianName" href="/Product/Details/@item.Id">@item.PersianName</a>
-                                        </h2>
-                                        <p>مناسب برای بررسی اولیه، افزودن به علاقه‌مندی و دریافت مشاوره بر اساس تست شنوایی.</p>
-                                        <div class="gp-product-card-meta">
-                                            <span>تجویز تخصصی</span>
-                                            <span>تنظیم دقیق</span>
-                                            <span>قابل مقایسه</span>
-                                        </div>
-                                        <div class="gp-product-actions">
-                                            <a title="@item.PersianName" class="gp-product-details" href="/Product/Details/@item.Id">بررسی</a>
-                                        </div>
-                                    </div>
-                                </article>
+                                <a href="@(CategoryPath + "?page=" + (CurrentPage - 1))">→ قبلی</a>
                             }
-                        </div>
-
-                        <div class="gp-product-pagination text-center">
-                            <nav aria-label="صفحه‌بندی محصولات">
-                                <ul class="pagination pagination-sm">
-                                    @if (CurrentPage > 1)
-                                    {
-                                        <li><a href="@(CategoryPath + "?page=" + (CurrentPage - 1))">قبلی</a></li>
-                                    }
-                                    @if (CurrentPage * 6 < TotalCount)
-                                    {
-                                        <li><a href="@(CategoryPath + "?page=" + (CurrentPage + 1))">بعدی</a></li>
-                                    }
-                                </ul>
-                            </nav>
-                        </div>
+                            <span class="gpc-pager-state">صفحه @FaNum(CurrentPage)</span>
+                            @if (CurrentPage * 6 < TotalCount)
+                            {
+                                <a href="@(CategoryPath + "?page=" + (CurrentPage + 1))">بعدی ←</a>
+                            }
+                        </nav>
                     }
-                    else
-                    {
-                        <div class="gp-empty-products">
-                            در حال حاضر محصولی برای این دسته وجود ندارد. برای مشاوره مستقیم با کلینیک تماس بگیرید.
-                        </div>
-                    }
-                </main>
-            }
+                }
+                else
+                {
+                    <div class="gpc-empty">
+                        <span aria-hidden="true">🔍</span>
+                        <b>محصولی در این دسته ثبت نشده است</b>
+                        <small>برای مشاوره مستقیم با کلینیک تماس بگیرید.</small>
+                        <a href="tel:02122735588">☎ ۰۲۱-۲۲۷۳۵۵۸۸</a>
+                    </div>
+                }
+            </main>
         </div>
+
+        <section class="gpc-cta" aria-label="تماس با کلینیک">
+            <div>
+                <h2>مدل مناسب خودت را پیدا نکردی؟</h2>
+                <p>تست شنوایی بده تا بر اساس نتیجه، دقیق‌ترین پیشنهاد را داشته باشی.</p>
+            </div>
+            <a href="/tajrish/hearing-test">رزرو تست شنوایی ←</a>
+        </section>
     </div>
 </section>
 
@@ -156,17 +235,32 @@
 
     private int CurrentPage => PageQuery < 1 ? 1 : PageQuery;
 
-    private string gpCategoryName = "محصولات سمعک";
+    private string gpCategoryName = "سمعک";
     private string gpCanonicalUrl = "https://tajrish-samak.ir/Product/All";
     private string CategoryPath = "/Product/All";
     private bool gpHasSubCategories;
     private bool notFound;
     private int TotalCount;
+    private int gpBrandCount;
+    private Dictionary<int, int> gpCategoryCounts = new();
     private List<Category> gpSubCategories = new();
     private List<Category> gpAllCategories = new();
     private List<Product> gpCurrentProducts = new();
 
     [Inject] Microsoft.AspNetCore.Http.IHttpContextAccessor Http { get; set; }
+
+    private static string Slugify(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return "product";
+        var sb = new System.Text.StringBuilder();
+        foreach (var ch in text.Trim())
+        {
+            if (char.IsLetterOrDigit(ch)) { sb.Append(ch); }
+            else if (ch == ' ' || ch == '-' || ch == '_') { sb.Append('-'); }
+        }
+        var result = System.Text.RegularExpressions.Regex.Replace(sb.ToString().Trim('-'), "-{2,}", "-");
+        return string.IsNullOrWhiteSpace(result) ? "product" : result;
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -213,6 +307,8 @@
         {
             var query = db.Products
                 .AsNoTracking()
+                .Include(p => p.Brand)
+                .Include(p => p.category)
                 .Where(p => p.SiteFirstImage != null);
 
             if (id.HasValue)
@@ -224,10 +320,34 @@
 
             gpCurrentProducts = await query
                 .OrderByDescending(p => p.CreateDate)
-                .ThenByDescending(p => p.PersianName)
                 .Skip((CurrentPage - 1) * 6)
                 .Take(6)
                 .ToListAsync();
+
+            gpBrandCount = gpCurrentProducts
+                .Select(p => p.Brand?.PersianName)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Distinct()
+                .Count();
+
+            // product count per top-level category (sidebar transparency)
+            gpCategoryCounts = await Cache.GetOrCreateAsync("gpc:category-counts", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+                var groups = await db.Products
+                    .AsNoTracking()
+                    .Where(p => p.SiteFirstImage != null && p.CategoryId != null)
+                    .GroupBy(p => p.CategoryId)
+                    .Select(g => new { Cat = g.Key, Count = g.Count() })
+                    .ToListAsync();
+                return groups.ToDictionary(x => x.Cat, x => x.Count);
+            }) ?? new Dictionary<int, int>();
         }
+    }
+
+    private static string FaNum(int value)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(value.ToString("N0", System.Globalization.CultureInfo.InvariantCulture).Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
     }
 }

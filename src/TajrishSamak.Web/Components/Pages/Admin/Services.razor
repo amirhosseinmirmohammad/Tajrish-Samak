@@ -1,0 +1,149 @@
+@page "/admin/services"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inherits TajrishSamak.Web.Components.Shared.AdmListBase
+
+<PageTitle>خدمات | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<div class="adm-toolbar-row" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+    <form method="get" class="adm-search" style="margin-bottom:0">
+        <input type="hidden" name="sort" value="@Sort" />
+        <input type="hidden" name="dir" value="@DirStr" />
+        <input type="search" name="q" value="@Q" placeholder="جستجو: عنوان، دسته..." />
+        <button type="submit" class="adm-btn adm-btn-purple">جستجو</button>
+    </form>
+    <a class="adm-btn adm-btn-purple" href="/admin/services/edit">＋ خدمت جدید</a>
+</div>
+
+<div class="adm-card adm-table-wrap">
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <AdmTh Key="Title" Label="عنوان" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="Category" Label="دسته" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="CreateDate" Label="تاریخ" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <th>نمایش</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Rows)
+            {
+                <tr>
+                    <td>@FaNum(s.Id)</td>
+                    <td><a href="/Service/@s.Id/@s.SefUrl" target="_blank" style="color:#6d0592;font-weight:900;text-decoration:none">@Truncate(s.Title, 45)</a></td>
+                    <td>@(s.Category?.PersianName ?? "—")</td>
+                    <td>@FaDate(s.CreateDate)</td>
+                    <td>
+                        <div style="display:flex;gap:5px;align-items:center">
+                            <a class="adm-btn adm-btn-purple" href="/admin/services/edit/@s.Id">ویرایش</a>
+                            <form method="post" action="/admin/toggle">
+                                <input type="hidden" name="entity" value="service" />
+                                <input type="hidden" name="id" value="@s.Id" />
+                                <input type="hidden" name="returnUrl" value="/admin/services" />
+                                <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                                <button type="submit" class="adm-btn @(s.IsVisible ? "adm-btn-green" : "adm-btn-danger")">
+                                    @(s.IsVisible ? "نمایان" : "مخفی")
+                                </button>
+                            </form>
+                            <form method="post" action="/admin/delete">
+                                <input type="hidden" name="entity" value="service" />
+                                <input type="hidden" name="id" value="@s.Id" />
+                                <input type="hidden" name="returnUrl" value="/admin/services" />
+                                <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                                <button type="submit" class="adm-btn adm-btn-danger">حذف</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (Rows.Count == 0)
+            {
+                <tr><td colspan="6">خدمتی یافت نشد.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<AdmPager Page="Page" PageSize="PageSize" Total="Filtered.Count()" PageUrl="@PageUrl" />
+
+@code {
+    private List<Service> services = new();
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "q")] public string? QP { get => Qs; set => Qs = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "page")] public int? PageQP { get => PageN; set => PageN = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "sort")] public string? SortQP { get => SortS; set => SortS = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "dir")] public string? DirQP { get => DirS; set => DirS = value; }
+    private string token = "";
+
+    private IEnumerable<Service> Filtered
+    {
+        get
+        {
+            IEnumerable<Service> q = services;
+            var term = (Q ?? "").Trim();
+            if (term.Length > 0)
+            {
+                q = q.Where(s =>
+                    (s.Title ?? "").Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (s.Category?.PersianName ?? "").Contains(term, StringComparison.OrdinalIgnoreCase));
+            }
+            q = (Sort, Asc) switch
+            {
+                ("Title", true) => q.OrderBy(s => s.Title),
+                ("Title", false) => q.OrderByDescending(s => s.Title),
+                ("Category", true) => q.OrderBy(s => s.Category?.PersianName),
+                ("Category", false) => q.OrderByDescending(s => s.Category?.PersianName),
+                ("CreateDate", true) => q.OrderBy(s => s.CreateDate ?? DateTime.MinValue),
+                ("CreateDate", false) => q.OrderByDescending(s => s.CreateDate ?? DateTime.MinValue),
+                _ => q
+            };
+            return q;
+        }
+    }
+
+    private List<Service> Rows => Filtered.Skip((Page - 1) * PageSize).Take(PageSize).ToList();
+
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+        services = await db.Services
+            .AsNoTracking()
+            .Include(s => s.Category)
+            .OrderByDescending(s => s.Id)
+            .ToListAsync();
+    }
+
+    private static string Truncate(string? text, int len)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return "—";
+        return text.Length <= len ? text : text.Substring(0, len) + "…";
+    }
+
+    private static string FaDate(DateTime? d)
+    {
+        if (!d.HasValue) return "—";
+        var cal = new System.Globalization.PersianCalendar();
+        return $"{cal.GetYear(d.Value):0000}/{cal.GetMonth(d.Value):00}/{cal.GetDayOfMonth(d.Value):00}";
+    }
+
+    private static string FaNum(long v)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(v.ToString("N0").Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}

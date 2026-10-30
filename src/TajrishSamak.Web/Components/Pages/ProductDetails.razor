@@ -1,19 +1,28 @@
 @page "/Product/Details/{id:long}"
+@page "/Product/Details/{id:long}/{sefUrl}"
 @using TajrishSamak.Web.Data.Entities
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject NavigationManager Nav
 
 <PageTitle>@(gpTitle ?? "محصول") | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
 <meta name="description" content="@gpMetaDesc" />
+<meta name="Keywords" content="@(gpTitle ?? "محصول")، سمعک، @(gpBrandName)، کلینیک شنوایی تجریش" />
 <link rel="canonical" href="@gpCanonicalUrl" />
 <meta property="og:title" content="@gpTitle" />
 <meta property="og:url" content="@gpCanonicalUrl" />
 <meta property="og:type" content="product" />
 <meta property="og:image" content="@gpImageUrl" />
-<link rel="stylesheet" href="css/gp-page-Product_Details.css" />
+<meta property="og:description" content="@gpMetaDesc" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="@gpTitle" />
+<meta name="twitter:image" content="@gpImageUrl" />
+<link rel="stylesheet" href="/css/gp-page-Product_Details.css?v=11" />
 
 @if (product == null)
 {
+    <meta name="robots" content="noindex" />
     if (notFound && Http.HttpContext != null)
     {
         Http.HttpContext.Response.StatusCode = 404;
@@ -23,66 +32,263 @@
     return;
 }
 
-<article class="gp-product-page">
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "Product",
+  "@@id": "@gpCanonicalUrl#product",
+  "name": "@gpTitle",
+  "description": "@gpMetaDesc",
+  "sku": "TS-@product.Id",
+  "url": "@gpCanonicalUrl",
+  "image": "@gpImageUrl",
+  "brand": { "@@type": "Brand", "name": "@gpBrandName" },
+  "category": "@(product.category?.PersianName ?? "سمعک")",
+  "offers": {
+    "@@type": "Offer",
+    "url": "@gpCanonicalUrl",
+    "itemCondition": "https://schema.org/NewCondition",
+    "availability": "https://schema.org/@avail",
+    "seller": {
+      "@@type": "Organization",
+      "@@id": "https://tajrish-samak.ir/#tajrish-samak",
+      "name": "کلینیک شنوایی و سمعک شکوه تجریش",
+      "url": "https://tajrish-samak.ir/"
+    }
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@@type": "ListItem", "position": 1, "name": "صفحه اصلی", "item": "https://tajrish-samak.ir/" },
+    { "@@type": "ListItem", "position": 2, "name": "محصولات", "item": "https://tajrish-samak.ir/Product/All" },
+    { "@@type": "ListItem", "position": 3, "name": "@gpTitle", "item": "@gpCanonicalUrl" }
+  ]
+}
+</script>
+
+<article class="gppd" itemscope itemtype="https://schema.org/Product">
     <div class="container">
-        <h1>@gpTitle</h1>
 
-        <div class="gp-product-media-main">
-            @if (!string.IsNullOrWhiteSpace(product.SiteFirstImage))
+        <nav class="gppd-crumb" aria-label="مسیر صفحه">
+            <a href="/">خانه</a>
+            <span aria-hidden="true">‹</span>
+            <a href="/Product/All">محصولات</a>
+            @if (product.category != null)
             {
-                <img src="@product.SiteFirstImage" alt="@gpTitle" width="420" style="max-width:100%;height:auto;" />
+                <span aria-hidden="true">‹</span>
+                <a href="/Product/All/@product.category.Id">@product.category.PersianName</a>
             }
+            <span aria-hidden="true">‹</span>
+            <span>@Truncate(gpTitle, 40)</span>
+        </nav>
+
+        @* ---------- split: thumbs rail | media | info ---------- *@
+        <div class="gppd-top @(gpGallery.Count > 1 ? null : "no-thumbs")">
+            @if (gpGallery.Count > 1)
+            {
+                <div class="gppd-thumbs" aria-label="تصاویر محصول">
+                    @for (var i = 0; i < gpGallery.Count; i++)
+                    {
+                        <button type="button" class="gppd-thumb @(i == 0 ? "is-active" : null)" data-index="@i" aria-label="تصویر @(i + 1)">
+                            <img src="@gpGallery[i]" alt="" loading="lazy" decoding="async" />
+                        </button>
+                    }
+                </div>
+            }
+
+            <figure class="gppd-media">
+                <img id="gppdMainImage" src="@(gpGallery.Count > 0 ? gpGallery[0] : gpImageUrl)" alt="@gpTitle" itemprop="image" fetchpriority="high" decoding="async" />
+                <span class="gppd-zoom-hint" aria-hidden="true">⤢</span>
+                <figcaption class="gppd-brand-badge">
+                    <i aria-hidden="true">★</i>
+                    <span>@(gpHasBrand ? gpBrandName : "اصالت کالا تضمینی")</span>
+                </figcaption>
+            </figure>
+
+            <div class="gppd-info">
+                @if (product.category != null)
+                {
+                    <a class="gppd-chip" href="/Product/All/@product.category.Id" itemprop="category">@product.category.PersianName</a>
+                }
+                <h1 itemprop="name">@gpTitle</h1>
+
+                <div class="gppd-brand-row">
+                    <span class="gppd-brand"><i aria-hidden="true">★</i> برند: @gpBrandName</span>
+                    @if (product.Stock > 0)
+                    {
+                        <span class="gppd-stock in"><i aria-hidden="true">✓</i> موجود</span>
+                    }
+                </div>
+
+                <div class="gppd-features">
+                    <div><i aria-hidden="true">🌐</i><b>گارانتی بین‌المللی</b><small>معتبر و قابل استعلام</small></div>
+                    <div><i aria-hidden="true">⚙</i><b>تنظیم تخصصی</b><small>توسط کارشناس شنوایی</small></div>
+                    <div><i aria-hidden="true">↻</i><b>پیگیری پس از فروش</b><small>همراهی مستمر</small></div>
+                </div>
+
+                <div class="gppd-actions">
+                    <a class="gppd-call" href="tel:02122735588"><span aria-hidden="true">☎</span> مشاوره و ثبت سفارش</a>
+                    <a class="gppd-wa" href="https://wa.me/+989393388985?text=@WATitleEncoded" target="_blank" rel="noreferrer"><span aria-hidden="true">✆</span> واتساپ</a>
+                </div>
+
+                <div class="gppd-share" aria-label="اشتراک‌گذاری">
+                    <span>اشتراک‌گذاری:</span>
+                    <a href="https://t.me/share/url?url=@UrlEncoded&text=@WATitleEncoded" target="_blank" rel="noreferrer" aria-label="تلگرام">➤</a>
+                    <a href="https://wa.me/?text=@WATitleEncoded%20@UrlEncoded" target="_blank" rel="noreferrer" aria-label="واتساپ">✆</a>
+                    <button type="button" class="gppd-copy" data-copy="@gpCanonicalUrl" aria-label="کپی لینک">⧉</button>
+                </div>
+
+                <dl class="gppd-specs">
+                    <div><dt>برند</dt><dd>@gpBrandName</dd></div>
+                    @if (product.category != null)
+                    {
+                        <div><dt>دسته</dt><dd>@product.category.PersianName</dd></div>
+                    }
+                    <div><dt>وضعیت</dt><dd>@(product.Stock > 0 ? "موجود در کلینیک" : "ثبت سفارش با تماس")</dd></div>
+                    <div><dt>گارانتی</dt><dd>بین‌المللی</dd></div>
+                </dl>
+            </div>
         </div>
 
-        <div class="gp-product-desc">
-            @((MarkupString)product.Description)
+        @* ---------- description ---------- *@
+        @if (!string.IsNullOrWhiteSpace(product.Description))
+        {
+            <div class="gppd-desc">
+                <h2><span>درباره این محصول</span></h2>
+                <div class="gppd-desc-body">
+                    @((MarkupString)product.Description)
+                </div>
+            </div>
+        }
+
+        @* ---------- related ---------- *@
+        @if (product.RelatedProducts != null && product.RelatedProducts.Any())
+        {
+            <section class="gppd-related" aria-label="محصولات مرتبط">
+                <h2><span>محصولات مرتبط</span></h2>
+                <div class="gppd-related-grid">
+                    @foreach (var rel in product.RelatedProducts.Take(4))
+                    {
+                        <a class="gppd-rel-card" href="/Product/Details/@rel.Id" title="@(rel.PersianName ?? "")">
+                            @if (!string.IsNullOrWhiteSpace(rel.SiteFirstImage))
+                            {
+                                <img src="@rel.SiteFirstImage" alt="@(rel.PersianName ?? "")" loading="lazy" decoding="async" />
+                            }
+                            <b>@rel.PersianName</b>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        <div class="gppd-back">
+            <a href="/Product/All">← بازگشت به محصولات</a>
         </div>
-
-        <h2>محصولات مرتبط</h2>
-        <ul>
-            @foreach (var r in product.RelatedProducts.Take(6))
-            {
-                <li><a href="/Product/Details/@r.Id">@r.PersianName</a></li>
-            }
-        </ul>
-
-        <p><a class="btn btn-default" href="tel:02122735588">☎ مشاوره و تماس فوری</a></p>
     </div>
 </article>
 
-@if (hasPrice)
-{
-    <script type="application/ld+json">
-    {
-      "@@context": "https://schema.org",
-      "@@type": "Product",
-      "@@id": "@gpCanonicalUrl#product",
-      "name": "@gpTitle",
-      "description": "@gpMetaDesc",
-      "sku": "TS-@product.Id",
-      "url": "@gpCanonicalUrl",
-      "image": "@gpImageUrl",
-      "brand": { "@@type": "Brand", "name": "@gpBrandName" },
-      "offers": {
-        "@@type": "Offer",
-        "url": "@gpCanonicalUrl",
-        "priceCurrency": "IRR",
-        "price": @finalPrice,
-        "itemCondition": "https://schema.org/NewCondition",
-        "availability": "https://schema.org/@avail",
-        "seller": {
-          "@@type": "Organization",
-          "@@id": "https://tajrish-samak.ir/#tajrish-samak",
-          "name": "کلینیک شنوایی و سمعک شکوه تجریش",
-          "url": "https://tajrish-samak.ir/"
+<script>
+    (function () {
+        document.addEventListener("click", function (event) {
+            var btn = event.target.closest(".gppd-copy");
+            if (!btn) return;
+            var url = btn.getAttribute("data-copy");
+            var done = function () {
+                var old = btn.textContent;
+                btn.textContent = "✓";
+                setTimeout(function () { btn.textContent = old; }, 1400);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(done).catch(function () { window.prompt("لینک محصول:", url); });
+            } else {
+                window.prompt("لینک محصول:", url);
+            }
+        });
+
+        /* product gallery: thumbnails + fullscreen zoom lightbox */
+        var mainImage = document.getElementById("gppdMainImage");
+        var thumbs = Array.prototype.slice.call(document.querySelectorAll(".gppd-thumb"));
+        if (mainImage) {
+            var sources = thumbs.length
+                ? thumbs.map(function (t) { return t.querySelector("img").getAttribute("src"); })
+                : [mainImage.getAttribute("src")];
+            var currentIndex = 0;
+            var lightbox = null, lbImage = null, lbCounter = null;
+            var faDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+
+            function faNum(n) { return String(n).replace(/\d/g, function (d) { return faDigits[+d]; }); }
+
+            function setActive(index) {
+                thumbs.forEach(function (t, i) { t.classList.toggle("is-active", i === index); });
+                currentIndex = index;
+            }
+
+            thumbs.forEach(function (thumb, index) {
+                thumb.addEventListener("click", function () {
+                    mainImage.src = sources[index];
+                    setActive(index);
+                });
+            });
+
+            function buildLightbox() {
+                lightbox = document.createElement("div");
+                lightbox.className = "gp-lightbox";
+                lightbox.setAttribute("role", "dialog");
+                lightbox.setAttribute("aria-modal", "true");
+                lightbox.innerHTML =
+                    '<button type="button" class="gp-lightbox-close" aria-label="بستن">×</button>' +
+                    (sources.length > 1 ? '<button type="button" class="gp-lightbox-nav gp-lightbox-prev" aria-label="تصویر قبلی">→</button>' : '') +
+                    '<figure class="gp-lightbox-figure"><img class="gp-lightbox-img" alt="' + (mainImage.alt || "") + '" />' +
+                    '<figcaption class="gp-lightbox-counter"></figcaption></figure>' +
+                    (sources.length > 1 ? '<button type="button" class="gp-lightbox-nav gp-lightbox-next" aria-label="تصویر بعدی">←</button>' : '');
+                document.body.appendChild(lightbox);
+                lbImage = lightbox.querySelector(".gp-lightbox-img");
+                lbCounter = lightbox.querySelector(".gp-lightbox-counter");
+
+                lightbox.addEventListener("click", function (event) {
+                    if (event.target === lightbox) { closeLightbox(); }
+                });
+                lightbox.querySelector(".gp-lightbox-close").addEventListener("click", closeLightbox);
+                var prevBtn = lightbox.querySelector(".gp-lightbox-prev");
+                var nextBtn = lightbox.querySelector(".gp-lightbox-next");
+                if (prevBtn) { prevBtn.addEventListener("click", function () { showLightbox(currentIndex - 1); }); }
+                if (nextBtn) { nextBtn.addEventListener("click", function () { showLightbox(currentIndex + 1); }); }
+
+                document.addEventListener("keydown", function (event) {
+                    if (!lightbox.classList.contains("is-open")) { return; }
+                    if (event.key === "Escape") { closeLightbox(); }
+                    else if (event.key === "ArrowLeft" && sources.length > 1) { showLightbox(currentIndex + 1); }
+                    else if (event.key === "ArrowRight" && sources.length > 1) { showLightbox(currentIndex - 1); }
+                });
+            }
+
+            function showLightbox(index) {
+                if (!lightbox) { buildLightbox(); }
+                currentIndex = (index + sources.length) % sources.length;
+                lbImage.src = sources[currentIndex];
+                lbCounter.textContent = faNum(currentIndex + 1) + " / " + faNum(sources.length);
+                lightbox.classList.add("is-open");
+                document.body.style.overflow = "hidden";
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove("is-open");
+                document.body.style.overflow = "";
+            }
+
+            mainImage.addEventListener("click", function () { showLightbox(currentIndex); });
         }
-      }
-    }
-    </script>
-}
+    })();
+</script>
 
 @code {
     [Parameter] public long id { get; set; }
+    [Parameter] public string? sefUrl { get; set; }
 
     private Product product;
     private bool notFound;
@@ -91,9 +297,12 @@
     private string gpCanonicalUrl = "";
     private string gpImageUrl = "https://tajrish-samak.ir/images/logo_purple.webp";
     private string gpBrandName = "Tajrish Samak";
-    private int finalPrice;
-    private bool hasPrice;
+    private bool gpHasBrand;
     private string avail = "InStock";
+    private List<string> gpGallery = new();
+
+    private string UrlEncoded => Uri.EscapeDataString(gpCanonicalUrl);
+    private string WATitleEncoded => Uri.EscapeDataString(gpTitle);
 
     protected override async Task OnParametersSetAsync()
     {
@@ -115,10 +324,28 @@
         }
 
         gpTitle = string.IsNullOrWhiteSpace(product.PersianName) ? "محصول سمعک" : product.PersianName;
-        gpCanonicalUrl = "https://tajrish-samak.ir/Product/Details/" + product.Id;
+        gpCanonicalUrl = "https://tajrish-samak.ir/Product/Details/" + product.Id + "/" + Slugify(gpTitle);
         gpImageUrl = !string.IsNullOrWhiteSpace(product.SiteFirstImage)
             ? "https://tajrish-samak.ir" + product.SiteFirstImage
             : "https://tajrish-samak.ir/images/logo_purple.webp";
+
+        // gallery: all available product images (deduplicated)
+        gpGallery = new[] { product.SiteFirstImage, product.SiteSecondImage, product.SiteThirdImage, product.SliderImage }
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Distinct()
+            .ToList();
+
+        // legacy URLs without slug -> 301 to the SEO-friendly slugged URL
+        // (Location header must be percent-encoded: raw Persian breaks the response)
+        if (string.IsNullOrWhiteSpace(sefUrl) || !string.Equals(sefUrl, Slugify(gpTitle), StringComparison.OrdinalIgnoreCase))
+        {
+            var target = "/Product/Details/" + product.Id + "/" + Uri.EscapeDataString(Slugify(gpTitle));
+            if (Http.HttpContext != null)
+            {
+                Http.HttpContext.Response.Redirect(target, true);
+            }
+            return;
+        }
 
         if (!string.IsNullOrWhiteSpace(product.Description))
         {
@@ -126,8 +353,6 @@
             gpMetaDesc = plain.Length > 160 ? plain.Substring(0, 160) : plain;
         }
 
-        finalPrice = product.UnitPrice - (product.UnitPrice * product.DiscountPercent / 100);
-        hasPrice = finalPrice > 0;
         avail = product.Stock > 0 ? "InStock" : "OutOfStock";
 
         if (product.BrandId > 0)
@@ -140,9 +365,33 @@
             if (!string.IsNullOrWhiteSpace(brandName))
             {
                 gpBrandName = brandName;
+                gpHasBrand = true;
             }
         }
     }
 
-    [Inject] Microsoft.AspNetCore.Http.IHttpContextAccessor Http { get; set; }
+    private static string Truncate(string text, int len)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return "";
+        return text.Length <= len ? text : text.Substring(0, len) + "…";
+    }
+
+    private static string Slugify(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return "product";
+        var sb = new System.Text.StringBuilder();
+        foreach (var ch in text.Trim())
+        {
+            if (char.IsLetterOrDigit(ch)) { sb.Append(ch); }
+            else if (ch == ' ' || ch == '-' || ch == '_') { sb.Append('-'); }
+        }
+        var result = System.Text.RegularExpressions.Regex.Replace(sb.ToString().Trim('-'), "-{2,}", "-");
+        return string.IsNullOrWhiteSpace(result) ? "product" : result;
+    }
+
+    private static string FaNum(int value)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(value.ToString("N0", System.Globalization.CultureInfo.InvariantCulture).Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
 }

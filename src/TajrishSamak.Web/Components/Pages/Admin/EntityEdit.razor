@@ -1,0 +1,191 @@
+@page "/admin/edit/{EntityKey}/{Id:long?}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+<PageTitle>@(def == null ? "—" : (Id > 0 ? "ویرایش " + def.Title : def.Title + " جدید")) | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+@if (def == null)
+{
+    <div class="adm-card" style="text-align:center;padding:40px">
+        <p style="font-weight:900;color:#b3125c">موجودیت نامعتبر است.</p>
+        <a class="adm-btn adm-btn-purple" href="/admin">بازگشت به داشبورد</a>
+    </div>
+}
+else
+{
+    <div class="adm-editor">
+        <div class="adm-toolbar-row" style="display:flex;justify-content:space-between;align-items:center">
+            <h2 style="margin:0">@(Id > 0 ? "✏️ ویرایش " + def.Title : "＋ " + def.Title + " جدید")</h2>
+            <a class="adm-btn adm-btn-danger" href="@def.ListUrl">→ بازگشت به لیست</a>
+        </div>
+
+        @if (saved)
+        {
+            <div class="adm-editor-saved">✓ با موفقیت ذخیره شد</div>
+        }
+
+        <div class="adm-card">
+            <form method="post" action="/admin/save/entity" class="adm-form">
+                <input type="hidden" name="entity" value="@def.Key" />
+                <input type="hidden" name="id" value="@(Id ?? 0)" />
+                <input type="hidden" name="__RequestVerificationToken" value="@token" />
+
+                @foreach (var field in def.Fields)
+                {
+                    var cur = Val(field.Name);
+
+                    @if (field.Type == "image")
+                    {
+                        <div class="adm-filter-field">
+                            <label>@field.Label</label>
+                            <div class="gpc-upload-zone" data-folder="@field.Folder">
+                                <div class="gpc-upload-inner">
+                                    <span aria-hidden="true">🖼</span>
+                                    <small>فایل را بکشید یا کلیک کنید</small>
+                                </div>
+                                <input type="text" name="@field.Name" value="@cur" dir="ltr" placeholder="/images/..." />
+                            </div>
+                        </div>
+                    }
+                    else if (field.Type == "checkbox")
+                    {
+                        <label class="adm-checkbox">
+                            <input type="checkbox" name="@field.Name" value="true" checked="@(cur == "true")" />
+                            @field.Label
+                        </label>
+                    }
+                    else if (field.Type == "textarea")
+                    {
+                        <div class="adm-filter-field">
+                            <label>@field.Label</label>
+                            <textarea name="@field.Name" rows="4" required="@field.Required">@cur</textarea>
+                        </div>
+                    }
+                    else if (field.Type == "date")
+                    {
+                        <div class="adm-filter-field">
+                            <label>@field.Label (شمسی)</label>
+                            <input type="text" class="gp-jalali" name="@field.Name" value="@cur" placeholder="۱۴۰۴/۰۱/۰۱" dir="ltr" />
+                        </div>
+                    }
+                    else if (field.Type.StartsWith("select:"))
+                    {
+                        <div class="adm-filter-field">
+                            <label>@field.Label</label>
+                            <select name="@field.Name">
+                                <option value="">— بدون —</option>
+                                @foreach (var opt in options)
+                                {
+                                    <option value="@opt.Id" selected="@(cur == opt.Id.ToString())">@opt.Name</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="adm-filter-field">
+                            <label>@field.Label</label>
+                            <input type="@(field.Type == "number" ? "number" : "text")"
+                                   name="@field.Name"
+                                   value="@(field.Type == "number" ? cur : cur)"
+                                   required="@field.Required"
+                                   dir="@(field.Name.EndsWith("Email") || field.Name == "Code" ? "ltr" : null)" />
+                        </div>
+                    }
+                }
+
+                <div class="adm-editor-actions">
+                    <button type="submit" class="adm-btn adm-btn-purple">💾 ذخیره</button>
+                </div>
+            </form>
+
+            @if (Id > 0)
+            {
+                <form method="post" action="/admin/delete" style="margin-top:10px">
+                    <input type="hidden" name="entity" value="@def.Key" />
+                    <input type="hidden" name="id" value="@Id" />
+                    <input type="hidden" name="returnUrl" value="@def.ListUrl" />
+                    <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                    <button type="submit" class="adm-btn adm-btn-danger">🗑 حذف این @(def.Title)</button>
+                </form>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string EntityKey { get; set; } = "";
+    [Parameter] public long? Id { get; set; }
+
+    private TajrishSamak.Web.Components.Shared.AdmEntityDef? def;
+    private object? item;
+    private string token = "";
+    private bool saved;
+    private Dictionary<string, string> current = new(StringComparer.OrdinalIgnoreCase);
+    private List<(long Id, string Name)> options = new();
+
+    private string Val(string name) => current.TryGetValue(name, out var v) ? v : "";
+
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+            saved = Http.HttpContext.Request.Query["saved"].ToString() == "1";
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        def = TajrishSamak.Web.Components.Shared.AdmEntityRegistry.Get(EntityKey);
+        if (def == null) return;
+
+        item = null;
+        current.Clear();
+        options.Clear();
+
+        if (Id > 0)
+        {
+            item = await def.Load(DbFactory, Id.Value);
+            if (item == null) return;
+
+            foreach (var f in def.Fields)
+            {
+                var pi = item.GetType().GetProperty(f.Name);
+                if (pi == null) continue;
+                var raw = pi.GetValue(item);
+                current[f.Name] = f.Type switch
+                {
+                    "checkbox" => raw is true ? "true" : "",
+                    "date" => FormatJalali(raw as DateTime?),
+                    _ => raw?.ToString() ?? ""
+                };
+            }
+        }
+
+        var selSrc = def.Fields.FirstOrDefault(f => f.Type.StartsWith("select:"))?.Type;
+        if (selSrc != null)
+        {
+            await using var db = DbFactory.CreateDbContext();            if (selSrc == "select:states")
+                options = db.States.AsNoTracking().OrderBy(s => s.Name)
+                    .Select(s => new { s.Id, s.Name }).ToList()
+                    .Select(s => ((long)s.Id, s.Name)).ToList();
+            else if (selSrc == "select:categories")
+                options = db.Categories.AsNoTracking().OrderBy(c => c.PersianName)
+                    .Select(c => new { c.Id, c.PersianName }).ToList()
+                    .Select(c => ((long)c.Id, c.PersianName)).ToList();
+        }
+    }
+
+    private static string FormatJalali(DateTime? d)
+    {
+        if (!d.HasValue) return "";
+        var cal = new System.Globalization.PersianCalendar();
+        return $"{cal.GetYear(d.Value):0000}/{cal.GetMonth(d.Value):00}/{cal.GetDayOfMonth(d.Value):00}";
+    }
+}

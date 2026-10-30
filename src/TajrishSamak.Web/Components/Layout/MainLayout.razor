@@ -119,10 +119,10 @@
             </ul>
             <div class="agileits_search gp-header-search-box">
                 <form action="/search" class="form-search" method="get">
-                    <button type="submit" class="btn btn-default">
+                    <button type="submit" class="btn btn-default" aria-label="جستجو">
                         <span class="gp-search-glyph" aria-hidden="true">⌕</span>
                     </button>
-                    <input name="q" type="search" placeholder="جستجو در سمعک‌ها، خدمات، مقالات و برندها..." required="">
+                    <input name="q" id="gpHeaderSearch" type="search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="gpSuggestPanel" aria-autocomplete="list" placeholder="جستجو در سمعک‌ها، خدمات، مقالات و برندها..." required="">
                 </form>
             </div>
             <div class="gp-header-tools">
@@ -225,7 +225,9 @@
     </nav>
 </div>
 
+<main id="gpmain">
 @Body
+</main>
 
 <section class="gp-footer-stage" aria-label="پاورقی سایت">
     <span class="gp-footer-blob gp-footer-blob-a" aria-hidden="true"></span>
@@ -233,7 +235,7 @@
     <span class="gp-footer-blob gp-footer-blob-c" aria-hidden="true"></span>
 
     <div class="container gp-footer-wrap">
-        <div class="gp-footer-card gp-reveal">
+        <div class="gp-footer-card">
             <div class="gp-footer-topline">
                 <div class="gp-footer-brand">
                     <a href="/" class="gp-footer-logo-link" aria-label="صفحه اصلی کلینیک شنوایی و سمعک شکوه تجریش">
@@ -253,14 +255,6 @@
                         <span aria-hidden="true">✦</span>
                         درخواست مشاوره
                     </a>
-                    <button type="button" class="gp-language-toggle notranslate" id="gpLanguageToggleFooter" data-gp-lang-toggle data-gp-tip="English / فارسی" aria-label="تغییر زبان سایت">
-                        <span class="gp-lang-option gp-lang-en">EN</span>
-                        <span class="gp-lang-option gp-lang-fa">FA</span>
-                    </button>
-                    <button type="button" class="gp-ios-theme-switch gp-theme-toggle" id="gpThemeToggle" data-gp-tip="ذخیره حالت روز/شب" aria-label="تغییر حالت شب و روز">
-                        <span aria-hidden="true">◐</span>
-                        <span class="gp-theme-toggle-text">حالت شب</span>
-                    </button>
                 </div>
             </div>
 
@@ -310,7 +304,15 @@
                 </div>
             </div>
 
-            <div class="gp-footer-bottom-panel">
+            <div class="gp-footer-quicklinks" aria-label="لینک‌های سریع">
+                <a href="/aboutus" title="درباره ما">درباره ما</a>
+                <span aria-hidden="true">·</span>
+                <a href="/contactus" title="تماس با ما">تماس با ما</a>
+                <span aria-hidden="true">·</span>
+                <a href="/faq" title="سوالات متداول">سوالات متداول</a>
+                <span aria-hidden="true">·</span>
+                <a href="/terms" title="قوانین و مقررات">قوانین</a>
+            </div>            <div class="gp-footer-bottom-panel">
                 <div class="gp-footer-newsletter">
                     <div class="gp-newsletter-copy">
                         <strong>خبرهای شنوایی را کوتاه و مفید بگیرید</strong>
@@ -367,15 +369,15 @@
         <span class="gp-mobile-nav-icon gp-nav-hearing" aria-hidden="true">🎧</span>
         <small>سمعک</small>
     </a>
-    <a href="/blog/all" class="gp-mobile-nav-item" data-gp-tip="مقالات" data-gp-path="/blog">
+    <a href="/Service/All" class="gp-mobile-nav-item" data-gp-tip="خدمات" data-gp-path="/Service/All">
+        <span class="gp-mobile-nav-icon gp-nav-info" aria-hidden="true">⚙</span>
+        <small>خدمات</small>
+    </a>
+    <a href="/Blog/All" class="gp-mobile-nav-item" data-gp-tip="مقالات" data-gp-path="/Blog/All">
         <span class="gp-mobile-nav-icon gp-nav-blog" aria-hidden="true">▤</span>
         <small>مقالات</small>
     </a>
-    <a href="/aboutus" class="gp-mobile-nav-item" data-gp-tip="درباره ما" data-gp-path="/aboutus">
-        <span class="gp-mobile-nav-icon gp-nav-info" aria-hidden="true">i</span>
-        <small>درباره</small>
-    </a>
-    <a href="/contactus" class="gp-mobile-nav-item" data-gp-tip="تماس" data-gp-path="/contactus">
+    <a href="tel:02122735588" class="gp-mobile-nav-item" data-gp-tip="تماس تلفنی">
         <span class="gp-mobile-nav-icon gp-nav-phone" aria-hidden="true">☎</span>
         <small>تماس</small>
     </a>
@@ -385,7 +387,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="بستن">&times;</button>
                 <h4 class="modal-title"> پیغام سایت </h4>
             </div>
             <div class="modal-body">

@@ -571,29 +571,29 @@
 
 
 
-        /* V54: GEO/AEO entity panel */
+        /* V54: GEO/AEO entity panel - V94: restyled for the dark footer card */
         .gp-geo-entity-panel {
             margin: 22px auto 0;
-            padding: 18px;
-            border-radius: 28px;
-            background: radial-gradient(circle at 12% 20%, rgba(216,245,18,.14), transparent 28%), linear-gradient(135deg, rgba(255,255,255,.86), rgba(255,255,255,.58));
-            border: 1px solid rgba(146,10,182,.10);
-            box-shadow: 0 18px 45px rgba(74,18,107,.08);
+            padding: 20px 22px;
+            border-radius: 24px;
+            background: rgba(255,255,255,.04) !important;
+            border: 1px solid rgba(255,255,255,.09) !important;
+            box-shadow: none;
             direction: rtl;
             text-align: right;
         }
 
             .gp-geo-entity-panel h2 {
                 margin: 0 0 8px;
-                color: #4b1684 !important;
-                font-size: 18px;
+                color: #ffffff !important;
+                font-size: 15.5px;
                 font-weight: 1000;
-                line-height: 1.8;
+                line-height: 1.9;
             }
 
             .gp-geo-entity-panel p {
                 margin: 0;
-                color: rgba(32,20,45,.72) !important;
+                color: rgba(244,236,255,.62) !important;
                 font-size: 13px;
                 font-weight: 850;
                 line-height: 2.1;
@@ -612,19 +612,27 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                padding: 0 10px;
+                padding: 0 12px;
                 border-radius: 999px;
-                background: rgba(146,10,182,.075);
-                color: #6420a0 !important;
+                background: rgba(255,255,255,.07) !important;
+                border: 1px solid rgba(255,255,255,.10);
+                color: rgba(255,255,255,.85) !important;
                 font-size: 12px;
                 font-weight: 950;
                 text-decoration: none !important;
+                transition: background .16s ease, color .16s ease, transform .16s ease;
+            }
+
+            .gp-geo-entity-keywords a:hover {
+                background: linear-gradient(135deg, rgba(209,244,17,.20), rgba(198,0,105,.18)) !important;
+                color: #ffffff !important;
+                transform: translateY(-2px);
             }
 
         html.gp-dark-mode .gp-geo-entity-panel {
-            background: rgba(255,255,255,.065) !important;
+            background: rgba(255,255,255,.05) !important;
             border-color: rgba(255,255,255,.10) !important;
-            box-shadow: 0 18px 45px rgba(0,0,0,.22);
+            box-shadow: none;
         }
 
             html.gp-dark-mode .gp-geo-entity-panel h2 {
@@ -632,7 +640,7 @@
             }
 
             html.gp-dark-mode .gp-geo-entity-panel p {
-                color: rgba(246,247,251,.76) !important;
+                color: rgba(246,247,251,.72) !important;
             }
 
         html.gp-dark-mode .gp-geo-entity-keywords a,
@@ -2425,5 +2433,176 @@
     .menu__list {
         justify-content: center;
         gap: 4px;
+    }
+}
+
+/* =========================================================
+   V92: brand pages (ported from legacy BrandController views)
+   ========================================================= */
+.gp-brand-initial {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(38px, 6vw, 64px);
+    font-weight: 950;
+    color: #fff !important;
+    background: linear-gradient(135deg, #4b1684, #920ab6 55%, #c60069);
+}
+
+.gp-side-list a.gp-side-active {
+    background: linear-gradient(135deg, var(--gp-purple, #920ab6), var(--gp-pink, #c60069)) !important;
+    color: #fff !important;
+    border-radius: 12px;
+}
+
+/* =========================================================
+   V103 - footer contact rows centered like the rest
+   ========================================================= */
+.gp-footer-contact li {
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+.gp-footer-contact .gp-footer-phone-row {
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+.gp-footer-contact li a {
+    text-align: center !important;
+}
+
+/* V103c - all contact rows flush to the right edge (one direction) */
+.gp-footer-grid-v80 .gp-footer-contact li,
+.gp-footer-grid-v80 .gp-footer-contact .gp-footer-phone-row {
+    justify-content: flex-end !important;
+    text-align: right !important;
+}
+
+/* =========================================================
+   V104 - DEFINITIVE footer grid responsiveness
+   ========================================================= */
+.gp-footer-grid,
+.gp-footer-grid.gp-footer-grid-v80 {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: clamp(14px, 2vw, 30px) !important;
+    width: 100% !important;
+}
+
+.gp-footer-grid .gp-footer-column,
+.gp-footer-grid.gp-footer-grid-v80 .gp-footer-column {
+    width: auto !important;
+    min-width: 0 !important;
+}
+
+@media (max-width: 1100px) {
+    .gp-footer-grid,
+    .gp-footer-grid.gp-footer-grid-v80 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .gp-footer-grid,
+    .gp-footer-grid.gp-footer-grid-v80 {
+        grid-template-columns: 1fr !important;
+    }
+
+    .gp-footer-grid .gp-footer-column {
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        padding-bottom: 14px;
+    }
+
+    .gp-footer-grid .gp-footer-column:last-child {
+        border-bottom: 0;
+    }
+}
+
+.gp-footer-grid .gp-footer-contact li,
+.gp-footer-grid.gp-footer-grid-v80 .gp-footer-contact li {
+    justify-content: flex-end !important;
+    text-align: right !important;
+}
+/* =========================================================
+   V105 - tidy contact rows: shrink-to-fit, flush right, icon-first
+   ========================================================= */
+.gp-footer-grid .gp-footer-contact li,
+.gp-footer-grid.gp-footer-grid-v80 .gp-footer-contact li {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    direction: rtl !important;
+    gap: 10px !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    margin: 0 0 10px auto !important;
+    text-align: right !important;
+}
+
+    .gp-footer-grid .gp-footer-contact li > span:first-child {
+        flex: 0 0 auto;
+    }
+
+    .gp-footer-grid .gp-footer-contact li > a {
+        display: inline !important;
+        padding: 0 !important;
+    }
+/* =========================================================
+   MOBILE NAV STRIP - clean horizontal pills (fixes broken dark menu)
+   ========================================================= */
+@media (max-width: 1024px) {
+    .top_nav_left { background: transparent !important; padding: 0 10px 8px !important; }
+    .top_nav_left .navbar { min-height: 0 !important; margin: 0 !important; border: 0 !important; }
+    .top_nav_left .navbar-collapse {
+        display: flex !important;
+        height: auto !important;
+        padding: 0 !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .top_nav_left .navbar-nav.menu__list {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center;
+        gap: 8px;
+        margin: 0 !important;
+        padding: 4px 2px !important;
+        float: none !important;
+        background: transparent !important;
+    }
+    .top_nav_left .navbar-nav > li { float: none !important; display: block !important; }
+    .top_nav_left .navbar-nav > li > a {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 16px !important;
+        border-radius: 999px !important;
+        background: rgba(146,10,182,.08) !important;
+        color: #5d0d80 !important;
+        font-size: 12.5px !important;
+        font-weight: 900 !important;
+        white-space: nowrap !important;
+    }
+    .top_nav_left .navbar-nav > li > a:hover,
+    .top_nav_left .navbar-nav > li > a:focus {
+        background: linear-gradient(135deg,#920ab6,#c60069) !important;
+        color: #fff !important;
+    }
+    .top_nav_left .dropdown-menu { display: none !important; }
+    .top_nav_left .navbar-nav > li.dropdown > a:after { content: none !important; }
+}
+
+/* NAV STRIP v2 - rounded band (overrides v1 transparent) */
+@media (max-width: 1024px) {
+    .top_nav_left {
+        background: #f7f2fd !important;
+        border-radius: 20px !important;
+        margin: 0 10px 10px !important;
+        padding: 8px 10px !important;
+        overflow: hidden;
     }
 }

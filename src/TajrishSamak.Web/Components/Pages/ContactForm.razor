@@ -1,79 +1,50 @@
 @using TajrishSamak.Web.Data.Entities
-@using Microsoft.EntityFrameworkCore
-@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 
+@* Static-SSR contact form: plain HTML POST to /contact/message (no circuits, honeypot + rate limited) *@
 <div class="gp-contact-form">
-    <EditForm Model="model" OnValidSubmit="Submit">
-        <DataAnnotationsValidator />
-        <div class="gp-contact-field">
-            <InputText @bind-Value="model.FullName" placeholder="نام و نام خانوادگی" />
-        </div>
-        <div class="gp-contact-field">
-            <InputText @bind-Value="model.Email" placeholder="ایمیل" />
-        </div>
-        <div class="gp-contact-field">
-            <InputTextArea @bind-Value="model.Body" placeholder="پیام شما" />
-        </div>
-        <ValidationMessage For="() => model.FullName" />
-        <ValidationMessage For="() => model.Body" />
-        <button type="submit" class="gp-contact-submit" disabled="@sending">
-            @(sending ? "در حال ارسال..." : "ارسال پیام")
-        </button>
-    </EditForm>
-
-    @if (!string.IsNullOrEmpty(message))
+    @if (done)
     {
-        <h6 class="newsletter"><i class="@(success ? "text-success" : "text-danger")">@message</i></h6>
+        <h6 class="newsletter"><i class="text-success">✓ پیام شما با موفقیت ثبت شد</i></h6>
     }
+    else if (failed)
+    {
+        <h6 class="newsletter"><i class="text-danger">✕ ارسال پیام با مشکل مواجه شد. لطفا مجدد تلاش فرمایید.</i></h6>
+    }
+    <form method="post" action="/contact/message">
+        <input type="hidden" name="__RequestVerificationToken" value="@token" />
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        <div class="gp-contact-field">
+            <input type="text" name="fullName" placeholder="نام و نام خانوادگی *" required minlength="2" maxlength="100" />
+        </div>
+        <div class="gp-contact-field">
+            <input type="email" name="email" placeholder="ایمیل" maxlength="150" />
+        </div>
+        <div class="gp-contact-field">
+            <textarea name="body" placeholder="پیام شما *" rows="5" required minlength="5" maxlength="3000"></textarea>
+        </div>
+        <input type="text" name="website" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden" />
+        <button type="submit" class="gp-contact-submit">ارسال پیام</button>
+    </form>
 </div>
 
 @code {
-    private ContactModel model = new();
-    private string message = "";
-    private bool success;
-    private bool sending;
+    private string token = "";
+    private string returnUrl = "/";
+    private bool done;
+    private bool failed;
 
-    private class ContactModel
+    protected override void OnInitialized()
     {
-        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "لطفا نام و نام خانوادگی را وارد نمایید")]
-        public string FullName { get; set; } = "";
-
-        [System.ComponentModel.DataAnnotations.EmailAddress(ErrorMessage = "ایمیل معتبر نیست")]
-        public string Email { get; set; } = "";
-
-        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "لطفا متن پیام را وارد نمایید")]
-        public string Body { get; set; } = "";
-    }
-
-    private async Task Submit()
-    {
-        sending = true;
-        message = "";
-
-        try
+        var ctx = Http.HttpContext;
+        if (ctx != null)
         {
-            await using var db = DbFactory.CreateDbContext();
-
-            db.SiteMessages.Add(new SiteMessage
-            {
-                FullName = model.FullName,
-                Body = model.Body + (!string.IsNullOrWhiteSpace(model.Email) ? " | ایمیل: " + model.Email : ""),
-                RegisterDate = DateTime.Now
-            });
-
-            await db.SaveChangesAsync();
-            success = true;
-            message = "پیام شما با موفقیت ثبت شد";
-            model = new ContactModel();
-        }
-        catch (Exception)
-        {
-            success = false;
-            message = "ارسال پیام با مشکل مواجه شد. لطفا مجدد تلاش فرمایید.";
-        }
-        finally
-        {
-            sending = false;
+            token = Antiforgery.GetAndStoreTokens(ctx).RequestToken;
+            returnUrl = ctx.Request.Path.Value ?? "/";
+            var msg = ctx.Request.Query["contact"].ToString();
+            done = msg == "ok";
+            failed = msg == "err";
         }
     }
 }

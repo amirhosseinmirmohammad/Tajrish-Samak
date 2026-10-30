@@ -592,3 +592,579 @@
             }
         }
     
+/* =========================================================
+   V97 - modern redesign (gradient hero, glass quick cards,
+   accent form card, icon chips, rounded map)
+   ========================================================= */
+.gp-contact-hero {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: clamp(24px, 3.5vw, 40px);
+    padding: clamp(26px, 4vw, 52px);
+    border-radius: 34px;
+    background:
+        radial-gradient(circle at 88% 12%, rgba(255,255,255,.14), transparent 30%),
+        radial-gradient(circle at 10% 88%, rgba(216,245,18,.16), transparent 32%),
+        linear-gradient(135deg, #4b1684 0%, #920ab6 48%, #c60069 100%);
+    box-shadow: 0 28px 70px rgba(72,17,100,.25);
+}
+
+    .gp-contact-hero::after {
+        content: "";
+        position: absolute;
+        width: 230px;
+        height: 230px;
+        border-radius: 50%;
+        left: -90px;
+        bottom: -120px;
+        background: rgba(255,255,255,.10);
+        pointer-events: none;
+    }
+
+.gp-contact-hero-grid > div {
+    position: relative;
+    z-index: 1;
+}
+
+.gp-contact-kicker {
+    display: inline-flex;
+    padding: 7px 15px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.16);
+    color: #ffd2f3 !important;
+    font-size: 13px;
+    font-weight: 950;
+}
+
+.gp-contact-hero h1 {
+    margin: 16px 0 12px;
+    color: #fff !important;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 990;
+    line-height: 1.4;
+}
+
+.gp-contact-hero p {
+    max-width: 620px;
+    color: rgba(255,255,255,.90) !important;
+    font-size: clamp(14px, 1.3vw, 16px);
+    font-weight: 800;
+    line-height: 2.1;
+}
+
+.gp-contact-actions {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+    .gp-contact-actions a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 46px;
+        padding: 0 22px;
+        border-radius: 999px;
+        background: #ffd2f3;
+        color: #330018 !important;
+        font-weight: 950;
+        text-decoration: none !important;
+        box-shadow: 0 14px 30px rgba(0,0,0,.18);
+        transition: transform .2s ease;
+    }
+
+        .gp-contact-actions a:nth-child(2),
+        .gp-contact-actions a:nth-child(3) {
+            background: rgba(255,255,255,.12);
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,.22);
+        }
+
+        .gp-contact-actions a:hover {
+            transform: translateY(-2px);
+        }
+
+.gp-contact-quick-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.gp-contact-quick-card {
+    padding: 15px 20px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.18);
+    backdrop-filter: blur(8px);
+}
+
+    .gp-contact-quick-card strong {
+        display: block;
+        color: rgba(255,255,255,.75);
+        font-size: 12px;
+        font-weight: 850;
+        margin-bottom: 3px;
+    }
+
+    .gp-contact-quick-card a {
+        color: #d1f411 !important;
+        font-size: clamp(15px, 1.6vw, 19px);
+        font-weight: 990;
+        text-decoration: none !important;
+        direction: ltr;
+        display: inline-block;
+    }
+
+/* form + side cards */
+.gp-contact-form-card {
+    border-radius: 28px;
+    background: linear-gradient(150deg, rgba(255,255,255,.98), rgba(250,244,255,.94));
+    border: 1px solid rgba(146,10,182,.12);
+    box-shadow: 0 22px 54px rgba(74,18,107,.09);
+    padding: clamp(22px, 3vw, 36px);
+}
+
+.gp-contact-form-head span {
+    display: inline-flex;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(146,10,182,.10), rgba(198,0,105,.08));
+    color: #7a0799 !important;
+    font-size: 12.5px;
+    font-weight: 950;
+}
+
+.gp-contact-form-head h2 {
+    margin: 12px 0 8px;
+    color: #33003f;
+    font-size: clamp(20px, 2.4vw, 28px);
+    font-weight: 990;
+}
+
+.gp-contact-form-head p {
+    color: rgba(46,22,70,.66);
+    font-weight: 800;
+    line-height: 2;
+}
+
+.gp-contact-field input,
+.gp-contact-field textarea {
+    width: 100%;
+    border: 1.5px solid rgba(146,10,182,.14);
+    border-radius: 16px;
+    padding: 13px 16px;
+    background: rgba(255,255,255,.9);
+    color: #2f1247;
+    font-weight: 800;
+    transition: border-color .2s ease, box-shadow .2s ease;
+    margin-bottom: 12px;
+}
+
+    .gp-contact-field input:focus,
+    .gp-contact-field textarea:focus {
+        outline: none;
+        border-color: #920ab6;
+        box-shadow: 0 0 0 4px rgba(146,10,182,.10);
+    }
+
+.gp-contact-field textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.gp-contact-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 34px;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #920ab6, #c60069);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 990;
+    box-shadow: 0 16px 34px rgba(146,10,182,.30);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+    .gp-contact-submit:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 22px 44px rgba(146,10,182,.36);
+    }
+
+    .gp-contact-submit:disabled {
+        opacity: .6;
+    }
+
+/* side info card with gradient icon chips */
+.gp-contact-info-card,
+.gp-contact-social-card {
+    border-radius: 26px;
+    background: linear-gradient(150deg, rgba(255,255,255,.97), rgba(250,244,255,.93));
+    border: 1px solid rgba(146,10,182,.12);
+    box-shadow: 0 18px 44px rgba(74,18,107,.08);
+    padding: 24px;
+}
+
+.gp-contact-info-card h2,
+.gp-contact-social-card h2 {
+    color: #33003f;
+    font-size: 17px;
+    font-weight: 980;
+    margin: 0 0 16px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+    .gp-contact-info-card h2::after,
+    .gp-contact-social-card h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 38px;
+        height: 3px;
+        border-radius: 3px;
+        background: linear-gradient(90deg, #d1f411, #c60069);
+    }
+
+.gp-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 12px;
+    border-radius: 16px;
+    text-decoration: none !important;
+    transition: background .18s ease, transform .18s ease;
+}
+
+    .gp-contact-item:hover {
+        background: linear-gradient(90deg, rgba(146,10,182,.07), rgba(198,0,105,.05));
+        transform: translateX(-3px);
+    }
+
+    .gp-contact-item .gp-contact-icon {
+        flex: 0 0 auto;
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(146,10,182,.12), rgba(198,0,105,.10));
+        color: #920ab6;
+        font-size: 17px;
+        font-style: normal;
+    }
+
+    .gp-contact-item strong {
+        display: block;
+        color: #33003f;
+        font-size: 13px;
+        font-weight: 970;
+    }
+
+    .gp-contact-item > span > span,
+    .gp-contact-item span span {
+        color: rgba(46,22,70,.72);
+        font-size: 12.5px;
+        font-weight: 800;
+        line-height: 1.8;
+        word-break: break-word;
+    }
+
+.gp-direction-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+    .gp-direction-buttons a {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(146,10,182,.10), rgba(198,0,105,.08));
+        border: 1px solid rgba(146,10,182,.14);
+        color: #7a0799 !important;
+        font-weight: 950;
+        font-size: 13px;
+        text-decoration: none !important;
+        transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+
+        .gp-direction-buttons a:hover {
+            background: linear-gradient(135deg, #920ab6, #c60069);
+            color: #fff !important;
+            transform: translateY(-2px);
+        }
+
+/* socials */
+.gp-contact-socials {
+    display: flex;
+    gap: 10px;
+}
+
+    .gp-contact-socials a {
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        background: rgba(146,10,182,.08);
+        border: 1px solid rgba(146,10,182,.14);
+        color: #920ab6 !important;
+        font-size: 19px;
+        text-decoration: none !important;
+        transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+
+        .gp-contact-socials a:hover {
+            background: linear-gradient(135deg, #920ab6, #c60069);
+            color: #fff !important;
+            transform: translateY(-3px);
+        }
+
+/* map card */
+.gp-contact-map-card {
+    border-radius: 28px;
+    overflow: hidden;
+    background: rgba(255,255,255,.96);
+    border: 1px solid rgba(146,10,182,.12);
+    box-shadow: 0 22px 54px rgba(74,18,107,.09);
+}
+
+.gp-map-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px 24px;
+}
+
+    .gp-map-head h2 {
+        color: #33003f;
+        font-size: 18px;
+        font-weight: 980;
+        margin: 0 0 4px;
+    }
+
+    .gp-map-head p {
+        margin: 0;
+        color: rgba(46,22,70,.66);
+        font-size: 12.5px;
+        font-weight: 800;
+    }
+
+    .gp-map-head .gp-direction-buttons {
+        margin-top: 0;
+    }
+
+#map {
+    height: 420px;
+    width: 100%;
+}
+
+/* dark mode */
+html.gp-dark-mode .gp-contact-form-card,
+html.gp-dark-mode .gp-contact-info-card,
+html.gp-dark-mode .gp-contact-social-card,
+html.gp-dark-mode .gp-contact-map-card {
+    background: linear-gradient(150deg, rgba(26,24,43,.96), rgba(18,20,33,.93)) !important;
+    border-color: rgba(255,255,255,.10) !important;
+}
+
+html.gp-dark-mode .gp-contact-form-head h2,
+html.gp-dark-mode .gp-contact-info-card h2,
+html.gp-dark-mode .gp-contact-social-card h2,
+html.gp-dark-mode .gp-map-head h2 {
+    color: #f8f1ff !important;
+}
+
+html.gp-dark-mode .gp-contact-form-head p,
+html.gp-dark-mode .gp-map-head p,
+html.gp-dark-mode .gp-contact-item strong {
+    color: rgba(255,255,255,.85) !important;
+}
+
+html.gp-dark-mode .gp-contact-item > span > span,
+html.gp-dark-mode .gp-contact-item span span {
+    color: rgba(255,255,255,.66) !important;
+}
+
+html.gp-dark-mode .gp-contact-form-head span {
+    background: rgba(146,10,182,.22);
+    color: #ffd2f3 !important;
+}
+
+html.gp-dark-mode .gp-contact-field input,
+html.gp-dark-mode .gp-contact-field textarea {
+    background: rgba(255,255,255,.06);
+    border-color: rgba(255,255,255,.14);
+    color: #f2e7fb;
+}
+
+/* =========================================================
+   V98 - icon/button color fixes (beats per-child legacy rules)
+   ========================================================= */
+
+/* contact list icons: solid gradient chip + white glyph (was pale) */
+.gp-contact-page .gp-contact-item .gp-contact-icon {
+    background: linear-gradient(135deg, #920ab6, #c60069) !important;
+    color: #ffffff !important;
+    font-size: 17px;
+    box-shadow: 0 8px 18px rgba(146, 10, 182, .30);
+}
+
+/* direction buttons: uniform glass style (was white vs cyan blob) */
+.gp-contact-page .gp-direction-buttons a,
+.gp-contact-page .gp-direction-buttons a:first-child,
+.gp-contact-page .gp-direction-buttons a:nth-child(2) {
+    background: rgba(255, 255, 255, .92) !important;
+    border: 1px solid rgba(146, 10, 182, .20) !important;
+    color: #7a0799 !important;
+    box-shadow: 0 8px 18px rgba(74, 18, 107, .08);
+    transition: background .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.gp-contact-page .gp-direction-buttons a:hover,
+.gp-contact-page .gp-direction-buttons a:first-child:hover,
+.gp-contact-page .gp-direction-buttons a:nth-child(2):hover {
+    background: linear-gradient(135deg, #920ab6, #c60069) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(146, 10, 182, .32);
+}
+
+/* socials: uniform glass tiles (was rainbow brand colors) */
+.gp-contact-page .gp-contact-socials a,
+.gp-contact-page .gp-contact-socials a:nth-child(1),
+.gp-contact-page .gp-contact-socials a:nth-child(2),
+.gp-contact-page .gp-contact-socials a:nth-child(3),
+.gp-contact-page .gp-contact-socials a:nth-child(4) {
+    background: linear-gradient(135deg, rgba(146, 10, 182, .10), rgba(198, 0, 105, .08)) !important;
+    border: 1px solid rgba(146, 10, 182, .18) !important;
+    color: #920ab6 !important;
+    transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.gp-contact-page .gp-contact-socials a:hover,
+.gp-contact-page .gp-contact-socials a:nth-child(1):hover,
+.gp-contact-page .gp-contact-socials a:nth-child(2):hover,
+.gp-contact-page .gp-contact-socials a:nth-child(3):hover,
+.gp-contact-page .gp-contact-socials a:nth-child(4):hover {
+    background: linear-gradient(135deg, #920ab6, #c60069) !important;
+    color: #ffffff !important;
+    transform: translateY(-3px);
+}
+
+/* dark mode */
+html.gp-dark-mode .gp-contact-page .gp-contact-item .gp-contact-icon {
+    box-shadow: 0 8px 18px rgba(0, 0, 0, .4);
+}
+
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a,
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:first-child,
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:nth-child(2) {
+    background: rgba(255, 255, 255, .07) !important;
+    border-color: rgba(255, 255, 255, .14) !important;
+    color: #ffd2f3 !important;
+}
+
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:hover,
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:first-child:hover,
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:nth-child(2):hover {
+    background: linear-gradient(135deg, #920ab6, #c60069) !important;
+    color: #ffffff !important;
+}
+
+html.gp-dark-mode .gp-contact-page .gp-contact-socials a,
+html.gp-dark-mode .gp-contact-page .gp-contact-socials a:nth-child(1),
+html.gp-dark-mode .gp-contact-page .gp-contact-socials a:nth-child(2),
+html.gp-dark-mode .gp-contact-page .gp-contact-socials a:nth-child(3),
+html.gp-dark-mode .gp-contact-page .gp-contact-socials a:nth-child(4) {
+    background: rgba(255, 255, 255, .07) !important;
+    border-color: rgba(255, 255, 255, .14) !important;
+    color: #ffd2f3 !important;
+}
+
+html.gp-dark-mode .gp-contact-page .gp-contact-socials a:hover,
+html.gp-dark-mode .gp-contact-page .gp-contact-socials a:nth-child(1):hover,
+html.gp-dark-mode .gp-contact-page .gp-contact-socials a:nth-child(2):hover,
+html.gp-dark-mode .gp-contact-page .gp-contact-socials a:nth-child(3):hover,
+html.gp-dark-mode .gp-contact-page .gp-contact-socials a:nth-child(4):hover {
+    background: linear-gradient(135deg, #920ab6, #c60069) !important;
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   V99 - direction buttons (گوگل مپ / ویز / نشان) final look
+   ========================================================= */
+.gp-contact-page .gp-direction-buttons {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+}
+
+.gp-contact-page .gp-direction-buttons a,
+.gp-contact-page .gp-direction-buttons a:first-child,
+.gp-contact-page .gp-direction-buttons a:nth-child(2),
+.gp-contact-page .gp-direction-buttons a:nth-child(3) {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 48px;
+    padding: 0 10px;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, rgba(146, 10, 182, .09), rgba(198, 0, 105, .07)) !important;
+    border: 1.5px solid rgba(146, 10, 182, .20) !important;
+    color: #6d0592 !important;
+    font-size: 13px;
+    font-weight: 980;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px rgba(74, 18, 107, .08);
+    transition: background .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.gp-contact-page .gp-direction-buttons a span {
+    font-size: 15px;
+    line-height: 1;
+    filter: saturate(1.15);
+}
+
+.gp-contact-page .gp-direction-buttons a:hover,
+.gp-contact-page .gp-direction-buttons a:first-child:hover,
+.gp-contact-page .gp-direction-buttons a:nth-child(2):hover,
+.gp-contact-page .gp-direction-buttons a:nth-child(3):hover {
+    background: linear-gradient(135deg, #920ab6, #c60069) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(146, 10, 182, .34);
+}
+
+/* dark mode */
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a,
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:first-child,
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:nth-child(2),
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:nth-child(3) {
+    background: rgba(255, 255, 255, .07) !important;
+    border-color: rgba(255, 255, 255, .16) !important;
+    color: #ffd2f3 !important;
+}
+
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:hover,
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:first-child:hover,
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:nth-child(2):hover,
+html.gp-dark-mode .gp-contact-page .gp-direction-buttons a:nth-child(3):hover {
+    background: linear-gradient(135deg, #920ab6, #c60069) !important;
+    color: #ffffff !important;
+}

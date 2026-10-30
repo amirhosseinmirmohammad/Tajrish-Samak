@@ -1,0 +1,32 @@
+@page "/admin/logout"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+<PageTitle>خروج | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<div class="adm-login-wrap">
+    <div class="adm-login-card" style="text-align:center">
+        <h1>خروج از حساب</h1>
+        <p>آیا مطمئن هستید که می‌خواهید خارج شوید؟</p>
+        <form method="post" action="/admin/logout">
+            <input type="hidden" name="__RequestVerificationToken" value="@token" />
+            <button type="submit" class="adm-login-submit" style="background:linear-gradient(135deg,#d6336c,#920ab6)">بله، خروج</button>
+        </form>
+        <a class="adm-login-back" href="/admin">انصراف</a>
+    </div>
+</div>
+
+@code {
+    private string token = "";
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+    }
+}

@@ -1,0 +1,94 @@
+@page "/admin/galleries"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inherits TajrishSamak.Web.Components.Shared.AdmListBase
+
+<PageTitle>گالری‌ها | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<div class="adm-card adm-table-wrap">
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <AdmTh Key="Images" Label="تعداد تصویر" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var g in Rows)
+            {
+                <tr>
+                    <td>@FaNum(g.Id)</td>
+                    <td>@FaNum(g.Images?.Count ?? 0) تصویر</td>
+                    <td>
+                        <form method="post" action="/admin/delete">
+                            <input type="hidden" name="entity" value="gallery" />
+                            <input type="hidden" name="id" value="@g.Id" />
+                            <input type="hidden" name="returnUrl" value="/admin/galleries" />
+                            <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                            <button type="submit" class="adm-btn adm-btn-danger">حذف</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (Rows.Count == 0)
+            {
+                <tr><td colspan="3">گالری‌ای یافت نشد.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<AdmPager Page="Page" PageSize="PageSize" Total="Filtered.Count()" PageUrl="@PageUrl" />
+
+@code {
+    private List<Gallery> galleries = new();
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "q")] public string? QP { get => Qs; set => Qs = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "page")] public int? PageQP { get => PageN; set => PageN = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "sort")] public string? SortQP { get => SortS; set => SortS = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "dir")] public string? DirQP { get => DirS; set => DirS = value; }
+    private string token = "";
+
+    private IEnumerable<Gallery> Filtered
+    {
+        get
+        {
+            IEnumerable<Gallery> q = galleries;
+            q = (Sort, Asc) switch
+            {
+                ("Images", true) => q.OrderBy(g => g.Images?.Count ?? 0),
+                ("Images", false) => q.OrderByDescending(g => g.Images?.Count ?? 0),
+                _ => q
+            };
+            return q;
+        }
+    }
+
+    private List<Gallery> Rows => Filtered.Skip((Page - 1) * PageSize).Take(PageSize).ToList();
+
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+        galleries = await db.Galleries.AsNoTracking().Include(g => g.Images).OrderBy(g => g.Id).ToListAsync();
+    }
+
+    private static string FaNum(long v)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(v.ToString("N0").Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}

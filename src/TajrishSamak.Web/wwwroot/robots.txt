@@ -1,3 +1,37 @@
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+# AI site guide: https://tajrish-samak.ir/llms.txt
 User-agent: *
 Allow: /
 
@@ -23,3 +57,4 @@ User-agent: GPTBot
 Allow: /
 
 Sitemap: https://tajrish-samak.ir/sitemap.xml
+# AI site guide: https://tajrish-samak.ir/llms.txt

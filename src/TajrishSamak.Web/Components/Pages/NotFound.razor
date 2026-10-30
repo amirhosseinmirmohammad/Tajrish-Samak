@@ -1,5 +1,23 @@
 ﻿@page "/not-found"
 @layout MainLayout
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
 
-<h3>Not Found</h3>
-<p>Sorry, the content you are looking for does not exist.</p>
+<div class="gp-404">
+    <div class="gp-404-card">
+        <div class="gp-404-code" aria-hidden="true">۴۰۴</div>
+        <h1>این صفحه پیدا نشد</h1>
+        <p>
+            صفحه‌ای که دنبالش بودید منتقل یا حذف شده است.
+            نگران نباشید — از اینجا می‌توانید ادامه دهید:
+        </p>
+        <div class="gp-404-actions">
+            <a class="gp-404-btn gp-404-btn-primary" href="/">صفحه اصلی</a>
+            <a class="gp-404-btn" href="/Product/All">سمعک‌ها</a>
+            <a class="gp-404-btn" href="/Blog/All">مقالات</a>
+            <a class="gp-404-btn" href="/contactus">تماس با ما</a>
+        </div>
+        <div class="gp-404-help">
+            <span>راه سریع‌تر: <a href="tel:02122735588">۰۲۱-۲۲۷۳۵۵۸۸</a> را بگیرید یا از جستجوی بالای صفحه استفاده کنید.</span>
+        </div>
+    </div>
+</div>

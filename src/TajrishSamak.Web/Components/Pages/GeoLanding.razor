@@ -1,4 +1,4 @@
-@page "/{areaSlug}/{serviceSlug}"
+@page "/{areaSlug:geo}/{serviceSlug:geo}"
 @using TajrishSamak.Web.Services
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
 
@@ -22,7 +22,7 @@
 <meta name="twitter:title" content="@(page.Title)" />
 <meta name="twitter:description" content="@(page.MetaDescription)" />
 <meta name="twitter:image" content="https://tajrish-samak.ir/images/logo_purple.webp" />
-<link rel="stylesheet" href="css/gp-geo-landing.css" />
+<link rel="stylesheet" href="/css/gp-geo-landing.css?v=11" />
 
 <script type="application/ld+json">
 {
@@ -245,7 +245,7 @@
                     <h3>لینک‌های مهم</h3>
                     <div class="gp-geo-chip-list">
                         <a href="/Service/All">خدمات</a>
-                        <a href="/Product/All">محصولات سمعک</a>
+                        <a href="/Product/All">سمعک</a>
                         <a href="/Blog/All">مجله کلینیک</a>
                         <a href="/contactus">تماس با ما</a>
                     </div>

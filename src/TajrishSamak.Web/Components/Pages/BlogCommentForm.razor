@@ -1,0 +1,66 @@
+@using TajrishSamak.Web.Data.Entities
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+@* Static-SSR comment form: plain HTML POST to /blog/comment (works without circuits).
+   Includes a hidden honeypot field for bots. *@
+<div class="gp-comment-form" id="comments-form">
+    @if (done)
+    {
+        <div class="gp-comment-success" role="status">
+            <span aria-hidden="true">✓</span>
+            <div>
+                <strong>نظر شما ثبت شد</strong>
+                <p>پس از بررسی و تایید ادمین، نظر شما در همین صفحه نمایش داده می‌شود.</p>
+            </div>
+        </div>
+    }
+    else if (failed)
+    {
+        <div class="gp-comment-success" role="alert" style="background:#fdeaef;border-color:rgba(214,51,108,.3);color:#b3125c">
+            <span aria-hidden="true">✕</span>
+            <div>
+                <strong>ثبت دیدگاه انجام نشد</strong>
+                <p>لطفا نام و متن دیدگاه را کامل وارد کنید و دوباره تلاش کنید.</p>
+            </div>
+        </div>
+    }
+    <h3 class="gp-comment-form-title">دیدگاه خود را بنویسید</h3>
+    <form method="post" action="/blog/comment">
+        <input type="hidden" name="__RequestVerificationToken" value="@token" />
+        <input type="hidden" name="blogId" value="@BlogId" />
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        <div class="gp-comment-field-row">
+            <div class="gp-comment-field">
+                <input type="text" name="fullName" placeholder="نام و نام خانوادگی *" required minlength="2" maxlength="100" />
+            </div>
+        </div>
+        <div class="gp-comment-field">
+            <textarea name="text" placeholder="دیدگاه شما *" rows="4" required minlength="5" maxlength="2000"></textarea>
+        </div>
+        <input type="text" name="website" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden" />
+        <button type="submit" class="gp-comment-submit">ثبت دیدگاه</button>
+    </form>
+</div>
+
+@code {
+    [Parameter] public long BlogId { get; set; }
+
+    private string token = "";
+    private string returnUrl = "/";
+    private bool done;
+    private bool failed;
+
+    protected override void OnInitialized()
+    {
+        var ctx = Http.HttpContext;
+        if (ctx != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(ctx).RequestToken;
+            returnUrl = ctx.Request.Path.Value ?? "/";
+            var cmt = ctx.Request.Query["cmt"].ToString();
+            done = cmt == "ok";
+            failed = cmt == "err";
+        }
+    }
+}

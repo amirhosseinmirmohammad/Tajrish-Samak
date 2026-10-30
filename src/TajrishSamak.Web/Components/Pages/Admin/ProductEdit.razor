@@ -1,0 +1,131 @@
+@page "/admin/products/edit/{id:int?}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject NavigationManager Nav
+
+<PageTitle>@(IsNew ? "محصول جدید" : "ویرایش محصول") | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<div class="adm-editor">
+    <h2>@(IsNew ? "🛍 محصول جدید" : "✏ ویرایش محصول")</h2>
+
+    <form method="post" action="/admin/save/product" class="adm-form">
+        <input type="hidden" name="id" value="@(id ?? 0)" />
+        <input type="hidden" name="__RequestVerificationToken" value="@token" />
+
+        <div class="adm-form-grid">
+            <div>
+                <label>نام فارسی *</label>
+                <input type="text" name="name" value="@Name" required maxlength="300" />
+            </div>
+            <div>
+                <label>نام انگلیسی</label>
+                <input type="text" name="enName" value="@EnName" dir="ltr" />
+            </div>
+        </div>
+
+        <div class="adm-form-grid adm-form-grid-3">
+            <div>
+                <label>قیمت (تومان)</label>
+                <input type="number" name="unitPrice" value="@UnitPrice" min="0" />
+            </div>
+            <div>
+                <label>موجودی</label>
+                <input type="number" name="stock" value="@Stock" min="0" />
+            </div>
+            <div>
+                <label>تخفیف (٪)</label>
+                <input type="number" name="discount" value="@Discount" min="0" max="100" />
+            </div>
+        </div>
+
+        <div class="adm-form-grid">
+            <div>
+                <label>دسته‌بندی</label>
+                <select name="categoryId" class="gp-searchable">
+                    <option value="">— بدون دسته —</option>
+                    @foreach (var c in categories)
+                    {
+                        <option value="@c.Id" selected="@(CategoryId == c.Id)">@c.PersianName</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label>برند</label>
+                <select name="brandId" class="gp-searchable">
+                    <option value="">— بدون برند —</option>
+                    @foreach (var b in brands)
+                    {
+                        <option value="@b.Id" selected="@(BrandId == b.Id)">@b.PersianName</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <label>عکس اصلی (آدرس یا آپلود)</label>
+        <div class="gpc-upload-zone" data-folder="products">
+            <div class="gpc-upload-inner">
+                <span aria-hidden="true">📤</span>
+                <small>فایل را بکشید یا کلیک کنید</small>
+            </div>
+            <input type="text" name="imageUrl" value="@ImageUrl" dir="ltr" placeholder="/images/..." />
+        </div>
+
+        <label>توضیحات (HTML)</label>
+        <textarea name="description" rows="12" class="mono">@Description</textarea>
+
+        <label class="adm-checkbox">
+            <input type="checkbox" name="isSpecial" value="true" checked="@(IsSpecial)" />
+            محصول ویژه
+        </label>
+
+        <div class="adm-editor-actions">
+            <button type="submit" class="adm-btn adm-btn-purple">💾 ذخیره</button>
+            <a href="/admin/products" class="adm-btn adm-btn-ghost">انصراف</a>
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter] public int? id { get; set; }
+
+    private Product? product;
+    private bool IsNew => id == null || id == 0;
+    private string token = "";
+    private string Name = "", EnName = "", ImageUrl = "", Description = "";
+    private int UnitPrice, Stock, Discount, CategoryId, BrandId;
+    private bool IsSpecial;
+    private List<Category> categories = new();
+    private List<Brand> brands = new();
+
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+        categories = await db.Categories.AsNoTracking().Where(c => c.IsBlog == false).OrderBy(c => c.PersianName).ToListAsync();
+        brands = await db.Brands.AsNoTracking().OrderBy(b => b.PersianName).ToListAsync();
+
+        if (!IsNew && product == null)
+        {
+            product = await db.Products.AsNoTracking().Include(p => p.category).Include(p => p.Brand).FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null) { Nav.NavigateTo("/admin/products"); return; }
+            Name = product.PersianName ?? ""; EnName = product.EnglishName ?? "";
+            UnitPrice = product.UnitPrice; Stock = product.Stock; Discount = product.DiscountPercent;
+            CategoryId = product.CategoryId; BrandId = product.BrandId;
+            ImageUrl = product.SiteFirstImage ?? ""; Description = product.Description ?? "";
+            IsSpecial = product.IsSpecial;
+        }
+    }
+}

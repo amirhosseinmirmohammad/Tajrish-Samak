@@ -1,0 +1,64 @@
+@inherits LayoutComponentBase
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+<script src="/js/gp-admin.js?v=11"></script>
+
+<div class="adm">
+    <aside class="adm-side">
+        <div class="adm-brand">
+            <i aria-hidden="true">⚙</i>
+            <span>پنل شکوه تجریش</span>
+        </div>
+
+        <nav class="adm-nav" aria-label="منوی مدیریت">
+            <NavLink class="adm-nav-link" ActiveClass="is-active" Match="NavLinkMatch.All" href="/admin"><i aria-hidden="true">📊</i> <span>داشبورد</span></NavLink>
+
+            <div class="adm-nav-sep">فروشگاه</div>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/products"><i aria-hidden="true">🛍</i> <span>محصولات</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/orders"><i aria-hidden="true">🧾</i> <span>سفارشات</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/transactions"><i aria-hidden="true">💳</i> <span>تراکنش‌ها</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/payments"><i aria-hidden="true">💰</i> <span>پرداخت‌ها</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/discounts"><i aria-hidden="true">🏷</i> <span>تخفیف‌ها</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/brands"><i aria-hidden="true">★</i> <span>برندها</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/categories"><i aria-hidden="true">📁</i> <span>دسته‌بندی‌ها</span></NavLink>
+
+            <div class="adm-nav-sep">محتوا</div>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/blogs"><i aria-hidden="true">📰</i> <span>مقالات</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/services"><i aria-hidden="true">⚙</i> <span>خدمات</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/sliders"><i aria-hidden="true">🖼</i> <span>اسلایدرها</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/galleries"><i aria-hidden="true">🖼</i> <span>گالری‌ها</span></NavLink>
+
+            <div class="adm-nav-sep">ارتباط</div>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/users"><i aria-hidden="true">👥</i> <span>کاربران</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/messages"><i aria-hidden="true">✉</i> <span>پیام‌های سایت</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/comments"><i aria-hidden="true">💬</i> <span>دیدگاه‌ها</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/newsletters"><i aria-hidden="true">📬</i> <span>خبرنامه</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/sentemails"><i aria-hidden="true">📧</i> <span>ایمیل‌های ارسالی</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/notifications"><i aria-hidden="true">🔔</i> <span>نوتیفیکیشن‌ها</span></NavLink>
+
+            <div class="adm-nav-sep">پایه</div>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/cities"><i aria-hidden="true">🏙</i> <span>شهرها</span></NavLink>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/states"><i aria-hidden="true">🗺</i> <span>استان‌ها</span></NavLink>
+
+            <div class="adm-nav-sep">سیستم</div>
+            <NavLink class="adm-nav-link" ActiveClass="is-active" href="/admin/profile"><i aria-hidden="true">👤</i> <span>پروفایل مدیر</span></NavLink>
+            <a class="adm-logout-link" href="/admin/logout"><i aria-hidden="true">⏻</i> <span>خروج از حساب</span></a>
+        </nav>
+    </aside>
+
+    <main class="adm-main">
+        <header class="adm-topbar">
+            <h1>@(Http.HttpContext?.Items["AdminTitle"] as string ?? "پنل مدیریت")</h1>
+            <div class="adm-user">
+                <span class="adm-avatar">👤</span>
+                <span>@(Http.HttpContext?.User?.Identity?.Name ?? "مدیر")</span>
+            </div>
+        </header>
+
+        <div class="adm-content">
+            @Body
+        </div>
+    </main>
+</div>

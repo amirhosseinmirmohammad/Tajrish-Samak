@@ -1,0 +1,174 @@
+@page "/admin/users"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inherits TajrishSamak.Web.Components.Shared.AdmListBase
+
+<PageTitle>کاربران | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<form method="get" class="adm-search">
+    <input type="hidden" name="sort" value="@Sort" />
+    <input type="hidden" name="dir" value="@DirStr" />
+    <input type="search" name="q" value="@Q" placeholder="جستجو: نام، ایمیل، موبایل..." />
+    <button type="submit" class="adm-btn adm-btn-purple">جستجو</button>
+    @if (!string.IsNullOrEmpty(Q))
+    {
+        <a class="adm-btn adm-btn-danger" href="@UrlWith(("q", (string?)null), ("page", (string?)null))">✕ پاک‌کردن</a>
+    }
+</form>
+
+<div class="adm-card adm-table-wrap">
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <AdmTh Key="FullName" Label="نام" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="Email" Label="ایمیل / نام کاربری" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <th>موبایل</th>
+                <th>نقش</th>
+                <AdmTh Key="RegistrationDate" Label="عضویت" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <th>وضعیت</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Rows)
+            {
+                <tr>
+                    <td>@FaNum(row.Id)</td>
+                    <td>@row.FullName</td>
+                    <td dir="ltr" style="text-align:right">@row.Email</td>
+                    <td dir="ltr" style="text-align:right">@(string.IsNullOrEmpty(row.Mobile) ? "—" : row.Mobile)</td>
+                    <td>
+                        @foreach (var role in row.Roles)
+                        {
+                            <span class="adm-badge adm-badge-purple">@role</span>
+                        }
+                        @if (row.Roles.Count == 0)
+                        {
+                            <span class="adm-badge adm-badge-yellow">کاربر</span>
+                        }
+                    </td>
+                    <td>@FaDate(row.RegDate)</td>
+                    <td>
+                        <span class="adm-badge @(row.Active ? "adm-badge-green" : "adm-badge-red")">@(row.Active ? "فعال" : "غیرفعال")</span>
+                    </td>
+                    <td>
+                        <form method="post" action="/admin/user/toggle">
+                            <input type="hidden" name="id" value="@row.Id" />
+                            <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                            <button type="submit" class="adm-btn @(row.Active ? "adm-btn-danger" : "adm-btn-green")">
+                                @(row.Active ? "غیرفعال‌سازی" : "فعال‌سازی")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (Rows.Count == 0)
+            {
+                <tr><td colspan="8">کاربری یافت نشد.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<AdmPager Page="Page" PageSize="PageSize" Total="Filtered.Count()" PageUrl="@PageUrl" />
+
+@code {
+    private List<UserRow> all = new();
+    private string token = "";
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "q")] public string? QP { get => Qs; set => Qs = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "page")] public int? PageQP { get => PageN; set => PageN = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "sort")] public string? SortQP { get => SortS; set => SortS = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "dir")] public string? DirQP { get => DirS; set => DirS = value; }
+
+    private IEnumerable<UserRow> Filtered
+    {
+        get
+        {
+            IEnumerable<UserRow> q = all;
+            var term = (Q ?? "").Trim();
+            if (term.Length > 0)
+            {
+                q = q.Where(r =>
+                    r.FullName.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    r.Email.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    r.Mobile.Contains(term, StringComparison.OrdinalIgnoreCase));
+            }
+            q = (Sort, Asc) switch
+            {
+                ("FullName", true) => q.OrderBy(r => r.FullName),
+                ("FullName", false) => q.OrderByDescending(r => r.FullName),
+                ("Email", true) => q.OrderBy(r => r.Email),
+                ("Email", false) => q.OrderByDescending(r => r.Email),
+                ("RegistrationDate", true) => q.OrderBy(r => r.RegDate),
+                ("RegistrationDate", false) => q.OrderByDescending(r => r.RegDate),
+                _ => q
+            };
+            return q;
+        }
+    }
+
+    private List<UserRow> Rows => Filtered.Skip((Page - 1) * PageSize).Take(PageSize).ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+        }
+
+        await using var db = DbFactory.CreateDbContext();
+
+        var users = await db.Users
+            .AsNoTracking()
+            .OrderByDescending(u => u.RegistrationDate)
+            .ToListAsync();
+
+        var roles = await db.IdentityUserRoles
+            .AsNoTracking()
+            .Join(db.IdentityRoles, ur => ur.RoleId, r => r.Id, (ur, r) => new { ur.UserId, Role = r.Name })
+            .ToListAsync();
+
+        var roleMap = roles.GroupBy(x => x.UserId).ToDictionary(g => g.Key, g => g.Select(x => x.Role).ToList());
+
+        all = users.Select(u => new UserRow
+        {
+            Id = u.Id,
+            FullName = ((u.FirstName ?? "") + " " + (u.LastName ?? "")).Trim() is { Length: > 0 } f ? f : (u.UserName ?? "—"),
+            Email = u.Email ?? u.UserName ?? "—",
+            Mobile = u.Mobile ?? "",
+            RegDate = u.RegistrationDate,
+            Active = u.IsActive,
+            Roles = roleMap.GetValueOrDefault(u.Id) ?? new List<string>()
+        }).ToList();
+    }
+
+    private class UserRow
+    {
+        public string Id { get; set; } = "";
+        public string FullName { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string Mobile { get; set; } = "";
+        public DateTime RegDate { get; set; }
+        public bool Active { get; set; }
+        public List<string> Roles { get; set; } = new();
+    }
+
+    private static string FaDate(DateTime d)
+    {
+        var cal = new System.Globalization.PersianCalendar();
+        return $"{cal.GetYear(d):0000}/{cal.GetMonth(d):00}/{cal.GetDayOfMonth(d):00}";
+    }
+
+    private static string FaNum(string v)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(v.Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}

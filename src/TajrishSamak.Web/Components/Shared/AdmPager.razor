@@ -1,0 +1,42 @@
+@namespace TajrishSamak.Web.Components.Shared
+
+@* Shared admin pager bar: link-based (GET), works in static SSR *@
+<div class="adm-pager-bar">
+    <span class="adm-pager-total">مجموع: @TotalStr</span>
+    @if (Page > 1)
+    {
+        <a class="adm-pager-btn" href="@PageUrl(Page - 1)">→ قبلی</a>
+    }
+    else
+    {
+        <button type="button" class="adm-pager-btn" disabled>→ قبلی</button>
+    }
+    <span>صفحه @PageStr از @TotalPagesStr</span>
+    @if (Page < TotalPages)
+    {
+        <a class="adm-pager-btn" href="@PageUrl(Page + 1)">بعدی ←</a>
+    }
+    else
+    {
+        <button type="button" class="adm-pager-btn" disabled>بعدی ←</button>
+    }
+</div>
+
+@code {
+    [Parameter] public int Page { get; set; }
+    [Parameter] public int PageSize { get; set; } = 20;
+    [Parameter] public int Total { get; set; }
+    [Parameter] public Func<int, string> PageUrl { get; set; } = _ => "#";
+
+    private int TotalPages => Math.Max(1, (int)Math.Ceiling(Total / (double)PageSize));
+
+    private string TotalStr => FaNum(Total);
+    private string PageStr => FaNum(Page);
+    private string TotalPagesStr => FaNum(TotalPages);
+
+    private static string FaNum(int v)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(v.ToString("N0").Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}

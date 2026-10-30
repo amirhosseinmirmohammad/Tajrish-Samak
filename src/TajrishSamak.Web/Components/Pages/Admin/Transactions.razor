@@ -1,0 +1,113 @@
+@page "/admin/transactions"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inherits TajrishSamak.Web.Components.Shared.AdmListBase
+
+<PageTitle>تراکنش‌ها | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<form method="get" class="adm-search">
+    <input type="hidden" name="sort" value="@Sort" />
+    <input type="hidden" name="dir" value="@DirStr" />
+    <input type="search" name="q" value="@Q" placeholder="جستجو: شماره تراکنش، بانک، فاکتور..." />
+    <button type="submit" class="adm-btn adm-btn-purple">جستجو</button>
+    @if (!string.IsNullOrEmpty(Q))
+    {
+        <a class="adm-btn adm-btn-danger" href="@UrlWith(("q", (string?)null), ("page", (string?)null))">✕ پاک‌کردن</a>
+    }
+</form>
+
+<div class="adm-card adm-table-wrap">
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <AdmTh Key="Number" Label="شماره تراکنش" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="BankName" Label="بانک" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="InvoiceNumber" Label="شماره فاکتور" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <th>شماره کارت</th>
+                <AdmTh Key="Date" Label="تاریخ" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in Rows)
+            {
+                <tr>
+                    <td>@FaNum(t.Id)</td>
+                    <td>@t.Number</td>
+                    <td>@t.BankName</td>
+                    <td>@(string.IsNullOrWhiteSpace(t.InvoiceNumber) ? "—" : t.InvoiceNumber)</td>
+                    <td dir="ltr" style="text-align:right">@(string.IsNullOrWhiteSpace(t.CardNumber) ? "—" : t.CardNumber)</td>
+                    <td>@FaDate(t.Date)</td>
+                </tr>
+            }
+            @if (Rows.Count == 0)
+            {
+                <tr><td colspan="6">تراکنشی یافت نشد.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<AdmPager Page="Page" PageSize="PageSize" Total="Filtered.Count()" PageUrl="@PageUrl" />
+
+@code {
+    private List<Transaction> transactions = new();
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "q")] public string? QP { get => Qs; set => Qs = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "page")] public int? PageQP { get => PageN; set => PageN = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "sort")] public string? SortQP { get => SortS; set => SortS = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "dir")] public string? DirQP { get => DirS; set => DirS = value; }
+
+    private IEnumerable<Transaction> Filtered
+    {
+        get
+        {
+            IEnumerable<Transaction> q = transactions;
+            var term = (Q ?? "").Trim();
+            if (term.Length > 0)
+            {
+                q = q.Where(t =>
+                    (t.Number ?? "").Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (t.BankName ?? "").Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (t.InvoiceNumber ?? "").Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (t.CardNumber ?? "").Contains(term, StringComparison.OrdinalIgnoreCase));
+            }
+            q = (Sort, Asc) switch
+            {
+                ("Number", true) => q.OrderBy(t => t.Number),
+                ("Number", false) => q.OrderByDescending(t => t.Number),
+                ("BankName", true) => q.OrderBy(t => t.BankName),
+                ("BankName", false) => q.OrderByDescending(t => t.BankName),
+                ("InvoiceNumber", true) => q.OrderBy(t => t.InvoiceNumber),
+                ("InvoiceNumber", false) => q.OrderByDescending(t => t.InvoiceNumber),
+                ("Date", true) => q.OrderBy(t => t.Date),
+                ("Date", false) => q.OrderByDescending(t => t.Date),
+                _ => q
+            };
+            return q;
+        }
+    }
+
+    private List<Transaction> Rows => Filtered.Skip((Page - 1) * PageSize).Take(PageSize).ToList();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+        transactions = await db.Transactions.AsNoTracking().OrderByDescending(t => t.Date).ToListAsync();
+    }
+
+    private static string FaDate(DateTime d)
+    {
+        var cal = new System.Globalization.PersianCalendar();
+        return $"{cal.GetYear(d):0000}/{cal.GetMonth(d):00}/{cal.GetDayOfMonth(d):00}";
+    }
+
+    private static string FaNum(long v)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(v.ToString("N0").Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}

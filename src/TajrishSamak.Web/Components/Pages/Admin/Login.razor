@@ -1,0 +1,60 @@
+@page "/admin/login"
+@layout TajrishSamak.Web.Components.Layout.BareLayout
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+
+@{
+    var tokens = Antiforgery.GetAndStoreTokens(Http.HttpContext);
+    var error = Http.HttpContext?.Request.Query["e"].ToString();
+    var errorMessage = error switch
+    {
+        "1" => "ایمیل یا رمز عبور اشتباه است.",
+        "2" => "حساب شما به دلیل تلاش‌های ناموفق موقتاً قفل شده است.",
+        "3" => "حساب کاربری شما غیرفعال است.",
+        "4" => "این حساب دسترسی مدیریتی ندارد.",
+        _ => ""
+    };
+}
+
+<PageTitle>ورود مدیر | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="robots" content="noindex" />
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<div class="adm-login-wrap">
+    <div class="adm-login-card">
+        <div class="adm-login-logo">⚙</div>
+        <h1>پنل مدیریت شکوه تجریش</h1>
+        <p>برای ورود، اطلاعات حساب مدیریتی خود را وارد کنید.</p>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="adm-login-error">
+                <span aria-hidden="true">⚠</span>
+                @errorMessage
+            </div>
+        }
+
+        <form method="post" action="/admin/do-login">
+            <input type="hidden" name="__RequestVerificationToken" value="@tokens.RequestToken" />
+
+            <div class="adm-login-field">
+                <label for="email">ایمیل یا نام کاربری</label>
+                <input type="text" id="email" name="email" autocomplete="username" required autofocus />
+            </div>
+
+            <div class="adm-login-field">
+                <label for="password">رمز عبور</label>
+                <input type="password" id="password" name="password" autocomplete="current-password" required />
+            </div>
+
+            <label class="adm-login-remember">
+                <input type="checkbox" name="remember" value="true" checked />
+                مرا به خاطر بسپار
+            </label>
+
+            <button type="submit" class="adm-login-submit">ورود به پنل مدیریت</button>
+        </form>
+
+        <a class="adm-login-back" href="/">← بازگشت به سایت</a>
+    </div>
+</div>

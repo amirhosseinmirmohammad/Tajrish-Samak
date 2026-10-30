@@ -40,5 +40,3 @@ $(document).ready(function () {
                 map.invalidateSize();
             }, 450);
         })();
-    
-}

@@ -1,0 +1,313 @@
+@page "/hearing-aid-brands"
+@page "/hearing-aid-brands/{slug}"
+@page "/hearing-aid-brands/{slug}/{page:int}"
+@page "/Home/Brands/{id:long}"
+@using TajrishSamak.Web.Data.Entities
+@using TajrishSamak.Web.Controllers
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Components.NavigationManager Nav
+
+<PageTitle>@(brandInfo != null ? "سمعک " + brandInfo.PersianName : "برندهای سمعک") | کلینیک شنوایی و سمعک شکوه تجریش</PageTitle>
+<meta name="description" content="@(brandInfo != null ? "بررسی، مشاوره و تجویز سمعک‌های " + brandInfo.PersianName + " (" + brandInfo.EnglishName + ") در کلینیک شنوایی و سمعک شکوه تجریش؛ تست شنوایی، انتخاب مدل مناسب و تنظیم تخصصی." : "برندهای معتبر جهانی سمعک قابل تجویز در کلینیک شنوایی و سمعک شکوه تجریش؛ ویدکس، سیگنیا، اتیکن، فوناک، ریساند و سایر برندها با مشاوره تخصصی.")" />
+<meta name="Keywords" content="@(brandInfo != null ? "سمعک " + brandInfo.PersianName + ", قیمت سمعک " + brandInfo.PersianName + ", برند " + brandInfo.EnglishName : "برندهای سمعک, سمعک خارجی, برند سمعک آلمان, سمعک دانمارکی")" />
+<link rel="canonical" href="https://tajrish-samak.ir@(brandInfo != null ? "/hearing-aid-brands/" + brandInfo.Slug : "/hearing-aid-brands")" />
+<meta property="og:title" content="@(brandInfo != null ? "سمعک " + brandInfo.PersianName : "برندهای سمعک") | کلینیک شنوایی شکوه تجریش" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://tajrish-samak.ir@(brandInfo != null ? "/hearing-aid-brands/" + brandInfo.Slug : "/hearing-aid-brands")" />
+<meta property="og:description" content="@(brandInfo != null ? "بررسی و مشاوره سمعک‌های " + brandInfo.PersianName + " در کلینیک شکوه تجریش" : "برندهای معتبر جهانی سمعک با مشاوره تخصصی در شکوه تجریش")" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="@(brandInfo != null ? "سمعک " + brandInfo.PersianName : "برندهای سمعک")" />
+<meta name="twitter:description" content="@(brandInfo != null ? "بررسی و مشاوره سمعک‌های " + brandInfo.PersianName + " در شکوه تجریش" : "برندهای معتبر سمعک در شکوه تجریش")" />
+<link rel="stylesheet" href="/css/gp-page-Brands.css?v=11" />
+
+@if (notFound)
+{
+    <meta name="robots" content="noindex" />
+    <h1 style="text-align:center;padding:60px 20px;">برند مورد نظر پیدا نشد</h1>
+    <p style="text-align:center;"><a href="/hearing-aid-brands">بازگشت به لیست برندها</a></p>
+    return;
+}
+
+@if (brandInfo == null)
+{
+    @* ===================== brand index — showroom ===================== *@
+    <section class="gpb-page" aria-label="برندهای سمعک">
+        <div class="container">
+            <nav class="gpb-crumb" aria-label="مسیر صفحه">
+                <a href="/">خانه</a>
+                <span aria-hidden="true">‹</span>
+                <span>برندهای سمعک</span>
+            </nav>
+
+            <header class="gpb-hero">
+                <div class="gpb-hero-copy">
+                    <span class="gpb-kicker"><i aria-hidden="true">★</i> نمایندگی برندهای معتبر جهانی</span>
+                    <h1>برندهای سمعک قابل تجویز در شکوه تجریش</h1>
+                    <p>
+                        از دانمارک تا سوئیس؛ برندهای مطرح سمعک جهان با گارانتی بین‌المللی در اختیار شماست. پس از تست شنوایی، برند و مدلی که با شنوایی، سبک زندگی و بودجه‌تان هماهنگ است پیشنهاد می‌شود.
+                    </p>
+                    <div class="gpb-hero-actions">
+                        <a href="tel:02122735588"><span aria-hidden="true">☎</span> مشاوره انتخاب برند</a>
+                        <a href="/Blog/All">مجله کلینیک</a>
+                    </div>
+                </div>
+                <div class="gpb-hero-side" aria-label="آمار برندها">
+                    <div class="gpb-hero-stat"><b>@FaNum(LegacyBrands.Brands.Length)</b><span>برند جهانی</span></div>
+                    <div class="gpb-hero-stat"><b>۱۰۰٪</b><span>گارانتی بین‌المللی</span></div>
+                </div>
+            </header>
+
+            <div class="gpb-grid">
+                @{ var brandIndex = 0; }
+                @foreach (var brand in LegacyBrands.Brands)
+                {
+                    brandIndex++;
+                    <a class="gpb-card gpb-card-@(brandIndex % 4)" href="/hearing-aid-brands/@brand.Slug" title="سمعک @brand.PersianName (@brand.EnglishName)">
+                        <span class="gpb-tile" aria-hidden="true">@brand.PersianName.Substring(0, 1)</span>
+                        <span class="gpb-card-text">
+                            <b>سمعک @brand.PersianName</b>
+                            <small dir="ltr">@brand.EnglishName</small>
+                        </span>
+                        <span class="gpb-card-go" aria-hidden="true">←</span>
+                    </a>
+                }
+            </div>
+
+            <section class="gpb-help-band" aria-label="راهنمای انتخاب برند">
+                <div>
+                    <h2>کدام برند برای من مناسبه؟</h2>
+                    <p>پاسخ درست از تست شنوایی شروع می‌شود؛ کارشناسان ما بر اساس نوع کم‌شنوایی، سبک زندگی و بودجه، بهترین گزینه را پیشنهاد می‌دهند.</p>
+                </div>
+                <a href="/tajrish/hearing-test">با یک تست شنوایی شروع کنید ←</a>
+            </section>
+        </div>
+    </section>
+}
+else
+{
+    @* ===================== brand landing — products ===================== *@
+    <section class="gpb-page" aria-label="سمعک @brandInfo.PersianName">
+        <div class="container">
+            <nav class="gpb-crumb" aria-label="مسیر صفحه">
+                <a href="/">خانه</a>
+                <span aria-hidden="true">‹</span>
+                <a href="/hearing-aid-brands">برندهای سمعک</a>
+                <span aria-hidden="true">‹</span>
+                <span>@brandInfo.PersianName</span>
+            </nav>
+
+            <header class="gpb-landing-hero gpb-accent-@(brandIndex % 4)">
+                <span class="gpb-landing-tile" aria-hidden="true">@brandInfo.PersianName.Substring(0, 1)</span>
+                <div class="gpb-landing-copy">
+                    <span class="gpb-kicker"><i aria-hidden="true">★</i> برند رسمی</span>
+                    <h1>سمعک @brandInfo.PersianName</h1>
+                    <p dir="ltr" class="gpb-landing-en">@brandInfo.EnglishName</p>
+                    <div class="gpb-hero-actions">
+                        <a href="tel:02122735588"><span aria-hidden="true">☎</span> مشاوره و تست شنوایی</a>
+                        <a href="/Product/All">همه سمعک‌ها</a>
+                    </div>
+                </div>
+            </header>
+
+            <div class="gpb-landing-shell">
+                <main>
+                    <div class="gpb-landing-toolbar">
+                        <h2>مدل‌های قابل بررسی @brandInfo.PersianName</h2>
+                        <span class="gpb-landing-count">@FaNum(TotalCount) مدل</span>
+                    </div>
+
+                    @if (gpProducts.Count > 0)
+                    {
+                        <div class="gpb-products">
+                            @foreach (var item in gpProducts)
+                            {
+                                <article class="gpb-product" itemscope itemtype="https://schema.org/Product">
+                                    <a class="gpb-product-media" title="@item.PersianName" href="/Product/Details/@item.Id/@Slugify(item.PersianName)">
+                                        @if (!string.IsNullOrWhiteSpace(item.SiteFirstImage))
+                                        {
+                                            <img src="@item.SiteFirstImage" alt="@item.PersianName" loading="lazy" decoding="async" itemprop="image" />
+                                        }
+                                        else
+                                        {
+                                            <span class="gpb-product-media-fallback" aria-hidden="true">🎧</span>
+                                        }
+                                    </a>
+                                    <div class="gpb-product-body">
+                                        <h3 itemprop="name"><a title="@item.PersianName" href="/Product/Details/@item.Id/@Slugify(item.PersianName)">@item.PersianName</a></h3>
+                                        <a class="gpb-product-btn" href="/Product/Details/@item.Id/@Slugify(item.PersianName)" title="@item.PersianName">بررسی تخصصی</a>
+                                    </div>
+                                </article>
+                            }
+                        </div>
+
+                        @if (TotalCount > BrandPageSize)
+                        {
+                            <nav class="gpb-pager" aria-label="صفحه‌بندی">
+                                @if (CurrentPage > 1)
+                                {
+                                    <a href="/hearing-aid-brands/@brandInfo.Slug/@(CurrentPage - 1)">→ قبلی</a>
+                                }
+                                <span class="gpb-pager-state">صفحه @FaNum(CurrentPage)</span>
+                                @if (CurrentPage * BrandPageSize < TotalCount)
+                                {
+                                    <a href="/hearing-aid-brands/@brandInfo.Slug/@(CurrentPage + 1)">بعدی ←</a>
+                                }
+                            </nav>
+                        }
+                    }
+                    else
+                    {
+                        <div class="gpb-empty">
+                            <span aria-hidden="true">🔍</span>
+                            <b>مدلی از این برند در سایت ثبت نشده است</b>
+                            <small>برای اطلاع از موجودی و مشاوره با کلینیک تماس بگیرید.</small>
+                            <a href="tel:02122735588">☎ ۰۲۱-۲۲۷۳۵۵۸۸</a>
+                        </div>
+                    }
+                </main>
+
+                <aside class="gpb-landing-side">
+                    <div class="gpb-side-box">
+                        <h3>سایر برندها</h3>
+                        <div class="gpb-side-brands">
+                            @foreach (var brand in LegacyBrands.Brands)
+                            {
+                                <a href="/hearing-aid-brands/@brand.Slug" class="@(brand.Slug == brandInfo.Slug ? "is-active" : null)" title="سمعک @brand.PersianName">
+                                    <i aria-hidden="true">@brand.PersianName.Substring(0, 1)</i>
+                                    <span>@brand.PersianName</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="gpb-side-box gpb-side-cta">
+                        <h3>مطمئن نیستید کدام مدل؟</h3>
+                        <p>تست شنوایی، نقطه شروع انتخاب درست است.</p>
+                        <a href="/tajrish/hearing-test" class="gpb-side-cta-btn">رزرو تست شنوایی</a>
+                    </div>
+                </aside>
+            </div>
+
+            <section class="gpb-help-band" aria-label="مشاوره انتخاب">
+                <div>
+                    <h2>برای انتخاب دقیق، اول شنوایی‌تان را بشناسید</h2>
+                    <p>کارشناسان شکوه تجریش با تست و مشاوره تخصصی، مدل متناسب با نیاز شما را از برند @brandInfo.PersianName پیشنهاد می‌دهند.</p>
+                </div>
+                <a href="/tajrish/hearing-test">شروع با تست شنوایی ←</a>
+            </section>
+        </div>
+    </section>
+}
+
+@code {
+    private const int BrandPageSize = 9;
+
+    private LegacyBrands.BrandLandingInfo brandInfo;
+    private List<Product> gpProducts = new();
+    private int CurrentPage = 1;
+    private int TotalCount;
+    private int brandIndex;
+    private bool notFound;
+
+    [Parameter] public long id { get; set; }
+    [Parameter] public string slug { get; set; }
+    [Parameter] public int page { get; set; } = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentPage = page < 1 ? 1 : page;
+
+        /* legacy /Home/Brands/{id} URLs (homepage strip): resolve DB brand ->
+           matching curated brand -> redirect to the slug landing */
+        if (id > 0 && string.IsNullOrWhiteSpace(slug))
+        {
+            await using var idb = DbFactory.CreateDbContext();
+            var dbBrand = await idb.Brands.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id);
+            if (dbBrand != null)
+            {
+                var legacy = LegacyBrands.Brands.FirstOrDefault(b =>
+                    (!string.IsNullOrWhiteSpace(dbBrand.EnglishName) &&
+                     b.EnglishName.Equals(dbBrand.EnglishName.Trim(), StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrWhiteSpace(dbBrand.PersianName) &&
+                     b.PersianName.Equals(dbBrand.PersianName.Trim(), StringComparison.OrdinalIgnoreCase)));
+                NavigationManager nm = Nav;
+                nm.NavigateTo(legacy != null ? "/hearing-aid-brands/" + legacy.Slug : "/hearing-aid-brands", true);
+                return;
+            }
+            notFound = true;
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(slug))
+        {
+            return; // brand index page
+        }
+
+        // same normalization as the legacy BrandController
+        var normalized = slug.Trim().ToLowerInvariant().Replace(" ", "-").Replace("_", "-");
+        brandInfo = LegacyBrands.Brands.FirstOrDefault(b =>
+            b.Slug.Equals(normalized, StringComparison.OrdinalIgnoreCase));
+
+        if (brandInfo == null)
+        {
+            notFound = true;
+            return;
+        }
+
+        brandIndex = Math.Max(0, Array.IndexOf(LegacyBrands.Brands, brandInfo));
+
+        await using var db = DbFactory.CreateDbContext();
+
+        var baseQuery = db.Products
+            .AsNoTracking()
+            .Include(p => p.category)
+            .Where(p => p.SiteFirstImage != null);
+
+        IQueryable<Product> query = null;
+        foreach (var rawTerm in brandInfo.SearchTerms.Where(t => !string.IsNullOrWhiteSpace(t)))
+        {
+            var term = rawTerm.Trim();
+            var part = baseQuery.Where(p =>
+                p.PersianName.Contains(term) ||
+                p.EnglishName.Contains(term) ||
+                p.Description.Contains(term) ||
+                p.category.PersianName.Contains(term));
+
+            query = query == null ? part : query.Union(part);
+        }
+
+        if (query == null)
+        {
+            query = baseQuery.Where(p => false);
+        }
+
+        TotalCount = await query.CountAsync();
+
+        gpProducts = await query
+            .OrderByDescending(p => p.CreateDate)
+            .ThenByDescending(p => p.PersianName)
+            .Skip((CurrentPage - 1) * BrandPageSize)
+            .Take(BrandPageSize)
+            .ToListAsync();
+    }
+
+    private static string Slugify(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return "product";
+        var sb = new System.Text.StringBuilder();
+        foreach (var ch in text.Trim())
+        {
+            if (char.IsLetterOrDigit(ch)) { sb.Append(ch); }
+            else if (ch == ' ' || ch == '-' || ch == '_') { sb.Append('-'); }
+        }
+        var result = System.Text.RegularExpressions.Regex.Replace(sb.ToString().Trim('-'), "-{2,}", "-");
+        return string.IsNullOrWhiteSpace(result) ? "product" : result;
+    }
+
+    private static string FaNum(int value)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(value.ToString("N0", System.Globalization.CultureInfo.InvariantCulture).Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}

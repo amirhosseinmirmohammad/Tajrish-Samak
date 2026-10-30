@@ -1,0 +1,14 @@
+@namespace TajrishSamak.Web.Components.Shared
+
+@* Shared sortable table header: link-based (GET), shows ▲/▼ when active *@
+<th class="sortable"><a href="@SortUrl(Key)" style="color:inherit;text-decoration:none">@Label @Arrow</a></th>
+
+@code {
+    [Parameter] public string Key { get; set; } = "";
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string? ActiveKey { get; set; }
+    [Parameter] public bool Asc { get; set; }
+    [Parameter] public Func<string, string> SortUrl { get; set; } = _ => "#";
+
+    private string Arrow => ActiveKey == Key ? (Asc ? "▲" : "▼") : "";
+}

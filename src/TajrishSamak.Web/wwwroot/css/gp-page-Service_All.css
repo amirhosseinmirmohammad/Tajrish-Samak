@@ -124,3 +124,326 @@
             border-top-right-radius: 14px;
         }
     
+/* =========================================================
+   V99 - modern services redesign (gradient hero, media cards)
+   ========================================================= */
+.gp-service-page {
+    padding-bottom: 16px;
+}
+
+.gp-svc-hero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: clamp(26px, 4vw, 50px);
+    border-radius: 34px;
+    margin-bottom: clamp(22px, 3.5vw, 38px);
+    background:
+        radial-gradient(circle at 88% 10%, rgba(255,255,255,.14), transparent 30%),
+        radial-gradient(circle at 8% 92%, rgba(216,245,18,.16), transparent 32%),
+        linear-gradient(135deg, #4b1684 0%, #920ab6 48%, #c60069 100%);
+    box-shadow: 0 28px 70px rgba(72,17,100,.25);
+}
+
+    .gp-svc-hero::after {
+        content: "";
+        position: absolute;
+        width: 230px;
+        height: 230px;
+        border-radius: 50%;
+        left: -80px;
+        bottom: -120px;
+        background: rgba(255,255,255,.10);
+        pointer-events: none;
+    }
+
+.gp-svc-hero-copy {
+    position: relative;
+    z-index: 1;
+    max-width: 620px;
+}
+
+.gp-svc-kicker {
+    display: inline-flex;
+    padding: 7px 15px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.16);
+    color: #ffd2f3 !important;
+    font-size: 13px;
+    font-weight: 950;
+}
+
+.gp-svc-hero h1 {
+    margin: 14px 0 10px;
+    color: #fff !important;
+    font-size: clamp(26px, 3.6vw, 44px);
+    font-weight: 990;
+    line-height: 1.4;
+}
+
+.gp-svc-hero p {
+    color: rgba(255,255,255,.88) !important;
+    font-size: clamp(13.5px, 1.2vw, 15.5px);
+    font-weight: 800;
+    line-height: 2.05;
+    margin: 0 0 18px;
+}
+
+.gp-svc-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+    .gp-svc-hero-actions a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 46px;
+        padding: 0 22px;
+        border-radius: 999px;
+        background: #ffd2f3;
+        color: #330018 !important;
+        font-weight: 950;
+        text-decoration: none !important;
+        box-shadow: 0 14px 30px rgba(0,0,0,.18);
+        transition: transform .2s ease;
+    }
+
+        .gp-svc-hero-actions a:last-child {
+            background: rgba(255,255,255,.12);
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,.22);
+        }
+
+        .gp-svc-hero-actions a:hover {
+            transform: translateY(-2px);
+        }
+
+.gp-svc-hero-stats {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 12px;
+}
+
+.gp-svc-stat {
+    min-width: 128px;
+    padding: 16px 20px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.18);
+    backdrop-filter: blur(8px);
+    text-align: center;
+}
+
+    .gp-svc-stat b {
+        display: block;
+        color: #d1f411;
+        font-size: clamp(22px, 2.4vw, 30px);
+        font-weight: 990;
+    }
+
+    .gp-svc-stat span {
+        color: rgba(255,255,255,.85);
+        font-size: 12px;
+        font-weight: 850;
+    }
+
+/* cards */
+.gp-service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 18px;
+    margin-bottom: 26px;
+}
+
+.gp-service-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 24px;
+    overflow: hidden;
+    background: rgba(255,255,255,.96);
+    border: 1px solid rgba(146,10,182,.10);
+    box-shadow: 0 14px 36px rgba(74,18,107,.08);
+    transition: transform .22s ease, box-shadow .22s ease;
+}
+
+    .gp-service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 26px 54px rgba(74,18,107,.15);
+    }
+
+.gp-service-card-media {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+}
+
+    .gp-service-card-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform .5s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .gp-service-card:hover .gp-service-card-media img {
+        transform: scale(1.07);
+    }
+
+.gp-service-card-cat {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.94);
+    color: #7a0799 !important;
+    font-size: 11px;
+    font-weight: 970;
+    box-shadow: 0 6px 16px rgba(24,6,40,.18);
+}
+
+.gp-service-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    padding: 18px 18px 20px;
+}
+
+    .gp-service-card-body h2 {
+        margin: 0 0 8px;
+        line-height: 1.75;
+    }
+
+        .gp-service-card-body h2 a {
+            color: #33003f;
+            font-size: 15.5px;
+            font-weight: 960;
+            text-decoration: none !important;
+            transition: color .18s ease;
+        }
+
+            .gp-service-card-body h2 a:hover {
+                color: #920ab6;
+            }
+
+    .gp-service-card-body p {
+        flex: 1 1 auto;
+        margin: 0 0 14px;
+        color: rgba(46,22,70,.66);
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 2;
+    }
+
+.gp-service-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    align-self: flex-start;
+    min-height: 40px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(146,10,182,.10), rgba(198,0,105,.08)) !important;
+    border: 1.5px solid rgba(146,10,182,.24);
+    color: #7a0799 !important;
+    font-size: 12.5px;
+    font-weight: 970;
+    text-decoration: none !important;
+    transition: background .2s ease, color .2s ease, box-shadow .2s ease;
+}
+
+    .gp-service-more span {
+        transition: transform .2s ease;
+    }
+
+    .gp-service-card:hover .gp-service-more {
+        background: linear-gradient(135deg, #920ab6, #c60069) !important;
+        color: #fff !important;
+        border-color: transparent;
+        box-shadow: 0 12px 26px rgba(146,10,182,.30);
+    }
+
+        .gp-service-card:hover .gp-service-more span {
+            transform: translateX(-4px);
+        }
+
+/* bottom CTA */
+.gp-svc-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: clamp(22px, 3.5vw, 36px);
+    border-radius: 30px;
+    background:
+        radial-gradient(circle at 90% 20%, rgba(209,244,17,.20), transparent 34%),
+        linear-gradient(135deg, #4b1684 0%, #920ab6 50%, #c60069 100%);
+    box-shadow: 0 26px 60px rgba(72,17,100,.26);
+}
+
+    .gp-svc-cta h2 {
+        color: #fff;
+        font-size: clamp(18px, 2.2vw, 26px);
+        font-weight: 990;
+        margin: 0 0 6px;
+    }
+
+    .gp-svc-cta p {
+        color: rgba(255,255,255,.86);
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .gp-svc-cta a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 52px;
+        padding: 0 30px;
+        border-radius: 999px;
+        background: #d1f411;
+        color: #26260a !important;
+        font-size: 16px;
+        font-weight: 990;
+        text-decoration: none !important;
+        box-shadow: 0 16px 34px rgba(0,0,0,.22);
+        transition: transform .2s ease;
+    }
+
+        .gp-svc-cta a:hover {
+            transform: translateY(-3px) scale(1.02);
+        }
+
+/* dark mode */
+html.gp-dark-mode .gp-service-card {
+    background: linear-gradient(150deg, rgba(26,24,43,.95), rgba(18,20,33,.92));
+    border-color: rgba(255,255,255,.10);
+}
+
+html.gp-dark-mode .gp-service-card-body h2 a {
+    color: #f8f1ff;
+}
+
+html.gp-dark-mode .gp-service-card-body p {
+    color: rgba(255,255,255,.62);
+}
+
+html.gp-dark-mode .gp-service-card-body h2 a:hover {
+    color: #d1f411;
+}
+
+html.gp-dark-mode .gp-svc-hero {
+    background:
+        radial-gradient(circle at 88% 10%, rgba(255,255,255,.10), transparent 30%),
+        radial-gradient(circle at 8% 92%, rgba(209,244,17,.12), transparent 32%),
+        linear-gradient(135deg, #1c0a30 0%, #3a0f52 48%, #4a0a2e 100%) !important;
+}

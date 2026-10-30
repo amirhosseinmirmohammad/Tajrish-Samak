@@ -1,0 +1,178 @@
+@page "/admin/orders"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+@layout TajrishSamak.Web.Components.Layout.AdminLayout
+@using TajrishSamak.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TajrishSamak.Web.Data.TajrishSamakDbContext> DbFactory
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Http
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inherits TajrishSamak.Web.Components.Shared.AdmListBase
+
+<PageTitle>سفارشات | پنل مدیریت</PageTitle>
+<link rel="stylesheet" href="/css/gp-admin.css?v=11" />
+
+<form method="get" class="adm-search">
+    <input type="hidden" name="sort" value="@Sort" />
+    <input type="hidden" name="dir" value="@DirStr" />
+    <input type="search" name="q" value="@Q" placeholder="جستجو: شماره فاکتور، نام گیرنده..." />
+    <button type="submit" class="adm-btn adm-btn-purple">جستجو</button>
+    @if (!string.IsNullOrEmpty(Q))
+    {
+        <a class="adm-btn adm-btn-danger" href="@UrlWith(("q", (string?)null), ("page", (string?)null))">✕ پاک‌کردن</a>
+    }
+</form>
+
+<div class="adm-card adm-table-wrap">
+    <table class="adm-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <AdmTh Key="InvoiceNumber" Label="شماره فاکتور" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="FullName" Label="نام گیرنده" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="OrderDate" Label="تاریخ سفارش" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <AdmTh Key="TotalPrice" Label="مبلغ کل" ActiveKey="@Sort" Asc="@Asc" SortUrl="@SortUrl" />
+                <th>وضعیت</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Rows)
+            {
+                <tr>
+                    <td>@FaNum(order.Id)</td>
+                    <td>@(string.IsNullOrWhiteSpace(order.InvoiceNumber) ? "—" : order.InvoiceNumber)</td>
+                    <td>@(string.IsNullOrWhiteSpace(order.FullName) ? "—" : order.FullName)</td>
+                    <td>@FaDate(order.OrderDate)</td>
+                    <td>@(string.IsNullOrWhiteSpace(order.TotalPrice) ? "—" : FaMoneyStr(order.TotalPrice))</td>
+                    <td>
+                        @if (order.IsCanceled)
+                        {
+                            <span class="adm-badge adm-badge-red">لغوشده</span>
+                        }
+                        else if (order.Done)
+                        {
+                            <span class="adm-badge adm-badge-green">تکمیل‌شده</span>
+                        }
+                        else
+                        {
+                            <span class="adm-badge adm-badge-yellow">در جریان</span>
+                        }
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:5px;flex-wrap:wrap">
+                            @if (!order.Done)
+                            {
+                                <form method="post" action="/admin/order/status">
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <input type="hidden" name="status" value="done" />
+                                    <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                                    <button type="submit" class="adm-btn adm-btn-green">تکمیل</button>
+                                </form>
+                            }
+                            @if (!order.IsCanceled)
+                            {
+                                <form method="post" action="/admin/order/status">
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <input type="hidden" name="status" value="cancel" />
+                                    <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                                    <button type="submit" class="adm-btn adm-btn-danger">لغو</button>
+                                </form>
+                            }
+                            @if (order.Done || order.IsCanceled)
+                            {
+                                <form method="post" action="/admin/order/status">
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <input type="hidden" name="status" value="reopen" />
+                                    <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                                    <button type="submit" class="adm-btn adm-btn-purple">بازگشایی</button>
+                                </form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (Rows.Count == 0)
+            {
+                <tr><td colspan="7">سفارشی یافت نشد.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<AdmPager Page="Page" PageSize="PageSize" Total="Filtered.Count()" PageUrl="@PageUrl" />
+
+@code {
+    private List<Order> orders = new();
+    private string token = "";
+
+    protected override void OnInitialized()
+    {
+        if (Http.HttpContext != null)
+        {
+            token = Antiforgery.GetAndStoreTokens(Http.HttpContext).RequestToken;
+        }
+    }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "q")] public string? QP { get => Qs; set => Qs = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "page")] public int? PageQP { get => PageN; set => PageN = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "sort")] public string? SortQP { get => SortS; set => SortS = value; }
+    [Microsoft.AspNetCore.Components.SupplyParameterFromQuery(Name = "dir")] public string? DirQP { get => DirS; set => DirS = value; }
+
+    private static decimal ParseMoney(string? s) => decimal.TryParse(s, out var v) ? v : 0m;
+    private static string FaMoneyStr(string s)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(s.Trim().Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+
+    private IEnumerable<Order> Filtered
+    {
+        get
+        {
+            IEnumerable<Order> q = orders;
+            var term = (Q ?? "").Trim();
+            if (term.Length > 0)
+            {
+                q = q.Where(o =>
+                    (o.InvoiceNumber ?? "").Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (o.FullName ?? "").Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    o.Id.ToString() == term);
+            }
+            q = (Sort, Asc) switch
+            {
+                ("InvoiceNumber", true) => q.OrderBy(o => o.InvoiceNumber),
+                ("InvoiceNumber", false) => q.OrderByDescending(o => o.InvoiceNumber),
+                ("FullName", true) => q.OrderBy(o => o.FullName),
+                ("FullName", false) => q.OrderByDescending(o => o.FullName),
+                ("OrderDate", true) => q.OrderBy(o => o.OrderDate),
+                ("OrderDate", false) => q.OrderByDescending(o => o.OrderDate),
+                ("TotalPrice", true) => q.OrderBy(o => ParseMoney(o.TotalPrice)),
+                ("TotalPrice", false) => q.OrderByDescending(o => ParseMoney(o.TotalPrice)),
+                _ => q
+            };
+            return q;
+        }
+    }
+
+    private List<Order> Rows => Filtered.Skip((Page - 1) * PageSize).Take(PageSize).ToList();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = DbFactory.CreateDbContext();
+        orders = await db.Orders
+            .AsNoTracking()
+            .OrderByDescending(o => o.OrderDate)
+            .ToListAsync();
+    }
+
+    private static string FaDate(DateTime d)
+    {
+        var cal = new System.Globalization.PersianCalendar();
+        return $"{cal.GetYear(d):0000}/{cal.GetMonth(d):00}/{cal.GetDayOfMonth(d):00}";
+    }
+
+    private static string FaNum(long v)
+    {
+        var map = new[] { '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' };
+        return new string(v.ToString("N0").Select(c => c >= '0' && c <= '9' ? map[c - '0'] : c).ToArray());
+    }
+}
