@@ -26,15 +26,15 @@ $(document).ready(function () {
                 }).setView([lat, lng], 18);
 
                 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                    attribution: "?????? ?????? ? ???? ???? ?????",
+                    attribution: "سمعک شکوه تجریش | کلینیک شنوایی و سمعک تهران",
                     maxZoom: 19
                 }).addTo(map);
 
                 var popupHtml =
                     "<div class='gp-map-popup'>" +
-                    "<img src='/images/logo_purple.webp' alt='?????? ?????? ? ???? ???? ?????' />" +
-                    "<strong>?????? ?????? ? ???? ???? ?????</strong>" +
-                    "<span>????? ?????? ?????? ???????</span>" +
+                    "<img src='/images/logo_purple.webp' alt='سمعک شکوه تجریش' />" +
+                    "<strong>سمعک شکوه تجریش | کلینیک شنوایی و سمعک تهران</strong>" +
+                    "<span>میدان تجریش، خیابان شهرداری، پلاک ۲۱۴</span>" +
                     "<span dir='ltr' style='direction:ltr;unicode-bidi:isolate;display:inline-block;'>021 2273 5588</span>" +
                     "</div>";
 
